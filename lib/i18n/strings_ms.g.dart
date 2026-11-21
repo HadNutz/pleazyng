@@ -387,6 +387,7 @@ class _Translations$settings$ms extends Translations$settings$en {
 	final TranslationsMs _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Engsel skrin boleh lipat';
 	@override String get title => 'Tetapan';
 	@override String get supportDeveloper => 'Perkhidmatan Pleazyng';
 	@override String get supportDeveloperDescription => 'Memberi sumbangan untuk menyokong pembangunan';
@@ -5865,6 +5866,7 @@ extension on TranslationsMs {
 			'update.viewRelease' => 'Lihat pelancaran',
 			'update.latestVersion' => 'Anda berada dalam versi terkini',
 			'update.checkFailed' => 'Tidak boleh memeriksa untuk update',
+			'settings.foldableDisplay' => 'Engsel skrin boleh lipat',
 			'settings.title' => 'Tetapan',
 			'settings.supportDeveloper' => 'Perkhidmatan Pleazyng',
 			'settings.supportDeveloperDescription' => 'Memberi sumbangan untuk menyokong pembangunan',
@@ -6159,9 +6161,9 @@ extension on TranslationsMs {
 			'settings.companionRemoteServer' => 'Pengenalan kepada Remote Server',
 			'settings.companionRemoteServerDescription' => 'Membolehkan peranti mudah alih di rangkaian anda untuk mengawal aplikasi ini',
 			'settings.companionRemoteServerStartFailed' => 'Tidak boleh memulakan pelayan rakan',
-			'settings.companionRemoteServerStopFailed' => 'Tidak boleh menghentikan pelayan rakan',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Tidak boleh menghentikan pelayan rakan',
 			'settings.autoPip' => 'Pengenalan kepada Auto Picture-in-Picture',
 			'settings.autoPipDescription' => 'Secara automatik, masukkan imej dalam imej apabila anda meninggalkan aplikasi semasa pemutaran',
 			'settings.matchContentFrameRate' => 'Rata-rata Perlawanan Content Frame Rate',
@@ -6673,9 +6675,9 @@ extension on TranslationsMs {
 			'tooltips.shufflePlay' => 'Permainan Shuffle',
 			'tooltips.playTrailer' => 'Bermain Trailer',
 			'tooltips.markAsWatched' => 'Mark yang dilihat',
-			'tooltips.markAsUnwatched' => 'Tag: tidak dipantau',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Tag: tidak dipantau',
 			'audioTracks.track' => ({required Object n}) => 'Perbincangan:Audio Track ${n}',
 			'videoControls.audioLabel' => 'Audio yang',
 			'videoControls.subtitlesLabel' => 'Sari kata',

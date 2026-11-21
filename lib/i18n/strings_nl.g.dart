@@ -387,6 +387,7 @@ class _Translations$settings$nl extends Translations$settings$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Scharnier van het vouwscherm';
 	@override String get title => 'Instellingen';
 	@override String get supportDeveloper => 'Steun Pleazyng';
 	@override String get supportDeveloperDescription => 'Doneer om de ontwikkeling te steunen';
@@ -5890,6 +5891,7 @@ extension on TranslationsNl {
 			'update.viewRelease' => 'Bekijk release',
 			'update.latestVersion' => 'Je hebt de nieuwste versie',
 			'update.checkFailed' => 'Kon niet controleren op updates',
+			'settings.foldableDisplay' => 'Scharnier van het vouwscherm',
 			'settings.title' => 'Instellingen',
 			'settings.supportDeveloper' => 'Steun Pleazyng',
 			'settings.supportDeveloperDescription' => 'Doneer om de ontwikkeling te steunen',
@@ -6184,9 +6186,9 @@ extension on TranslationsNl {
 			'settings.companionRemoteServer' => 'Companion Remote-server',
 			'settings.companionRemoteServerDescription' => 'Sta mobiele apparaten op je netwerk toe om deze app te bedienen',
 			'settings.companionRemoteServerStartFailed' => 'Kan de Companion Remote-server niet starten',
-			'settings.companionRemoteServerStopFailed' => 'Kan de Companion Remote-server niet stoppen',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Kan de Companion Remote-server niet stoppen',
 			'settings.autoPip' => 'Automatische beeld-in-beeld',
 			'settings.autoPipDescription' => 'Schakel over naar beeld-in-beeld als je tijdens het afspelen de app verlaat',
 			'settings.matchContentFrameRate' => 'Inhoudsframesnelheid afstemmen',
@@ -6698,9 +6700,9 @@ extension on TranslationsNl {
 			'tooltips.shufflePlay' => 'Willekeurig afspelen',
 			'tooltips.playTrailer' => 'Trailer afspelen',
 			'tooltips.markAsWatched' => 'Als bekeken markeren',
-			'tooltips.markAsUnwatched' => 'Als ongekeken markeren',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Als ongekeken markeren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospoor ${n}',
 			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Ondertitels',

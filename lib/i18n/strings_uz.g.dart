@@ -387,6 +387,7 @@ class _Translations$settings$uz extends Translations$settings$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Buklanadigan ekran sharniri';
 	@override String get title => 'Sozlamalar';
 	@override String get supportDeveloper => 'Pleazyng-ni qoʻllab-quvvatlash';
 	@override String get supportDeveloperDescription => 'Rivojlanishni qoʻllab-quvvatlash uchun xayriya qiling';
@@ -5890,6 +5891,7 @@ extension on TranslationsUz {
 			'update.viewRelease' => 'Tafsilotlarni koʻrish',
 			'update.latestVersion' => 'Sizda eng soʻnggi versiya oʻrnatilgan',
 			'update.checkFailed' => 'Yangilanishlarni tekshirish imkoni boʻlmadi',
+			'settings.foldableDisplay' => 'Buklanadigan ekran sharniri',
 			'settings.title' => 'Sozlamalar',
 			'settings.supportDeveloper' => 'Pleazyng-ni qoʻllab-quvvatlash',
 			'settings.supportDeveloperDescription' => 'Rivojlanishni qoʻllab-quvvatlash uchun xayriya qiling',
@@ -6184,9 +6186,9 @@ extension on TranslationsUz {
 			'settings.companionRemoteServer' => 'Yordamchi pult serveri',
 			'settings.companionRemoteServerDescription' => 'Tarmoqdagi mobil qurilmalarga ushbu ilovani boshqarishga ruxsat berish',
 			'settings.companionRemoteServerStartFailed' => 'Yordamchi pult serverini ishga tushirib bo‘lmadi',
-			'settings.companionRemoteServerStopFailed' => 'Yordamchi pult serverini to‘xtatib bo‘lmadi',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Yordamchi pult serverini to‘xtatib bo‘lmadi',
 			'settings.autoPip' => 'Avtomatik Rasm ichida rasm (PiP)',
 			'settings.autoPipDescription' => 'Video ijro etilayotganda ilovadan chiqilganda avto-PiP rejimiga oʻtish',
 			'settings.matchContentFrameRate' => 'Kadrlar chastotasini moslashtirish',
@@ -6698,9 +6700,9 @@ extension on TranslationsUz {
 			'tooltips.shufflePlay' => 'Aralashtirib ijro etish',
 			'tooltips.playTrailer' => 'Treylerni koʻrish',
 			'tooltips.markAsWatched' => 'Koʻrilgan deb belgilash',
-			'tooltips.markAsUnwatched' => 'Koʻrilmagan deb belgilash',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Koʻrilmagan deb belgilash',
 			'audioTracks.track' => ({required Object n}) => 'Audio yoʻlak ${n}',
 			'videoControls.audioLabel' => 'Ovoz',
 			'videoControls.subtitlesLabel' => 'Subtitr',

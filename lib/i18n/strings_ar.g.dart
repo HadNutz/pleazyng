@@ -387,6 +387,7 @@ class _Translations$settings$ar extends Translations$settings$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'مفصلة الشاشة القابلة للطي';
 	@override String get title => 'الإعدادات';
 	@override String get supportDeveloper => 'دعم Pleazyng';
 	@override String get supportDeveloperDescription => 'التبرع بدعم التنمية';
@@ -5990,6 +5991,7 @@ extension on TranslationsAr {
 			'update.viewRelease' => 'مشاهدة الإصدار',
 			'update.latestVersion' => 'أنت في أحدث النسخة',
 			'update.checkFailed' => 'فشل في التحقق من التحديثات',
+			'settings.foldableDisplay' => 'مفصلة الشاشة القابلة للطي',
 			'settings.title' => 'الإعدادات',
 			'settings.supportDeveloper' => 'دعم Pleazyng',
 			'settings.supportDeveloperDescription' => 'التبرع بدعم التنمية',
@@ -6284,9 +6286,9 @@ extension on TranslationsAr {
 			'settings.companionRemoteServer' => 'الخادم عن بعد',
 			'settings.companionRemoteServerDescription' => 'السماح للأجهزة المحمولة على شبكتك بالتحكم في هذا التطبيق',
 			'settings.companionRemoteServerStartFailed' => 'لا يمكن إطلاق الخادم المرافق',
-			'settings.companionRemoteServerStopFailed' => 'لا يمكن إيقاف الخادم المرافق',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'لا يمكن إيقاف الخادم المرافق',
 			'settings.autoPip' => 'صورة في صورة Auto Picture',
 			'settings.autoPipDescription' => 'إدخال صورة في الصورة تلقائيًا عند مغادرة التطبيق أثناء تشغيل',
 			'settings.matchContentFrameRate' => 'مقارنة محتوى إطار معدل',
@@ -6798,9 +6800,9 @@ extension on TranslationsAr {
 			'tooltips.shufflePlay' => 'لعبة Shuffle',
 			'tooltips.playTrailer' => 'لعبة تريلر',
 			'tooltips.markAsWatched' => 'مارك كما شاهدت',
-			'tooltips.markAsUnwatched' => 'مارك غير ملاحظة',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'مارك غير ملاحظة',
 			'audioTracks.track' => ({required Object n}) => 'سياق الصوت ${n}',
 			'videoControls.audioLabel' => 'الصوت',
 			'videoControls.subtitlesLabel' => 'الترجمة',

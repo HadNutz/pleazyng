@@ -1071,6 +1071,9 @@ class Translations$settings$en {
 	/// en: 'mpv'
 	String get mpv => 'mpv';
 
+	/// en: 'Foldable display hinge'
+	String get foldableDisplay => 'Foldable display hinge';
+
 	/// en: 'Hardware Decoding'
 	String get hardwareDecoding => 'Hardware Decoding';
 
@@ -18645,6 +18648,7 @@ extension on Translations {
 			'settings.playerBackend' => 'Player Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Foldable display hinge',
 			'settings.hardwareDecoding' => 'Hardware Decoding',
 			'settings.hardwareDecodingDescription' => 'Use hardware acceleration when available',
 			'settings.playbackBuffer' => 'Playback Buffer',
@@ -18827,9 +18831,9 @@ extension on Translations {
 			'settings.askDownloadQualityEachTimeDescription' => 'Show the quality picker before queueing each video download',
 			'settings.cellularDownloadBlocked' => 'Downloads are blocked on cellular. Use Wi-Fi or change the setting.',
 			'settings.maxVolume' => 'Maximum Volume',
-			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
 			_ => null,
 		} ?? switch (path) {
+			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
 			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
 			'settings.discordRichPresence' => 'Discord Rich Presence',
 			'settings.discordRichPresenceDescription' => 'Show what you\'re watching on Discord',
@@ -19341,9 +19345,9 @@ extension on Translations {
 			'accessibility.tapToPlay' => 'Tap to play',
 			'accessibility.decrease' => 'Decrease',
 			'accessibility.increase' => 'Increase',
-			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
 			'accessibility.hue' => 'Hue',
 			'accessibility.saturation' => 'Saturation',

@@ -244,6 +244,7 @@
     "checkFailed": "Yangilanishlarni tekshirish imkoni boʻlmadi"
   },
   "settings": {
+    "foldableDisplay": "Buklanadigan ekran sharniri",
     "title": "Sozlamalar",
     "supportDeveloper": "Pleazyng-ni qoʻllab-quvvatlash",
     "supportDeveloperDescription": "Rivojlanishni qoʻllab-quvvatlash uchun xayriya qiling",

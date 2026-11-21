@@ -244,6 +244,7 @@
     "checkFailed": "Güncellemeler kontrol edilemedi"
   },
   "settings": {
+    "foldableDisplay": "Katlanabilir ekran menteşesi",
     "title": "Ayarlar",
     "supportDeveloper": "Pleazyng'yi Destekleyin",
     "supportDeveloperDescription": "Geliştirmeyi desteklemek için bağış yapın",

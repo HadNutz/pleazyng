@@ -244,6 +244,7 @@
     "checkFailed": "Fehler bei der Updateprüfung"
   },
   "settings": {
+    "foldableDisplay": "Scharnier des Faltdisplays",
     "title": "Einstellungen",
     "supportDeveloper": "Pleazyng unterstützen",
     "supportDeveloperDescription": "Spenden Sie, um die Entwicklung zu unterstützen",

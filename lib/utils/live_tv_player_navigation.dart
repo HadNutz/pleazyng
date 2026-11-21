@@ -38,6 +38,9 @@ Future<void> navigateToLiveTv(
   bool Function()? isLaunchCurrent,
   LiveTvStartPosition startPosition = LiveTvStartPosition.ask,
   LiveTvProgram? program,
+  int? restoredBroadcastEpoch,
+  bool initiallyPaused = false,
+  bool Function()? canPresent,
 }) async {
   if (!(isLaunchCurrent?.call() ?? true) || !(launchObserver?.isCurrent ?? true)) return;
   if (!await IptvParentalAccessService.ensureAllowed(context, channel)) {
@@ -45,6 +48,7 @@ Future<void> navigateToLiveTv(
     return;
   }
   if (!context.mounted || !(isLaunchCurrent?.call() ?? true) || !(launchObserver?.isCurrent ?? true)) return;
+  if (canPresent?.call() == false) return;
   final directIptv = channel.iptvSourceId != null && channel.iptvChannelId != null;
   final serverInfo = directIptv ? null : liveTvServerInfoForChannel(multiServer, channel);
   if (!directIptv && serverInfo == null) {
@@ -89,12 +93,14 @@ Future<void> navigateToLiveTv(
   final route = VideoPlayerRoute(
     builder: (_) => VideoPlayerScreen(
       metadata: placeholder,
+      initiallyPaused: initiallyPaused,
       live: LiveTvSessionArgs(
         channel: channel,
         channels: normalizedChannels,
         currentChannelIndex: currentChannelIndex,
         startPosition: startPosition,
         initialProgram: program,
+        restoredBroadcastEpoch: restoredBroadcastEpoch,
       ),
       launchObserver: launchObserver,
       isLaunchCurrent: isLaunchCurrent,

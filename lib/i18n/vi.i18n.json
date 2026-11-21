@@ -244,6 +244,7 @@
     "checkFailed": "Không kiểm tra cho các bản cập nhật"
   },
   "settings": {
+    "foldableDisplay": "Bản lề màn hình gập",
     "title": "Cài đặt",
     "supportDeveloper": "Hỗ trợ Pleazyng",
     "supportDeveloperDescription": "Ưu đãi để hỗ trợ phát triển",

@@ -244,6 +244,7 @@
     "checkFailed": "अद्यतन की जांच नहीं कर पाया"
   },
   "settings": {
+    "foldableDisplay": "फ़ोल्ड होने वाली स्क्रीन का हिंज",
     "title": "सेटिंग्स",
     "supportDeveloper": "समर्थन Pleazyng",
     "supportDeveloperDescription": "विकास का समर्थन करने के लिए दान",

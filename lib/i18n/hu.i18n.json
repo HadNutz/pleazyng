@@ -244,6 +244,7 @@
     "checkFailed": "Nem sikerült az újabb frissítések ellenőrzése"
   },
   "settings": {
+    "foldableDisplay": "Az összehajtható kijelző zsanérja",
     "title": "Beállítások",
     "supportDeveloper": "Pleazyng támogatása",
     "supportDeveloperDescription": "Adománnyal támogassa a fejlesztést",

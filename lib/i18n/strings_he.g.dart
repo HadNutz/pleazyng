@@ -387,6 +387,7 @@ class _Translations$settings$he extends Translations$settings$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'ציר המסך המתקפל';
 	@override String get title => 'הגדרות';
 	@override String get supportDeveloper => 'תמיכה Pleazyng';
 	@override String get supportDeveloperDescription => 'תרומות לתמיכה בפיתוח';
@@ -5898,6 +5899,7 @@ extension on TranslationsHe {
 			'update.viewRelease' => 'ראה שחרור',
 			'update.latestVersion' => 'אתם נמצאים בגרסה האחרונה',
 			'update.checkFailed' => 'לא הצלחתי לבדוק עדכונים',
+			'settings.foldableDisplay' => 'ציר המסך המתקפל',
 			'settings.title' => 'הגדרות',
 			'settings.supportDeveloper' => 'תמיכה Pleazyng',
 			'settings.supportDeveloperDescription' => 'תרומות לתמיכה בפיתוח',
@@ -6192,9 +6194,9 @@ extension on TranslationsHe {
 			'settings.companionRemoteServer' => 'שרת מרחוק',
 			'settings.companionRemoteServerDescription' => 'תאפשר למכשירים ניידים ברשת שלך לשלוט באפליקציה זו',
 			'settings.companionRemoteServerStartFailed' => 'לא יכולתי להתחיל את שרת החברות',
-			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
 			'settings.autoPip' => 'צילום: Auto Picture in Picture',
 			'settings.autoPipDescription' => 'כניסת תמונה בתמונה באופן אוטומטי כאשר אתה עוזב את האפליקציה במהלך הצגת',
 			'settings.matchContentFrameRate' => 'תחרות תוכן Frame',
@@ -6706,9 +6708,9 @@ extension on TranslationsHe {
 			'tooltips.shufflePlay' => 'שושן משחק',
 			'tooltips.playTrailer' => 'משחק טריילר',
 			'tooltips.markAsWatched' => 'מארק כפי שנצפה',
-			'tooltips.markAsUnwatched' => 'מארק כבלתי צפוי',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'מארק כבלתי צפוי',
 			'audioTracks.track' => ({required Object n}) => 'אודיו טרק ${n}',
 			'videoControls.audioLabel' => 'שמע',
 			'videoControls.subtitlesLabel' => 'כתוביות',

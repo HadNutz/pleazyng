@@ -244,6 +244,7 @@
     "checkFailed": "Det gick inte att söka efter uppdateringar"
   },
   "settings": {
+    "foldableDisplay": "Gångjärn på vikbar skärm",
     "title": "Inställningar",
     "supportDeveloper": "Stöd Pleazyng",
     "supportDeveloperDescription": "Donera för att stödja utvecklingen",

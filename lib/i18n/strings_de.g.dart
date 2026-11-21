@@ -387,6 +387,7 @@ class _Translations$settings$de extends Translations$settings$en {
 	final TranslationsDe _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Scharnier des Faltdisplays';
 	@override String get title => 'Einstellungen';
 	@override String get supportDeveloper => 'Pleazyng unterstützen';
 	@override String get supportDeveloperDescription => 'Spenden Sie, um die Entwicklung zu unterstützen';
@@ -5890,6 +5891,7 @@ extension on TranslationsDe {
 			'update.viewRelease' => 'Versionshinweise anzeigen',
 			'update.latestVersion' => 'Aktuellste Version installiert',
 			'update.checkFailed' => 'Fehler bei der Updateprüfung',
+			'settings.foldableDisplay' => 'Scharnier des Faltdisplays',
 			'settings.title' => 'Einstellungen',
 			'settings.supportDeveloper' => 'Pleazyng unterstützen',
 			'settings.supportDeveloperDescription' => 'Spenden Sie, um die Entwicklung zu unterstützen',
@@ -6184,9 +6186,9 @@ extension on TranslationsDe {
 			'settings.companionRemoteServer' => 'Companion-Fernbedienungsserver',
 			'settings.companionRemoteServerDescription' => 'Mobilgeräten in deinem Netzwerk erlauben, diese App zu steuern',
 			'settings.companionRemoteServerStartFailed' => 'Companion-Fernbedienungsserver konnte nicht gestartet werden',
-			'settings.companionRemoteServerStopFailed' => 'Companion-Fernbedienungsserver konnte nicht gestoppt werden',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Companion-Fernbedienungsserver konnte nicht gestoppt werden',
 			'settings.autoPip' => 'Automatisches Bild-in-Bild',
 			'settings.autoPipDescription' => 'Beim Verlassen der App während der Wiedergabe automatisch Bild-in-Bild starten',
 			'settings.matchContentFrameRate' => 'Inhalts-Bildrate anpassen',
@@ -6698,9 +6700,9 @@ extension on TranslationsDe {
 			'tooltips.shufflePlay' => 'Zufallswiedergabe',
 			'tooltips.playTrailer' => 'Trailer abspielen',
 			'tooltips.markAsWatched' => 'Als gesehen markieren',
-			'tooltips.markAsUnwatched' => 'Als ungesehen markieren',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Als ungesehen markieren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospur ${n}',
 			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Untertitel',

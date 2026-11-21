@@ -244,6 +244,7 @@
     "checkFailed": "无法检查更新"
   },
   "settings": {
+    "foldableDisplay": "折叠屏铰链",
     "title": "设置",
     "supportDeveloper": "支持 Pleazyng",
     "supportDeveloperDescription": "捐赠以支持开发",

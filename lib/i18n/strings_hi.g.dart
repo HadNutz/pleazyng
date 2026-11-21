@@ -387,6 +387,7 @@ class _Translations$settings$hi extends Translations$settings$en {
 	final TranslationsHi _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'फ़ोल्ड होने वाली स्क्रीन का हिंज';
 	@override String get title => 'सेटिंग्स';
 	@override String get supportDeveloper => 'समर्थन Pleazyng';
 	@override String get supportDeveloperDescription => 'विकास का समर्थन करने के लिए दान';
@@ -5890,6 +5891,7 @@ extension on TranslationsHi {
 			'update.viewRelease' => 'देखें रिलीज',
 			'update.latestVersion' => 'आप नवीनतम संस्करण पर हैं',
 			'update.checkFailed' => 'अद्यतन की जांच नहीं कर पाया',
+			'settings.foldableDisplay' => 'फ़ोल्ड होने वाली स्क्रीन का हिंज',
 			'settings.title' => 'सेटिंग्स',
 			'settings.supportDeveloper' => 'समर्थन Pleazyng',
 			'settings.supportDeveloperDescription' => 'विकास का समर्थन करने के लिए दान',
@@ -6184,9 +6186,9 @@ extension on TranslationsHi {
 			'settings.companionRemoteServer' => 'रिमोट सर्वर',
 			'settings.companionRemoteServerDescription' => 'अपने नेटवर्क पर मोबाइल उपकरणों को इस ऐप को नियंत्रित करने की अनुमति दें',
 			'settings.companionRemoteServerStartFailed' => 'साथी सर्वर शुरू नहीं किया जा सकता',
-			'settings.companionRemoteServerStopFailed' => 'साथी सर्वर को रोक नहीं पाया',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'साथी सर्वर को रोक नहीं पाया',
 			'settings.autoPip' => 'Auto Picture-in-Picture के बारे में टिप्पणियाँ',
 			'settings.autoPipDescription' => 'स्वचालित रूप से छवि-इन-चित्र दर्ज करें जब आप प्लेबैक के दौरान ऐप छोड़ देते हैं',
 			'settings.matchContentFrameRate' => 'मैच सामग्री फ्रेम दर',
@@ -6698,9 +6700,9 @@ extension on TranslationsHi {
 			'tooltips.shufflePlay' => 'शूफ खेल',
 			'tooltips.playTrailer' => 'ट्रेलर खेलना',
 			'tooltips.markAsWatched' => 'मार्क देखने के लिए',
-			'tooltips.markAsUnwatched' => 'अनदेखी के रूप में मार्क',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'अनदेखी के रूप में मार्क',
 			'audioTracks.track' => ({required Object n}) => 'ऑडियो ट्रैक ${n}',
 			'videoControls.audioLabel' => 'ऑडियो',
 			'videoControls.subtitlesLabel' => 'उपशीर्षक',

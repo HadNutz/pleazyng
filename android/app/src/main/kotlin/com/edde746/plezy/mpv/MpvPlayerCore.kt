@@ -895,6 +895,24 @@ class MpvPlayerCore private constructor(
    */
   private var displayListener: DisplayManager.DisplayListener? = null
 
+  // A mode switch on the same panel must retain the pre-switch HDR probe.
+  // Foldables may reuse display 0 for a cover with a different mode list.
+  private fun panelIdentity(): Triple<Int, Int, Int>? = currentDisplay()?.let { display ->
+    val mode = display.supportedModes.maxByOrNull { it.physicalWidth.toLong() * it.physicalHeight } ?: display.mode
+    Triple(display.displayId, minOf(mode.physicalWidth, mode.physicalHeight), maxOf(mode.physicalWidth, mode.physicalHeight))
+  }
+
+  private var outputPanel: Triple<Int, Int, Int>? = null
+  private fun refreshOutputPanel() {
+    val panel = panelIdentity() ?: return
+    if (disposing || panel == outputPanel) return
+    outputPanel = panel
+    displayHdrSupported = DoviBridge.displaySupportsHdr(activity)
+    displayDvSupported = DoviBridge.displaySupportsDolbyVision(activity)
+    refreshHdrToneMapRequirement()
+    updateDisplayFpsOverride("output panel changed")
+  }
+
   private fun registerDisplayListener() {
     if (audioOnly || displayListener != null) return
     val listener = object : DisplayManager.DisplayListener {
@@ -902,6 +920,7 @@ class MpvPlayerCore private constructor(
       override fun onDisplayRemoved(displayId: Int) = Unit
       override fun onDisplayChanged(displayId: Int) {
         if (disposing || displayId != (currentDisplay()?.displayId ?: android.view.Display.DEFAULT_DISPLAY)) return
+        refreshOutputPanel()
         updateDisplayFpsOverride("display changed")
       }
     }
@@ -1017,8 +1036,9 @@ class MpvPlayerCore private constructor(
         isPaused = { desiredPaused }
       )
       if (!audioOnly) {
-        displayHdrSupported = DoviBridge.displaySupportsHdr(context)
-        displayDvSupported = DoviBridge.displaySupportsDolbyVision(context)
+        outputPanel = panelIdentity()
+        displayHdrSupported = DoviBridge.displaySupportsHdr(activity)
+        displayDvSupported = DoviBridge.displaySupportsDolbyVision(activity)
 
         frameRateManager = FrameRateManager(
           activity = activity,
@@ -1032,6 +1052,7 @@ class MpvPlayerCore private constructor(
         )
 
         surfaceContainer = PlayerSurfaceHost.createContainer(activity)
+        surfaceContainer!!.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> refreshOutputPanel() }
         surfaceView = PlayerSurfaceHost.createVideoSurface(activity, this@MpvPlayerCore)
         surfaceContainer!!.addView(surfaceView)
         if (usesMediaCodecVo) {

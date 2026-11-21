@@ -387,6 +387,7 @@ class _Translations$settings$ko extends Translations$settings$en {
 	final TranslationsKo _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => '폴더블 화면 힌지';
 	@override String get title => '설정';
 	@override String get supportDeveloper => 'Pleazyng 후원하기';
 	@override String get supportDeveloperDescription => '기부로 개발을 지원하세요';
@@ -5885,6 +5886,7 @@ extension on TranslationsKo {
 			'update.viewRelease' => '릴리스 정보 보기',
 			'update.latestVersion' => '최신 버전을 사용 중입니다',
 			'update.checkFailed' => '업데이트 확인 실패',
+			'settings.foldableDisplay' => '폴더블 화면 힌지',
 			'settings.title' => '설정',
 			'settings.supportDeveloper' => 'Pleazyng 후원하기',
 			'settings.supportDeveloperDescription' => '기부로 개발을 지원하세요',
@@ -6179,9 +6181,9 @@ extension on TranslationsKo {
 			'settings.companionRemoteServer' => '컴패니언 리모트 서버',
 			'settings.companionRemoteServerDescription' => '네트워크의 모바일 기기가 이 앱을 제어할 수 있도록 허용',
 			'settings.companionRemoteServerStartFailed' => '컴패니언 리모트 서버를 시작할 수 없습니다',
-			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
 			'settings.autoPip' => '자동 PIP 모드',
 			'settings.autoPipDescription' => '재생 중 앱을 떠나면 자동으로 화면 속 화면 모드로 전환합니다',
 			'settings.matchContentFrameRate' => '콘텐츠 프레임 레이트 맞춤',
@@ -6693,9 +6695,9 @@ extension on TranslationsKo {
 			'tooltips.shufflePlay' => '무작위 재생',
 			'tooltips.playTrailer' => '예고편 재생',
 			'tooltips.markAsWatched' => '시청 완료로 표시',
-			'tooltips.markAsUnwatched' => '미시청으로 표시',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => '미시청으로 표시',
 			'audioTracks.track' => ({required Object n}) => '오디오 트랙 ${n}',
 			'videoControls.audioLabel' => '오디오',
 			'videoControls.subtitlesLabel' => '자막',

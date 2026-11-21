@@ -387,6 +387,7 @@ class _Translations$settings$az extends Translations$settings$en {
 	final TranslationsAz _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Qatlanan ekranın menteşəsi';
 	@override String get title => 'Tənzimləmələr';
 	@override String get supportDeveloper => 'Pleazyng-yə dəstək ol';
 	@override String get supportDeveloperDescription => 'İnkişafı dəstəkləmək üçün ianə edin';
@@ -5890,6 +5891,7 @@ extension on TranslationsAz {
 			'update.viewRelease' => 'Buraxılışa bax',
 			'update.latestVersion' => 'Siz ən son versiyadasınız',
 			'update.checkFailed' => 'Yenilənmələr yoxlanıla bilmədi',
+			'settings.foldableDisplay' => 'Qatlanan ekranın menteşəsi',
 			'settings.title' => 'Tənzimləmələr',
 			'settings.supportDeveloper' => 'Pleazyng-yə dəstək ol',
 			'settings.supportDeveloperDescription' => 'İnkişafı dəstəkləmək üçün ianə edin',
@@ -6184,9 +6186,9 @@ extension on TranslationsAz {
 			'settings.companionRemoteServer' => 'Köməkçi pult serveri',
 			'settings.companionRemoteServerDescription' => 'Şəbəkənizdəki mobil cihazların bu tətbiqi idarə etməsinə icazə verin',
 			'settings.companionRemoteServerStartFailed' => 'Köməkçi pult serveri başladıla bilmədi',
-			'settings.companionRemoteServerStopFailed' => 'Köməkçi pult serveri dayandırıla bilmədi',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Köməkçi pult serveri dayandırıla bilmədi',
 			'settings.autoPip' => 'Avtomatik Pəncərə daxilində Pəncərə (PiP)',
 			'settings.autoPipDescription' => 'Oynatma zamanı tətbiqdən çıxdıqda avtomatik PiP rejiminə keç',
 			'settings.matchContentFrameRate' => 'Kadr tezliyini uyğunlaşdır',
@@ -6698,9 +6700,9 @@ extension on TranslationsAz {
 			'tooltips.shufflePlay' => 'Qarışıq oynat',
 			'tooltips.playTrailer' => 'Treyleri oynat',
 			'tooltips.markAsWatched' => 'Baxıldı olaraq işarələ',
-			'tooltips.markAsUnwatched' => 'Baxılmadı olaraq işarələ',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Baxılmadı olaraq işarələ',
 			'audioTracks.track' => ({required Object n}) => 'Səs zolağı ${n}',
 			'videoControls.audioLabel' => 'Səs',
 			'videoControls.subtitlesLabel' => 'Altyazı',

@@ -244,6 +244,7 @@
     "checkFailed": "Falha ao verificar atualizações"
   },
   "settings": {
+    "foldableDisplay": "Dobradiça do ecrã dobrável",
     "title": "Configurações",
     "supportDeveloper": "Apoie o Pleazyng",
     "supportDeveloperDescription": "Doe para apoiar o desenvolvimento",

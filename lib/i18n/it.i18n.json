@@ -244,6 +244,7 @@
     "checkFailed": "Impossibile controllare gli aggiornamenti"
   },
   "settings": {
+    "foldableDisplay": "Cerniera dello schermo pieghevole",
     "title": "Impostazioni",
     "supportDeveloper": "Supporta Pleazyng",
     "supportDeveloperDescription": "Fai una donazione per sostenere lo sviluppo",

@@ -387,6 +387,7 @@ class _Translations$settings$uk extends Translations$settings$en {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Шарнір складаного екрана';
 	@override String get title => 'Налаштування';
 	@override String get supportDeveloper => 'Підтримка Pleazyng';
 	@override String get supportDeveloperDescription => 'Донорство на підтримку розвитку';
@@ -5934,6 +5935,7 @@ extension on TranslationsUk {
 			'update.viewRelease' => 'Переглянути випуск',
 			'update.latestVersion' => 'Ви знаходитесь в останній версії',
 			'update.checkFailed' => 'Не вдалося перевірити оновлення',
+			'settings.foldableDisplay' => 'Шарнір складаного екрана',
 			'settings.title' => 'Налаштування',
 			'settings.supportDeveloper' => 'Підтримка Pleazyng',
 			'settings.supportDeveloperDescription' => 'Донорство на підтримку розвитку',
@@ -6228,9 +6230,9 @@ extension on TranslationsUk {
 			'settings.companionRemoteServer' => 'Віддалені сервери',
 			'settings.companionRemoteServerDescription' => 'Дозвольте мобільним пристроям у вашій мережі контролювати цю програму',
 			'settings.companionRemoteServerStartFailed' => 'Не можна було запустити сервер товаришів',
-			'settings.companionRemoteServerStopFailed' => 'Не можна було зупинити сервер товаришів',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Не можна було зупинити сервер товаришів',
 			'settings.autoPip' => 'Створення Auto Picture-in-Picture',
 			'settings.autoPipDescription' => 'Автоматично введіть зображення в зображення, коли ви покидаєте додаток під час відтворення',
 			'settings.matchContentFrameRate' => 'Матч Content Frame Rate',
@@ -6742,9 +6744,9 @@ extension on TranslationsUk {
 			'tooltips.shufflePlay' => 'Шуффлей грає',
 			'tooltips.playTrailer' => 'Грати в трейлер',
 			'tooltips.markAsWatched' => 'Марк як спостерігається',
-			'tooltips.markAsUnwatched' => 'Марк як невідомий',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Марк як невідомий',
 			'audioTracks.track' => ({required Object n}) => 'Анонс звуку ${n}',
 			'videoControls.audioLabel' => 'Аудіо',
 			'videoControls.subtitlesLabel' => 'Субтитри',

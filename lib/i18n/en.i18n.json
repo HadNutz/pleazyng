@@ -353,6 +353,7 @@
     "playerBackend": "Player Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Foldable display hinge",
     "hardwareDecoding": "Hardware Decoding",
     "hardwareDecodingDescription": "Use hardware acceleration when available",
     "playbackBuffer": "Playback Buffer",

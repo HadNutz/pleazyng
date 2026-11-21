@@ -192,6 +192,7 @@ class _Translations$settings$fr_CA extends Translations$settings$fr {
 	final TranslationsFrCa _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Charnière de l’écran pliable';
 	@override String get title => 'Paramètres';
 	@override String get language => 'Langue';
 	@override String get theme => 'Thème';
@@ -1405,6 +1406,7 @@ extension on TranslationsFrCa {
 			'common.mediaKind.folder' => 'Dossier',
 			'screens.subtitleStyling' => 'Style des sous-titres',
 			'screens.logs' => 'Journaux',
+			'settings.foldableDisplay' => 'Charnière de l’écran pliable',
 			'settings.title' => 'Paramètres',
 			'settings.language' => 'Langue',
 			'settings.theme' => 'Thème',

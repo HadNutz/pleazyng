@@ -244,6 +244,7 @@
     "checkFailed": "Не вдалося перевірити оновлення"
   },
   "settings": {
+    "foldableDisplay": "Шарнір складаного екрана",
     "title": "Налаштування",
     "supportDeveloper": "Підтримка Pleazyng",
     "supportDeveloperDescription": "Донорство на підтримку розвитку",

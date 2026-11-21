@@ -387,6 +387,7 @@ class Translations$settings$fr extends Translations$settings$en {
 	final TranslationsFr _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Charnière de l’écran pliable';
 	@override String get title => 'Paramètres';
 	@override String get supportDeveloper => 'Soutenir Pleazyng';
 	@override String get supportDeveloperDescription => 'Faites un don pour soutenir le développement';
@@ -5924,6 +5925,7 @@ extension on TranslationsFr {
 			'update.viewRelease' => 'Voir les notes de version',
 			'update.latestVersion' => 'Vous utilisez la dernière version',
 			'update.checkFailed' => 'Échec de la vérification des mises à jour',
+			'settings.foldableDisplay' => 'Charnière de l’écran pliable',
 			'settings.title' => 'Paramètres',
 			'settings.supportDeveloper' => 'Soutenir Pleazyng',
 			'settings.supportDeveloperDescription' => 'Faites un don pour soutenir le développement',
@@ -6218,9 +6220,9 @@ extension on TranslationsFr {
 			'settings.companionRemoteServer' => 'Serveur de télécommande',
 			'settings.companionRemoteServerDescription' => 'Autoriser les appareils mobiles de votre réseau à contrôler cette application',
 			'settings.companionRemoteServerStartFailed' => 'Impossible de démarrer le serveur de télécommande',
-			'settings.companionRemoteServerStopFailed' => 'Impossible d\'arrêter le serveur de télécommande',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Impossible d\'arrêter le serveur de télécommande',
 			'settings.autoPip' => 'Mode image dans l’image automatique',
 			'settings.autoPipDescription' => 'Passer en mode image dans l’image si vous quittez l’application pendant la lecture',
 			'settings.matchContentFrameRate' => 'Adapter la fréquence d’images au contenu',
@@ -6732,9 +6734,9 @@ extension on TranslationsFr {
 			'tooltips.shufflePlay' => 'Lecture aléatoire',
 			'tooltips.playTrailer' => 'Lire la bande-annonce',
 			'tooltips.markAsWatched' => 'Marquer comme vu',
-			'tooltips.markAsUnwatched' => 'Marquer comme non vu',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Marquer comme non vu',
 			'audioTracks.track' => ({required Object n}) => 'Piste audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Sous-titres',

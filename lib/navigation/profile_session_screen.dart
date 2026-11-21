@@ -6,6 +6,11 @@ import '../services/playback_coordinator.dart';
 import '../utils/global_key_utils.dart';
 import '../utils/video_player_navigation.dart';
 import 'video_task_restoration.dart';
+import '../iptv/iptv_source_repository.dart';
+import '../models/livetv_channel.dart';
+import '../models/livetv_program.dart';
+import '../screens/video_player/live_tv_session_args.dart';
+import '../utils/live_tv_player_navigation.dart';
 import '../services/music/music_car_host.dart';
 import '../services/music/music_experience.dart';
 import '../services/music/music_offline_rating_account.dart';
@@ -575,6 +580,69 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> with
   late final _videoTasks = VideoTaskObserver((value) {
     if (mounted && !restorePending) _savedVideo.value = value;
   });
+  final _savedRoom = RestorableStringN(null);
+  WatchTogetherProvider? _room;
+  String? _lastMembership;
+  bool _restoringRoom = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final room = context.read<WatchTogetherProvider?>();
+    if (identical(room, _room)) return;
+    _room?.removeListener(_roomChanged);
+    _room = room;
+    room?.addListener(_roomChanged);
+  }
+
+  void _roomChanged() {
+    if (!mounted || restorePending || bucket == null) return;
+    final data = _room?.membershipForRestoration;
+    if (data == _lastMembership) return;
+    _lastMembership = data;
+    _savedRoom.value = null;
+    if (data == null) return;
+    _savedVideo.value = null;
+    unawaited(_saveRoom(data));
+  }
+
+  Future<void> _saveRoom(String data) async {
+    try {
+      final protected = await CredentialVault.protect(data);
+      if (mounted && !restorePending && _lastMembership == data) _savedRoom.value = protected;
+    } catch (_) {
+      if (mounted && !restorePending && _lastMembership == data) _savedRoom.value = null;
+    }
+  }
+
+  Future<void> _restoreRoom(String encrypted, int attempt) async {
+    final room = _room;
+    final owner = context.read<ActiveProfileProvider>().activeId;
+    if (room == null || owner == null || !CredentialVault.isProtected(encrypted)) return;
+    final generation = _videoTasks.navigationGeneration;
+    bool current() =>
+        mounted &&
+        attempt == _restoreAttempt &&
+        room.profileId == owner &&
+        generation == _videoTasks.navigationGeneration &&
+        (ModalRoute.of(context)?.isCurrent ?? true) &&
+        context.read<MusicPlaybackService?>()?.currentTrack == null &&
+        (_navigatorKey.currentState?.canPop() == false) &&
+        (WidgetsBinding.instance.lifecycleState == null ||
+            WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed);
+    try {
+      final data = await CredentialVault.reveal(encrypted);
+      if (data == null || !current() || room.isInSession || PlaybackCoordinator.instance.hasVideoSession) return;
+      _restoringRoom = true;
+      await room.restoreMembership(data, current: current);
+    } catch (error) {
+      appLogger.d('Watch Together membership restoration ended', error: error.runtimeType);
+    } finally {
+      _restoringRoom = false;
+      if (mounted && !restorePending && _savedRoom.value == encrypted && !room.isInSession) _savedRoom.value = null;
+    }
+  }
+
   int _restoreAttempt = 0;
   @override
   String get restorationId => 'playback-task';
@@ -582,16 +650,22 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> with
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_savedVideo, 'video');
-    final task = SavedVideoTask.decode(_savedVideo.value);
+    registerForRestoration(_savedRoom, 'room');
+    final room = _savedRoom.value;
+    final task = SavedPlaybackTask.decode(_savedVideo.value);
     final attempt = ++_restoreAttempt;
-    if (task != null) {
+    if (room != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && attempt == _restoreAttempt) unawaited(_restoreRoom(room, attempt));
+      });
+    } else if (task != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && attempt == _restoreAttempt) unawaited(_restoreVideo(task, attempt));
       });
     }
   }
 
-  Future<void> _restoreVideo(SavedVideoTask task, int attempt) async {
+  Future<void> _restoreVideo(SavedPlaybackTask task, int attempt) async {
     final nav = _navigatorKey.currentState;
     if (nav == null || nav.canPop()) return;
     final profile = context.read<ActiveProfileProvider>();
@@ -616,6 +690,87 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> with
     final servers = context.read<MultiServerProvider>();
     final hidden = context.read<HiddenLibrariesProvider>();
     final downloads = context.read<DownloadProvider?>();
+    if (task is SavedLiveTask) {
+      final playlists = context.read<IptvSourceRepository?>();
+      try {
+        List<LiveTvChannel> channels = [];
+        if (task.iptv) {
+          if (playlists == null) return;
+          channels = await playlists.channels(owner!);
+        } else {
+          final id = ServerId(task.ownerId);
+          for (var i = 0; i < 24 && current(); i++) {
+            final client = servers.getClientForServer(id);
+            if (client != null && servers.serverManager.isServerVisible(id)) {
+              await servers.checkLiveTvAvailability();
+              if (!current()) return;
+              for (final source in servers.liveTvServers.where((s) => s.serverId == id)) {
+                final rows = await client.liveTv.fetchChannels(lineup: source.lineup);
+                if (!current() ||
+                    !identical(servers.getClientForServer(id), client) ||
+                    !servers.serverManager.isServerVisible(id)) {
+                  return;
+                }
+                channels.addAll(rows.map((c) => c.copyWith(serverId: id, liveDvrKey: source.dvrKey)));
+              }
+              if (channels.isNotEmpty) break;
+            }
+            await Future<void>.delayed(const Duration(milliseconds: 500));
+          }
+        }
+        if (!current()) return;
+        final channel = channels
+            .where(
+              (c) =>
+                  (c.iptvSourceId ?? c.serverId) == task.ownerId &&
+                  SavedLiveTask.digest(liveTvChannelScopeKey(c)) == task.channelDigest,
+            )
+            .firstOrNull;
+        if (channel == null || channel.iptvParentalLocked || channel.drm == true) {
+          _savedVideo.value = null;
+          return;
+        }
+        LiveTvProgram? program;
+        final epoch = task.epoch;
+        if (task.iptv &&
+            epoch != null &&
+            channel.iptvCatchupAvailable &&
+            playlists != null &&
+            (channel.iptvCatchupDays == null ||
+                DateTime.now().millisecondsSinceEpoch ~/ 1000 - epoch <= channel.iptvCatchupDays! * 86400)) {
+          final at = DateTime.fromMillisecondsSinceEpoch(epoch * 1000);
+          final rows = await playlists.schedule(
+            owner!,
+            at,
+            at.add(const Duration(seconds: 1)),
+            sourceId: channel.iptvSourceId,
+            channelId: channel.iptvChannelId,
+          );
+          final airing = rows.firstOrNull;
+          if (airing?.endsAt case final end? when end > epoch) {
+            program = LiveTvProgram(title: airing!.title, beginsAt: epoch, endsAt: end);
+          }
+        }
+        final routeContext = nav.overlay?.context;
+        if (!current() || routeContext == null || !routeContext.mounted) return;
+        _savedVideo.value = null;
+        await navigateToLiveTv(
+          routeContext,
+          multiServer: servers,
+          channel: channel,
+          channels: channels,
+          canPresent: current,
+          startPosition: LiveTvStartPosition.live,
+          initiallyPaused: task.paused,
+          restoredBroadcastEpoch: task.epoch,
+          program: program,
+        );
+      } catch (error) {
+        appLogger.d('Could not retune restored live channel', error: error.runtimeType);
+      }
+      return;
+    }
+    if (task is! SavedVideoTask) return;
     final id = ServerId(task.server);
     final key = buildGlobalKey(id, task.item);
     try {
@@ -695,6 +850,8 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> with
   void dispose() {
     profileNavigationRegistry.detachNavigator(_navigatorKey);
     profileNavigationRegistry.detachMainScaffoldMessenger(_mainScaffoldMessengerKey);
+    _room?.removeListener(_roomChanged);
+    _savedRoom.dispose();
     _savedVideo.dispose();
     _miniPlayerInsets.dispose();
     _musicRouteObserver.suppress.dispose();
@@ -748,6 +905,7 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> with
                     Listener(
                       onPointerDown: (_) {
                         _restoreAttempt++;
+                        if (_restoringRoom && _room?.isReconnecting == true) _room?.leave();
                         if (!_videoTasks.hasOwner && !restorePending) _savedVideo.value = null;
                       },
                       child: Navigator(

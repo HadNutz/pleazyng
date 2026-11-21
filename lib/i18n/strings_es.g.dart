@@ -391,6 +391,7 @@ class Translations$settings$es extends Translations$settings$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Bisagra de la pantalla plegable';
 	@override String get title => 'Configuración';
 	@override String get supportDeveloper => 'Apoya Pleazyng';
 	@override String get supportDeveloperDescription => 'Dona para apoyar el desarrollo';
@@ -6017,6 +6018,7 @@ extension on TranslationsEs {
 			'update.viewRelease' => 'Ver versión',
 			'update.latestVersion' => 'Ya estás en la última versión',
 			'update.checkFailed' => 'Error al buscar actualizaciones',
+			'settings.foldableDisplay' => 'Bisagra de la pantalla plegable',
 			'settings.title' => 'Configuración',
 			'settings.supportDeveloper' => 'Apoya Pleazyng',
 			'settings.supportDeveloperDescription' => 'Dona para apoyar el desarrollo',
@@ -6308,9 +6310,9 @@ extension on TranslationsEs {
 			'settings.services' => 'Servicios',
 			'settings.servicesDescription' => 'Conecta Trakt, MyAnimeList, Seerr y más',
 			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
-			'settings.companionRemoteServer' => 'Servidor de control remoto',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServer' => 'Servidor de control remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
 			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
 			'settings.companionRemoteServerStopFailed' => 'No se pudo detener el servidor de control remoto',
@@ -6822,9 +6824,9 @@ extension on TranslationsEs {
 			'accessibility.navigationHint' => 'Usa Tab y Shift+Tab para moverte entre los controles, Enter o la barra espaciadora para activarlos y Escape o Atrás para cerrar. El zoom y las preferencias de lectura están disponibles cuando hay un libro abierto.',
 			'accessibility.textSizeDescription' => 'Escala el texto de la interfaz en Pleazyng además de la configuración de tamaño del texto del sistema de su dispositivo.',
 			'accessibility.boldTextHint' => 'Utilice un peso más pesado para las etiquetas de interfaz y los mensajes para que sean más fáciles de distinguir.',
-			'tooltips.shufflePlay' => 'Reproducción aleatoria',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'Reproducción aleatoria',
 			'tooltips.playTrailer' => 'Reproducir tráiler',
 			'tooltips.markAsWatched' => 'Marcar como visto',
 			'tooltips.markAsUnwatched' => 'Marcar como no visto',

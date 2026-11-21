@@ -244,6 +244,7 @@
     "checkFailed": "gagal memeriksa update"
   },
   "settings": {
+    "foldableDisplay": "Engsel layar lipat",
     "title": "Pengaturan",
     "supportDeveloper": "Dukungan Pleazyng",
     "supportDeveloperDescription": "Memberi dukungan untuk pengembangan",

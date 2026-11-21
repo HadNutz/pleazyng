@@ -244,6 +244,7 @@
     "checkFailed": "업데이트 확인 실패"
   },
   "settings": {
+    "foldableDisplay": "폴더블 화면 힌지",
     "title": "설정",
     "supportDeveloper": "Pleazyng 후원하기",
     "supportDeveloperDescription": "기부로 개발을 지원하세요",

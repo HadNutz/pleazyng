@@ -191,6 +191,7 @@ class _Translations$settings$es_419 extends Translations$settings$es {
 	final TranslationsEs419 _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Bisagra de la pantalla plegable';
 	@override String get title => 'Configuración';
 	@override String get language => 'Idioma';
 	@override String get theme => 'Tema';
@@ -1436,6 +1437,7 @@ extension on TranslationsEs419 {
 			'common.mediaKind.folder' => 'Carpeta',
 			'screens.subtitleStyling' => 'Estilo de subtítulos',
 			'screens.logs' => 'Registros',
+			'settings.foldableDisplay' => 'Bisagra de la pantalla plegable',
 			'settings.title' => 'Configuración',
 			'settings.language' => 'Idioma',
 			'settings.theme' => 'Tema',

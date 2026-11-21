@@ -48,7 +48,18 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
         final timeshift = session is LiveTvTimeshiftSession ? session as LiveTvTimeshiftSession : null;
         final window = captureBuffer == null ? null : timeshift?.seekWindow(captureBuffer);
         double? requestedEpoch;
-        if (window != null) {
+        final restored = widget.live!.restoredBroadcastEpoch;
+        _lateLiveRestore =
+            restored != null && window == null && timeshift != null && session is! IptvLiveTvPlaybackSession
+            ? (session: session, intent: _liveSeek.intentGeneration, epoch: restored)
+            : null;
+        if (restored != null) {
+          // The old decoder buffer died with its process. Only the new tuner
+          // can establish whether this broadcast time is still playable.
+          if (window != null && restored >= window.startEpoch && restored <= window.endEpoch) {
+            requestedEpoch = window.target(restored.toDouble());
+          }
+        } else if (window != null) {
           final programStart = session.program.beginsAt?.toDouble() ?? window.startEpoch;
           final effectiveStart = window.target(programStart)!;
           if (window.endEpoch - effectiveStart > 60) {
@@ -112,7 +123,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
           targetEpoch: targetEpoch,
           openingSession: session,
           enableLocalTimeShift: session is IptvLiveTvPlaybackSession ? session.localTimeShiftEnabled : false,
-          play: !holdPlaybackStart && !PlatformDetector.isAutomotive(),
+          play: _playbackIntentShouldPlay && !holdPlaybackStart && !PlatformDetector.isAutomotive(),
           isCurrent: () => attempt.isCurrent && identical(_live.session, session),
           timeShifted: requestedEpoch != null,
         );
@@ -143,7 +154,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
         }
         // A held start is resumed by the display gate, which applies the
         // same vehicle check.
-        if (PlatformDetector.isAutomotive() && !holdPlaybackStart) {
+        if (_playbackIntentShouldPlay && PlatformDetector.isAutomotive() && !holdPlaybackStart) {
           await _playWithPlaybackIntent(currentPlayer);
         }
         committed = attempt.isCurrent;

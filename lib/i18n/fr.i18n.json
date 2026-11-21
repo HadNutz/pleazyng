@@ -244,6 +244,7 @@
     "checkFailed": "Échec de la vérification des mises à jour"
   },
   "settings": {
+    "foldableDisplay": "Charnière de l’écran pliable",
     "title": "Paramètres",
     "supportDeveloper": "Soutenir Pleazyng",
     "supportDeveloperDescription": "Faites un don pour soutenir le développement",

@@ -244,6 +244,7 @@
     "checkFailed": "無法檢查更新"
   },
   "settings": {
+    "foldableDisplay": "摺疊螢幕鉸鏈",
     "title": "設定",
     "supportDeveloper": "贊助 Pleazyng",
     "supportDeveloperDescription": "捐款支持開發",

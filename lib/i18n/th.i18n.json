@@ -244,6 +244,7 @@
     "checkFailed": "ไม่สามารถตรวจสอบอัปเดตได้"
   },
   "settings": {
+    "foldableDisplay": "บานพับของหน้าจอพับได้",
     "title": "การตั้งค่า",
     "supportDeveloper": "สนับสนุน Pleazyng",
     "supportDeveloperDescription": "การสนับสนุนการพัฒนา",

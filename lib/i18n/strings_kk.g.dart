@@ -387,6 +387,7 @@ class _Translations$settings$kk extends Translations$settings$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Жиналмалы экранның топсасы';
 	@override String get title => 'Баптаулар';
 	@override String get supportDeveloper => 'Pleazyng жобасын қолдау';
 	@override String get supportDeveloperDescription => 'Әзірлеуді қолдау үшін қайырымдылық жасаңыз';
@@ -5890,6 +5891,7 @@ extension on TranslationsKk {
 			'update.viewRelease' => 'Релизді көру',
 			'update.latestVersion' => 'Сізде ең соңғы нұсқа орнатылған',
 			'update.checkFailed' => 'Жаңартуларды тексеру мүмкін болмады',
+			'settings.foldableDisplay' => 'Жиналмалы экранның топсасы',
 			'settings.title' => 'Баптаулар',
 			'settings.supportDeveloper' => 'Pleazyng жобасын қолдау',
 			'settings.supportDeveloperDescription' => 'Әзірлеуді қолдау үшін қайырымдылық жасаңыз',
@@ -6184,9 +6186,9 @@ extension on TranslationsKk {
 			'settings.companionRemoteServer' => 'Көмекші пульт сервері',
 			'settings.companionRemoteServerDescription' => 'Желідегі мобильді құрылғыларға осы қолданбаны басқаруға рұқсат беру',
 			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
-			'settings.companionRemoteServerStopFailed' => 'Көмекші серверді тоқтату мүмкін болмады',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Көмекші серверді тоқтату мүмкін болмады',
 			'settings.autoPip' => 'Автоматты Суреттегі сурет (PiP)',
 			'settings.autoPipDescription' => 'Видео ойнап жатқанда қолданбадан шыққанда авто-PiP режиміне өту',
 			'settings.matchContentFrameRate' => 'Кадр жиілігін сәйкестендіру',
@@ -6698,9 +6700,9 @@ extension on TranslationsKk {
 			'tooltips.shufflePlay' => 'Араластырып ойнату',
 			'tooltips.playTrailer' => 'Трейлерді ойнату',
 			'tooltips.markAsWatched' => 'Көрілді деп белгілеу',
-			'tooltips.markAsUnwatched' => 'Көрілмеді деп белгілеу',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Көрілмеді деп белгілеу',
 			'audioTracks.track' => ({required Object n}) => 'Аудиожол ${n}',
 			'videoControls.audioLabel' => 'Дыбыс',
 			'videoControls.subtitlesLabel' => 'Субтитр',

@@ -387,6 +387,7 @@ class _Translations$settings$nb extends Translations$settings$en {
 	final TranslationsNb _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Hengsel på brettbar skjerm';
 	@override String get title => 'Innstillinger';
 	@override String get supportDeveloper => 'Støtt Pleazyng';
 	@override String get supportDeveloperDescription => 'Doner for å støtte utviklingen';
@@ -5890,6 +5891,7 @@ extension on TranslationsNb {
 			'update.viewRelease' => 'Vis utgivelse',
 			'update.latestVersion' => 'Du har den nyeste versjonen',
 			'update.checkFailed' => 'Kunne ikke se etter oppdateringer',
+			'settings.foldableDisplay' => 'Hengsel på brettbar skjerm',
 			'settings.title' => 'Innstillinger',
 			'settings.supportDeveloper' => 'Støtt Pleazyng',
 			'settings.supportDeveloperDescription' => 'Doner for å støtte utviklingen',
@@ -6184,9 +6186,9 @@ extension on TranslationsNb {
 			'settings.companionRemoteServer' => 'Fjernkontrollserver',
 			'settings.companionRemoteServerDescription' => 'La mobilenheter på nettverket styre denne appen',
 			'settings.companionRemoteServerStartFailed' => 'Kunne ikke starte fjernkontrollserveren',
-			'settings.companionRemoteServerStopFailed' => 'Kunne ikke stoppe fjernkontrollserveren',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Kunne ikke stoppe fjernkontrollserveren',
 			'settings.autoPip' => 'Automatisk bilde-i-bilde',
 			'settings.autoPipDescription' => 'Åpne bilde-i-bilde når du forlater appen under avspilling',
 			'settings.matchContentFrameRate' => 'Tilpass innholdets bildefrekvens',
@@ -6698,9 +6700,9 @@ extension on TranslationsNb {
 			'tooltips.shufflePlay' => 'Tilfeldig avspilling',
 			'tooltips.playTrailer' => 'Spill trailer',
 			'tooltips.markAsWatched' => 'Merk som sett',
-			'tooltips.markAsUnwatched' => 'Merk som usett',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Merk som usett',
 			'audioTracks.track' => ({required Object n}) => 'Lydspor ${n}',
 			'videoControls.audioLabel' => 'Lyd',
 			'videoControls.subtitlesLabel' => 'Undertekster',

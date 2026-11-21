@@ -27,6 +27,21 @@ void main() {
     }
   });
 
+  test('live restoration retains the channel scope and broadcast time without its source URL', () {
+    const key = 'provider\u0000dvr\u0000https://example.org/secret?token=private';
+    final digest = SavedLiveTask.digest(key);
+    final saved = SavedLiveTask('source', digest, true, 1700000000, true);
+    expect(saved.encode(), isNot(contains('example.org')));
+    final restored = SavedPlaybackTask.decode(saved.encode()) as SavedLiveTask;
+    expect(restored.epoch, 1700000000);
+    expect(restored.paused, isTrue);
+    expect(restored.channelDigest, digest);
+    expect(SavedLiveTask.digest('other$key'), isNot(digest));
+    expect(SavedPlaybackTask.decode(saved.encode().replaceFirst(digest, key)), isNull);
+    expect(SavedPlaybackTask.decode(saved.encode().replaceFirst('1700000000', '-1')), isNull);
+    expect(SavedPlaybackTask.decode(task.encode()), isA<SavedVideoTask>());
+  });
+
   testWidgets('covered or retired players cannot overwrite a replacement checkpoint', (tester) async {
     final values = <String?>[];
     final observer = VideoTaskObserver(values.add);

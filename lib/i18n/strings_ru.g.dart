@@ -387,6 +387,7 @@ class _Translations$settings$ru extends Translations$settings$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Шарнир складного экрана';
 	@override String get title => 'Настройки';
 	@override String get supportDeveloper => 'Поддержать Pleazyng';
 	@override String get supportDeveloperDescription => 'Поддержите разработку пожертвованием';
@@ -5940,6 +5941,7 @@ extension on TranslationsRu {
 			'update.viewRelease' => 'Посмотреть релиз',
 			'update.latestVersion' => 'У вас последняя версия',
 			'update.checkFailed' => 'Не удалось проверить обновления',
+			'settings.foldableDisplay' => 'Шарнир складного экрана',
 			'settings.title' => 'Настройки',
 			'settings.supportDeveloper' => 'Поддержать Pleazyng',
 			'settings.supportDeveloperDescription' => 'Поддержите разработку пожертвованием',
@@ -6234,9 +6236,9 @@ extension on TranslationsRu {
 			'settings.companionRemoteServer' => 'Сервер удалённого управления',
 			'settings.companionRemoteServerDescription' => 'Разрешить мобильным устройствам в сети управлять этим приложением',
 			'settings.companionRemoteServerStartFailed' => 'Не удалось запустить сервер удалённого управления',
-			'settings.companionRemoteServerStopFailed' => 'Не удалось остановить сервер удалённого управления',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Не удалось остановить сервер удалённого управления',
 			'settings.autoPip' => 'Автоматический режим «картинка в картинке»',
 			'settings.autoPipDescription' => 'Автоматически включать режим «картинка в картинке» при выходе из приложения во время воспроизведения',
 			'settings.matchContentFrameRate' => 'Соответствие частоты кадров контента',
@@ -6748,9 +6750,9 @@ extension on TranslationsRu {
 			'tooltips.shufflePlay' => 'Случайное воспроизведение',
 			'tooltips.playTrailer' => 'Воспроизвести трейлер',
 			'tooltips.markAsWatched' => 'Отметить как просмотренное',
-			'tooltips.markAsUnwatched' => 'Отметить как непросмотренное',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Отметить как непросмотренное',
 			'audioTracks.track' => ({required Object n}) => 'Аудиодорожка ${n}',
 			'videoControls.audioLabel' => 'Аудио',
 			'videoControls.subtitlesLabel' => 'Субтитры',

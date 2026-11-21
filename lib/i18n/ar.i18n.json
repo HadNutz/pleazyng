@@ -244,6 +244,7 @@
     "checkFailed": "فشل في التحقق من التحديثات"
   },
   "settings": {
+    "foldableDisplay": "مفصلة الشاشة القابلة للطي",
     "title": "الإعدادات",
     "supportDeveloper": "دعم Pleazyng",
     "supportDeveloperDescription": "التبرع بدعم التنمية",

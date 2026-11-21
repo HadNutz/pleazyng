@@ -244,6 +244,7 @@
     "checkFailed": "Error al buscar actualizaciones"
   },
   "settings": {
+    "foldableDisplay": "Bisagra de la pantalla plegable",
     "title": "Configuración",
     "supportDeveloper": "Apoya Pleazyng",
     "supportDeveloperDescription": "Dona para apoyar el desarrollo",

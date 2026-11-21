@@ -244,6 +244,7 @@
     "checkFailed": "アップデートの確認に失敗しました"
   },
   "settings": {
+    "foldableDisplay": "折りたたみ画面のヒンジ",
     "title": "設定",
     "supportDeveloper": "Plezyを支援",
     "supportDeveloperDescription": "寄付で開発を支援",

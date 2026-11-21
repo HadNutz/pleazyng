@@ -387,6 +387,7 @@ class _Translations$settings$vi extends Translations$settings$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Bản lề màn hình gập';
 	@override String get title => 'Cài đặt';
 	@override String get supportDeveloper => 'Hỗ trợ Pleazyng';
 	@override String get supportDeveloperDescription => 'Ưu đãi để hỗ trợ phát triển';
@@ -5865,6 +5866,7 @@ extension on TranslationsVi {
 			'update.viewRelease' => 'Xem bản phát hành',
 			'update.latestVersion' => 'Bạn đang ở phiên bản mới nhất',
 			'update.checkFailed' => 'Không kiểm tra cho các bản cập nhật',
+			'settings.foldableDisplay' => 'Bản lề màn hình gập',
 			'settings.title' => 'Cài đặt',
 			'settings.supportDeveloper' => 'Hỗ trợ Pleazyng',
 			'settings.supportDeveloperDescription' => 'Ưu đãi để hỗ trợ phát triển',
@@ -6159,9 +6161,9 @@ extension on TranslationsVi {
 			'settings.companionRemoteServer' => 'Dịch vụ Remote Server',
 			'settings.companionRemoteServerDescription' => 'Cho phép các thiết bị di động trên mạng của bạn để kiểm soát ứng dụng này',
 			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
-			'settings.companionRemoteServerStopFailed' => 'Không thể dừng lại máy chủ đồng nghiệp',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Không thể dừng lại máy chủ đồng nghiệp',
 			'settings.autoPip' => 'Ảnh Auto Picture in Picture',
 			'settings.autoPipDescription' => 'Tự động nhập hình ảnh trong khi bạn rời khỏi ứng dụng trong khi chơi',
 			'settings.matchContentFrameRate' => 'Match Content Frame Tỷ lệ',
@@ -6673,9 +6675,9 @@ extension on TranslationsVi {
 			'tooltips.shufflePlay' => 'Shuffle chơi',
 			'tooltips.playTrailer' => 'Trò chơi Trailer',
 			'tooltips.markAsWatched' => 'Mark theo dõi',
-			'tooltips.markAsUnwatched' => 'Mark như không được xem',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Mark như không được xem',
 			'audioTracks.track' => ({required Object n}) => 'Âm thanh Track ${n}',
 			'videoControls.audioLabel' => 'Âm thanh',
 			'videoControls.subtitlesLabel' => 'Phụ đề',

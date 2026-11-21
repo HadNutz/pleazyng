@@ -387,6 +387,7 @@ class _Translations$settings$ja extends Translations$settings$en {
 	final TranslationsJa _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => '折りたたみ画面のヒンジ';
 	@override String get title => '設定';
 	@override String get supportDeveloper => 'Plezyを支援';
 	@override String get supportDeveloperDescription => '寄付で開発を支援';
@@ -5885,6 +5886,7 @@ extension on TranslationsJa {
 			'update.viewRelease' => 'リリースを表示',
 			'update.latestVersion' => '最新バージョンです',
 			'update.checkFailed' => 'アップデートの確認に失敗しました',
+			'settings.foldableDisplay' => '折りたたみ画面のヒンジ',
 			'settings.title' => '設定',
 			'settings.supportDeveloper' => 'Plezyを支援',
 			'settings.supportDeveloperDescription' => '寄付で開発を支援',
@@ -6179,9 +6181,9 @@ extension on TranslationsJa {
 			'settings.companionRemoteServer' => 'コンパニオンリモートサーバー',
 			'settings.companionRemoteServerDescription' => 'ネットワーク上のモバイルデバイスからこのアプリを操作できるようにする',
 			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
-			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
 			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			'settings.autoPipDescription' => '再生中にアプリを離れると、自動的にピクチャーインピクチャーに切り替えます',
 			'settings.matchContentFrameRate' => 'コンテンツのフレームレートに合わせる',
@@ -6693,9 +6695,9 @@ extension on TranslationsJa {
 			'tooltips.shufflePlay' => 'シャッフル再生',
 			'tooltips.playTrailer' => '予告編を再生',
 			'tooltips.markAsWatched' => '視聴済みにする',
-			'tooltips.markAsUnwatched' => '未視聴にする',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => '未視聴にする',
 			'audioTracks.track' => ({required Object n}) => '音声トラック${n}',
 			'videoControls.audioLabel' => '音声',
 			'videoControls.subtitlesLabel' => '字幕',

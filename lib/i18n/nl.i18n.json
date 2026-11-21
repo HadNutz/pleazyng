@@ -244,6 +244,7 @@
     "checkFailed": "Kon niet controleren op updates"
   },
   "settings": {
+    "foldableDisplay": "Scharnier van het vouwscherm",
     "title": "Instellingen",
     "supportDeveloper": "Steun Pleazyng",
     "supportDeveloperDescription": "Doneer om de ontwikkeling te steunen",

@@ -244,6 +244,7 @@
     "checkFailed": "Tidak boleh memeriksa untuk update"
   },
   "settings": {
+    "foldableDisplay": "Engsel skrin boleh lipat",
     "title": "Tetapan",
     "supportDeveloper": "Perkhidmatan Pleazyng",
     "supportDeveloperDescription": "Memberi sumbangan untuk menyokong pembangunan",

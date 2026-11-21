@@ -244,6 +244,7 @@
     "checkFailed": "Yenilənmələr yoxlanıla bilmədi"
   },
   "settings": {
+    "foldableDisplay": "Qatlanan ekranın menteşəsi",
     "title": "Tənzimləmələr",
     "supportDeveloper": "Pleazyng-yə dəstək ol",
     "supportDeveloperDescription": "İnkişafı dəstəkləmək üçün ianə edin",

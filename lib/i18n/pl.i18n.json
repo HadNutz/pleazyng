@@ -244,6 +244,7 @@
     "checkFailed": "Nie udało się sprawdzić aktualizacji"
   },
   "settings": {
+    "foldableDisplay": "Zawias składanego ekranu",
     "title": "Ustawienia",
     "supportDeveloper": "Wesprzyj Pleazyng",
     "supportDeveloperDescription": "Wspomóż rozwój darowizną",

@@ -794,6 +794,7 @@ class SettingsService extends BaseSharedPreferencesService {
 
   static const enableDebugLogging = BoolPref('enable_debug_logging', onWrite: setLoggerLevel);
   static const crashReporting = BoolPref('crash_reporting', defaultValue: true);
+  static const windowsFoldAxis = StringPref('windows_fold_axis', defaultValue: 'auto');
   static const enableHardwareDecoding = BoolPref('enable_hardware_decoding', defaultValue: true);
   static const enableHDR = BoolPref('enable_hdr', defaultValue: true);
   // Linux native video plane only. Defaults to the compositor: photographed on a

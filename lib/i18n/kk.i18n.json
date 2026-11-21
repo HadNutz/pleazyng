@@ -244,6 +244,7 @@
     "checkFailed": "Жаңартуларды тексеру мүмкін болмады"
   },
   "settings": {
+    "foldableDisplay": "Жиналмалы экранның топсасы",
     "title": "Баптаулар",
     "supportDeveloper": "Pleazyng жобасын қолдау",
     "supportDeveloperDescription": "Әзірлеуді қолдау үшін қайырымдылық жасаңыз",

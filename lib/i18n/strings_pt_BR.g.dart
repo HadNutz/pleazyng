@@ -227,6 +227,7 @@ class Translations$settings$pt_BR extends Translations$settings$pt {
 	final TranslationsPtBr _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Dobradiça da tela dobrável';
 	@override String get title => 'Configurações';
 	@override String get language => 'Idioma';
 	@override String get theme => 'Tema';
@@ -1496,6 +1497,7 @@ extension on TranslationsPtBr {
 			'common.mediaKind.folder' => 'Pasta',
 			'screens.subtitleStyling' => 'Estilização da legenda',
 			'screens.logs' => 'Registros',
+			'settings.foldableDisplay' => 'Dobradiça da tela dobrável',
 			'settings.title' => 'Configurações',
 			'settings.language' => 'Idioma',
 			'settings.theme' => 'Tema',

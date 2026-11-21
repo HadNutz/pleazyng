@@ -387,6 +387,7 @@ class _Translations$settings$hu extends Translations$settings$en {
 	final TranslationsHu _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Az összehajtható kijelző zsanérja';
 	@override String get title => 'Beállítások';
 	@override String get supportDeveloper => 'Pleazyng támogatása';
 	@override String get supportDeveloperDescription => 'Adománnyal támogassa a fejlesztést';
@@ -5890,6 +5891,7 @@ extension on TranslationsHu {
 			'update.viewRelease' => 'Kiadási megjegyzések',
 			'update.latestVersion' => 'A legújabb verziót használod',
 			'update.checkFailed' => 'Nem sikerült az újabb frissítések ellenőrzése',
+			'settings.foldableDisplay' => 'Az összehajtható kijelző zsanérja',
 			'settings.title' => 'Beállítások',
 			'settings.supportDeveloper' => 'Pleazyng támogatása',
 			'settings.supportDeveloperDescription' => 'Adománnyal támogassa a fejlesztést',
@@ -6184,9 +6186,9 @@ extension on TranslationsHu {
 			'settings.companionRemoteServer' => 'Kísérőtávirányító szervere',
 			'settings.companionRemoteServerDescription' => 'Lehetővé teszi, hogy a hálózaton lévő mobileszközökről vezéreld az alkalmazást',
 			'settings.companionRemoteServerStartFailed' => 'Nem sikerült elindítani a kísérőtávirányító szerverét',
-			'settings.companionRemoteServerStopFailed' => 'Nem sikerült leállítani a kísérőtávirányító szerverét',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Nem sikerült leállítani a kísérőtávirányító szerverét',
 			'settings.autoPip' => 'Automatikus kép a képben (PiP)',
 			'settings.autoPipDescription' => 'Lejátszás közben az alkalmazás elhagyásakor automatikusan kép a képben módra vált',
 			'settings.matchContentFrameRate' => 'Képkockasebesség illesztése a tartalomhoz',
@@ -6698,9 +6700,9 @@ extension on TranslationsHu {
 			'tooltips.shufflePlay' => 'Véletlenszerű lejátszás',
 			'tooltips.playTrailer' => 'Előzetes lejátszása',
 			'tooltips.markAsWatched' => 'Megjelölés megtekintettként',
-			'tooltips.markAsUnwatched' => 'Megjelölés nem megtekintettként',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Megjelölés nem megtekintettként',
 			'audioTracks.track' => ({required Object n}) => '${n}. hangsáv',
 			'videoControls.audioLabel' => 'Hang',
 			'videoControls.subtitlesLabel' => 'Feliratok',

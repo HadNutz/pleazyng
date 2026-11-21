@@ -70,6 +70,7 @@
     "logs": "Registos"
   },
   "settings": {
+    "foldableDisplay": "Dobradiça do ecrã dobrável",
     "title": "Definições",
     "language": "Idioma",
     "theme": "Tema",

@@ -387,6 +387,7 @@ class _Translations$settings$th extends Translations$settings$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'บานพับของหน้าจอพับได้';
 	@override String get title => 'การตั้งค่า';
 	@override String get supportDeveloper => 'สนับสนุน Pleazyng';
 	@override String get supportDeveloperDescription => 'การสนับสนุนการพัฒนา';
@@ -5865,6 +5866,7 @@ extension on TranslationsTh {
 			'update.viewRelease' => 'ดูการปล่อย',
 			'update.latestVersion' => 'คุณอยู่ในเวอร์ชันล่าสุด',
 			'update.checkFailed' => 'ไม่สามารถตรวจสอบอัปเดตได้',
+			'settings.foldableDisplay' => 'บานพับของหน้าจอพับได้',
 			'settings.title' => 'การตั้งค่า',
 			'settings.supportDeveloper' => 'สนับสนุน Pleazyng',
 			'settings.supportDeveloperDescription' => 'การสนับสนุนการพัฒนา',
@@ -6159,9 +6161,9 @@ extension on TranslationsTh {
 			'settings.companionRemoteServer' => 'เซิร์ฟเวอร์ระยะไกล',
 			'settings.companionRemoteServerDescription' => 'ให้อุปกรณ์มือถือบนเครือข่ายของคุณควบคุมแอปนี้',
 			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
-			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
 			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
 			'settings.matchContentFrameRate' => 'Match Content Frame Rate ความเร็ว',
@@ -6673,9 +6675,9 @@ extension on TranslationsTh {
 			'tooltips.shufflePlay' => 'เล่น Shuffle',
 			'tooltips.playTrailer' => 'เล่น Trailer',
 			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
-			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
 			'audioTracks.track' => ({required Object n}) => 'ลวดเสียง ${n}',
 			'videoControls.audioLabel' => 'เสียง',
 			'videoControls.subtitlesLabel' => 'คำบรรยาย',

@@ -387,6 +387,7 @@ class _Translations$settings$fa extends Translations$settings$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'لولای نمایشگر تاشو';
 	@override String get title => 'تنظیمات';
 	@override String get supportDeveloper => 'پشتیبانی Pleazyng';
 	@override String get supportDeveloperDescription => 'کمک های مالی برای حمایت از توسعه';
@@ -5890,6 +5891,7 @@ extension on TranslationsFa {
 			'update.viewRelease' => 'مشاهده انتشارات',
 			'update.latestVersion' => 'شما در آخرین نسخه هستید',
 			'update.checkFailed' => 'نتوانستیم به روز رسانی ها را بررسی کنیم',
+			'settings.foldableDisplay' => 'لولای نمایشگر تاشو',
 			'settings.title' => 'تنظیمات',
 			'settings.supportDeveloper' => 'پشتیبانی Pleazyng',
 			'settings.supportDeveloperDescription' => 'کمک های مالی برای حمایت از توسعه',
@@ -6184,9 +6186,9 @@ extension on TranslationsFa {
 			'settings.companionRemoteServer' => 'سرورهای از راه دور',
 			'settings.companionRemoteServerDescription' => 'اجازه دهید دستگاه های تلفن همراه در شبکه شما این برنامه را کنترل کنند',
 			'settings.companionRemoteServerStartFailed' => 'نمی توانم سرور همراه را راه اندازی کنم.',
-			'settings.companionRemoteServerStopFailed' => 'نمی توانم سرور همراه را متوقف کنم.',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'نمی توانم سرور همراه را متوقف کنم.',
 			'settings.autoPip' => 'عکس های خودکار در تصویر',
 			'settings.autoPipDescription' => 'به طور خودکار تصویر-در-تصویر را وارد کنید هنگامی که برنامه را در طول پخش ترک می کنید',
 			'settings.matchContentFrameRate' => 'مسابقه محتوای فریم نرخ',
@@ -6698,9 +6700,9 @@ extension on TranslationsFa {
 			'tooltips.shufflePlay' => 'بازی شوفلی',
 			'tooltips.playTrailer' => 'بازی تریلر',
 			'tooltips.markAsWatched' => 'مارک به نظر می رسد',
-			'tooltips.markAsUnwatched' => 'مارک ناشناخته',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'مارک ناشناخته',
 			'audioTracks.track' => ({required Object n}) => 'ترافیک صوتی ${n}',
 			'videoControls.audioLabel' => 'صدا',
 			'videoControls.subtitlesLabel' => 'زیرنویس‌ها',

@@ -244,6 +244,7 @@
     "checkFailed": "Kunne ikke se etter oppdateringer"
   },
   "settings": {
+    "foldableDisplay": "Hengsel på brettbar skjerm",
     "title": "Innstillinger",
     "supportDeveloper": "Støtt Pleazyng",
     "supportDeveloperDescription": "Doner for å støtte utviklingen",

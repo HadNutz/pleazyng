@@ -244,6 +244,7 @@
     "checkFailed": "Неуспешна проверка за актуализации"
   },
   "settings": {
+    "foldableDisplay": "Панта на сгъваемия дисплей",
     "title": "Настройки",
     "supportDeveloper": "Подкрепи Pleazyng",
     "supportDeveloperDescription": "Направете дарение, за да подкрепите разработката",

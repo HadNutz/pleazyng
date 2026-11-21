@@ -244,6 +244,7 @@
     "checkFailed": "আপডেটের জন্য চেক করতে পারিনি"
   },
   "settings": {
+    "foldableDisplay": "ভাঁজযোগ্য পর্দার কবজা",
     "title": "সিস্টেম",
     "supportDeveloper": "সমর্থন Pleazyng",
     "supportDeveloperDescription": "উন্নয়নকে সহায়তা দেওয়ার জন্য",

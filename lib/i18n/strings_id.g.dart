@@ -387,6 +387,7 @@ class _Translations$settings$id extends Translations$settings$en {
 	final TranslationsId _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Engsel layar lipat';
 	@override String get title => 'Pengaturan';
 	@override String get supportDeveloper => 'Dukungan Pleazyng';
 	@override String get supportDeveloperDescription => 'Memberi dukungan untuk pengembangan';
@@ -5865,6 +5866,7 @@ extension on TranslationsId {
 			'update.viewRelease' => 'Lihat Release',
 			'update.latestVersion' => 'Anda berada di versi terbaru',
 			'update.checkFailed' => 'gagal memeriksa update',
+			'settings.foldableDisplay' => 'Engsel layar lipat',
 			'settings.title' => 'Pengaturan',
 			'settings.supportDeveloper' => 'Dukungan Pleazyng',
 			'settings.supportDeveloperDescription' => 'Memberi dukungan untuk pengembangan',
@@ -6159,9 +6161,9 @@ extension on TranslationsId {
 			'settings.companionRemoteServer' => 'Layanan Remote Server',
 			'settings.companionRemoteServerDescription' => 'Memungkinkan perangkat mobile di jaringan Anda untuk mengontrol aplikasi ini',
 			'settings.companionRemoteServerStartFailed' => 'Tidak bisa memulai server',
-			'settings.companionRemoteServerStopFailed' => 'Tidak bisa menghentikan server',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Tidak bisa menghentikan server',
 			'settings.autoPip' => 'Foto-foto dalam gambar',
 			'settings.autoPipDescription' => 'Secara otomatis masuk gambar-in-gambar ketika Anda meninggalkan aplikasi selama pemutaran',
 			'settings.matchContentFrameRate' => 'Perbandingan Content Frame Rate',
@@ -6673,9 +6675,9 @@ extension on TranslationsId {
 			'tooltips.shufflePlay' => 'Permainan Shuffle',
 			'tooltips.playTrailer' => 'Bermain Trailer',
 			'tooltips.markAsWatched' => 'Mark yang ditonton',
-			'tooltips.markAsUnwatched' => 'Mark yang tidak diperhatikan',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Mark yang tidak diperhatikan',
 			'audioTracks.track' => ({required Object n}) => 'Trek audio ${n}',
 			'videoControls.audioLabel' => 'Audio yang',
 			'videoControls.subtitlesLabel' => 'Subtitel',

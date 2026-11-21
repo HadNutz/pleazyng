@@ -387,6 +387,7 @@ class _Translations$settings$bn extends Translations$settings$en {
 	final TranslationsBn _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'ভাঁজযোগ্য পর্দার কবজা';
 	@override String get title => 'সিস্টেম';
 	@override String get supportDeveloper => 'সমর্থন Pleazyng';
 	@override String get supportDeveloperDescription => 'উন্নয়নকে সহায়তা দেওয়ার জন্য';
@@ -5890,6 +5891,7 @@ extension on TranslationsBn {
 			'update.viewRelease' => 'দেখুন Release',
 			'update.latestVersion' => 'আপনি সর্বশেষ সংস্করণে আছেন',
 			'update.checkFailed' => 'আপডেটের জন্য চেক করতে পারিনি',
+			'settings.foldableDisplay' => 'ভাঁজযোগ্য পর্দার কবজা',
 			'settings.title' => 'সিস্টেম',
 			'settings.supportDeveloper' => 'সমর্থন Pleazyng',
 			'settings.supportDeveloperDescription' => 'উন্নয়নকে সহায়তা দেওয়ার জন্য',
@@ -6184,9 +6186,9 @@ extension on TranslationsBn {
 			'settings.companionRemoteServer' => 'Remote সার্ভার',
 			'settings.companionRemoteServerDescription' => 'আপনার নেটওয়ার্কের মোবাইল ডিভাইসগুলি এই অ্যাপটি নিয়ন্ত্রণ করার অনুমতি দেয়',
 			'settings.companionRemoteServerStartFailed' => 'সার্ভার সার্ভার শুরু করতে পারেনি।',
-			'settings.companionRemoteServerStopFailed' => 'সার্ভার বন্ধ করতে পারত না।',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'সার্ভার বন্ধ করতে পারত না।',
 			'settings.autoPip' => 'Auto Picture-in-Picture গাড়ি',
 			'settings.autoPipDescription' => 'আপনি Playback সময় অ্যাপটি ছেড়ে যখন স্বয়ংক্রিয়ভাবে ছবি-এ-ফটো প্রবেশ করুন',
 			'settings.matchContentFrameRate' => 'ফ্রেম ফ্রেম ফ্রেম ফ্রেম ফ্রেম',
@@ -6698,9 +6700,9 @@ extension on TranslationsBn {
 			'tooltips.shufflePlay' => 'শফল খেলা',
 			'tooltips.playTrailer' => 'ট্র্যালার খেলুন',
 			'tooltips.markAsWatched' => 'মার্ক দেখে',
-			'tooltips.markAsUnwatched' => 'মার্ক অবিশ্বাসিত',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'মার্ক অবিশ্বাসিত',
 			'audioTracks.track' => ({required Object n}) => 'অডিও ট্র্যাক ${n}',
 			'videoControls.audioLabel' => 'অডিও',
 			'videoControls.subtitlesLabel' => 'সাবটাইটেল',

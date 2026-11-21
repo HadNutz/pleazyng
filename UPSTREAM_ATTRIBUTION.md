@@ -11,6 +11,10 @@ The PR list comes from explicit “Squash of upstream” commit records and the 
 [M3U Web Picker v49](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897), created by [Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors, inspired Pleazyng's native local playlist import, provider and custom group selection, independent channel order, M3U/XMLTV export, interval-based guide merging, profile-owned backup-source selection and the native guide-based sports browser. The public U.S. preview lineup comes from [IPTV-org](https://github.com/iptv-org/iptv). Pleazyng implements these behaviors independently. Upstream's [provider operations](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/api/providers.py) and [guide merge](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/sports/guide.py) are the behavior references.
 
 
+## Watch Together room recovery
+
+[@edde746](https://github.com/edde746) authored the upstream [OpenWatchParty Dart client](https://github.com/edde746/openwatchparty/tree/main/sdk/dart). Pleazyng vendors the Apache-2.0 client from the [1.1.0 release](https://pub.dev/packages/openwatchparty/versions/1.1.0) and extends its authenticated reconnect path to restore the original member after process loss. The package retains its upstream license.
+
 ## Media-file workflows and format documentation
 
 - The retained live-buffer recording interaction draws on [TiVo’s viewer guide](https://www.tivo.com/assets/pdfs/accessibility/TiVo_VG_Complete.pdf).

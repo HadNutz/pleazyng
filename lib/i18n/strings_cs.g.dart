@@ -387,6 +387,7 @@ class _Translations$settings$cs extends Translations$settings$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Pant skládacího displeje';
 	@override String get title => 'Nastavení';
 	@override String get supportDeveloper => 'Podpora Pleazyng';
 	@override String get supportDeveloperDescription => 'Dotace na podporu rozvoje';
@@ -5934,6 +5935,7 @@ extension on TranslationsCs {
 			'update.viewRelease' => 'Zobrazit Release',
 			'update.latestVersion' => 'Jste na nejnovější verzi',
 			'update.checkFailed' => 'Nedokázal se dohlížet na aktualizace',
+			'settings.foldableDisplay' => 'Pant skládacího displeje',
 			'settings.title' => 'Nastavení',
 			'settings.supportDeveloper' => 'Podpora Pleazyng',
 			'settings.supportDeveloperDescription' => 'Dotace na podporu rozvoje',
@@ -6228,9 +6230,9 @@ extension on TranslationsCs {
 			'settings.companionRemoteServer' => 'Společnost Remote Server',
 			'settings.companionRemoteServerDescription' => 'Umožňujte mobilním zařízením v síti ovládat tuto aplikaci',
 			'settings.companionRemoteServerStartFailed' => 'Nemohla spustit server',
-			'settings.companionRemoteServerStopFailed' => 'Nemohla jsem zastavit server',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Nemohla jsem zastavit server',
 			'settings.autoPip' => 'Auto Picture v obraze',
 			'settings.autoPipDescription' => 'Automaticky zadejte obrázek v obrazu, když opustíte aplikaci během přehrávání',
 			'settings.matchContentFrameRate' => 'Match Content Frame Rate - míra obsahu',
@@ -6742,9 +6744,9 @@ extension on TranslationsCs {
 			'tooltips.shufflePlay' => 'Shuffle hraje',
 			'tooltips.playTrailer' => 'Hrajte trailer',
 			'tooltips.markAsWatched' => 'Mark jako sledovaný',
-			'tooltips.markAsUnwatched' => 'Mark jako nepozorovaný',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Mark jako nepozorovaný',
 			'audioTracks.track' => ({required Object n}) => 'Zvukový pás ${n}',
 			'videoControls.audioLabel' => 'Zvuk',
 			'videoControls.subtitlesLabel' => 'Titulky',

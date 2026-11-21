@@ -387,6 +387,7 @@ class Translations$settings$zh extends Translations$settings$en {
 	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => '折叠屏铰链';
 	@override String get title => '设置';
 	@override String get supportDeveloper => '支持 Pleazyng';
 	@override String get supportDeveloperDescription => '捐赠以支持开发';
@@ -5885,6 +5886,7 @@ extension on TranslationsZh {
 			'update.viewRelease' => '查看发布详情',
 			'update.latestVersion' => '当前已是最新版本',
 			'update.checkFailed' => '无法检查更新',
+			'settings.foldableDisplay' => '折叠屏铰链',
 			'settings.title' => '设置',
 			'settings.supportDeveloper' => '支持 Pleazyng',
 			'settings.supportDeveloperDescription' => '捐赠以支持开发',
@@ -6179,9 +6181,9 @@ extension on TranslationsZh {
 			'settings.companionRemoteServer' => '远程控制服务器',
 			'settings.companionRemoteServerDescription' => '允许同一网络中的移动设备控制此应用',
 			'settings.companionRemoteServerStartFailed' => '无法启动远程控制服务器',
-			'settings.companionRemoteServerStopFailed' => '无法停止远程控制服务器',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => '无法停止远程控制服务器',
 			'settings.autoPip' => '自动画中画',
 			'settings.autoPipDescription' => '播放期间离开应用时自动进入画中画模式',
 			'settings.matchContentFrameRate' => '匹配内容帧率',
@@ -6693,9 +6695,9 @@ extension on TranslationsZh {
 			'tooltips.shufflePlay' => '随机播放',
 			'tooltips.playTrailer' => '播放预告片',
 			'tooltips.markAsWatched' => '标记为已观看',
-			'tooltips.markAsUnwatched' => '标记为未观看',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => '标记为未观看',
 			'audioTracks.track' => ({required Object n}) => '音轨 ${n}',
 			'videoControls.audioLabel' => '音频',
 			'videoControls.subtitlesLabel' => '字幕',

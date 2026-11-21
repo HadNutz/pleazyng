@@ -244,6 +244,7 @@
     "checkFailed": "Kunne ikke søge efter opdateringer"
   },
   "settings": {
+    "foldableDisplay": "Hængsel på foldbar skærm",
     "title": "Indstillinger",
     "supportDeveloper": "Støt Pleazyng",
     "supportDeveloperDescription": "Donér for at støtte udviklingen",

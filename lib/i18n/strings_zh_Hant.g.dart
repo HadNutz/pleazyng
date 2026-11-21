@@ -388,6 +388,7 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => '摺疊螢幕鉸鏈';
 	@override String get title => '設定';
 	@override String get supportDeveloper => '贊助 Pleazyng';
 	@override String get supportDeveloperDescription => '捐款支持開發';
@@ -5886,6 +5887,7 @@ extension on TranslationsZhHant {
 			'update.viewRelease' => '查看版本詳情',
 			'update.latestVersion' => '已安裝的版本為最新版本',
 			'update.checkFailed' => '無法檢查更新',
+			'settings.foldableDisplay' => '摺疊螢幕鉸鏈',
 			'settings.title' => '設定',
 			'settings.supportDeveloper' => '贊助 Pleazyng',
 			'settings.supportDeveloperDescription' => '捐款支持開發',
@@ -6180,9 +6182,9 @@ extension on TranslationsZhHant {
 			'settings.companionRemoteServer' => '隨身遙控器伺服器',
 			'settings.companionRemoteServerDescription' => '允許區域網路中的行動裝置控制此應用程式',
 			'settings.companionRemoteServerStartFailed' => '無法啟動隨身遙控器伺服器',
-			'settings.companionRemoteServerStopFailed' => '無法停止隨身遙控器伺服器',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => '無法停止隨身遙控器伺服器',
 			'settings.autoPip' => '自動進入子母畫面',
 			'settings.autoPipDescription' => '播放影片時離開應用程式將自動進入子母畫面模式',
 			'settings.matchContentFrameRate' => '符合影片影格率',
@@ -6694,9 +6696,9 @@ extension on TranslationsZhHant {
 			'tooltips.shufflePlay' => '隨機播放',
 			'tooltips.playTrailer' => '播放預告片',
 			'tooltips.markAsWatched' => '標記為已觀看',
-			'tooltips.markAsUnwatched' => '標記為未觀看',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => '標記為未觀看',
 			'audioTracks.track' => ({required Object n}) => '音軌 ${n}',
 			'videoControls.audioLabel' => '音訊',
 			'videoControls.subtitlesLabel' => '字幕',

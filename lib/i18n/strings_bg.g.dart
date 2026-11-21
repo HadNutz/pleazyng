@@ -387,6 +387,7 @@ class _Translations$settings$bg extends Translations$settings$en {
 	final TranslationsBg _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Панта на сгъваемия дисплей';
 	@override String get title => 'Настройки';
 	@override String get supportDeveloper => 'Подкрепи Pleazyng';
 	@override String get supportDeveloperDescription => 'Направете дарение, за да подкрепите разработката';
@@ -5890,6 +5891,7 @@ extension on TranslationsBg {
 			'update.viewRelease' => 'Виж версията',
 			'update.latestVersion' => 'Използвате най-новата версия',
 			'update.checkFailed' => 'Неуспешна проверка за актуализации',
+			'settings.foldableDisplay' => 'Панта на сгъваемия дисплей',
 			'settings.title' => 'Настройки',
 			'settings.supportDeveloper' => 'Подкрепи Pleazyng',
 			'settings.supportDeveloperDescription' => 'Направете дарение, за да подкрепите разработката',
@@ -6184,9 +6186,9 @@ extension on TranslationsBg {
 			'settings.companionRemoteServer' => 'Сървър за дистанционно управление',
 			'settings.companionRemoteServerDescription' => 'Позволи на мобилни устройства във вашата мрежа да управляват това приложение',
 			'settings.companionRemoteServerStartFailed' => 'Сървърът за дистанционно управление не можа да бъде стартиран',
-			'settings.companionRemoteServerStopFailed' => 'Сървърът за дистанционно управление не можа да бъде спрян',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Сървърът за дистанционно управление не можа да бъде спрян',
 			'settings.autoPip' => 'Автоматичен режим картина в картината',
 			'settings.autoPipDescription' => 'Автоматично включвай режима картина в картината при излизане от приложението по време на възпроизвеждане',
 			'settings.matchContentFrameRate' => 'Напасване към кадровата честота на съдържанието',
@@ -6698,9 +6700,9 @@ extension on TranslationsBg {
 			'tooltips.shufflePlay' => 'Разбъркано възпроизвеждане',
 			'tooltips.playTrailer' => 'Пусни трейлър',
 			'tooltips.markAsWatched' => 'Маркирай като гледано',
-			'tooltips.markAsUnwatched' => 'Маркирай като негледано',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Маркирай като негледано',
 			'audioTracks.track' => ({required Object n}) => 'Аудиопътечка ${n}',
 			'videoControls.audioLabel' => 'Аудио',
 			'videoControls.subtitlesLabel' => 'Субтитри',

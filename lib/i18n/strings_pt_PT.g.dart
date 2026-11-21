@@ -194,6 +194,7 @@ class Translations$settings$pt_PT extends Translations$settings$pt {
 	final TranslationsPtPt _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Dobradiça do ecrã dobrável';
 	@override String get title => 'Definições';
 	@override String get language => 'Idioma';
 	@override String get theme => 'Tema';
@@ -1465,6 +1466,7 @@ extension on TranslationsPtPt {
 			'common.mediaKind.folder' => 'Pasta',
 			'screens.subtitleStyling' => 'Estilo de legendas',
 			'screens.logs' => 'Registos',
+			'settings.foldableDisplay' => 'Dobradiça do ecrã dobrável',
 			'settings.title' => 'Definições',
 			'settings.language' => 'Idioma',
 			'settings.theme' => 'Tema',

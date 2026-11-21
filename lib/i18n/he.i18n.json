@@ -244,6 +244,7 @@
     "checkFailed": "לא הצלחתי לבדוק עדכונים"
   },
   "settings": {
+    "foldableDisplay": "ציר המסך המתקפל",
     "title": "הגדרות",
     "supportDeveloper": "תמיכה Pleazyng",
     "supportDeveloperDescription": "תרומות לתמיכה בפיתוח",

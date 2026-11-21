@@ -68,6 +68,7 @@
     "logs": "Registros"
   },
   "settings": {
+    "foldableDisplay": "Bisagra de la pantalla plegable",
     "title": "Configuración",
     "language": "Idioma",
     "theme": "Tema",

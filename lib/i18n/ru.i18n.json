@@ -244,6 +244,7 @@
     "checkFailed": "Не удалось проверить обновления"
   },
   "settings": {
+    "foldableDisplay": "Шарнир складного экрана",
     "title": "Настройки",
     "supportDeveloper": "Поддержать Pleazyng",
     "supportDeveloperDescription": "Поддержите разработку пожертвованием",

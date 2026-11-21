@@ -244,6 +244,7 @@
     "checkFailed": "Nedokázal se dohlížet na aktualizace"
   },
   "settings": {
+    "foldableDisplay": "Pant skládacího displeje",
     "title": "Nastavení",
     "supportDeveloper": "Podpora Pleazyng",
     "supportDeveloperDescription": "Dotace na podporu rozvoje",

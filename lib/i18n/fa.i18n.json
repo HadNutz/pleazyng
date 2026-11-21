@@ -244,6 +244,7 @@
     "checkFailed": "نتوانستیم به روز رسانی ها را بررسی کنیم"
   },
   "settings": {
+    "foldableDisplay": "لولای نمایشگر تاشو",
     "title": "تنظیمات",
     "supportDeveloper": "پشتیبانی Pleazyng",
     "supportDeveloperDescription": "کمک های مالی برای حمایت از توسعه",

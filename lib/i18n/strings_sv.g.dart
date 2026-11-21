@@ -387,6 +387,7 @@ class _Translations$settings$sv extends Translations$settings$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Gångjärn på vikbar skärm';
 	@override String get title => 'Inställningar';
 	@override String get supportDeveloper => 'Stöd Pleazyng';
 	@override String get supportDeveloperDescription => 'Donera för att stödja utvecklingen';
@@ -5890,6 +5891,7 @@ extension on TranslationsSv {
 			'update.viewRelease' => 'Visa versionsinformation',
 			'update.latestVersion' => 'Du har den senaste versionen',
 			'update.checkFailed' => 'Det gick inte att söka efter uppdateringar',
+			'settings.foldableDisplay' => 'Gångjärn på vikbar skärm',
 			'settings.title' => 'Inställningar',
 			'settings.supportDeveloper' => 'Stöd Pleazyng',
 			'settings.supportDeveloperDescription' => 'Donera för att stödja utvecklingen',
@@ -6184,9 +6186,9 @@ extension on TranslationsSv {
 			'settings.companionRemoteServer' => 'Server för fjärrkontroll',
 			'settings.companionRemoteServerDescription' => 'Tillåt att mobila enheter i nätverket styr appen',
 			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
-			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
 			'settings.autoPip' => 'Automatisk bild-i-bild',
 			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
 			'settings.matchContentFrameRate' => 'Matcha innehållets bildfrekvens',
@@ -6698,9 +6700,9 @@ extension on TranslationsSv {
 			'tooltips.shufflePlay' => 'Blanda uppspelning',
 			'tooltips.playTrailer' => 'Spela trailer',
 			'tooltips.markAsWatched' => 'Markera som sedd',
-			'tooltips.markAsUnwatched' => 'Markera som osedd',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Markera som osedd',
 			'audioTracks.track' => ({required Object n}) => 'Ljudspår ${n}',
 			'videoControls.audioLabel' => 'Ljud',
 			'videoControls.subtitlesLabel' => 'Undertexter',

@@ -387,6 +387,7 @@ class _Translations$settings$pl extends Translations$settings$en {
 	final TranslationsPl _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Zawias składanego ekranu';
 	@override String get title => 'Ustawienia';
 	@override String get supportDeveloper => 'Wesprzyj Pleazyng';
 	@override String get supportDeveloperDescription => 'Wspomóż rozwój darowizną';
@@ -5940,6 +5941,7 @@ extension on TranslationsPl {
 			'update.viewRelease' => 'Zobacz wydanie',
 			'update.latestVersion' => 'Masz najnowszą wersję',
 			'update.checkFailed' => 'Nie udało się sprawdzić aktualizacji',
+			'settings.foldableDisplay' => 'Zawias składanego ekranu',
 			'settings.title' => 'Ustawienia',
 			'settings.supportDeveloper' => 'Wesprzyj Pleazyng',
 			'settings.supportDeveloperDescription' => 'Wspomóż rozwój darowizną',
@@ -6234,9 +6236,9 @@ extension on TranslationsPl {
 			'settings.companionRemoteServer' => 'Serwer zdalnego sterowania',
 			'settings.companionRemoteServerDescription' => 'Pozwól urządzeniom mobilnym w sieci sterować tą aplikacją',
 			'settings.companionRemoteServerStartFailed' => 'Nie udało się uruchomić serwera zdalnego sterowania',
-			'settings.companionRemoteServerStopFailed' => 'Nie udało się zatrzymać serwera zdalnego sterowania',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Nie udało się zatrzymać serwera zdalnego sterowania',
 			'settings.autoPip' => 'Automatyczny obraz w obrazie',
 			'settings.autoPipDescription' => 'Automatycznie włączaj tryb obrazu w obrazie po opuszczeniu aplikacji podczas odtwarzania',
 			'settings.matchContentFrameRate' => 'Dopasuj częstotliwość klatek do treści',
@@ -6748,9 +6750,9 @@ extension on TranslationsPl {
 			'tooltips.shufflePlay' => 'Odtwarzanie losowe',
 			'tooltips.playTrailer' => 'Odtwórz zwiastun',
 			'tooltips.markAsWatched' => 'Oznacz jako obejrzane',
-			'tooltips.markAsUnwatched' => 'Oznacz jako nieobejrzane',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'Oznacz jako nieobejrzane',
 			'audioTracks.track' => ({required Object n}) => 'Ścieżka audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Napisy',

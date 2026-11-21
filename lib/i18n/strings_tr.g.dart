@@ -387,6 +387,7 @@ class _Translations$settings$tr extends Translations$settings$en {
 	final TranslationsTr _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Katlanabilir ekran menteşesi';
 	@override String get title => 'Ayarlar';
 	@override String get supportDeveloper => 'Pleazyng\'yi Destekleyin';
 	@override String get supportDeveloperDescription => 'Geliştirmeyi desteklemek için bağış yapın';
@@ -5890,6 +5891,7 @@ extension on TranslationsTr {
 			'update.viewRelease' => 'Sürümü Görüntüle',
 			'update.latestVersion' => 'En son sürümü kullanıyorsunuz',
 			'update.checkFailed' => 'Güncellemeler kontrol edilemedi',
+			'settings.foldableDisplay' => 'Katlanabilir ekran menteşesi',
 			'settings.title' => 'Ayarlar',
 			'settings.supportDeveloper' => 'Pleazyng\'yi Destekleyin',
 			'settings.supportDeveloperDescription' => 'Geliştirmeyi desteklemek için bağış yapın',
@@ -6184,9 +6186,9 @@ extension on TranslationsTr {
 			'settings.companionRemoteServer' => 'Yardımcı Uzaktan Kumanda Sunucusu',
 			'settings.companionRemoteServerDescription' => 'Ağınızdaki mobil cihazların bu uygulamayı kontrol etmesine izin verin',
 			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
-			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
 			'settings.autoPip' => 'Otomatik Pencere İçinde Pencere (PiP)',
 			'settings.autoPipDescription' => 'Oynatma sırasında uygulamadan çıktığınızda otomatik olarak pencere içinde pencere moduna geç',
 			'settings.matchContentFrameRate' => 'İçerik Kare Hızını Eşitle',
@@ -6698,9 +6700,9 @@ extension on TranslationsTr {
 			'tooltips.shufflePlay' => 'Karışık oynat',
 			'tooltips.playTrailer' => 'Fragmanı oynat',
 			'tooltips.markAsWatched' => 'İzlendi olarak işaretle',
-			'tooltips.markAsUnwatched' => 'İzlenmedi olarak işaretle',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.markAsUnwatched' => 'İzlenmedi olarak işaretle',
 			'audioTracks.track' => ({required Object n}) => 'Ses Parçası ${n}',
 			'videoControls.audioLabel' => 'Ses',
 			'videoControls.subtitlesLabel' => 'Altyazı',
