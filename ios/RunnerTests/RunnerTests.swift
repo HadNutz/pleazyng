@@ -253,8 +253,11 @@ final class MpvPlayerContractTests: XCTestCase {
     core.experimentalDolbyVisionRequested = false
     XCTAssertTrue(core.initialize(in: window))
     defer {
+      // The video output releases its AVFoundation layers on the main queue.
+      let destroyed = expectation(description: "MPV video output disposed")
       core.dispose()
-      core.queue.sync {}
+      core.queue.async { destroyed.fulfill() }
+      wait(for: [destroyed], timeout: nativeCompletionTimeout)
       window.isHidden = true
     }
     core.setVisible(true)
