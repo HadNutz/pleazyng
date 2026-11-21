@@ -1938,6 +1938,7 @@ class _LibraryBrowseTabState extends BaseLibraryTabState<MediaItem, LibraryBrows
       },
       child: Builder(
         builder: (context) => CustomScrollView(
+          restorationId: 'browse-scroll-${widget.library.globalKey}',
           // No explicit controller: this picks up NestedScrollView's
           // PrimaryScrollController, which is what wires inner scroll deltas
           // through to the outer floating header.

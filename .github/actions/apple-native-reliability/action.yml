@@ -20,7 +20,7 @@ runs:
           macOS) project=macos; sdk='';               runtime='';   destination='platform=macOS' ;;
           *) echo "::error::Unsupported Apple platform $PLATFORM"; exit 1 ;;
         esac
-        if [[ "$RUNNER_ENVIRONMENT" == self-hosted ]]; then
+        if [[ "$RUNNER_ENVIRONMENT" == self-hosted && "$PLATFORM" != iOS ]]; then
           xcodebuild -version | grep -Fx 'Xcode 27.0'
           test "$(xcrun --sdk "${sdk:-macosx}" --show-sdk-version)" = '27.0'
         fi
@@ -318,6 +318,7 @@ runs:
     - name: Select Apple test destination
       id: destination
       env:
+        PREFERRED_SIMULATOR_TYPE: ${{ inputs.platform == 'iOS' && 'com.apple.CoreSimulator.SimDeviceType.iPhone-Duo' || '' }}
         SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}
         SIMULATOR_SDK: ${{ steps.scratch.outputs.sdk }}
         STATIC_DESTINATION: ${{ steps.scratch.outputs.destination }}

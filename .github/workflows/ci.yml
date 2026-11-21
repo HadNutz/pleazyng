@@ -693,7 +693,7 @@ jobs:
           - platform: tvOS
             slug: tvos
     # Native tests and their simulator dependencies build arm64 on every platform.
-    runs-on: ${{ inputs.apple_runner_pool == 'private' && github.event_name == 'workflow_dispatch' && github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-apple-native-test-{1}"]}}', github.run_id, matrix.slug)) || 'macos-26' }}
+    runs-on: ${{ inputs.apple_runner_pool == 'private' && github.event_name == 'workflow_dispatch' && github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && github.workflow_ref == 'snapetech-org/pleazyng/.github/workflows/build.yml@refs/heads/main' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-apple-native-test-{1}"]}}', github.run_id, matrix.slug)) || (matrix.slug == 'ios' && 'xcode-27' || 'macos-26') }}
     permissions:
       contents: read
     env:
@@ -712,7 +712,8 @@ jobs:
       - name: Setup Flutter
         uses: ./.github/actions/setup-flutter-apple
         with:
-          hosted-xcode-version: '26.5'
+          hosted-xcode-version: ${{ matrix.slug == 'ios' && '27.1' || '26.5' }}
+          require-duo-sdk: ${{ matrix.slug == 'ios' && 'true' || 'false' }}
           flutter-version: ${{ env.FLUTTER_VERSION }}
       - name: Ensure CMake for the embedded Steam receiver
         shell: bash

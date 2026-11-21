@@ -56,3 +56,13 @@ test('guided mode skips out-of-image frames and keeps unmarked pages readable',(
     assert.deepEqual(comicTurns([{width:100,height:100,frames:[[110,0,120,20],[0,0,20,20]]},{}],
         {comicMode:'panels'},320,640),[[{index:0,panel:1}],[{index:1}]]);
 });
+
+test('narrow book posture pairs RTL pages while preserving single mode and physical locators',()=>{
+    const settings={spread:'auto',direction:'rtl',foldPane:320,foldGap:18};
+    const open=comicTurns(pages,settings,658,800);
+    assert.deepEqual(indices(open),[[0],[2,1],[4,3],[6,5]]);
+    const locator=comicLocator(3,undefined);
+    const closed=comicTurns(pages,{...settings,foldPane:0},320,800);
+    assert.equal(closed.find(t=>t.some(p=>p.index===parseComicLocator(locator).index))[0].index,3);
+    assert.equal(comicTurns(pages,{...settings,spread:'single'},658,800).length,7);
+});

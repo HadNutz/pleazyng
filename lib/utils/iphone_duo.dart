@@ -192,7 +192,7 @@ class _IphoneDuoScopeState extends State<IphoneDuoScope> {
       child: widget.child,
       builder: (context, state, child) {
         Widget result = child!;
-        if (state.folds.isNotEmpty) {
+        if (state.folds.isNotEmpty || state.occlusions.isNotEmpty) {
           final media = MediaQuery.of(context);
           result = MediaQuery(
             data: media.copyWith(
@@ -202,8 +202,14 @@ class _IphoneDuoScopeState extends State<IphoneDuoScope> {
                   DisplayFeature(
                     bounds: fold,
                     type: DisplayFeatureType.fold,
-                    state: DisplayFeatureState.postureHalfOpened,
+                    state: switch (state.hingeStatus) {
+                      HingeStatus.partiallyOpen => DisplayFeatureState.postureHalfOpened,
+                      HingeStatus.fullyOpen => DisplayFeatureState.postureFlat,
+                      _ => DisplayFeatureState.unknown,
+                    },
                   ),
+                for (final area in state.occlusions)
+                  DisplayFeature(bounds: area, type: DisplayFeatureType.cutout, state: DisplayFeatureState.unknown),
               ],
             ),
             child: result,

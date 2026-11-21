@@ -34,3 +34,18 @@ or endorsement of this fork.
 - [tvOS trailer and link actions](https://github.com/edde746/plezy/commit/16d5b404cb14163a776b701265e55b6f66cdfc34) by [@moust4ki](https://github.com/moust4ki).
 
 See the [source ledger](../../UPSTREAM_ATTRIBUTION.md).
+
+## Foldable release qualification
+
+The live playback route owns the decoder across pane changes. The Flutter geometry tests exercise flat and half-open folds, opaque hinges, two hinges, right-to-left placement, cropped windows and camera insets. The browse test keeps an editable detail mounted while closing and reopening the device. These are simulated inputs. Native output and lifecycle behavior require separate evidence.
+
+| Target | Checks to record on a release candidate |
+|---|---|
+| iPhone Duo | Outer → inner → tabletop → PiP → return. Check camera clearance, both rail edges, paused and playing video, subtitles and OS Split View. Open a second window, browse music, switch profiles and verify that only one session owns transport. |
+| Android book and dual-screen devices | Galaxy Fold, Pixel Fold, another OEM and a spanned physical hinge. Switch displays with the taskbar shown and hidden while seeking, changing subtitles and using live time-shift. |
+| Flip and Razr | Continue inside after using transport on the cover. On Samsung add the Flex Window widget and check play, skip and open. Test both OEM continue-on-cover settings. |
+| Multi-fold, tablet and standard phone | TriFold outer and fully open, narrow split-screen, compact phone and tablet. Check RTL manga, an EPUB reading anchor, PDF zoom, keyboard focus, large text and TalkBack or VoiceOver. |
+| Steam streaming and native output | While streaming, fold and rotate, check touch coordinates against all four video corners and test the controller. Repeat video transitions with offline and streamed media, Watch Together, supported HDR formats and each available engine. |
+| Windows foldable | Resize, span and unspan, test touch and keyboard, and verify the physical video rectangle and audible session. |
+
+Record the commit, device model, OS, player backend, content mode, starting posture, final posture, observed position, audio and focus. An unrecorded case is unqualified. Native HarmonyOS NEXT requires a separately buildable application package and media integrations.

@@ -112,7 +112,7 @@ class PlezyFlutterViewController: FlutterViewController {
       if let hingeStatus { state["hingeStatus"] = hingeStatus }
 
       state["folds"] = view.reservedRegions(kind: .division)
-        .filter { $0.isActive && !$0.frame.isEmpty }
+        .filter { $0.isActive && !$0.frame.isNull && ($0.frame.width > 0 || $0.frame.height > 0) }
         .map { Self.encode($0.frame) }
       state["occlusions"] = view.reservedRegions(kind: .occlusion)
         .filter { $0.isActive && !$0.frame.isEmpty }

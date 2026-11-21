@@ -10,6 +10,8 @@
 - Preserve non-ASCII settings in WebDAV restores, overlapping TV subtitles and delayed Samsung captions. Discard cancelled virtual-keyboard edits and retain selected lyrics when importing MIDI karaoke.
 
 - Apply MPV smoothing toggles and Motion clarity preset changes during eligible Linux and Windows playback, including titles started with smoothing off.
+- Adapt video, music, Steam streaming, browsing and reading to separating folds and physical hinges. Keep the active player and detail view during live window resizing. Add compact cover controls and a Samsung Flex Window music widget.
+- Build iPhone releases with the Duo SDK and validate the SDK inside the IPA. A second iOS app window can browse the active audio catalog and send playback to the existing session.
 
 - Fix a webOS MPV crash when the Flutter renderer requests a retired video texture. Apply the OLED motion preset to eligible TV MPV sources and retry playback without smoothing if the first filtered frame fails.
 

@@ -1,3 +1,4 @@
+import '../widgets/fold_browser.dart';
 import 'dart:async';
 
 import '../media/ids.dart';
@@ -423,7 +424,8 @@ Future<bool?> navigateToVideoPlayer(
   }
 
   if (!context.mounted) return null;
-  final navigator = Navigator.of(context);
+  final sourceNavigator = Navigator.of(context);
+  final navigator = FoldBrowserScope.of(context)?.owner ?? sourceNavigator;
   final sourceRoute = ModalRoute.of(context);
   final downloadProvider = context.read<DownloadProvider>();
   final launchMusic = launchObserver == null ? null : context.read<MusicPlaybackService>();
@@ -607,7 +609,7 @@ Future<bool?> navigateToVideoPlayer(
       ),
     );
 
-    pushFuture = route.push(navigator, replaceCurrent: usePushReplacement);
+    pushFuture = route.push(navigator, replaceCurrent: usePushReplacement && identical(sourceNavigator, navigator));
     launchObserver?.mark('opening');
     onLaunched?.call();
   } finally {

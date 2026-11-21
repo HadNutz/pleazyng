@@ -1,3 +1,4 @@
+import '../widgets/fold_browser.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -383,8 +384,8 @@ Future<MediaNavigationResult> navigateToMediaItemDetails(
   }
 
   final target = mediaDetailNavigationTargetFor(mi, metadataOverride: metadataOverride);
-  final result = await Navigator.push<bool>(
-    context,
+  final navigator = FoldBrowserScope.of(context)?.detail?.call() ?? Navigator.of(context);
+  final result = await navigator.push<bool>(
     mediaDetailRoute(
       metadata: target.metadata,
       isOffline: isOffline,

@@ -161,9 +161,13 @@ window.publication = {
         }
         view.renderer.toggleAttribute('animated',!s.reduceMotion);
         view.renderer.setAttribute('flow',s.scrolled?'scrolled':'paginated');
+        const fold = s.foldPane > 0 && !s.scrolled && s.columns !== 1;
+        view.renderer.toggleAttribute('fold-spread',fold);
         view.renderer.setAttribute('max-column-count',String(s.columns??2));
-        view.renderer.setAttribute('max-inline-size','720px');
-        view.renderer.setAttribute('gap',`${Math.min(25,Math.max(2,s.margin??8))}%`);
+        view.renderer.setAttribute('max-inline-size',fold ? `${s.foldPane}px` : '720px');
+        const margin = Math.min(25,Math.max(2,s.margin??8));
+        const hingeMargin = fold ? 100 * (s.foldGap + 8) / (2*s.foldPane + s.foldGap) : 0;
+        view.renderer.setAttribute('gap',`${Math.max(margin,hingeMargin)}%`);
         view.renderer.setAttribute('margin','24px');
         const size=Math.min(72,Math.max(12,s.fontSize??20))*(s.textScale??1);
         const family=s.font==='sans'?'sans-serif':s.font==='mono'?'monospace':'serif';

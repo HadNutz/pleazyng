@@ -499,6 +499,9 @@ export class Paginator extends HTMLElement {
                 }
             }
         }
+        :host([fold-spread]) #top:not(.vertical) {
+            --_max-column-count-portrait: 2;
+        }
         #background {
             grid-column: 1 / -1;
             grid-row: 1 / -1;

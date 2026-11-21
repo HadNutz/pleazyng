@@ -74,6 +74,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen>
     with
+        RestorationMixin,
         Refreshable,
         ManualRefreshable,
         FullRefreshable,
@@ -81,6 +82,19 @@ class _SearchScreenState extends State<SearchScreen>
         FocusableTab,
         MountedSetStateMixin,
         DebouncedMediaSearch<SearchScreen, SearchHit> {
+  final _savedQuery = RestorableString('');
+  @override
+  String get restorationId => 'search';
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_savedQuery, 'query');
+    if (searchController.text != _savedQuery.value) searchController.text = _savedQuery.value;
+  }
+
+  void _saveQuery() {
+    if (!restorePending) _savedQuery.value = searchController.text;
+  }
+
   String? _focusResultsForQuery;
   final _tvTextInputController = TvTextInputController();
   AbortController? _activeSearchAbort;
@@ -145,6 +159,7 @@ class _SearchScreenState extends State<SearchScreen>
   @override
   void initState() {
     super.initState();
+    searchController.addListener(_saveQuery);
     FocusUtils.requestFocusAfterBuild(this, searchFocusNode);
     unawaited(_bindHiddenLibraries());
   }
@@ -205,6 +220,8 @@ class _SearchScreenState extends State<SearchScreen>
 
   @override
   void dispose() {
+    searchController.removeListener(_saveQuery);
+    _savedQuery.dispose();
     _sourceController?.removeListener(_onSourceScopeChanged);
     _catalogSourcesProvider?.removeListener(_onCatalogSourcesChanged);
     for (final node in _sourceChipFocusNodes.values) {
@@ -1594,6 +1611,7 @@ class _SearchScreenState extends State<SearchScreen>
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
+          restorationId: 'results-scroll',
           primary: false,
           slivers: [
             DesktopSliverAppBar(title: Text(t.common.search), floating: true),
