@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -108,7 +109,9 @@ Future<PlexDirectServerInfo> probePlexServer({
             isAuthenticated: false,
           );
         }
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('A candidate Plex connection probe failed.');
+      }
 
       return PlexDirectServerInfo(
         activeUrl: url,

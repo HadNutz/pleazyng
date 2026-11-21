@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -400,7 +401,9 @@ class SteamGameWorkspaceSession {
     if (live()) muteMicrophone();
     try {
       await channel.invokeMethod<bool>('setMicrophoneEnabled', {'enabled': false}).timeout(const Duration(seconds: 2));
-    } catch (_) {}
+    } catch (_) {
+      appLogger.d('Could not disable native microphone capture after the session changed.');
+    }
     return false;
   }
 

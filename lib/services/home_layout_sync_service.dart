@@ -130,7 +130,9 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
         );
         if (await file.exists() && await file.length() > 256 * 1024) await file.writeAsString('');
         await file.writeAsString('${now.toIso8601String()} $message\n', mode: FileMode.append, flush: true);
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not write the Home layout diagnostic log.');
+      }
     }());
   }
 

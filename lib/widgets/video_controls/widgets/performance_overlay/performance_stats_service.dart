@@ -224,7 +224,9 @@ class PerformanceStatsService {
     int? appMemory;
     try {
       appMemory = ProcessInfo.currentRss;
-    } catch (_) {}
+    } catch (_) {
+      appLogger.d('The platform could not report resident memory for the performance overlay.');
+    }
 
     if (playerType == 'mpv') {
       // Parse MPV stats format (returned when in fallback mode)

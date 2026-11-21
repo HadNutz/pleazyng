@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -27,7 +28,9 @@ class GameDiscovery {
     if (Platform.isAndroid) {
       try {
         await const MethodChannel('com.plezy/games').invokeMethod<void>('multicast', {'enabled': true});
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Android multicast permission request failed during game discovery.');
+      }
     }
     if (generation != _generation) return [];
     void accept(GameHost host) {

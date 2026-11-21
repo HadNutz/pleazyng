@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import '../services/file_picker_service.dart';
 import '../widgets/app_icon.dart';
 
@@ -89,17 +90,23 @@ class _KaraokeTakesScreenState extends State<KaraokeTakesScreen> {
     _preview = null;
     try {
       await player?.dispose();
-    } catch (_) {}
+    } catch (_) {
+      appLogger.d('Could not dispose the karaoke preview player.');
+    }
     if (_previewUsesMusic) {
       final music = widget.session.music;
       if (music is MusicKaraokeControls) {
         try {
           await (music as MusicKaraokeControls).resetKaraokeControls();
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('Could not reset karaoke controls after preview.');
+        }
       }
       try {
         await music.pause();
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not pause music after the karaoke preview.');
+      }
     }
     _previewUsesMusic = false;
     _previewMarksListened = false;

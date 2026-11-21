@@ -184,7 +184,9 @@ final class IncomingSubtitleShareService {
               await entity.delete();
             }
           }
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('Could not remove an incomplete subtitle import.');
+        }
         appLogger.w('Skipped an invalid shared subtitle', error: error, stackTrace: stackTrace);
       }
     }

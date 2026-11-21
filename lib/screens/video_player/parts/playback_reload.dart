@@ -125,7 +125,9 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
     if (isPlexBacked && serverId != null) {
       try {
         streamSelectClient = context.getPlexClientForServer(ServerId(serverId));
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not resolve the Plex client during the playback source switch.');
+      }
     }
 
     if (newSubtitleChoice != null && newMediaIndex == null && newPreset == null && newAudioStreamId == null) {

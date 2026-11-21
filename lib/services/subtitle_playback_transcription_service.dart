@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import 'subtitle_capture_status.dart';
 
 import 'dart:async';
@@ -344,7 +345,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       if (captureEnabled) {
         try {
           await player.setSubtitlePcmCaptureEnabled(false);
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('Could not disable subtitle PCM capture after initialization failed.');
+        }
       }
       if (startedJob != null && startedJobStore != null) {
         await startedJobStore.finishCapture(
@@ -390,7 +393,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     if (player != null) {
       try {
         await player.setSubtitlePcmCaptureEnabled(false);
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not disable subtitle PCM capture while stopping transcription.');
+      }
     }
     while (_polling) {
       await Future<void>.delayed(const Duration(milliseconds: 20));
@@ -399,7 +404,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
     if (invalidReason == null && player != null && !_unexpectedTimelineReset) {
       try {
         _appendPackets(await player.drainSubtitlePcmCapture());
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not drain the final subtitle PCM packets.');
+      }
     } else if (invalidReason != null) {
       _discardCapturedTimeline();
     }
@@ -654,7 +661,9 @@ final class SubtitlePlaybackTranscriptionService extends ChangeNotifier {
       _timer = null;
       try {
         await player.setSubtitlePcmCaptureEnabled(false);
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not disable subtitle PCM capture after polling stopped.');
+      }
       _setStatus(const SubtitleCaptureStatus(SubtitleCapturePhase.captureStopped));
     } finally {
       _polling = false;

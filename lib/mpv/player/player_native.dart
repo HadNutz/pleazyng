@@ -1062,7 +1062,9 @@ class PlayerNative extends PlayerBase
       postPos = duringDispose
           ? await super.invoke<String>('getProperty', {'name': 'playlist-pos'})
           : await getProperty('playlist-pos');
-    } catch (_) {}
+    } catch (_) {
+      appLogger.d('Could not read the playlist position while clearing the armed next item.');
+    }
     if (pos == '0' && postPos == '0') {
       unawaited(_closeContentFd(fd, duringDispose: duringDispose));
     }

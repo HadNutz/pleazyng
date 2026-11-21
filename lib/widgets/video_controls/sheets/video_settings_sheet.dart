@@ -1714,7 +1714,9 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
         } catch (_) {
           try {
             await ScopedPlayerPrefs.write(ScopedPlayerPrefs.motionClarityKernel, _state.metadata, oldKernel);
-          } catch (_) {}
+          } catch (_) {
+            appLogger.d('Could not restore the previous motion interpolation kernel.');
+          }
           await _motionService.configure(
             preset: oldPreset,
             kernel: oldKernel,
@@ -1770,7 +1772,9 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     } catch (error, stackTrace) {
       try {
         await ScopedPlayerPrefs.write(ScopedPlayerPrefs.motionClarityThreshold, _state.metadata, oldThreshold);
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not restore the previous motion threshold.');
+      }
       await _motionService.configure(
         preset: oldPreset,
         kernel: oldKernel,

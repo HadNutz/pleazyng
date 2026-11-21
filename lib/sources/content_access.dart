@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
@@ -2883,11 +2884,15 @@ class SourceStreamGateway {
     } catch (_) {
       try {
         request.response.statusCode = 502;
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not set the gateway error status after the response began.');
+      }
     } finally {
       try {
         await request.response.close();
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not close the source gateway response.');
+      }
     }
   }
 

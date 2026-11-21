@@ -169,7 +169,9 @@ class _PlexPinAuthFlowState extends State<PlexPinAuthFlow> {
       if (!resolvedUseQr) {
         try {
           await closeInAppWebView();
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('The in-app sign-in browser could not be closed.');
+        }
       }
 
       if (!_isCurrentAttempt(attemptId)) return;

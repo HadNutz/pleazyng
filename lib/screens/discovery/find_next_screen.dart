@@ -1,3 +1,4 @@
+import '../../utils/app_logger.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
@@ -3345,7 +3346,9 @@ class _SavedPicksScreenState extends State<_SavedPicksScreen> {
       try {
         entry = await sources.repository.entryById(widget.profileId, choice.sourceId!, choice.entryId!);
         sources.requireSession(_sourceGeneration);
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not read the saved entry for comparison.');
+      }
     }
     if (entry == null &&
         choice.portableKey != null &&
@@ -3371,7 +3374,9 @@ class _SavedPicksScreenState extends State<_SavedPicksScreen> {
                 )
                 .firstOrNull;
         sources.requireSession(_sourceGeneration);
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not match a saved entry by its public identifier.');
+      }
     }
     var offline = false;
     var language = '';
@@ -3401,7 +3406,9 @@ class _SavedPicksScreenState extends State<_SavedPicksScreen> {
           if (media.kind == MediaKind.movie || media.kind == MediaKind.episode || media.kind == MediaKind.clip) {
             offline = await downloads.getVideoFilePath(media.globalKey).timeout(const Duration(seconds: 2)) != null;
           }
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('Could not determine offline availability for comparison.');
+        }
       }
     } else if (choice.type == DiscoveryChoiceType.video &&
         (choice.mediaKind == MediaKind.movie || choice.mediaKind == MediaKind.show)) {
@@ -3412,7 +3419,9 @@ class _SavedPicksScreenState extends State<_SavedPicksScreen> {
           if (media.kind == MediaKind.movie || media.kind == MediaKind.episode || media.kind == MediaKind.clip) {
             offline = await downloads.getVideoFilePath(media.globalKey).timeout(const Duration(seconds: 2)) != null;
           }
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('Could not determine offline availability for comparison.');
+        }
       }
     }
     return _SavedPickFacts(
