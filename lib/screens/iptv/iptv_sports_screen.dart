@@ -54,6 +54,7 @@ class _IptvSportsScreenState extends State<IptvSportsScreen> {
       if (_owned) setState(() => _followed = next);
     } catch (_) {
       if (mounted && _owned) {
+        // Keep the previous followed teams when saving fails.
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.iptv.genericError)));
       }
     } finally {
