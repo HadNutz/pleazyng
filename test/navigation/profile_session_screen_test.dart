@@ -40,28 +40,9 @@ void main() {
     SystemShelfService().debugReset();
   });
 
-  testWidgets('a PIN-protected profile stays off the launcher shelf while startup asks for a profile', (tester) async {
-    final settings = await SettingsService.getInstance();
-    await settings.write(SettingsService.requireProfileSelectionOnOpen, true);
-    const channel = MethodChannel('test/profile_session_shelf');
-    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-    final calls = <(String, Object?)>[];
-    messenger.setMockMethodCallHandler(channel, (call) async {
-      calls.add((call.method, (call.arguments as Map)['ownerId']));
-      return true;
-    });
-    SystemShelfService.debugOverrideInstance(
-      SystemShelfService.forTesting(channel: channel, isSupported: () async => true),
-    );
-    final graph = await _SessionGraph.create();
-    addTearDown(() async {
-      await tester.pumpWidget(const SizedBox.shrink());
-      await tester.pumpAndSettle();
-      await graph.dispose();
-      SystemShelfService.debugOverrideInstance(null);
-      messenger.setMockMethodCallHandler(channel, null);
-    });
-
+  group('launcher shelf during profile selection', () {
+    late SettingsService settings;
+    late _SessionGraph graph;
     final owner = Profile.local(
       id: 'local-owner',
       displayName: 'Owner',
@@ -69,34 +50,67 @@ void main() {
       createdAt: DateTime(2026, 1, 1),
     );
     final kids = Profile.local(id: 'local-kids', displayName: 'Kids', createdAt: DateTime(2026, 1, 2));
-    await graph.profileRegistry.upsert(owner);
-    await graph.profileRegistry.upsert(kids);
-    await graph.storage.setActiveProfileId(owner.id);
-    await graph.activeProfile.initialize();
-    await graph.pump(
-      tester,
-      httpClientFactory: () => FakeHttpClient(200, const <int>[]),
-      profileShellBuilder: (context) {
-        context.watch<DiscoverProvider>();
-        return const SizedBox.shrink();
-      },
-    );
-    await tester.pumpAndSettle();
-    final shelf = SystemShelfService();
-    expect(shelf.debugActiveOwner, isNull);
-    expect(calls, [('clear', owner.id)]);
-    await settings.write(SettingsService.requireProfileSelectionOnOpen, false);
-    await tester.pumpAndSettle();
-    expect(shelf.debugActiveOwner, owner.id);
-    expect(calls.last, ('sync', owner.id));
 
-    await settings.write(SettingsService.requireProfileSelectionOnOpen, true);
-    await tester.pumpAndSettle();
-    expect(shelf.debugActiveOwner, isNull);
-    expect(calls.last, ('clear', owner.id));
-    expect(await graph.activeProfile.activate(kids), isTrue);
-    await tester.pumpAndSettle();
-    expect(shelf.debugActiveOwner, kids.id);
+    setUp(() async {
+      settings = await SettingsService.getInstance();
+      await settings.write(SettingsService.requireProfileSelectionOnOpen, true);
+      graph = await _SessionGraph.create();
+      await graph.profileRegistry.upsert(owner);
+      await graph.profileRegistry.upsert(kids);
+      await graph.storage.setActiveProfileId(owner.id);
+      await graph.activeProfile.initialize();
+    });
+    tearDown(() async {
+      try {
+        await graph.dispose();
+      } finally {
+        SystemShelfService.debugOverrideInstance(null);
+      }
+    });
+
+    testWidgets('a PIN-protected profile stays off the launcher shelf while startup asks for a profile', (
+      tester,
+    ) async {
+      const channel = MethodChannel('test/profile_session_shelf');
+      final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+      final calls = <(String, Object?)>[];
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        calls.add((call.method, (call.arguments as Map)['ownerId']));
+        return true;
+      });
+      SystemShelfService.debugOverrideInstance(
+        SystemShelfService.forTesting(channel: channel, isSupported: () async => true),
+      );
+      addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+      await graph.pump(
+        tester,
+        httpClientFactory: () => FakeHttpClient(200, const <int>[]),
+        profileShellBuilder: (context) {
+          context.watch<DiscoverProvider>();
+          return const SizedBox.shrink();
+        },
+      );
+      await tester.pumpAndSettle();
+      final shelf = SystemShelfService();
+      expect(shelf.debugActiveOwner, isNull);
+      expect(calls, [('clear', owner.id)]);
+      await settings.write(SettingsService.requireProfileSelectionOnOpen, false);
+      await tester.pumpAndSettle();
+      expect(shelf.debugActiveOwner, owner.id);
+      expect(calls.last, ('sync', owner.id));
+
+      await settings.write(SettingsService.requireProfileSelectionOnOpen, true);
+      await tester.pumpAndSettle();
+      expect(shelf.debugActiveOwner, isNull);
+      expect(calls.last, ('clear', owner.id));
+      final activation = graph.activeProfile.activate(kids);
+      await tester.pumpAndSettle();
+      expect(await activation, isTrue);
+      await tester.pumpAndSettle();
+      expect(shelf.debugActiveOwner, kids.id);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
   });
 
   testWidgets('profile switch disposes the profile navigator, routes, and providers', (tester) async {
