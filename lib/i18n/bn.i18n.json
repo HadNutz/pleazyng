@@ -433,7 +433,6 @@
     "importSettings": "Import Settings প্রদর্শন",
     "importSettingsDescription": "একটি ফাইল থেকে পছন্দ ফেরত",
     "importSettingsConfirm": "এটাই আপনাকে বর্তমান পরামর্শগুলি বদলে দেবে।",
-    "importSettingsSuccess": "আউটডোজ করা",
     "importSettingsCounts": "প্রয়োগ করা সেটিংস: ${applied}। বাদ দেওয়া হয়েছে: ${skipped}।",
     "importSettingsInvalidFile": "এই ফাইলটি একটি সঠিক Pleazyng সেটিংগুলি অ্যাক্সেস নয়",
     "importSettingsNoUser": "প্রদর্শন করার আগে সাইন করুন",
@@ -447,7 +446,6 @@
     "cloudBackupComplete": "ব্যাকআপ আপলোড হয়েছে। এই URL সংরক্ষণ করুন। নতুন করে ইনস্টল করার পর ক্লাউড ব্যাকআপে URL লিখে “${action}” বেছে নিন।",
     "cloudBackupRestore": "Backup পুনরাবৃত্তি",
     "cloudBackupRestoreConfirm": "এই ডিভাইসের পোর্টেবল সিস্টেমগুলি সমাধান করবে. চলুন?",
-    "cloudBackupRestored": "Cloud Backup থেকে পুনরাবৃত্তি",
     "shortcutsReset": "দূতাবাসের জন্য দূতাবাস ফিরে আসুন",
     "resetShortcutsConfirm": "এটি আপনার কাস্টম কুরআনগুলি ভিত্তিতে বদলে দেবে।",
     "about": "সম্পর্কে",
@@ -3677,7 +3675,6 @@
     "connectedTo": "সংযোগ ${device}",
     "device": "কাস্ট ডিভাইস",
     "readyToCast": "কাস্ট করার জন্য প্রস্তুত",
-    "subtitle": "সাবটাইটেল",
     "serverNotAvailable": "মিডিয়া সার্ভার পাওয়া যায় না।",
     "stopCasting": "কাস্ট করা বন্ধ করুন",
     "startFailed": "সার্ভার দেখুন এবং আবার চেষ্টা করুন।"

@@ -431,7 +431,6 @@
     "importSettings": "การตั้งค่าการนําเข้า",
     "importSettingsDescription": "การกู้คืนความต้องการจากไฟล์",
     "importSettingsConfirm": "สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?",
-    "importSettingsSuccess": "การตั้งค่าที่นําเข้า",
     "importSettingsCounts": "ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ",
     "importSettingsInvalidFile": "ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng",
     "importSettingsNoUser": "ลงทะเบียนก่อนนําเข้าการตั้งค่า",
@@ -445,7 +444,6 @@
     "cloudBackupComplete": "อัปโหลดข้อมูลสำรองแล้ว โปรดเก็บ URL นี้ไว้ หลังจากติดตั้งแอปใหม่ ให้ป้อน URL นี้ในหน้าสำรองข้อมูลบนคลาวด์ แล้วเลือก “${action}”",
     "cloudBackupRestore": "การกู้คืน Backup",
     "cloudBackupRestoreConfirm": "สิ่งนี้จะแทนที่การตั้งค่าแบบพกพาที่ตรงกับอุปกรณ์นี้. ต่อไป?",
-    "cloudBackupRestored": "การตั้งค่าที่ได้รับการกู้คืนจาก Cloud Backup",
     "shortcutsReset": "ระยะสั้นที่กําหนดเอง",
     "resetShortcutsConfirm": "นี่จะแทนที่การสั้น ๆ ที่กําหนดเองของคุณด้วยข้อกําหนดต่อไปหรือไม่?",
     "about": "เกี่ยวกับ",
@@ -3656,7 +3654,6 @@
     "connectedTo": "เชื่อมต่อ ${device}",
     "device": "อุปกรณ์แคสต์",
     "readyToCast": "พร้อมแคสต์",
-    "subtitle": "คำบรรยาย",
     "serverNotAvailable": "เซิร์ฟเวอร์สื่อไม่สามารถใช้ได้",
     "stopCasting": "หยุดแคสต์",
     "startFailed": "ไม่สามารถเริ่ม casting ตรวจสอบเซิร์ฟเวอร์และลองอีกครั้ง"

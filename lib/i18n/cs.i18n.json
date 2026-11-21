@@ -437,7 +437,6 @@
     "importSettings": "Importujte nastavení",
     "importSettingsDescription": "Obnovte preference z souboru",
     "importSettingsConfirm": "To nahradí vaše aktuální nastavení. pokračovat?",
-    "importSettingsSuccess": "Nastavení importované",
     "importSettingsCounts": "Použitá nastavení: ${applied}. Přeskočená: ${skipped}.",
     "importSettingsInvalidFile": "Tento soubor není platný Pleazyng nastavení export",
     "importSettingsNoUser": "Přihlaste se před dovozem",
@@ -451,7 +450,6 @@
     "cloudBackupComplete": "Záloha byla nahrána. Uložte si tuto adresu URL. Po nové instalaci ji zadejte v nastavení cloudové zálohy a vyberte „${action}“.",
     "cloudBackupRestore": "Obnovit zálohu",
     "cloudBackupRestoreConfirm": "To nahradí odpovídající přenosné nastavení na tomto zařízení.",
-    "cloudBackupRestored": "Nastavení obnovené z cloud backup",
     "shortcutsReset": "Zpět na defaulty",
     "resetShortcutsConfirm": "To nahradí vaše přizpůsobené zkratky s defaulty.",
     "about": "o",
@@ -3713,7 +3711,6 @@
     "connectedTo": "Připojení k číslu ${device}",
     "device": "Zařízení pro odesílání",
     "readyToCast": "Připraveno k odesílání",
-    "subtitle": "Titulky",
     "serverNotAvailable": "Media server není k dispozici.",
     "stopCasting": "Ukončit odesílání",
     "startFailed": "Nemůžete začít casting. zkontrolujte server a zkuste znovu."

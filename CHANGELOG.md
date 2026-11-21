@@ -38,6 +38,7 @@
 - Preserve audiobook and reading progress on unavailable files. Restore IPTV recording and tuning for affected profiles, label TV keyboard actions for screen readers, and show the actual results of local and network settings restores.
 
 - Keep manual app-store review submissions tracked separately from successful artifact uploads.
+- Remove unused download and music helpers and restore a clean analyzer run. Behaviour is unchanged.
 
 ## [3.0.47] - 2026-11-21
 

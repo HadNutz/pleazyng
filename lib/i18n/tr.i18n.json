@@ -433,7 +433,6 @@
     "importSettings": "Ayarları İçe Aktar",
     "importSettingsDescription": "Tercihleri bir dosyadan geri yükleyin",
     "importSettingsConfirm": "Bu işlem mevcut ayarlarınızın üzerine yazacak. Devam edilsin mi?",
-    "importSettingsSuccess": "Ayarlar içe aktarıldı",
     "importSettingsCounts": "Uygulanan ayar: ${applied}. Atlanan: ${skipped}.",
     "importSettingsInvalidFile": "Bu dosya geçerli bir Pleazyng ayar dosyası değil",
     "importSettingsNoUser": "Ayarları içe aktarmadan önce giriş yapın",
@@ -447,7 +446,6 @@
     "cloudBackupComplete": "Yedek yüklendi. Bu URL’yi saklayın. Yeni bir kurulumdan sonra URL’yi bulut yedekleme bölümüne girip “${action}” seçeneğini seçin.",
     "cloudBackupRestore": "Backup Yöntemleri",
     "cloudBackupRestoreConfirm": "Bu cihazda uyumlu taşınabilir ayarları değiştirecektir. devamı?",
-    "cloudBackupRestored": "Cloud Backup'tan kurtarılan ayarlar",
     "shortcutsReset": "Kısayollar varsayılana sıfırlandı",
     "resetShortcutsConfirm": "Bu işlem özel kısayollarınızı varsayılanlarla değiştirecek. Devam edilsin mi?",
     "about": "Hakkında",
@@ -3677,7 +3675,6 @@
     "connectedTo": "${device} ile bağlantılı",
     "device": "Cast cihazı",
     "readyToCast": "Hazırlık atmak",
-    "subtitle": "Altyazılar",
     "serverNotAvailable": "Medya sunucusu mevcut değildir.",
     "stopCasting": "Casting durdurma",
     "startFailed": "Sunucu kontrol edemezsiniz.Sunucu kontrol edin ve tekrar deneyin."

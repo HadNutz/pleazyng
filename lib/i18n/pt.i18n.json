@@ -435,7 +435,6 @@
     "importSettings": "Importar Configurações",
     "importSettingsDescription": "Restaurar preferências a partir de um arquivo",
     "importSettingsConfirm": "Isso substituirá suas configurações atuais. Continuar?",
-    "importSettingsSuccess": "Configurações importadas",
     "importSettingsCounts": "Configurações aplicadas: ${applied}. Ignoradas: ${skipped}.",
     "importSettingsInvalidFile": "Este arquivo não é uma exportação válida do Pleazyng",
     "importSettingsNoUser": "Entre na conta antes de importar as configurações",
@@ -449,7 +448,6 @@
     "cloudBackupComplete": "Cópia de segurança enviada. Guarde este URL. Após uma nova instalação, introduza-o na secção de cópias de segurança na nuvem e selecione «${action}».",
     "cloudBackupRestore": "Restauração de backup",
     "cloudBackupRestoreConfirm": "Isso substituirá as configurações portáteis correspondentes neste dispositivo.",
-    "cloudBackupRestored": "Atualização de configurações recuperadas da backup da nuvem",
     "shortcutsReset": "Atalhos redefinidos para o padrão",
     "resetShortcutsConfirm": "Isso substituirá seus atalhos personalizados pelos padrões. Continuar?",
     "about": "Sobre",
@@ -3680,7 +3678,6 @@
     "connectedTo": "Conectado a ${device}",
     "device": "CAST DEFINITOR",
     "readyToCast": "Pronto para jogar",
-    "subtitle": "Legendas",
     "serverNotAvailable": "O servidor de mídia não está disponível.",
     "stopCasting": "Parar de casting",
     "startFailed": "Não pode começar a casting. verificar o servidor e tentar novamente."

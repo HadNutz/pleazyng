@@ -41,7 +41,6 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	TranslationsPtPt $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPtPt(meta: meta ?? this.$meta);
 
 	// Translations
-	@override late final Translations$cast$pt_PT cast = Translations$cast$pt_PT.internal(_root);
 	@override late final Translations$appIcon$pt_PT appIcon = Translations$appIcon$pt_PT.internal(_root);
 	@override late final Translations$auth$pt_PT auth = Translations$auth$pt_PT.internal(_root);
 	@override late final Translations$common$pt_PT common = Translations$common$pt_PT.internal(_root);
@@ -91,16 +90,6 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$musicTools$pt_PT musicTools = Translations$musicTools$pt_PT.internal(_root);
 	@override late final Translations$musicExperience$pt_PT musicExperience = Translations$musicExperience$pt_PT.internal(_root);
 	@override late final Translations$subtitleAiUi$pt_PT subtitleAiUi = Translations$subtitleAiUi$pt_PT.internal(_root);
-}
-
-// Path: cast
-class Translations$cast$pt_PT extends Translations$cast$pt {
-	Translations$cast$pt_PT.internal(TranslationsPtPt root) : this._root = root, super.internal(root);
-
-	final TranslationsPtPt _root; // ignore: unused_field
-
-	// Translations
-	@override String get subtitle => 'Legendas';
 }
 
 // Path: appIcon
@@ -1392,7 +1381,6 @@ class Translations$services$libraryFilter$pt_PT extends Translations$services$li
 extension on TranslationsPtPt {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'cast.subtitle' => 'Legendas',
 			'appIcon.defaultIcon' => 'Predefinição',
 			'auth.quickConnect' => 'Ligação rápida',
 			'auth.useQuickConnect' => 'Utilizar Ligação rápida',
@@ -1904,9 +1892,9 @@ extension on TranslationsPtPt {
 			'romm.engine' => 'Emulator identity',
 			'romm.slot' => 'Save slot',
 			'romm.core' => 'Core identity',
+			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
 			_ => null,
 		} ?? switch (path) {
-			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
 			'romm.saveConflict' => 'Both copies changed. Keep both versions, use the server copy, or explicitly replace it.',
 			'romm.keepBoth' => 'Keep both',
 			'romm.useServer' => 'Use server copy',

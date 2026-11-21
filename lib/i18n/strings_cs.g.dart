@@ -579,7 +579,6 @@ class _Translations$settings$cs extends Translations$settings$en {
 	@override String get importSettings => 'Importujte nastavení';
 	@override String get importSettingsDescription => 'Obnovte preference z souboru';
 	@override String get importSettingsConfirm => 'To nahradí vaše aktuální nastavení. pokračovat?';
-	@override String get importSettingsSuccess => 'Nastavení importované';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Použitá nastavení: ${applied}. Přeskočená: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Tento soubor není platný Pleazyng nastavení export';
 	@override String get importSettingsNoUser => 'Přihlaste se před dovozem';
@@ -593,7 +592,6 @@ class _Translations$settings$cs extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Záloha byla nahrána. Uložte si tuto adresu URL. Po nové instalaci ji zadejte v nastavení cloudové zálohy a vyberte „${action}“.';
 	@override String get cloudBackupRestore => 'Obnovit zálohu';
 	@override String get cloudBackupRestoreConfirm => 'To nahradí odpovídající přenosné nastavení na tomto zařízení.';
-	@override String get cloudBackupRestored => 'Nastavení obnovené z cloud backup';
 	@override String get shortcutsReset => 'Zpět na defaulty';
 	@override String get resetShortcutsConfirm => 'To nahradí vaše přizpůsobené zkratky s defaulty.';
 	@override String get about => 'o';
@@ -3159,7 +3157,6 @@ class _Translations$cast$cs extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Připojení k číslu ${device}';
 	@override String get device => 'Zařízení pro odesílání';
 	@override String get readyToCast => 'Připraveno k odesílání';
-	@override String get subtitle => 'Titulky';
 	@override String get serverNotAvailable => 'Media server není k dispozici.';
 	@override String get stopCasting => 'Ukončit odesílání';
 	@override String get startFailed => 'Nemůžete začít casting. zkontrolujte server a zkuste znovu.';
@@ -6094,7 +6091,6 @@ extension on TranslationsCs {
 			'settings.importSettings' => 'Importujte nastavení',
 			'settings.importSettingsDescription' => 'Obnovte preference z souboru',
 			'settings.importSettingsConfirm' => 'To nahradí vaše aktuální nastavení. pokračovat?',
-			'settings.importSettingsSuccess' => 'Nastavení importované',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Použitá nastavení: ${applied}. Přeskočená: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Tento soubor není platný Pleazyng nastavení export',
 			'settings.importSettingsNoUser' => 'Přihlaste se před dovozem',
@@ -6108,7 +6104,6 @@ extension on TranslationsCs {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Záloha byla nahrána. Uložte si tuto adresu URL. Po nové instalaci ji zadejte v nastavení cloudové zálohy a vyberte „${action}“.',
 			'settings.cloudBackupRestore' => 'Obnovit zálohu',
 			'settings.cloudBackupRestoreConfirm' => 'To nahradí odpovídající přenosné nastavení na tomto zařízení.',
-			'settings.cloudBackupRestored' => 'Nastavení obnovené z cloud backup',
 			'settings.shortcutsReset' => 'Zpět na defaulty',
 			'settings.resetShortcutsConfirm' => 'To nahradí vaše přizpůsobené zkratky s defaulty.',
 			'settings.about' => 'o',
@@ -6206,10 +6201,10 @@ extension on TranslationsCs {
 			'settings.manageLibrariesDescription' => 'Přehrávat a skrývat knihovny',
 			'settings.companionRemoteServer' => 'Společnost Remote Server',
 			'settings.companionRemoteServerDescription' => 'Umožňujte mobilním zařízením v síti ovládat tuto aplikaci',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Nemohla spustit server',
 			'settings.companionRemoteServerStopFailed' => 'Nemohla jsem zastavit server',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Auto Picture v obraze',
 			'settings.autoPipDescription' => 'Automaticky zadejte obrázek v obrazu, když opustíte aplikaci během přehrávání',
 			'settings.matchContentFrameRate' => 'Match Content Frame Rate - míra obsahu',
@@ -6720,10 +6715,10 @@ extension on TranslationsCs {
 			'accessibility.boldTextHint' => 'Použijte těžší váhu pro rozhraní etikety a zprávy, aby je jednodušší rozlišovat.',
 			'tooltips.shufflePlay' => 'Shuffle hraje',
 			'tooltips.playTrailer' => 'Hrajte trailer',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark jako sledovaný',
 			'tooltips.markAsUnwatched' => 'Mark jako nepozorovaný',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Zvukový pás ${n}',
 			'videoControls.audioLabel' => 'Zvuk',
 			'videoControls.subtitlesLabel' => 'Titulky',
@@ -7234,10 +7229,10 @@ extension on TranslationsCs {
 			'errors.connectionTimeout' => ({required Object context}) => 'Připojení do času při nabíjení ${context}',
 			'errors.connectionFailed' => 'Neschopnost připojit se k mediálnímu serveru',
 			'errors.unableToLoad' => ({required Object context}) => 'Není možné nabíjet ${context}. prosím zkuste znovu.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Žádný zákazník k dispozici',
 			'errors.pleaseEnterToken' => 'Vložte prosím token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Invalidní token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Neuvěřený token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Přepínání na ${displayName}',
@@ -7748,10 +7743,10 @@ extension on TranslationsCs {
 			'playlists.emptyPlaylist' => 'Tento playlist je prázdný',
 			'playlists.deleteConfirm' => 'Vymažte si playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Jste si jisti, že chcete odstranit „${name}“?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist vytvořený',
 			'playlists.deleted' => 'Playlist vymazané',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Přidáno do playlist',
 			'playlists.itemRemoved' => 'Odstranění z playlist',
 			'playlists.selectPlaylist' => 'Vyberte Playlist',
@@ -8262,10 +8257,10 @@ extension on TranslationsCs {
 			'performanceOverlay.transfer' => 'Převod',
 			'performanceOverlay.renderFps' => 'FPS vykreslování',
 			'performanceOverlay.displayFps' => 'Zobrazit FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V synchronizace',
 			'performanceOverlay.dropped' => 'roztrhané',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Dv RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'DV vzorec AVG',
@@ -8697,7 +8692,6 @@ extension on TranslationsCs {
 			'cast.connectedTo' => ({required Object device}) => 'Připojení k číslu ${device}',
 			'cast.device' => 'Zařízení pro odesílání',
 			'cast.readyToCast' => 'Připraveno k odesílání',
-			'cast.subtitle' => 'Titulky',
 			'cast.serverNotAvailable' => 'Media server není k dispozici.',
 			'cast.stopCasting' => 'Ukončit odesílání',
 			'cast.startFailed' => 'Nemůžete začít casting. zkontrolujte server a zkuste znovu.',
@@ -8776,11 +8770,11 @@ extension on TranslationsCs {
 			'homeLayout.showInRecommended' => 'Představení v knihovně doporučeno',
 			'homeLayout.customPlexRow' => 'Přizpůsobený Plex řádek',
 			'homeLayout.heroNeedsLibrary' => 'Prohlédněte si knihovnu nejprve – Hero potřebuje někde ukázat',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'Zkontrolujte knihovnu nebo domov nejprve – Hero potřebuje někde ukázat',
 			'homeLayout.removeHub' => 'Odstranění Hub',
 			'homeLayout.noPlexRows' => 'Číslo Plex řízené řádky se vrátily pro tuto knihovnu.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Otevřené detaily',
 			'homeLayout.heroCards' => 'Hrdinové karty',
 			'homeLayout.tapHeroCard' => 'Ztráta hrdinské karty',
@@ -9290,11 +9284,11 @@ extension on TranslationsCs {
 			'audiobook.recoveryHelp' => 'Exportujte nedávnou šifrovanou kopii před přenesením nebo opravou synchronizačních dat. Importy se spojí s aktuálním stavem; nikdy nenahrazují místní historii synchromu.',
 			'audiobook.recoveryExport' => 'Export šifrované obnovení souborů',
 			'audiobook.recoveryImport' => 'Import šifrované obnovení souborů',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'Spojte tento šifrovaný obnovení soubor s aktuálními čtení pozic a poznámky? existující historie bude zachována. sdílená knihovna a ID položky nejsou zahrnuty; nastavit odpovídající ID na každém zařízení před dovozem.',
 			'audiobook.recoveryExported' => 'Šifrované obnovení souboru je uloženo.',
 			'audiobook.recoveryImported' => 'Údaje o obnově se smítají.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Přihlaste se ke svému účtu BookOrbit a procházejte jeho knihy nebo je přehrávejte. Žádosti o chybějící tituly nadále zpracovává vaše připojená instance SeerrNG.',
 			'sourceSetup.bookorbitOpen' => 'Otevřít v BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Zobrazte tento titul v BookOrbit a spravujte podrobnosti knihovny i formáty, které Pleazyng nedokáže otevřít. Průběh poslechu se synchronizuje s vaším účtem BookOrbit.',
@@ -9804,11 +9798,11 @@ extension on TranslationsCs {
 			'musicTools.home' => 'Hudba',
 			'musicTools.recent' => 'Nedávno přehrané',
 			'musicTools.apiKey' => 'Klíč API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'minuty',
 			'musicTools.rules' => 'Filtry',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Výhradní zvukový výstup',
 			'musicTools.preamp' => 'Předzesílení',
 			'musicTools.ratingPending' => 'Uloženo v tomto zařízení; čeká na synchronizaci',

@@ -5,6 +5,14 @@ import 'package:plezy/services/music/music_playlist_loader.dart';
 import 'package:plezy/services/music/music_queue_items.dart';
 import 'package:plezy/utils/media_server_http_client.dart';
 import '../../test_helpers/music_experience_fakes.dart';
+import 'package:plezy/media/media_server_client.dart';
+
+Future<List<MediaItem>> loadMusicPlaylist(
+  MediaServerClient client,
+  String id, {
+  required bool Function() current,
+  bool Function(MediaItem)? acceptsItem,
+}) => MusicPlaylistRead(client, id, current: current, acceptsItem: acceptsItem).all(active: current);
 
 class PlaylistClient extends ExperienceClient {
   Future<LibraryPage<MediaItem>> Function(int)? playlist;

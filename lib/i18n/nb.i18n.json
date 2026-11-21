@@ -433,7 +433,6 @@
     "importSettings": "Importer innstillinger",
     "importSettingsDescription": "Gjenopprett innstillinger fra en fil",
     "importSettingsConfirm": "Dette vil erstatte nåværende innstillinger. Fortsette?",
-    "importSettingsSuccess": "Innstillinger importert",
     "importSettingsCounts": "Innstillinger tatt i bruk: ${applied}. Hoppet over: ${skipped}.",
     "importSettingsInvalidFile": "Denne filen er ikke en gyldig Pleazyng-innstillingseksport",
     "importSettingsNoUser": "Logg inn før import av innstillinger",
@@ -447,7 +446,6 @@
     "cloudBackupComplete": "Sikkerhetskopien er lastet opp. Ta vare på denne nettadressen. Etter en ny installasjon skriver du den inn under sikkerhetskopiering i skyen og velger «${action}».",
     "cloudBackupRestore": "Åpne backup",
     "cloudBackupRestoreConfirm": "Dette vil erstatte matching bærbare innstillinger på denne enheten.",
-    "cloudBackupRestored": "Innstillinger gjenopprettet fra cloud backup",
     "shortcutsReset": "Snarveier tilbakestilt til standard",
     "resetShortcutsConfirm": "Dette vil erstatte de egendefinerte snarveiene dine med standardsnarveiene. Fortsette?",
     "about": "Om",
@@ -3677,7 +3675,6 @@
     "connectedTo": "Tilkoblet til ${device}",
     "device": "Cast utstyr",
     "readyToCast": "Klar til å kastes",
-    "subtitle": "Undertekster",
     "serverNotAvailable": "Media server er ikke tilgjengelig.",
     "stopCasting": "Stoppe casting",
     "startFailed": "Kan ikke begynne å kaste. sjekk serveren og prøv igjen."

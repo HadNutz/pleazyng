@@ -435,7 +435,6 @@
     "importSettings": "Importa impostazioni",
     "importSettingsDescription": "Ripristina le preferenze da un file",
     "importSettingsConfirm": "Questa azione sostituirà le impostazioni attuali. Continuare?",
-    "importSettingsSuccess": "Impostazioni importate",
     "importSettingsCounts": "Impostazioni applicate: ${applied}. Ignorate: ${skipped}.",
     "importSettingsInvalidFile": "Questo file non è un'esportazione Pleazyng valida",
     "importSettingsNoUser": "Accedi prima di importare le impostazioni",
@@ -449,7 +448,6 @@
     "cloudBackupComplete": "Backup caricato. Conserva questo URL. Dopo una nuova installazione, inseriscilo nella sezione del backup su cloud e scegli «${action}».",
     "cloudBackupRestore": "Ristrutturazione Backup",
     "cloudBackupRestoreConfirm": "Questo sostituirà le impostazioni portatili in questo dispositivo.",
-    "cloudBackupRestored": "Impostazioni ripristinate dal cloud backup",
     "shortcutsReset": "Scorciatoie ripristinate alle impostazioni predefinite",
     "resetShortcutsConfirm": "Le scorciatoie personalizzate verranno sostituite con quelle predefinite. Continuare?",
     "about": "Informazioni",
@@ -3680,7 +3678,6 @@
     "connectedTo": "Connetto a ${device}",
     "device": "Dispositivi di Cast",
     "readyToCast": "Pronte a lanciare",
-    "subtitle": "Sottotitoli",
     "serverNotAvailable": "Il server dei media non è disponibile.",
     "stopCasting": "smettere di casting",
     "startFailed": "Non è possibile iniziare la casta. controllare il server e provare di nuovo."

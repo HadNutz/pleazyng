@@ -431,7 +431,6 @@
     "importSettings": "설정 가져오기",
     "importSettingsDescription": "파일에서 기본 설정 복원",
     "importSettingsConfirm": "현재 설정을 대체합니다. 계속하시겠습니까?",
-    "importSettingsSuccess": "설정 가져오기 완료",
     "importSettingsCounts": "적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.",
     "importSettingsInvalidFile": "유효한 Pleazyng 설정 내보내기 파일이 아닙니다",
     "importSettingsNoUser": "설정을 가져오기 전에 로그인하세요",
@@ -445,7 +444,6 @@
     "cloudBackupComplete": "백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.",
     "cloudBackupRestore": "Backup 복구",
     "cloudBackupRestoreConfirm": "이 장치에서 해당 휴대용 설정을 대체합니다.",
-    "cloudBackupRestored": "Cloud Backup에서 복구된 설정",
     "shortcutsReset": "단축키가 기본값으로 재설정되었습니다",
     "resetShortcutsConfirm": "사용자 지정 단축키가 기본값으로 대체됩니다. 계속하시겠습니까?",
     "about": "정보",
@@ -3673,7 +3671,6 @@
     "connectedTo": "${device}에 연결된",
     "device": "장치 캡처",
     "readyToCast": "던져질 준비",
-    "subtitle": "자막",
     "serverNotAvailable": "미디어 서버는 사용할 수 없습니다.",
     "stopCasting": "카스팅을 멈추세요",
     "startFailed": "캐스트를 시작할 수 없습니다. 서버를 확인하고 다시 시도하세요."

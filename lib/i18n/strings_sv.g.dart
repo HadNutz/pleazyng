@@ -575,7 +575,6 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get importSettings => 'Importera inställningar';
 	@override String get importSettingsDescription => 'Återställ inställningar från en fil';
 	@override String get importSettingsConfirm => 'Detta ersätter dina nuvarande inställningar. Fortsätta?';
-	@override String get importSettingsSuccess => 'Inställningar importerade';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Filen är inte en giltig export av Pleazyng-inställningar';
 	@override String get importSettingsNoUser => 'Logga in innan du importerar inställningar';
@@ -589,7 +588,6 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.';
 	@override String get cloudBackupRestore => 'Återställ backup';
 	@override String get cloudBackupRestoreConfirm => 'Detta kommer att ersätta matchande bärbara inställningar på denna enhet.';
-	@override String get cloudBackupRestored => 'Inställningar återställda från moln backup';
 	@override String get shortcutsReset => 'Genvägarna har återställts till standard';
 	@override String get resetShortcutsConfirm => 'Detta ersätter dina anpassade genvägar med standardgenvägarna. Fortsätta?';
 	@override String get about => 'Om';
@@ -3125,7 +3123,6 @@ class _Translations$cast$sv extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Anslut till ${device}';
 	@override String get device => 'Castanläggning';
 	@override String get readyToCast => 'Redo att kasta';
-	@override String get subtitle => 'Undertexter';
 	@override String get serverNotAvailable => 'Media server är inte tillgänglig.';
 	@override String get stopCasting => 'Sluta casting';
 	@override String get startFailed => 'Kan inte börja kastar. kontrollera serveren och försök igen.';
@@ -6050,7 +6047,6 @@ extension on TranslationsSv {
 			'settings.importSettings' => 'Importera inställningar',
 			'settings.importSettingsDescription' => 'Återställ inställningar från en fil',
 			'settings.importSettingsConfirm' => 'Detta ersätter dina nuvarande inställningar. Fortsätta?',
-			'settings.importSettingsSuccess' => 'Inställningar importerade',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Filen är inte en giltig export av Pleazyng-inställningar',
 			'settings.importSettingsNoUser' => 'Logga in innan du importerar inställningar',
@@ -6064,7 +6060,6 @@ extension on TranslationsSv {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.',
 			'settings.cloudBackupRestore' => 'Återställ backup',
 			'settings.cloudBackupRestoreConfirm' => 'Detta kommer att ersätta matchande bärbara inställningar på denna enhet.',
-			'settings.cloudBackupRestored' => 'Inställningar återställda från moln backup',
 			'settings.shortcutsReset' => 'Genvägarna har återställts till standard',
 			'settings.resetShortcutsConfirm' => 'Detta ersätter dina anpassade genvägar med standardgenvägarna. Fortsätta?',
 			'settings.about' => 'Om',
@@ -6162,10 +6157,10 @@ extension on TranslationsSv {
 			'settings.manageLibrariesDescription' => 'Ordna om och dölj bibliotek',
 			'settings.companionRemoteServer' => 'Server för fjärrkontroll',
 			'settings.companionRemoteServerDescription' => 'Tillåt att mobila enheter i nätverket styr appen',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Automatisk bild-i-bild',
 			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
 			'settings.matchContentFrameRate' => 'Matcha innehållets bildfrekvens',
@@ -6676,10 +6671,10 @@ extension on TranslationsSv {
 			'accessibility.boldTextHint' => 'Använd en tyngre vikt för gränssnittets etiketter och meddelanden för att göra dem lättare att skilja.',
 			'tooltips.shufflePlay' => 'Blanda uppspelning',
 			'tooltips.playTrailer' => 'Spela trailer',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Markera som sedd',
 			'tooltips.markAsUnwatched' => 'Markera som osedd',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Ljudspår ${n}',
 			'videoControls.audioLabel' => 'Ljud',
 			'videoControls.subtitlesLabel' => 'Undertexter',
@@ -7190,10 +7185,10 @@ extension on TranslationsSv {
 			'errors.connectionTimeout' => ({required Object context}) => 'Anslutningen tog för lång tid när ${context} lästes in',
 			'errors.connectionFailed' => 'Det gick inte att ansluta till medieservern',
 			'errors.unableToLoad' => ({required Object context}) => 'Det gick inte att läsa in ${context}. Försök igen.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Ingen klient är tillgänglig',
 			'errors.pleaseEnterToken' => 'Ange en token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Ogiltig token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Det gick inte att verifiera token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Det gick inte att byta till ${displayName}',
@@ -7704,10 +7699,10 @@ extension on TranslationsSv {
 			'playlists.emptyPlaylist' => 'Denna spellista är tom',
 			'playlists.deleteConfirm' => 'Ta bort spellista?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Är du säker på att du vill ta bort "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Spellistan har skapats',
 			'playlists.deleted' => 'Spellistan har tagits bort',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Objektet har lagts till i spellistan',
 			'playlists.itemRemoved' => 'Objektet har tagits bort från spellistan',
 			'playlists.selectPlaylist' => 'Välj spellista',
@@ -8218,10 +8213,10 @@ extension on TranslationsSv {
 			'performanceOverlay.transfer' => 'Överföring',
 			'performanceOverlay.renderFps' => 'Renderings-FPS',
 			'performanceOverlay.displayFps' => 'Skärm-FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-synk',
 			'performanceOverlay.dropped' => 'Tappade bildrutor',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV-RPU:er',
 			'performanceOverlay.dvRpuAverage' => 'DV-RPU, genomsnitt',
 			'performanceOverlay.dvSampleAverage' => 'DV-sampling, genomsnitt',
@@ -8653,7 +8648,6 @@ extension on TranslationsSv {
 			'cast.connectedTo' => ({required Object device}) => 'Anslut till ${device}',
 			'cast.device' => 'Castanläggning',
 			'cast.readyToCast' => 'Redo att kasta',
-			'cast.subtitle' => 'Undertexter',
 			'cast.serverNotAvailable' => 'Media server är inte tillgänglig.',
 			'cast.stopCasting' => 'Sluta casting',
 			'cast.startFailed' => 'Kan inte börja kastar. kontrollera serveren och försök igen.',
@@ -8732,11 +8726,11 @@ extension on TranslationsSv {
 			'homeLayout.showInRecommended' => 'Utställning i biblioteket rekommenderas',
 			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
 			'homeLayout.removeHub' => 'Ta bort Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex-hanterade rader återvände till denna bibliotek.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Öppna detaljer',
 			'homeLayout.heroCards' => 'hjältar kort',
 			'homeLayout.tapHeroCard' => 'Att ta ett hjälte kort',
@@ -9246,11 +9240,11 @@ extension on TranslationsSv {
 			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
 			'audiobook.recoveryExported' => 'Den krypterade återhämtningsfilen sparas.',
 			'audiobook.recoveryImported' => 'Data återhämtning sammansatt.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Logga in med ditt eget BookOrbit-konto för att bläddra bland och spela upp dina böcker. Begäranden om saknade titlar går fortfarande via din anslutna SeerrNG-instans.',
 			'sourceSetup.bookorbitOpen' => 'Öppna i BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Visa den här titeln i BookOrbit för att hantera biblioteksuppgifter och format som Pleazyng inte kan öppna. Lyssningsförloppet synkroniseras med ditt BookOrbit-konto.',
@@ -9760,11 +9754,11 @@ extension on TranslationsSv {
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senast spelat',
 			'musicTools.apiKey' => 'API-nyckel',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minuter',
 			'musicTools.rules' => 'Filter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Exklusiv ljudutgång',
 			'musicTools.preamp' => 'Förförstärkning',
 			'musicTools.ratingPending' => 'Sparat på den här enheten; väntar på synkronisering',

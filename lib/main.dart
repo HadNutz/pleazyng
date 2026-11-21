@@ -2848,8 +2848,9 @@ class _SetupScreenState extends State<SetupScreen> with MountedSetStateMixin {
 
       var bindingSucceeded = activeProfile.lastBindingSucceeded;
       if (shouldPrompt) {
-        await Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const ProfileSwitchScreen(requireSelection: true)));
+        await Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const ProfileSwitchScreen(requireSelection: true)));
         if (!mounted) {
           return;
         }

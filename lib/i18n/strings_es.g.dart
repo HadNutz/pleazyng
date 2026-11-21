@@ -581,7 +581,6 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get importSettings => 'Importar configuración';
 	@override String get importSettingsDescription => 'Restaurar preferencias desde un archivo';
 	@override String get importSettingsConfirm => 'Esto reemplazará tu configuración actual. ¿Continuar?';
-	@override String get importSettingsSuccess => 'Configuración importada';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Ajustes aplicados: ${applied}. Omitidos: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Este archivo no es una exportación válida de Pleazyng';
 	@override String get importSettingsNoUser => 'Inicia sesión antes de importar la configuración';
@@ -595,7 +594,6 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Se ha subido la copia de seguridad. Guarda esta URL. Tras una nueva instalación, introdúcela en la sección de copias de seguridad en la nube y selecciona «${action}».';
 	@override String get cloudBackupRestore => 'Restaurar la Backup';
 	@override String get cloudBackupRestoreConfirm => 'Esto sustituirá las configuraciones portátiles que se ajustan a este dispositivo.';
-	@override String get cloudBackupRestored => 'Configuraciones restauradas de la backup en la nube';
 	@override String get shortcutsReset => 'Atajos restablecidos a los valores predeterminados';
 	@override String get resetShortcutsConfirm => 'Esto reemplazará tus atajos personalizados por los predeterminados. ¿Continuar?';
 	@override String get about => 'Acerca de';
@@ -3133,7 +3131,6 @@ class Translations$cast$es extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Conectado a ${device}';
 	@override String get device => 'Dispositivo de Cast';
 	@override String get readyToCast => 'Prepara para lanzar';
-	@override String get subtitle => 'Subtítulos';
 	@override String get serverNotAvailable => 'El servidor de medios no está disponible.';
 	@override String get stopCasting => 'Dejar de casting';
 	@override String get startFailed => 'No puedo empezar a casting. comprobar el servidor y intentarlo de nuevo.';
@@ -6177,7 +6174,6 @@ extension on TranslationsEs {
 			'settings.importSettings' => 'Importar configuración',
 			'settings.importSettingsDescription' => 'Restaurar preferencias desde un archivo',
 			'settings.importSettingsConfirm' => 'Esto reemplazará tu configuración actual. ¿Continuar?',
-			'settings.importSettingsSuccess' => 'Configuración importada',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Ajustes aplicados: ${applied}. Omitidos: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Este archivo no es una exportación válida de Pleazyng',
 			'settings.importSettingsNoUser' => 'Inicia sesión antes de importar la configuración',
@@ -6191,7 +6187,6 @@ extension on TranslationsEs {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Se ha subido la copia de seguridad. Guarda esta URL. Tras una nueva instalación, introdúcela en la sección de copias de seguridad en la nube y selecciona «${action}».',
 			'settings.cloudBackupRestore' => 'Restaurar la Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Esto sustituirá las configuraciones portátiles que se ajustan a este dispositivo.',
-			'settings.cloudBackupRestored' => 'Configuraciones restauradas de la backup en la nube',
 			'settings.shortcutsReset' => 'Atajos restablecidos a los valores predeterminados',
 			'settings.resetShortcutsConfirm' => 'Esto reemplazará tus atajos personalizados por los predeterminados. ¿Continuar?',
 			'settings.about' => 'Acerca de',
@@ -6286,10 +6281,10 @@ extension on TranslationsEs {
 			'settings.discordRichPresenceDescription' => 'Mostrar lo que estás viendo en Discord',
 			'settings.services' => 'Servicios',
 			'settings.servicesDescription' => 'Conecta Trakt, MyAnimeList, Seerr y más',
-			_ => null,
-		} ?? switch (path) {
 			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
 			'settings.companionRemoteServer' => 'Servidor de control remoto',
+			_ => null,
+		} ?? switch (path) {
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
 			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
 			'settings.companionRemoteServerStopFailed' => 'No se pudo detener el servidor de control remoto',
@@ -6800,10 +6795,10 @@ extension on TranslationsEs {
 			'accessibility.largeTargetsHint' => 'Dale controles compartidos más espacio para el toque y la navegación asistiva.',
 			'accessibility.navigationHint' => 'Usa Tab y Shift+Tab para moverte entre los controles, Enter o la barra espaciadora para activarlos y Escape o Atrás para cerrar. El zoom y las preferencias de lectura están disponibles cuando hay un libro abierto.',
 			'accessibility.textSizeDescription' => 'Escala el texto de la interfaz en Pleazyng además de la configuración de tamaño del texto del sistema de su dispositivo.',
-			_ => null,
-		} ?? switch (path) {
 			'accessibility.boldTextHint' => 'Utilice un peso más pesado para las etiquetas de interfaz y los mensajes para que sean más fáciles de distinguir.',
 			'tooltips.shufflePlay' => 'Reproducción aleatoria',
+			_ => null,
+		} ?? switch (path) {
 			'tooltips.playTrailer' => 'Reproducir tráiler',
 			'tooltips.markAsWatched' => 'Marcar como visto',
 			'tooltips.markAsUnwatched' => 'Marcar como no visto',
@@ -7314,10 +7309,10 @@ extension on TranslationsEs {
 			'discover.findNext.releaseToConfirm' => 'Suelta para confirmar',
 			'discover.findNext.remoteHint' => 'Portada enfocada: ← / → elegir · Seleccionar: detalles · ↑ / ↓ mover el foco',
 			'discover.studio' => 'Estudio',
-			_ => null,
-		} ?? switch (path) {
 			'discover.rating' => 'Valoración',
 			'discover.director' => 'Director',
+			_ => null,
+		} ?? switch (path) {
 			'discover.directors' => 'Directores',
 			'discover.movie' => 'Película',
 			'discover.tvShow' => 'Serie de TV',
@@ -7828,10 +7823,10 @@ extension on TranslationsEs {
 			'collections.addedToCollection' => 'Añadido a la colección',
 			'collections.errorAddingToCollection' => 'Error al añadir a la colección',
 			'collections.created' => 'Colección creada',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollection' => 'Eliminar de la colección',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '¿Eliminar "${title}" de esta colección?',
+			_ => null,
+		} ?? switch (path) {
 			'collections.removedFromCollection' => 'Eliminado de la colección',
 			'collections.removeFromCollectionFailed' => 'Error al eliminar de la colección',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Error al eliminar de la colección: ${error}',
@@ -8342,10 +8337,10 @@ extension on TranslationsEs {
 			'performanceOverlay.passthrough' => 'Transferencia directa',
 			'performanceOverlay.aspect' => 'Aspecto',
 			'performanceOverlay.rotation' => 'Rotación',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSource' => 'Origen DV',
 			'performanceOverlay.dvPath' => 'Ruta DV',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteDecoder' => 'Decodificador Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'Decodificador Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Capa base',
@@ -8796,7 +8791,6 @@ extension on TranslationsEs {
 			'cast.connectedTo' => ({required Object device}) => 'Conectado a ${device}',
 			'cast.device' => 'Dispositivo de Cast',
 			'cast.readyToCast' => 'Prepara para lanzar',
-			'cast.subtitle' => 'Subtítulos',
 			'cast.serverNotAvailable' => 'El servidor de medios no está disponible.',
 			'cast.stopCasting' => 'Dejar de casting',
 			'cast.startFailed' => 'No puedo empezar a casting. comprobar el servidor y intentarlo de nuevo.',
@@ -8856,11 +8850,11 @@ extension on TranslationsEs {
 			'homeLayout.syncNow' => 'Síntomas ahora',
 			'homeLayout.plexHomeManager' => 'Plex Director de la casa',
 			'homeLayout.managePlexRows' => 'Gestión Plex líneas en Pleazyng',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
 			'homeLayout.organizeHomeRows' => 'Organizar las rutas domésticas',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} líneas: movimiento, Hero, Auto-slide, eliminación',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizar ${library} líneas',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continuar Vea + ${n} líneas: movimiento, Biblioteca, Casa, Héroe, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render como una tarjeta de héroe',
@@ -9370,11 +9364,11 @@ extension on TranslationsEs {
 			'audiobook.bookTimeline' => 'Todo el libro Progreso',
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Tiempo restante en este capítulo: ${time}',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
 			'audiobook.undoSeek' => 'La última búsqueda',
 			'audiobook.customSpeed' => 'Velocidad de reproducción personalizada',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.speedHelp' => 'Seleccione una velocidad de 0.25× a 4×.',
 			'audiobook.apply' => 'Aplique',
 			'audiobook.customSleep' => 'Calendario de sueño personalizado',
@@ -9884,11 +9878,11 @@ extension on TranslationsEs {
 			'bonusExtras.cancel' => 'Cancelar',
 			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
 			'bonusExtras.linkTitle' => 'Título del extra',
 			'bonusExtras.linkUrl' => 'Enlace de YouTube o Vimeo',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.invalidLink' => 'Introduce un título y un enlace HTTPS válido a un vídeo de YouTube o Vimeo.',
 			'bonusExtras.showHidden' => 'Restablecer extras y editores ocultos',
 			'bonusExtras.clearCache' => 'Borrar la caché de descubrimiento',

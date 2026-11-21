@@ -433,7 +433,6 @@
     "importSettings": "आयात सेटिंग्स",
     "importSettingsDescription": "फ़ाइल से प्राथमिकताओं को पुनर्स्थापित करें",
     "importSettingsConfirm": "यह आपके वर्तमान सेटिंग्स को प्रतिस्थापित करेगा. आगे?",
-    "importSettingsSuccess": "आयातित सेटिंग्स",
     "importSettingsCounts": "लागू की गई सेटिंग: ${applied}। छोड़ी गई सेटिंग: ${skipped}।",
     "importSettingsInvalidFile": "यह फ़ाइल एक वैध Pleazyng सेटिंग्स निर्यात नहीं है",
     "importSettingsNoUser": "आयात से पहले इनपुट करें",
@@ -447,7 +446,6 @@
     "cloudBackupComplete": "बैकअप अपलोड हो गया है। यह URL सहेज लें। नई स्थापना के बाद इसे क्लाउड बैकअप में दर्ज करें और “${action}” चुनें।",
     "cloudBackupRestore": "बैकअप पुनर्स्थापित करें",
     "cloudBackupRestoreConfirm": "यह इस डिवाइस पर फिट पोर्टेबल सेटिंग्स को प्रतिस्थापित करेगा. आगे?",
-    "cloudBackupRestored": "Cloud Backup से पुनर्स्थापित सेटिंग्स",
     "shortcutsReset": "डिफ़ॉल्ट में पुनर्स्थापित करें",
     "resetShortcutsConfirm": "यह आपके कस्टम छूट को डिफ़ॉल्ट के साथ प्रतिस्थापित करेगा. आगे?",
     "about": "के बारे",
@@ -3677,7 +3675,6 @@
     "connectedTo": "${device} पर कनेक्ट करें",
     "device": "कास्ट डिवाइस",
     "readyToCast": "कास्ट करने के लिए तैयार",
-    "subtitle": "उपशीर्षक",
     "serverNotAvailable": "मीडिया सर्वर उपलब्ध नहीं है।",
     "stopCasting": "कास्ट करना बंद करें",
     "startFailed": "सर्वर की जांच करें और फिर से कोशिश करें।"

@@ -41,7 +41,6 @@ class TranslationsEs419 extends TranslationsEs with BaseTranslations<AppLocale, 
 	TranslationsEs419 $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEs419(meta: meta ?? this.$meta);
 
 	// Translations
-	@override late final _Translations$cast$es_419 cast = _Translations$cast$es_419._(_root);
 	@override late final _Translations$appIcon$es_419 appIcon = _Translations$appIcon$es_419._(_root);
 	@override late final _Translations$auth$es_419 auth = _Translations$auth$es_419._(_root);
 	@override late final _Translations$common$es_419 common = _Translations$common$es_419._(_root);
@@ -90,16 +89,6 @@ class TranslationsEs419 extends TranslationsEs with BaseTranslations<AppLocale, 
 	@override late final _Translations$musicTools$es_419 musicTools = _Translations$musicTools$es_419._(_root);
 	@override late final _Translations$musicExperience$es_419 musicExperience = _Translations$musicExperience$es_419._(_root);
 	@override late final _Translations$subtitleAiUi$es_419 subtitleAiUi = _Translations$subtitleAiUi$es_419._(_root);
-}
-
-// Path: cast
-class _Translations$cast$es_419 extends Translations$cast$es {
-	_Translations$cast$es_419._(TranslationsEs419 root) : this._root = root, super.internal(root);
-
-	final TranslationsEs419 _root; // ignore: unused_field
-
-	// Translations
-	@override String get subtitle => 'Subtítulos';
 }
 
 // Path: appIcon
@@ -1365,7 +1354,6 @@ class _Translations$services$libraryFilter$es_419 extends Translations$services$
 extension on TranslationsEs419 {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'cast.subtitle' => 'Subtítulos',
 			'appIcon.defaultIcon' => 'Por defecto',
 			'auth.quickConnect' => 'Conexión rápida',
 			'auth.useQuickConnect' => 'Usar «Conexión rápida»',
@@ -1877,9 +1865,9 @@ extension on TranslationsEs419 {
 			'romm.exitConfirm' => 'Finish this game session?',
 			'romm.saveExitHelp' => 'Save your progress before leaving. Keep this screen open until saving finishes.',
 			'romm.starting' => 'Starting game…',
+			'romm.connecting' => 'Connecting…',
 			_ => null,
 		} ?? switch (path) {
-			'romm.connecting' => 'Connecting…',
 			'romm.busy' => 'The streaming computer is occupied.',
 			'romm.streamEnded' => 'The streaming session ended.',
 			'romm.retry' => 'Try again',

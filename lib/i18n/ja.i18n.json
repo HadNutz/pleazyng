@@ -431,7 +431,6 @@
     "importSettings": "設定をインポート",
     "importSettingsDescription": "ファイルから設定を復元",
     "importSettingsConfirm": "現在の設定を置き換えます。続行しますか？",
-    "importSettingsSuccess": "設定をインポートしました",
     "importSettingsCounts": "適用した設定：${applied}件。スキップ：${skipped}件。",
     "importSettingsInvalidFile": "このファイルは有効なPlezyの設定エクスポートではありません",
     "importSettingsNoUser": "設定をインポートする前にサインインしてください",
@@ -445,7 +444,6 @@
     "cloudBackupComplete": "バックアップをアップロードしました。このURLを保存してください。再インストール後、クラウドバックアップ画面にこのURLを入力し、「${action}」を選んでください。",
     "cloudBackupRestore": "バックアップ復元",
     "cloudBackupRestoreConfirm": "これは、このデバイス上の適合する携帯設定を置き換えるでしょう。",
-    "cloudBackupRestored": "設定は、Cloud Backup から復元",
     "shortcutsReset": "ショートカットをデフォルトにリセットしました",
     "resetShortcutsConfirm": "カスタムショートカットがデフォルトに置き換えられます。続行しますか？",
     "about": "アプリについて",
@@ -3673,7 +3671,6 @@
     "connectedTo": "接続番号: ${device}",
     "device": "キャストデバイス",
     "readyToCast": "投げる準備",
-    "subtitle": "字幕",
     "serverNotAvailable": "メディアサーバーは利用できません。",
     "stopCasting": "キャストをやめる",
     "startFailed": "サーバーをチェックして再度試してみる"

@@ -431,7 +431,6 @@
     "importSettings": "Cài đặt Import",
     "importSettingsDescription": "khôi phục các tùy chọn từ một tệp",
     "importSettingsConfirm": "Điều này sẽ thay thế cài đặt hiện tại của bạn. tiếp tục?",
-    "importSettingsSuccess": "Cài đặt nhập khẩu",
     "importSettingsCounts": "Cài đặt đã áp dụng: ${applied}. Đã bỏ qua: ${skipped}.",
     "importSettingsInvalidFile": "Tệp này không phải là một hợp lệ Pleazyng cài đặt xuất khẩu",
     "importSettingsNoUser": "Đăng nhập trước khi nhập cài đặt",
@@ -445,7 +444,6 @@
     "cloudBackupComplete": "Đã tải bản sao lưu lên. Hãy lưu URL này. Sau khi cài đặt lại, nhập URL này vào mục sao lưu đám mây rồi chọn “${action}”.",
     "cloudBackupRestore": "khôi phục backup",
     "cloudBackupRestoreConfirm": "Điều này sẽ thay thế các cài đặt di động phù hợp trên thiết bị này.",
-    "cloudBackupRestored": "Cài đặt khôi phục từ Cloud Backup",
     "shortcutsReset": "Tải về Shortcuts to defaults",
     "resetShortcutsConfirm": "Điều này sẽ thay thế các shortcuts tùy chỉnh của bạn với các default.",
     "about": "Về",
@@ -3656,7 +3654,6 @@
     "connectedTo": "Kết nối với ${device}",
     "device": "Thiết bị truyền",
     "readyToCast": "Sẵn sàng truyền",
-    "subtitle": "Phụ đề",
     "serverNotAvailable": "Server phương tiện truyền thông không sẵn dùng.",
     "stopCasting": "Dừng truyền",
     "startFailed": "Không thể bắt đầu casting. kiểm tra máy chủ và thử lại."

@@ -573,7 +573,6 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String get importSettings => 'Cài đặt Import';
 	@override String get importSettingsDescription => 'khôi phục các tùy chọn từ một tệp';
 	@override String get importSettingsConfirm => 'Điều này sẽ thay thế cài đặt hiện tại của bạn. tiếp tục?';
-	@override String get importSettingsSuccess => 'Cài đặt nhập khẩu';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Cài đặt đã áp dụng: ${applied}. Đã bỏ qua: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Tệp này không phải là một hợp lệ Pleazyng cài đặt xuất khẩu';
 	@override String get importSettingsNoUser => 'Đăng nhập trước khi nhập cài đặt';
@@ -587,7 +586,6 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Đã tải bản sao lưu lên. Hãy lưu URL này. Sau khi cài đặt lại, nhập URL này vào mục sao lưu đám mây rồi chọn “${action}”.';
 	@override String get cloudBackupRestore => 'khôi phục backup';
 	@override String get cloudBackupRestoreConfirm => 'Điều này sẽ thay thế các cài đặt di động phù hợp trên thiết bị này.';
-	@override String get cloudBackupRestored => 'Cài đặt khôi phục từ Cloud Backup';
 	@override String get shortcutsReset => 'Tải về Shortcuts to defaults';
 	@override String get resetShortcutsConfirm => 'Điều này sẽ thay thế các shortcuts tùy chỉnh của bạn với các default.';
 	@override String get about => 'Về';
@@ -3106,7 +3104,6 @@ class _Translations$cast$vi extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Kết nối với ${device}';
 	@override String get device => 'Thiết bị truyền';
 	@override String get readyToCast => 'Sẵn sàng truyền';
-	@override String get subtitle => 'Phụ đề';
 	@override String get serverNotAvailable => 'Server phương tiện truyền thông không sẵn dùng.';
 	@override String get stopCasting => 'Dừng truyền';
 	@override String get startFailed => 'Không thể bắt đầu casting. kiểm tra máy chủ và thử lại.';
@@ -6025,7 +6022,6 @@ extension on TranslationsVi {
 			'settings.importSettings' => 'Cài đặt Import',
 			'settings.importSettingsDescription' => 'khôi phục các tùy chọn từ một tệp',
 			'settings.importSettingsConfirm' => 'Điều này sẽ thay thế cài đặt hiện tại của bạn. tiếp tục?',
-			'settings.importSettingsSuccess' => 'Cài đặt nhập khẩu',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Cài đặt đã áp dụng: ${applied}. Đã bỏ qua: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Tệp này không phải là một hợp lệ Pleazyng cài đặt xuất khẩu',
 			'settings.importSettingsNoUser' => 'Đăng nhập trước khi nhập cài đặt',
@@ -6039,7 +6035,6 @@ extension on TranslationsVi {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Đã tải bản sao lưu lên. Hãy lưu URL này. Sau khi cài đặt lại, nhập URL này vào mục sao lưu đám mây rồi chọn “${action}”.',
 			'settings.cloudBackupRestore' => 'khôi phục backup',
 			'settings.cloudBackupRestoreConfirm' => 'Điều này sẽ thay thế các cài đặt di động phù hợp trên thiết bị này.',
-			'settings.cloudBackupRestored' => 'Cài đặt khôi phục từ Cloud Backup',
 			'settings.shortcutsReset' => 'Tải về Shortcuts to defaults',
 			'settings.resetShortcutsConfirm' => 'Điều này sẽ thay thế các shortcuts tùy chỉnh của bạn với các default.',
 			'settings.about' => 'Về',
@@ -6137,10 +6132,10 @@ extension on TranslationsVi {
 			'settings.manageLibrariesDescription' => 'Đặt lại và ẩn thư viện',
 			'settings.companionRemoteServer' => 'Dịch vụ Remote Server',
 			'settings.companionRemoteServerDescription' => 'Cho phép các thiết bị di động trên mạng của bạn để kiểm soát ứng dụng này',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
 			'settings.companionRemoteServerStopFailed' => 'Không thể dừng lại máy chủ đồng nghiệp',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Ảnh Auto Picture in Picture',
 			'settings.autoPipDescription' => 'Tự động nhập hình ảnh trong khi bạn rời khỏi ứng dụng trong khi chơi',
 			'settings.matchContentFrameRate' => 'Match Content Frame Tỷ lệ',
@@ -6651,10 +6646,10 @@ extension on TranslationsVi {
 			'accessibility.boldTextHint' => 'Sử dụng trọng lượng nặng hơn cho các nhãn giao diện và tin nhắn để làm cho chúng dễ dàng phân biệt.',
 			'tooltips.shufflePlay' => 'Shuffle chơi',
 			'tooltips.playTrailer' => 'Trò chơi Trailer',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark theo dõi',
 			'tooltips.markAsUnwatched' => 'Mark như không được xem',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Âm thanh Track ${n}',
 			'videoControls.audioLabel' => 'Âm thanh',
 			'videoControls.subtitlesLabel' => 'Phụ đề',
@@ -7165,10 +7160,10 @@ extension on TranslationsVi {
 			'errors.connectionTimeout' => ({required Object context}) => 'Thời gian kết nối trong khi tải ${context}',
 			'errors.connectionFailed' => 'Không thể kết nối với Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'Không thể tải ${context}. xin vui lòng thử lại.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Không có khách hàng',
 			'errors.pleaseEnterToken' => 'Vui lòng nhập token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Mã xác thực không hợp lệ',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Không xác minh token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Không thể chuyển sang ${displayName}',
@@ -7679,10 +7674,10 @@ extension on TranslationsVi {
 			'playlists.emptyPlaylist' => 'Danh sách game này trống',
 			'playlists.deleteConfirm' => 'xóa playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Bạn có chắc chắn bạn muốn xóa "${name}" không?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist tạo ra',
 			'playlists.deleted' => 'Playlist xóa',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Thêm vào playlist',
 			'playlists.itemRemoved' => 'Xóa khỏi playlist',
 			'playlists.selectPlaylist' => 'Chọn Playlist',
@@ -8193,10 +8188,10 @@ extension on TranslationsVi {
 			'performanceOverlay.transfer' => 'Chuyển đổi',
 			'performanceOverlay.renderFps' => 'Đánh giá FPS',
 			'performanceOverlay.displayFps' => 'Hiển thị FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V đồng bộ',
 			'performanceOverlay.dropped' => 'bị rơi',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Đánh giá RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'Đánh giá DV Sample Avg',
@@ -8628,7 +8623,6 @@ extension on TranslationsVi {
 			'cast.connectedTo' => ({required Object device}) => 'Kết nối với ${device}',
 			'cast.device' => 'Thiết bị truyền',
 			'cast.readyToCast' => 'Sẵn sàng truyền',
-			'cast.subtitle' => 'Phụ đề',
 			'cast.serverNotAvailable' => 'Server phương tiện truyền thông không sẵn dùng.',
 			'cast.stopCasting' => 'Dừng truyền',
 			'cast.startFailed' => 'Không thể bắt đầu casting. kiểm tra máy chủ và thử lại.',
@@ -8707,11 +8701,11 @@ extension on TranslationsVi {
 			'homeLayout.showInRecommended' => 'Hiển thị trong Thư viện khuyến cáo',
 			'homeLayout.customPlexRow' => 'Tính năng: Plex',
 			'homeLayout.heroNeedsLibrary' => 'Kiểm tra Thư viện đầu tiên — Hero cần một nơi nào đó để hiển thị',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'Kiểm tra Thư viện hoặc Nhà đầu tiên — Anh hùng cần một nơi nào đó để hiển thị',
 			'homeLayout.removeHub' => 'Xóa Hub',
 			'homeLayout.noPlexRows' => 'Số Plex hàng quản lý đã trở lại cho thư viện này.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'chi tiết mở',
 			'homeLayout.heroCards' => 'thẻ anh hùng',
 			'homeLayout.tapHeroCard' => 'Tải thẻ anh hùng',
@@ -9221,11 +9215,11 @@ extension on TranslationsVi {
 			'audiobook.recoveryHelp' => 'Xuất một bản sao được mã hóa gần đây trước khi di chuyển hoặc sửa chữa dữ liệu đồng bộ. nhập khẩu kết hợp với trạng thái hiện tại; họ không bao giờ thay thế lịch sử đồng bộ địa phương. Giữ mã đồng bộ riêng biệt.',
 			'audiobook.recoveryExport' => 'Xuất khẩu file recovery mã hóa',
 			'audiobook.recoveryImport' => 'nhập file recovery mã hóa',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'Kết hợp tệp phục hồi mã hóa này với các vị trí đọc và ghi chú hiện tại? Lịch sử hiện có sẽ được giữ lại. Thư viện chia sẻ và ID mục không bao gồm; thiết lập ID phù hợp trên mỗi thiết bị trước khi nhập khẩu.',
 			'audiobook.recoveryExported' => 'Tệp phục hồi mã hóa đã được lưu.',
 			'audiobook.recoveryImported' => 'Dữ liệu phục hồi kết hợp.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Đăng nhập bằng tài khoản BookOrbit của riêng bạn để duyệt và phát sách. Yêu cầu các tựa sách còn thiếu vẫn được gửi qua phiên bản SeerrNG đã kết nối.',
 			'sourceSetup.bookorbitOpen' => 'Mở trong BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Xem tựa sách này trong BookOrbit để quản lý thông tin thư viện và các định dạng Pleazyng không thể mở. Tiến độ nghe được đồng bộ với tài khoản BookOrbit của bạn.',
@@ -9735,11 +9729,11 @@ extension on TranslationsVi {
 			'musicTools.home' => 'Nhạc',
 			'musicTools.recent' => 'Đã phát gần đây',
 			'musicTools.apiKey' => 'Khóa API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'phút',
 			'musicTools.rules' => 'Bộ lọc',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Đầu ra âm thanh độc quyền',
 			'musicTools.preamp' => 'Tiền khuếch đại',
 			'musicTools.ratingPending' => 'Đã lưu trên thiết bị này; đang chờ đồng bộ',

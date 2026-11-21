@@ -573,7 +573,6 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get importSettings => 'การตั้งค่าการนําเข้า';
 	@override String get importSettingsDescription => 'การกู้คืนความต้องการจากไฟล์';
 	@override String get importSettingsConfirm => 'สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?';
-	@override String get importSettingsSuccess => 'การตั้งค่าที่นําเข้า';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ';
 	@override String get importSettingsInvalidFile => 'ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng';
 	@override String get importSettingsNoUser => 'ลงทะเบียนก่อนนําเข้าการตั้งค่า';
@@ -587,7 +586,6 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'อัปโหลดข้อมูลสำรองแล้ว โปรดเก็บ URL นี้ไว้ หลังจากติดตั้งแอปใหม่ ให้ป้อน URL นี้ในหน้าสำรองข้อมูลบนคลาวด์ แล้วเลือก “${action}”';
 	@override String get cloudBackupRestore => 'การกู้คืน Backup';
 	@override String get cloudBackupRestoreConfirm => 'สิ่งนี้จะแทนที่การตั้งค่าแบบพกพาที่ตรงกับอุปกรณ์นี้. ต่อไป?';
-	@override String get cloudBackupRestored => 'การตั้งค่าที่ได้รับการกู้คืนจาก Cloud Backup';
 	@override String get shortcutsReset => 'ระยะสั้นที่กําหนดเอง';
 	@override String get resetShortcutsConfirm => 'นี่จะแทนที่การสั้น ๆ ที่กําหนดเองของคุณด้วยข้อกําหนดต่อไปหรือไม่?';
 	@override String get about => 'เกี่ยวกับ';
@@ -3106,7 +3104,6 @@ class _Translations$cast$th extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'เชื่อมต่อ ${device}';
 	@override String get device => 'อุปกรณ์แคสต์';
 	@override String get readyToCast => 'พร้อมแคสต์';
-	@override String get subtitle => 'คำบรรยาย';
 	@override String get serverNotAvailable => 'เซิร์ฟเวอร์สื่อไม่สามารถใช้ได้';
 	@override String get stopCasting => 'หยุดแคสต์';
 	@override String get startFailed => 'ไม่สามารถเริ่ม casting ตรวจสอบเซิร์ฟเวอร์และลองอีกครั้ง';
@@ -6025,7 +6022,6 @@ extension on TranslationsTh {
 			'settings.importSettings' => 'การตั้งค่าการนําเข้า',
 			'settings.importSettingsDescription' => 'การกู้คืนความต้องการจากไฟล์',
 			'settings.importSettingsConfirm' => 'สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?',
-			'settings.importSettingsSuccess' => 'การตั้งค่าที่นําเข้า',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ',
 			'settings.importSettingsInvalidFile' => 'ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng',
 			'settings.importSettingsNoUser' => 'ลงทะเบียนก่อนนําเข้าการตั้งค่า',
@@ -6039,7 +6035,6 @@ extension on TranslationsTh {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'อัปโหลดข้อมูลสำรองแล้ว โปรดเก็บ URL นี้ไว้ หลังจากติดตั้งแอปใหม่ ให้ป้อน URL นี้ในหน้าสำรองข้อมูลบนคลาวด์ แล้วเลือก “${action}”',
 			'settings.cloudBackupRestore' => 'การกู้คืน Backup',
 			'settings.cloudBackupRestoreConfirm' => 'สิ่งนี้จะแทนที่การตั้งค่าแบบพกพาที่ตรงกับอุปกรณ์นี้. ต่อไป?',
-			'settings.cloudBackupRestored' => 'การตั้งค่าที่ได้รับการกู้คืนจาก Cloud Backup',
 			'settings.shortcutsReset' => 'ระยะสั้นที่กําหนดเอง',
 			'settings.resetShortcutsConfirm' => 'นี่จะแทนที่การสั้น ๆ ที่กําหนดเองของคุณด้วยข้อกําหนดต่อไปหรือไม่?',
 			'settings.about' => 'เกี่ยวกับ',
@@ -6137,10 +6132,10 @@ extension on TranslationsTh {
 			'settings.manageLibrariesDescription' => 'การจัดเก็บและซ่อนห้องสมุด',
 			'settings.companionRemoteServer' => 'เซิร์ฟเวอร์ระยะไกล',
 			'settings.companionRemoteServerDescription' => 'ให้อุปกรณ์มือถือบนเครือข่ายของคุณควบคุมแอปนี้',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
 			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
 			'settings.matchContentFrameRate' => 'Match Content Frame Rate ความเร็ว',
@@ -6651,10 +6646,10 @@ extension on TranslationsTh {
 			'accessibility.boldTextHint' => 'ใช้น้ําหนักที่หนักขึ้นสําหรับแท็กอินเตอร์เฟซและข้อความเพื่อให้ง่ายต่อการแยกต่างหาก',
 			'tooltips.shufflePlay' => 'เล่น Shuffle',
 			'tooltips.playTrailer' => 'เล่น Trailer',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
 			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'ลวดเสียง ${n}',
 			'videoControls.audioLabel' => 'เสียง',
 			'videoControls.subtitlesLabel' => 'คำบรรยาย',
@@ -7165,10 +7160,10 @@ extension on TranslationsTh {
 			'errors.connectionTimeout' => ({required Object context}) => 'เวลาการเชื่อมต่อเมื่อโหลด ${context}',
 			'errors.connectionFailed' => 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์สื่อ',
 			'errors.unableToLoad' => ({required Object context}) => 'ไม่สามารถโหลด ${context} โปรดลองอีกครั้ง',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'ไม่มีลูกค้า',
 			'errors.pleaseEnterToken' => 'กรุณาใส่ token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'โค้นที่ผิดพลาด',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'ไม่สามารถตรวจสอบ token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'ไม่สามารถเปลี่ยนไป ${displayName}',
@@ -7679,10 +7674,10 @@ extension on TranslationsTh {
 			'playlists.emptyPlaylist' => 'รายการเล่นนี้ว่างเปล่า',
 			'playlists.deleteConfirm' => 'ลบ Playlist',
 			'playlists.deleteMessage' => ({required Object name}) => 'คุณแน่ใจว่าคุณต้องการลบ "${name}"',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist สร้างขึ้น',
 			'playlists.deleted' => 'Playlist ลบ',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'เพิ่มขึ้นใน Playlist',
 			'playlists.itemRemoved' => 'ลบออกจาก Playlist',
 			'playlists.selectPlaylist' => 'เลือก Playlist',
@@ -8193,10 +8188,10 @@ extension on TranslationsTh {
 			'performanceOverlay.transfer' => 'การถ่ายโอน',
 			'performanceOverlay.renderFps' => 'ฟิล์ม',
 			'performanceOverlay.displayFps' => 'แสดง FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'ละลาย',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'DV ตัวอย่าง Avg',
@@ -8628,7 +8623,6 @@ extension on TranslationsTh {
 			'cast.connectedTo' => ({required Object device}) => 'เชื่อมต่อ ${device}',
 			'cast.device' => 'อุปกรณ์แคสต์',
 			'cast.readyToCast' => 'พร้อมแคสต์',
-			'cast.subtitle' => 'คำบรรยาย',
 			'cast.serverNotAvailable' => 'เซิร์ฟเวอร์สื่อไม่สามารถใช้ได้',
 			'cast.stopCasting' => 'หยุดแคสต์',
 			'cast.startFailed' => 'ไม่สามารถเริ่ม casting ตรวจสอบเซิร์ฟเวอร์และลองอีกครั้ง',
@@ -8707,11 +8701,11 @@ extension on TranslationsTh {
 			'homeLayout.showInRecommended' => 'แสดงในห้องสมุดแนะนํา',
 			'homeLayout.customPlexRow' => 'คู่มือ Plex รอบ',
 			'homeLayout.heroNeedsLibrary' => 'ตรวจสอบห้องสมุดแรก — Hero ต้องการที่ไหนที่จะแสดง',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
 			'homeLayout.removeHub' => 'ลบ Hub',
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
 			'homeLayout.heroCards' => 'บัตรฮีโร่',
 			'homeLayout.tapHeroCard' => 'การสูญเสียการ์ดฮีโร่',
@@ -9221,11 +9215,11 @@ extension on TranslationsTh {
 			'audiobook.recoveryHelp' => 'Export a recent encrypted copy before moving or repairing sync data. นําเข้ามาพร้อมกับสถานะปัจจุบัน พวกเขาไม่เคยแทนที่ประวัติการซิงค์ในท้องถิ่น ให้รหัสซิงโครแยกกัน',
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImport' => 'นําเข้าไฟล์การกู้คืนที่เข้ารหัส',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
 			'audiobook.recoveryExported' => 'ไฟล์การกู้คืนที่เข้ารหัสถูกบันทึก',
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
 			'sourceSetup.bookorbitOpen' => 'เปิดใน BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'ดูเรื่องนี้ใน BookOrbit เพื่อจัดการรายละเอียดในคลังและรูปแบบไฟล์ที่ Pleazyng เปิดไม่ได้ ความคืบหน้าในการฟังจะซิงค์กับบัญชี BookOrbit ของคุณ',
@@ -9735,11 +9729,11 @@ extension on TranslationsTh {
 			'musicTools.home' => 'เพลง',
 			'musicTools.recent' => 'เล่นล่าสุด',
 			'musicTools.apiKey' => 'คีย์ API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'หมายเลขรุ่น: A',
 			'musicTools.minutes' => 'นาที',
 			'musicTools.rules' => 'ฟิล์ม',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',
 			'musicTools.ratingPending' => 'บันทึกบนอุปกรณ์นี้แล้ว รอซิงค์',

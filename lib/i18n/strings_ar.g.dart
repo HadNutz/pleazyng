@@ -583,7 +583,6 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get importSettings => 'إعدادات الواردات';
 	@override String get importSettingsDescription => 'استعادة تفضيلات من ملف';
 	@override String get importSettingsConfirm => 'هذا سيحل محل إعداداتك الحالية.مواصلة؟';
-	@override String get importSettingsSuccess => 'الإعدادات المستوردة';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'هذا الملف غير صالحة Pleazyng إعدادات تصدير';
 	@override String get importSettingsNoUser => 'تسجيل الدخول قبل استيراد الإعدادات';
@@ -597,7 +596,6 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».';
 	@override String get cloudBackupRestore => 'استعادة النسخ الاحتياطي';
 	@override String get cloudBackupRestoreConfirm => 'هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.';
-	@override String get cloudBackupRestored => 'إعدادات استعادة من النسخ الاحتياطي السحابية';
 	@override String get shortcutsReset => 'إعادة تعيين القصص إلى الافتراضات';
 	@override String get resetShortcutsConfirm => 'هذا سوف يحل محل اختصاراتك المخصصة مع الافتراضات.';
 	@override String get about => 'حول';
@@ -3201,7 +3199,6 @@ class _Translations$cast$ar extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'متصل بـ ${device}';
 	@override String get device => 'جهاز البث';
 	@override String get readyToCast => 'جاهز للبث';
-	@override String get subtitle => 'الترجمة';
 	@override String get serverNotAvailable => 'خادم الوسائط غير متاح.';
 	@override String get stopCasting => 'إيقاف البث';
 	@override String get startFailed => 'تعذر بدء البث. تحقق من الخادم وحاول مرة أخرى.';
@@ -6150,7 +6147,6 @@ extension on TranslationsAr {
 			'settings.importSettings' => 'إعدادات الواردات',
 			'settings.importSettingsDescription' => 'استعادة تفضيلات من ملف',
 			'settings.importSettingsConfirm' => 'هذا سيحل محل إعداداتك الحالية.مواصلة؟',
-			'settings.importSettingsSuccess' => 'الإعدادات المستوردة',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'هذا الملف غير صالحة Pleazyng إعدادات تصدير',
 			'settings.importSettingsNoUser' => 'تسجيل الدخول قبل استيراد الإعدادات',
@@ -6164,7 +6160,6 @@ extension on TranslationsAr {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».',
 			'settings.cloudBackupRestore' => 'استعادة النسخ الاحتياطي',
 			'settings.cloudBackupRestoreConfirm' => 'هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.',
-			'settings.cloudBackupRestored' => 'إعدادات استعادة من النسخ الاحتياطي السحابية',
 			'settings.shortcutsReset' => 'إعادة تعيين القصص إلى الافتراضات',
 			'settings.resetShortcutsConfirm' => 'هذا سوف يحل محل اختصاراتك المخصصة مع الافتراضات.',
 			'settings.about' => 'حول',
@@ -6262,10 +6257,10 @@ extension on TranslationsAr {
 			'settings.manageLibrariesDescription' => 'إعادة ترتيب وإخفاء المكتبات',
 			'settings.companionRemoteServer' => 'الخادم عن بعد',
 			'settings.companionRemoteServerDescription' => 'السماح للأجهزة المحمولة على شبكتك بالتحكم في هذا التطبيق',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'لا يمكن إطلاق الخادم المرافق',
 			'settings.companionRemoteServerStopFailed' => 'لا يمكن إيقاف الخادم المرافق',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'صورة في صورة Auto Picture',
 			'settings.autoPipDescription' => 'إدخال صورة في الصورة تلقائيًا عند مغادرة التطبيق أثناء تشغيل',
 			'settings.matchContentFrameRate' => 'مقارنة محتوى إطار معدل',
@@ -6776,10 +6771,10 @@ extension on TranslationsAr {
 			'accessibility.boldTextHint' => 'استخدم وزنًا أثقل لعلامات الواجهة والرسائل لجعلها أسهل في التمييز.',
 			'tooltips.shufflePlay' => 'لعبة Shuffle',
 			'tooltips.playTrailer' => 'لعبة تريلر',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'مارك كما شاهدت',
 			'tooltips.markAsUnwatched' => 'مارك غير ملاحظة',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'سياق الصوت ${n}',
 			'videoControls.audioLabel' => 'الصوت',
 			'videoControls.subtitlesLabel' => 'الترجمة',
@@ -7290,10 +7285,10 @@ extension on TranslationsAr {
 			'errors.connectionTimeout' => ({required Object context}) => 'اتصال الوقت أثناء التحميل ${context}',
 			'errors.connectionFailed' => 'عدم القدرة على الاتصال بـ Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'لا يمكن تحميل ${context}. يرجى المحاولة مرة أخرى.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'لا يوجد عميل متاح',
 			'errors.pleaseEnterToken' => 'يرجى إدخال علامة',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'الرموز المعاقبة',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'عدم التحقق من الرموز: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'لم يتم تحويلها إلى ${displayName}',
@@ -7804,10 +7799,10 @@ extension on TranslationsAr {
 			'playlists.emptyPlaylist' => 'هذه القائمة فارغة',
 			'playlists.deleteConfirm' => 'إلغاء اللعب؟',
 			'playlists.deleteMessage' => ({required Object name}) => 'هل أنت متأكد من أنك تريد إزالة "${name}"؟',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'لعبة تم إنشاءها',
 			'playlists.deleted' => 'Playlist حذف',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'إضافة إلى playlist',
 			'playlists.itemRemoved' => 'إزالة من قائمة اللعب',
 			'playlists.selectPlaylist' => 'اختيار Playlist',
@@ -8318,10 +8313,10 @@ extension on TranslationsAr {
 			'performanceOverlay.transfer' => 'نقل',
 			'performanceOverlay.renderFps' => 'رينجر FPS',
 			'performanceOverlay.displayFps' => 'عرض FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V التزامن',
 			'performanceOverlay.dropped' => 'انقطاع',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'رويترز RPU Avg',
 			'performanceOverlay.dvSampleAverage' => 'DV نموذج Avg',
@@ -8753,7 +8748,6 @@ extension on TranslationsAr {
 			'cast.connectedTo' => ({required Object device}) => 'متصل بـ ${device}',
 			'cast.device' => 'جهاز البث',
 			'cast.readyToCast' => 'جاهز للبث',
-			'cast.subtitle' => 'الترجمة',
 			'cast.serverNotAvailable' => 'خادم الوسائط غير متاح.',
 			'cast.stopCasting' => 'إيقاف البث',
 			'cast.startFailed' => 'تعذر بدء البث. تحقق من الخادم وحاول مرة أخرى.',
@@ -8832,11 +8826,11 @@ extension on TranslationsAr {
 			'homeLayout.showInRecommended' => 'إظهار ضمن توصيات المكتبة',
 			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
 			'homeLayout.heroNeedsLibrary' => 'حدّد المكتبة أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'حدّد المكتبة أو الصفحة الرئيسية أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			'homeLayout.removeHub' => 'إزالة قسم المحتوى',
 			'homeLayout.noPlexRows' => 'لم يُرجع Plex أي صفوف يديرها لهذه المكتبة.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'فتح التفاصيل',
 			'homeLayout.heroCards' => 'البطاقات البارزة',
 			'homeLayout.tapHeroCard' => 'عند النقر على بطاقة بارزة',
@@ -9346,11 +9340,11 @@ extension on TranslationsAr {
 			'audiobook.recoveryHelp' => 'تصدير نسخة مشفرة مؤخرا قبل نقل أو إصلاح بيانات المزامنة.يتم دمج الواردات مع الحالة الحالية؛ أنها لا تحل محل تاريخ المزامن المحلي.',
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
 			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'هل يجمع هذا ملف إعادة التأهيل المشفر مع مواقف القراءة الحالية والملاحظات؟ سيتم الحفاظ على التاريخ الحالي. لا يتم تضمين المكتبة المشتركة ومعارف العناصر؛ قم بتعيين المعارف المقابلة على كل جهاز قبل الاستيراد.',
 			'audiobook.recoveryExported' => 'تم حفظ ملف الاسترداد المشفر.',
 			'audiobook.recoveryImported' => 'استرداد البيانات مترابطة.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'سجّل الدخول باستخدام حساب BookOrbit الخاص بك لتصفح كتبه وتشغيلها. تظل طلبات العناوين غير المتوفرة تمر عبر مثيل SeerrNG المتصل بك.',
 			'sourceSetup.bookorbitOpen' => 'افتح في BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'اعرض هذا العنوان في BookOrbit لإدارة تفاصيله في مكتبتك وأي تنسيقات لا يستطيع Pleazyng فتحها. تتم مزامنة تقدم الاستماع مع حسابك في BookOrbit.',
@@ -9860,11 +9854,11 @@ extension on TranslationsAr {
 			'musicTools.home' => 'الموسيقى',
 			'musicTools.recent' => 'تم تشغيلها مؤخرًا',
 			'musicTools.apiKey' => 'مفتاح API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'دقائق',
 			'musicTools.rules' => 'الفلاتر',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'إخراج صوت حصري',
 			'musicTools.preamp' => 'التضخيم المسبق',
 			'musicTools.ratingPending' => 'حُفظ على هذا الجهاز؛ بانتظار المزامنة',

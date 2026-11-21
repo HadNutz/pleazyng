@@ -433,7 +433,6 @@
     "importSettings": "Beállítások importálása",
     "importSettingsDescription": "Beállítások visszaállítása fájlból",
     "importSettingsConfirm": "Ez felülírja a jelenlegi beállításaidat. Folytatod?",
-    "importSettingsSuccess": "Beállítások importálva",
     "importSettingsCounts": "Alkalmazott beállítások: ${applied}. Kihagyva: ${skipped}.",
     "importSettingsInvalidFile": "Ez a fájl nem érvényes Pleazyng-beállításexport",
     "importSettingsNoUser": "Jelentkezz be a beállítások importálása előtt",
@@ -447,7 +446,6 @@
     "cloudBackupComplete": "A biztonsági mentés feltöltve. Mentsd el ezt az URL-t. Új telepítés után add meg a felhőalapú mentésnél, majd válaszd ezt: „${action}”.",
     "cloudBackupRestore": "Backup visszaállítása",
     "cloudBackupRestoreConfirm": "Ez helyettesíti a hordozható beállítások megfelelését ezen a készüléken.",
-    "cloudBackupRestored": "A felhő biztonsági mentéséből helyreállított beállítások",
     "shortcutsReset": "A billentyűparancsok visszaálltak az alapértelmezettekre",
     "resetShortcutsConfirm": "Ezzel az egyéni billentyűparancsaid helyére az alapértelmezettek kerülnek. Folytatod?",
     "about": "Névjegy",
@@ -3677,7 +3675,6 @@
     "connectedTo": "Kapcsolódó oldalak ${device}",
     "device": "Cast eszköz",
     "readyToCast": "Kész a kiadásra",
-    "subtitle": "Feliratok",
     "serverNotAvailable": "A média szerver nem elérhető.",
     "stopCasting": "Csatlakozás megáll",
     "startFailed": "Nem tudok elkezdeni a szétválasztást. ellenőrizze a szervert, és próbáljon újra."

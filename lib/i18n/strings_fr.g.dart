@@ -578,7 +578,6 @@ class Translations$settings$fr extends Translations$settings$en {
 	@override String get importSettings => 'Importer les paramètres';
 	@override String get importSettingsDescription => 'Restaurer les préférences depuis un fichier';
 	@override String get importSettingsConfirm => 'Cela remplacera vos paramètres actuels. Continuer ?';
-	@override String get importSettingsSuccess => 'Paramètres importés';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Paramètres appliqués : ${applied}. Ignorés : ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Ce fichier n’est pas une exportation valide des paramètres de Pleazyng';
 	@override String get importSettingsNoUser => 'Connectez-vous avant d’importer les paramètres';
@@ -592,7 +591,6 @@ class Translations$settings$fr extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Sauvegarde envoyée. Conservez cette URL. Après une nouvelle installation, saisissez-la dans la rubrique de sauvegarde en ligne et choisissez « ${action} ».';
 	@override String get cloudBackupRestore => 'Récupérer Backup';
 	@override String get cloudBackupRestoreConfirm => 'Cela remplacera les paramètres portables correspondants sur ce dispositif.';
-	@override String get cloudBackupRestored => 'Récupération de la récupération de la sauvegarde cloud';
 	@override String get shortcutsReset => 'Raccourcis réinitialisés aux valeurs par défaut';
 	@override String get resetShortcutsConfirm => 'Cela remplacera vos raccourcis personnalisés par les raccourcis par défaut. Continuer ?';
 	@override String get about => 'À propos';
@@ -3142,7 +3140,6 @@ class Translations$cast$fr extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Connectez-vous à ${device}';
 	@override String get device => 'Dispositif de casting';
 	@override String get readyToCast => 'Prêt à lancer';
-	@override String get subtitle => 'Sous-titres';
 	@override String get serverNotAvailable => 'Le serveur de médias n’est pas disponible.';
 	@override String get stopCasting => 'Arrêter de casting';
 	@override String get startFailed => 'Je ne peux pas commencer à lancer. vérifier le serveur et essayer à nouveau.';
@@ -6094,7 +6091,6 @@ extension on TranslationsFr {
 			'settings.importSettings' => 'Importer les paramètres',
 			'settings.importSettingsDescription' => 'Restaurer les préférences depuis un fichier',
 			'settings.importSettingsConfirm' => 'Cela remplacera vos paramètres actuels. Continuer ?',
-			'settings.importSettingsSuccess' => 'Paramètres importés',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Paramètres appliqués : ${applied}. Ignorés : ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Ce fichier n’est pas une exportation valide des paramètres de Pleazyng',
 			'settings.importSettingsNoUser' => 'Connectez-vous avant d’importer les paramètres',
@@ -6108,7 +6104,6 @@ extension on TranslationsFr {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Sauvegarde envoyée. Conservez cette URL. Après une nouvelle installation, saisissez-la dans la rubrique de sauvegarde en ligne et choisissez « ${action} ».',
 			'settings.cloudBackupRestore' => 'Récupérer Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Cela remplacera les paramètres portables correspondants sur ce dispositif.',
-			'settings.cloudBackupRestored' => 'Récupération de la récupération de la sauvegarde cloud',
 			'settings.shortcutsReset' => 'Raccourcis réinitialisés aux valeurs par défaut',
 			'settings.resetShortcutsConfirm' => 'Cela remplacera vos raccourcis personnalisés par les raccourcis par défaut. Continuer ?',
 			'settings.about' => 'À propos',
@@ -6206,10 +6201,10 @@ extension on TranslationsFr {
 			'settings.manageLibrariesDescription' => 'Réorganiser et masquer les bibliothèques',
 			'settings.companionRemoteServer' => 'Serveur de télécommande',
 			'settings.companionRemoteServerDescription' => 'Autoriser les appareils mobiles de votre réseau à contrôler cette application',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Impossible de démarrer le serveur de télécommande',
 			'settings.companionRemoteServerStopFailed' => 'Impossible d\'arrêter le serveur de télécommande',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Mode image dans l’image automatique',
 			'settings.autoPipDescription' => 'Passer en mode image dans l’image si vous quittez l’application pendant la lecture',
 			'settings.matchContentFrameRate' => 'Adapter la fréquence d’images au contenu',
@@ -6720,10 +6715,10 @@ extension on TranslationsFr {
 			'accessibility.boldTextHint' => 'Utilisez un poids plus lourd pour les étiquettes et les messages d’interface afin de les rendre plus faciles à distinguer.',
 			'tooltips.shufflePlay' => 'Lecture aléatoire',
 			'tooltips.playTrailer' => 'Lire la bande-annonce',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Marquer comme vu',
 			'tooltips.markAsUnwatched' => 'Marquer comme non vu',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Piste audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Sous-titres',
@@ -7234,10 +7229,10 @@ extension on TranslationsFr {
 			'discover.person.born' => 'Naissance',
 			'discover.person.died' => 'Décès',
 			'discover.person.birthplace' => 'Lieu de naissance',
-			_ => null,
-		} ?? switch (path) {
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} ans)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (à ${age} ans)',
+			_ => null,
+		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => 'Échec de la recherche : ${error}',
 			'errors.searchUnavailable' => 'La recherche n\'a pu atteindre aucun serveur multimédia.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Délai d\'attente de connexion dépassé pendant le chargement ${context}',
@@ -7748,10 +7743,10 @@ extension on TranslationsFr {
 			'playlists.create' => 'Créer une playlist',
 			'playlists.playlistName' => 'Nom de playlist',
 			'playlists.enterPlaylistName' => 'Saisissez le nom de la playlist',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.delete' => 'Supprimer la playlist',
 			'playlists.removeItem' => 'Retirer de la playlist',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.smartPlaylist' => 'Playlist intelligente',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} élément', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} éléments', ), 
 			'playlists.emptyPlaylist' => 'Cette playlist est vide',
@@ -8262,10 +8257,10 @@ extension on TranslationsFr {
 			'performanceOverlay.dvRouteFelGraphActive' => 'Graphique expérimental P7 FEL (non qualifié)',
 			'performanceOverlay.p7Conversion' => 'Conv. P7',
 			'performanceOverlay.sampleRate' => 'Fréquence d’échantillonnage',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.pixelFormat' => 'Fmt pixel',
 			'performanceOverlay.hwFormat' => 'Fmt HW',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.matrix' => 'Matrice',
 			'performanceOverlay.primaries' => 'Primaires',
 			'performanceOverlay.transfer' => 'Transfert',
@@ -8704,7 +8699,6 @@ extension on TranslationsFr {
 			'cast.connectedTo' => ({required Object device}) => 'Connectez-vous à ${device}',
 			'cast.device' => 'Dispositif de casting',
 			'cast.readyToCast' => 'Prêt à lancer',
-			'cast.subtitle' => 'Sous-titres',
 			'cast.serverNotAvailable' => 'Le serveur de médias n’est pas disponible.',
 			'cast.stopCasting' => 'Arrêter de casting',
 			'cast.startFailed' => 'Je ne peux pas commencer à lancer. vérifier le serveur et essayer à nouveau.',
@@ -8776,11 +8770,11 @@ extension on TranslationsFr {
 			'homeLayout.selectRowsFirst' => 'Sélectionnez les lignes de maison ci-dessous d\'abord.',
 			'homeLayout.plexManagedRows' => ({required Object n}) => '${n} Plex rangées gérées',
 			'homeLayout.continueWatching' => 'Continuer à regarder',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.continueWatchingLibraryDescription' => 'La suite de la bibliothèque de la suite',
 			'homeLayout.continueWatchingHomeDescription' => 'Le nouveau progrès de la ligne montrée sur Home',
 			'homeLayout.nextUpHomeDescription' => 'La prochaine série de l\'épisode non vu diffusée séparément sur Home',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.library' => 'Bibliothèque',
 			'homeLayout.showInRecommended' => 'Présentation dans la bibliothèque recommandée',
 			'homeLayout.customPlexRow' => 'Résultats de la Plex',
@@ -9290,11 +9284,11 @@ extension on TranslationsFr {
 			'audiobook.sortSeries' => 'Commande série',
 			'audiobook.sortRecent' => 'récemment ouvert',
 			'audiobook.statusFilter' => 'Le statut de lecture',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.statusAll' => 'Tous les livres',
 			'audiobook.statusNew' => 'Pas commencé',
 			'audiobook.statusProgress' => 'Au progrès',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.statusFinished' => 'terminé',
 			'audiobook.goToTime' => 'Aller dans le temps',
 			'audiobook.timeHelp' => 'Hores : minutes : secondes ou minutes : secondes',
@@ -9804,11 +9798,11 @@ extension on TranslationsFr {
 			'musicExperience.unknown' => 'Inconnu',
 			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
 			'musicExperience.autoDriving' => 'Ouvrir le mode conduite à la connexion à une voiture',
-			_ => null,
-		} ?? switch (path) {
 			'musicExperience.routeHint' => 'Le système de la voiture décide si l’application peut s’afficher automatiquement.',
 			'musicExperience.bluetoothDriving' => 'Sorties Bluetooth pour la conduite',
 			'musicExperience.bluetoothDrivingHint' => 'Choisissez les sorties Bluetooth connectées qui ouvrent automatiquement la vue conduite.',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessMissing' => 'Aucune donnée de sonie renvoyée',
 			'musicTools.loudnessRequested' => 'Demande d’analyse envoyée',
 			'musicTools.loudnessUnsupported' => 'Cette version du serveur ne prend pas en charge les demandes d’analyse',

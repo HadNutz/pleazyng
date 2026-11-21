@@ -899,7 +899,7 @@ void main() {
       addTearDown(db.close);
       final serverId = ServerId('plex-machine');
       final profileScope = buildPlexProfileScopeId(serverId: serverId, profileId: 'profile-a');
-      final transferScope = buildPlexTransferScopeId(serverId);
+      final transferScope = PlexTransferScopeId(serverId);
       await db.insertDownload(
         serverId: serverId,
         clientScopeId: profileScope,
@@ -968,7 +968,7 @@ void main() {
       final serverId = ServerId('plex-machine');
       const globalKey = 'plex-machine:item-1';
       final originalScope = buildPlexProfileScopeId(serverId: serverId, profileId: 'profile-a');
-      final transferScope = buildPlexTransferScopeId(serverId);
+      final transferScope = PlexTransferScopeId(serverId);
       final destinationScope = buildPlexProfileScopeId(serverId: serverId, profileId: 'profile-b');
       for (final profileId in const ['profile-a', 'profile-b']) {
         await db

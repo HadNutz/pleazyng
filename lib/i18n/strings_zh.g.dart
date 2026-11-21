@@ -573,7 +573,6 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String get importSettings => '导入设置';
 	@override String get importSettingsDescription => '从文件恢复偏好设置';
 	@override String get importSettingsConfirm => '这将替换您当前的设置。继续吗？';
-	@override String get importSettingsSuccess => '设置已导入';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => '已应用设置：${applied} 项。已跳过：${skipped} 项。';
 	@override String get importSettingsInvalidFile => '此文件不是有效的 Pleazyng 设置导出';
 	@override String get importSettingsNoUser => '导入设置前请先登录';
@@ -587,7 +586,6 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => '备份已上传。请保存此网址。重新安装后，在云备份中输入此网址，然后选择“${action}”。';
 	@override String get cloudBackupRestore => '恢复备份';
 	@override String get cloudBackupRestoreConfirm => '此将取代该设备上的相匹配移动设置。';
-	@override String get cloudBackupRestored => '從雲端儲備恢復的設定';
 	@override String get shortcutsReset => '快捷键已重置为默认值';
 	@override String get resetShortcutsConfirm => '这将用默认快捷键替换你的自定义快捷键。继续吗？';
 	@override String get about => '关于';
@@ -3121,7 +3119,6 @@ class Translations$cast$zh extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '连接到 ${device}';
 	@override String get device => '加密装置';
 	@override String get readyToCast => '准备放';
-	@override String get subtitle => '字幕';
 	@override String get serverNotAvailable => '媒体服务器不适用。';
 	@override String get stopCasting => '停止加密';
 	@override String get startFailed => '无法开始投射,检查服务器并尝试一次。';
@@ -6045,7 +6042,6 @@ extension on TranslationsZh {
 			'settings.importSettings' => '导入设置',
 			'settings.importSettingsDescription' => '从文件恢复偏好设置',
 			'settings.importSettingsConfirm' => '这将替换您当前的设置。继续吗？',
-			'settings.importSettingsSuccess' => '设置已导入',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '已应用设置：${applied} 项。已跳过：${skipped} 项。',
 			'settings.importSettingsInvalidFile' => '此文件不是有效的 Pleazyng 设置导出',
 			'settings.importSettingsNoUser' => '导入设置前请先登录',
@@ -6059,7 +6055,6 @@ extension on TranslationsZh {
 			'settings.cloudBackupComplete' => ({required Object action}) => '备份已上传。请保存此网址。重新安装后，在云备份中输入此网址，然后选择“${action}”。',
 			'settings.cloudBackupRestore' => '恢复备份',
 			'settings.cloudBackupRestoreConfirm' => '此将取代该设备上的相匹配移动设置。',
-			'settings.cloudBackupRestored' => '從雲端儲備恢復的設定',
 			'settings.shortcutsReset' => '快捷键已重置为默认值',
 			'settings.resetShortcutsConfirm' => '这将用默认快捷键替换你的自定义快捷键。继续吗？',
 			'settings.about' => '关于',
@@ -6157,10 +6152,10 @@ extension on TranslationsZh {
 			'settings.manageLibrariesDescription' => '重新排序和隐藏媒体库',
 			'settings.companionRemoteServer' => '远程控制服务器',
 			'settings.companionRemoteServerDescription' => '允许同一网络中的移动设备控制此应用',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => '无法启动远程控制服务器',
 			'settings.companionRemoteServerStopFailed' => '无法停止远程控制服务器',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => '自动画中画',
 			'settings.autoPipDescription' => '播放期间离开应用时自动进入画中画模式',
 			'settings.matchContentFrameRate' => '匹配内容帧率',
@@ -6671,10 +6666,10 @@ extension on TranslationsZh {
 			'accessibility.boldTextHint' => '加粗界面标签和消息的字重，让它们更容易辨认。',
 			'tooltips.shufflePlay' => '随机播放',
 			'tooltips.playTrailer' => '播放预告片',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => '标记为已观看',
 			'tooltips.markAsUnwatched' => '标记为未观看',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => '音轨 ${n}',
 			'videoControls.audioLabel' => '音频',
 			'videoControls.subtitlesLabel' => '字幕',
@@ -7185,10 +7180,10 @@ extension on TranslationsZh {
 			'errors.connectionTimeout' => ({required Object context}) => '加载 ${context} 时连接超时',
 			'errors.connectionFailed' => '无法连接到媒体服务器',
 			'errors.unableToLoad' => ({required Object context}) => '无法加载${context}。请重试。',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => '没有可用客户端',
 			'errors.pleaseEnterToken' => '请输入一个令牌',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => '令牌无效',
 			'errors.failedToVerifyToken' => ({required Object error}) => '无法验证令牌：${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '无法切换到 ${displayName}',
@@ -7699,10 +7694,10 @@ extension on TranslationsZh {
 			'playlists.emptyPlaylist' => '此播放列表为空',
 			'playlists.deleteConfirm' => '删除播放列表？',
 			'playlists.deleteMessage' => ({required Object name}) => '确定要删除“${name}”吗？',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => '播放列表已创建',
 			'playlists.deleted' => '播放列表已删除',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => '已添加到播放列表',
 			'playlists.itemRemoved' => '已从播放列表中移除',
 			'playlists.selectPlaylist' => '选择播放列表',
@@ -8213,10 +8208,10 @@ extension on TranslationsZh {
 			'performanceOverlay.transfer' => '传递特性',
 			'performanceOverlay.renderFps' => '渲染 FPS',
 			'performanceOverlay.displayFps' => '显示 FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V 同步',
 			'performanceOverlay.dropped' => '丢帧',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			'performanceOverlay.dvSampleAverage' => 'DV 采样平均',
@@ -8648,7 +8643,6 @@ extension on TranslationsZh {
 			'cast.connectedTo' => ({required Object device}) => '连接到 ${device}',
 			'cast.device' => '加密装置',
 			'cast.readyToCast' => '准备放',
-			'cast.subtitle' => '字幕',
 			'cast.serverNotAvailable' => '媒体服务器不适用。',
 			'cast.stopCasting' => '停止加密',
 			'cast.startFailed' => '无法开始投射,检查服务器并尝试一次。',
@@ -8727,11 +8721,11 @@ extension on TranslationsZh {
 			'homeLayout.showInRecommended' => '图书馆推荐',
 			'homeLayout.customPlexRow' => '定制 Plex 行',
 			'homeLayout.heroNeedsLibrary' => '查看图书馆首先 - 英雄需要在某处展示',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => '查看图书馆或家先 - 英雄需要在某处展示',
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex号管理行返回此图书馆。',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => '开放细节',
 			'homeLayout.heroCards' => '英雄卡',
 			'homeLayout.tapHeroCard' => '打破英雄卡',
@@ -9241,11 +9235,11 @@ extension on TranslationsZh {
 			'audiobook.recoveryHelp' => '移动或修复同步数据前，请先导出近期的加密备份。导入内容会与当前状态合并，不会覆盖本地同步历史。请另行保存同步代码。',
 			'audiobook.recoveryExport' => '输出加密恢复文件',
 			'audiobook.recoveryImport' => '输入加密恢复文件',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => '将此加密恢复文件与当前阅读位置和笔记相结合吗?现有历史记录将被保留. 共享图书馆和项目 ID 不包含; 在进口之前,在每个设备上设置匹配 ID。',
 			'audiobook.recoveryExported' => '加密恢复文件保存。',
 			'audiobook.recoveryImported' => '恢复数据合并。',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => '使用你自己的 BookOrbit 账户登录，即可浏览和播放书籍。缺少的书名仍会通过已连接的 SeerrNG 实例提交请求。',
 			'sourceSetup.bookorbitOpen' => '在 BookOrbit 中打开',
 			'sourceSetup.bookorbitDetailHelp' => '在 BookOrbit 中查看此书，以管理书库详情和 Pleazyng 无法打开的格式。收听进度会与您的 BookOrbit 账户同步。',
@@ -9755,11 +9749,11 @@ extension on TranslationsZh {
 			'musicTools.home' => '音乐',
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 密钥',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分钟',
 			'musicTools.rules' => '筛选',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => '独占音频输出',
 			'musicTools.preamp' => '前置放大',
 			'musicTools.ratingPending' => '已保存在此设备；等待同步',

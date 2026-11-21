@@ -433,7 +433,6 @@
     "importSettings": "Tənzimləmələri idxal et",
     "importSettingsDescription": "Seçimləri fayldan bərpa edin",
     "importSettingsConfirm": "Bu cari tənzimləmələrinizin üzərinə yazacaq. Davam edilsin?",
-    "importSettingsSuccess": "Tənzimləmələr idxal edildi",
     "importSettingsCounts": "Tətbiq olunan ayarlar: ${applied}. Buraxılan: ${skipped}.",
     "importSettingsInvalidFile": "Bu fayl düzgün Pleazyng tənzimləmələr faylı deyil",
     "importSettingsNoUser": "Tənzimləmələri idxal etməzdən əvvəl daxil olun",
@@ -447,7 +446,6 @@
     "cloudBackupComplete": "Ehtiyat nüsxə yükləndi. Bu URL-i saxlayın. Tətbiqi yenidən quraşdırdıqdan sonra URL-i bulud ehtiyat nüsxəsi bölməsinə daxil edin və “${action}” seçin.",
     "cloudBackupRestore": "Backup qayıtmaq",
     "cloudBackupRestoreConfirm": "Bu, bu cihazda uyumlu mobil ayarların yerini alacaq.",
-    "cloudBackupRestored": "“Cloud Backup”dan qayıtılmış ayarlar",
     "shortcutsReset": "Qısayollar defolt vəziyyətə sıfırlandı",
     "resetShortcutsConfirm": "Bu, xüsusi qısayollarınızı defolt qısayollarla əvəz edəcək. Davam edilsin?",
     "about": "Haqqında",
@@ -3677,7 +3675,6 @@
     "connectedTo": "Qəzaqə ${device}",
     "device": "Xatırma aparatı",
     "readyToCast": "Hazır atmaq",
-    "subtitle": "Altyazılar",
     "serverNotAvailable": "Medya serveri yoxdur.",
     "stopCasting": "Qısağı durdurma",
     "startFailed": "Yayımı başlatmaq mümkün olmadı. Serveri yoxlayın və yenidən cəhd edin."

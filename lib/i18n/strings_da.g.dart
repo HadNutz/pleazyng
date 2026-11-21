@@ -575,7 +575,6 @@ class _Translations$settings$da extends Translations$settings$en {
 	@override String get importSettings => 'Importér indstillinger';
 	@override String get importSettingsDescription => 'Gendan præferencer fra en fil';
 	@override String get importSettingsConfirm => 'Dette vil erstatte dine nuværende indstillinger. Fortsæt?';
-	@override String get importSettingsSuccess => 'Indstillinger importeret';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Anvendte indstillinger: ${applied}. Sprunget over: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Denne fil er ikke en gyldig eksport af Pleazyng-indstillinger';
 	@override String get importSettingsNoUser => 'Log ind før import af indstillinger';
@@ -589,7 +588,6 @@ class _Translations$settings$da extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Sikkerhedskopien er uploadet. Gem denne URL. Indtast den under sikkerhedskopiering i skyen efter en ny installation, og vælg »${action}«.';
 	@override String get cloudBackupRestore => 'Giv backup tilbage';
 	@override String get cloudBackupRestoreConfirm => 'Dette vil erstatte matching bærbare indstillinger på denne enhed.';
-	@override String get cloudBackupRestored => 'Indstillinger tilbagevendt fra cloud backup';
 	@override String get shortcutsReset => 'Genveje nulstillet til standard';
 	@override String get resetShortcutsConfirm => 'Dette vil erstatte dine tilpassede genveje med standardgenvejene. Fortsæt?';
 	@override String get about => 'Om';
@@ -3125,7 +3123,6 @@ class _Translations$cast$da extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Tilslut til ${device}';
 	@override String get device => 'Cast udstyr';
 	@override String get readyToCast => 'Klar til at kastes';
-	@override String get subtitle => 'Undertekster';
 	@override String get serverNotAvailable => 'Media server er ikke tilgængelig.';
 	@override String get stopCasting => 'Stop med casting';
 	@override String get startFailed => 'Kan ikke begynde at kaste. tjek serveren og prøv igen.';
@@ -6050,7 +6047,6 @@ extension on TranslationsDa {
 			'settings.importSettings' => 'Importér indstillinger',
 			'settings.importSettingsDescription' => 'Gendan præferencer fra en fil',
 			'settings.importSettingsConfirm' => 'Dette vil erstatte dine nuværende indstillinger. Fortsæt?',
-			'settings.importSettingsSuccess' => 'Indstillinger importeret',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Anvendte indstillinger: ${applied}. Sprunget over: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Denne fil er ikke en gyldig eksport af Pleazyng-indstillinger',
 			'settings.importSettingsNoUser' => 'Log ind før import af indstillinger',
@@ -6064,7 +6060,6 @@ extension on TranslationsDa {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Sikkerhedskopien er uploadet. Gem denne URL. Indtast den under sikkerhedskopiering i skyen efter en ny installation, og vælg »${action}«.',
 			'settings.cloudBackupRestore' => 'Giv backup tilbage',
 			'settings.cloudBackupRestoreConfirm' => 'Dette vil erstatte matching bærbare indstillinger på denne enhed.',
-			'settings.cloudBackupRestored' => 'Indstillinger tilbagevendt fra cloud backup',
 			'settings.shortcutsReset' => 'Genveje nulstillet til standard',
 			'settings.resetShortcutsConfirm' => 'Dette vil erstatte dine tilpassede genveje med standardgenvejene. Fortsæt?',
 			'settings.about' => 'Om',
@@ -6162,10 +6157,10 @@ extension on TranslationsDa {
 			'settings.manageLibrariesDescription' => 'Omarranger og skjul biblioteker',
 			'settings.companionRemoteServer' => 'Fjernbetjeningsserver',
 			'settings.companionRemoteServerDescription' => 'Tillad mobilenheder på dit netværk at styre denne app',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Fjernbetjeningsserveren kunne ikke startes',
 			'settings.companionRemoteServerStopFailed' => 'Fjernbetjeningsserveren kunne ikke stoppes',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Automatisk billede-i-billede',
 			'settings.autoPipDescription' => 'Skift automatisk til billede-i-billede, når du forlader appen under afspilning',
 			'settings.matchContentFrameRate' => 'Tilpas billedhastigheden til indholdet',
@@ -6676,10 +6671,10 @@ extension on TranslationsDa {
 			'accessibility.boldTextHint' => 'Brug en tyngre vægt til grænseflader og meddelelser for at gøre dem lettere at skelne.',
 			'tooltips.shufflePlay' => 'Afspil tilfældigt',
 			'tooltips.playTrailer' => 'Afspil trailer',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Markér som set',
 			'tooltips.markAsUnwatched' => 'Markér som uset',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Lydspor ${n}',
 			'videoControls.audioLabel' => 'Lyd',
 			'videoControls.subtitlesLabel' => 'Undertekster',
@@ -7190,10 +7185,10 @@ extension on TranslationsDa {
 			'errors.connectionTimeout' => ({required Object context}) => 'Forbindelsen fik timeout under indlæsning af ${context}',
 			'errors.connectionFailed' => 'Kan ikke oprette forbindelse til medieserver',
 			'errors.unableToLoad' => ({required Object context}) => 'Kunne ikke indlæse ${context}. Prøv igen.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Ingen klient tilgængelig',
 			'errors.pleaseEnterToken' => 'Indtast et token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Ugyldigt token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Kunne ikke verificere token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Kunne ikke skifte til ${displayName}',
@@ -7704,10 +7699,10 @@ extension on TranslationsDa {
 			'playlists.emptyPlaylist' => 'Denne playliste er tom',
 			'playlists.deleteConfirm' => 'Slet playliste?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Er du sikker på, at du vil slette "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playliste oprettet',
 			'playlists.deleted' => 'Playliste slettet',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Tilføjet til playliste',
 			'playlists.itemRemoved' => 'Fjernet fra playliste',
 			'playlists.selectPlaylist' => 'Vælg playliste',
@@ -8218,10 +8213,10 @@ extension on TranslationsDa {
 			'performanceOverlay.transfer' => 'Overførsel',
 			'performanceOverlay.renderFps' => 'Gengivelses-FPS',
 			'performanceOverlay.displayFps' => 'Skærm-FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-synk.',
 			'performanceOverlay.dropped' => 'Tabte',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU’er',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU gns.',
 			'performanceOverlay.dvSampleAverage' => 'DV-sample gns.',
@@ -8653,7 +8648,6 @@ extension on TranslationsDa {
 			'cast.connectedTo' => ({required Object device}) => 'Tilslut til ${device}',
 			'cast.device' => 'Cast udstyr',
 			'cast.readyToCast' => 'Klar til at kastes',
-			'cast.subtitle' => 'Undertekster',
 			'cast.serverNotAvailable' => 'Media server er ikke tilgængelig.',
 			'cast.stopCasting' => 'Stop med casting',
 			'cast.startFailed' => 'Kan ikke begynde at kaste. tjek serveren og prøv igen.',
@@ -8732,11 +8726,11 @@ extension on TranslationsDa {
 			'homeLayout.showInRecommended' => 'Udstilling i biblioteket anbefalet',
 			'homeLayout.customPlexRow' => 'Tilpasset Plex række',
 			'homeLayout.heroNeedsLibrary' => 'Se biblioteket først – Hero har brug for et sted at vise',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'Se biblioteket eller hjemmet først – Hero har brug for et sted at vise',
 			'homeLayout.removeHub' => 'Fjern Hub',
 			'homeLayout.noPlexRows' => 'Plex-forvaltet række tilbage til denne bibliotek.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Åbne detaljer',
 			'homeLayout.heroCards' => 'Hjælp kort',
 			'homeLayout.tapHeroCard' => 'Tapping af en helt kort',
@@ -9246,11 +9240,11 @@ extension on TranslationsDa {
 			'audiobook.recoveryHelp' => 'Eksporter en nylig krypteret kopi, før du flytter eller reparerer synkroniseringsdata. Importer fusioneres med den aktuelle tilstand; de erstattes aldrig lokal synkroniseringshistorie. Hold synkronkoden adskilt.',
 			'audiobook.recoveryExport' => 'Eksport krypteret genopretning filer',
 			'audiobook.recoveryImport' => 'Import krypteret genopretning filer',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'Kombinere denne krypterede genopretning fil med nuværende læsningspositioner og noter? eksisterende historie vil blive bevaret. Delte bibliotek og element ID\'er er ikke inkluderet; indstille matching ID\'erne på hver enhed før import.',
 			'audiobook.recoveryExported' => 'Den krypterede genopretningsfil er gemt.',
 			'audiobook.recoveryImported' => 'Genopretning af data sammensat.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Log ind med din egen BookOrbit-konto for at gennemse og afspille dens bøger. Anmodninger om manglende titler går stadig gennem din tilsluttede SeerrNG-instans.',
 			'sourceSetup.bookorbitOpen' => 'Åbn i BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Se denne titel i BookOrbit for at administrere biblioteksoplysninger og formater, som Pleazyng ikke kan åbne. Lyttefremskridt synkroniseres med din BookOrbit-konto.',
@@ -9760,11 +9754,11 @@ extension on TranslationsDa {
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senest afspillet',
 			'musicTools.apiKey' => 'API-nøgle',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minutter',
 			'musicTools.rules' => 'Filtre',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Eksklusiv lydudgang',
 			'musicTools.preamp' => 'Forforstærkning',
 			'musicTools.ratingPending' => 'Gemt på denne enhed; afventer synkronisering',

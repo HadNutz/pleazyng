@@ -435,7 +435,6 @@
     "importSettings": "Importar configuración",
     "importSettingsDescription": "Restaurar preferencias desde un archivo",
     "importSettingsConfirm": "Esto reemplazará tu configuración actual. ¿Continuar?",
-    "importSettingsSuccess": "Configuración importada",
     "importSettingsCounts": "Ajustes aplicados: ${applied}. Omitidos: ${skipped}.",
     "importSettingsInvalidFile": "Este archivo no es una exportación válida de Pleazyng",
     "importSettingsNoUser": "Inicia sesión antes de importar la configuración",
@@ -449,7 +448,6 @@
     "cloudBackupComplete": "Se ha subido la copia de seguridad. Guarda esta URL. Tras una nueva instalación, introdúcela en la sección de copias de seguridad en la nube y selecciona «${action}».",
     "cloudBackupRestore": "Restaurar la Backup",
     "cloudBackupRestoreConfirm": "Esto sustituirá las configuraciones portátiles que se ajustan a este dispositivo.",
-    "cloudBackupRestored": "Configuraciones restauradas de la backup en la nube",
     "shortcutsReset": "Atajos restablecidos a los valores predeterminados",
     "resetShortcutsConfirm": "Esto reemplazará tus atajos personalizados por los predeterminados. ¿Continuar?",
     "about": "Acerca de",
@@ -3681,7 +3679,6 @@
     "connectedTo": "Conectado a ${device}",
     "device": "Dispositivo de Cast",
     "readyToCast": "Prepara para lanzar",
-    "subtitle": "Subtítulos",
     "serverNotAvailable": "El servidor de medios no está disponible.",
     "stopCasting": "Dejar de casting",
     "startFailed": "No puedo empezar a casting. comprobar el servidor y intentarlo de nuevo."

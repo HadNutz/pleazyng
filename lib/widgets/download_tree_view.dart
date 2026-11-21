@@ -601,7 +601,6 @@ class _DownloadTreeItem extends StatefulWidget {
   final int depth;
   final bool isExpanded;
   final VoidCallback onToggleExpansion;
-  final void Function(String globalKey)? onMissingMetadata;
   final void Function(String globalKey)? onPause;
   final void Function(String globalKey)? onResume;
   final void Function(String globalKey)? onRetry;
@@ -621,7 +620,6 @@ class _DownloadTreeItem extends StatefulWidget {
     required this.depth,
     required this.isExpanded,
     required this.onToggleExpansion,
-    this.onMissingMetadata,
     this.onPause,
     this.onResume,
     this.onRetry,

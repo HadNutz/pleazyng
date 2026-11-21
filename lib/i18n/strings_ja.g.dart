@@ -573,7 +573,6 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get importSettings => '設定をインポート';
 	@override String get importSettingsDescription => 'ファイルから設定を復元';
 	@override String get importSettingsConfirm => '現在の設定を置き換えます。続行しますか？';
-	@override String get importSettingsSuccess => '設定をインポートしました';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => '適用した設定：${applied}件。スキップ：${skipped}件。';
 	@override String get importSettingsInvalidFile => 'このファイルは有効なPlezyの設定エクスポートではありません';
 	@override String get importSettingsNoUser => '設定をインポートする前にサインインしてください';
@@ -587,7 +586,6 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'バックアップをアップロードしました。このURLを保存してください。再インストール後、クラウドバックアップ画面にこのURLを入力し、「${action}」を選んでください。';
 	@override String get cloudBackupRestore => 'バックアップ復元';
 	@override String get cloudBackupRestoreConfirm => 'これは、このデバイス上の適合する携帯設定を置き換えるでしょう。';
-	@override String get cloudBackupRestored => '設定は、Cloud Backup から復元';
 	@override String get shortcutsReset => 'ショートカットをデフォルトにリセットしました';
 	@override String get resetShortcutsConfirm => 'カスタムショートカットがデフォルトに置き換えられます。続行しますか？';
 	@override String get about => 'アプリについて';
@@ -3121,7 +3119,6 @@ class _Translations$cast$ja extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '接続番号: ${device}';
 	@override String get device => 'キャストデバイス';
 	@override String get readyToCast => '投げる準備';
-	@override String get subtitle => '字幕';
 	@override String get serverNotAvailable => 'メディアサーバーは利用できません。';
 	@override String get stopCasting => 'キャストをやめる';
 	@override String get startFailed => 'サーバーをチェックして再度試してみる';
@@ -6045,7 +6042,6 @@ extension on TranslationsJa {
 			'settings.importSettings' => '設定をインポート',
 			'settings.importSettingsDescription' => 'ファイルから設定を復元',
 			'settings.importSettingsConfirm' => '現在の設定を置き換えます。続行しますか？',
-			'settings.importSettingsSuccess' => '設定をインポートしました',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '適用した設定：${applied}件。スキップ：${skipped}件。',
 			'settings.importSettingsInvalidFile' => 'このファイルは有効なPlezyの設定エクスポートではありません',
 			'settings.importSettingsNoUser' => '設定をインポートする前にサインインしてください',
@@ -6059,7 +6055,6 @@ extension on TranslationsJa {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'バックアップをアップロードしました。このURLを保存してください。再インストール後、クラウドバックアップ画面にこのURLを入力し、「${action}」を選んでください。',
 			'settings.cloudBackupRestore' => 'バックアップ復元',
 			'settings.cloudBackupRestoreConfirm' => 'これは、このデバイス上の適合する携帯設定を置き換えるでしょう。',
-			'settings.cloudBackupRestored' => '設定は、Cloud Backup から復元',
 			'settings.shortcutsReset' => 'ショートカットをデフォルトにリセットしました',
 			'settings.resetShortcutsConfirm' => 'カスタムショートカットがデフォルトに置き換えられます。続行しますか？',
 			'settings.about' => 'アプリについて',
@@ -6157,10 +6152,10 @@ extension on TranslationsJa {
 			'settings.manageLibrariesDescription' => 'ライブラリを並べ替えたり非表示にしたりできます',
 			'settings.companionRemoteServer' => 'コンパニオンリモートサーバー',
 			'settings.companionRemoteServerDescription' => 'ネットワーク上のモバイルデバイスからこのアプリを操作できるようにする',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
 			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			'settings.autoPipDescription' => '再生中にアプリを離れると、自動的にピクチャーインピクチャーに切り替えます',
 			'settings.matchContentFrameRate' => 'コンテンツのフレームレートに合わせる',
@@ -6671,10 +6666,10 @@ extension on TranslationsJa {
 			'accessibility.boldTextHint' => 'インターフェイスラベルやメッセージに重い重さを使用して、それらを区別しやすくなります。',
 			'tooltips.shufflePlay' => 'シャッフル再生',
 			'tooltips.playTrailer' => '予告編を再生',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => '視聴済みにする',
 			'tooltips.markAsUnwatched' => '未視聴にする',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => '音声トラック${n}',
 			'videoControls.audioLabel' => '音声',
 			'videoControls.subtitlesLabel' => '字幕',
@@ -7185,10 +7180,10 @@ extension on TranslationsJa {
 			'errors.connectionTimeout' => ({required Object context}) => '${context}の読み込み中に接続がタイムアウトしました',
 			'errors.connectionFailed' => 'メディアサーバーに接続できません',
 			'errors.unableToLoad' => ({required Object context}) => '${context}を読み込めませんでした。もう一度お試しください。',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'クライアントが利用できません',
 			'errors.pleaseEnterToken' => 'トークンを入力してください',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => '無効なトークン',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'トークンの検証に失敗しました: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}への切替に失敗しました',
@@ -7699,10 +7694,10 @@ extension on TranslationsJa {
 			'playlists.emptyPlaylist' => 'このプレイリストは空です',
 			'playlists.deleteConfirm' => 'プレイリストを削除しますか？',
 			'playlists.deleteMessage' => ({required Object name}) => '「${name}」を削除しますか？',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'プレイリストを作成しました',
 			'playlists.deleted' => 'プレイリストを削除しました',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'プレイリストに追加しました',
 			'playlists.itemRemoved' => 'プレイリストから削除しました',
 			'playlists.selectPlaylist' => 'プレイリストを選択',
@@ -8213,10 +8208,10 @@ extension on TranslationsJa {
 			'performanceOverlay.transfer' => '伝達特性',
 			'performanceOverlay.renderFps' => '描画 FPS',
 			'performanceOverlay.displayFps' => '表示 FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V 同期',
 			'performanceOverlay.dropped' => 'ドロップ',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			'performanceOverlay.dvSampleAverage' => 'DV サンプル平均',
@@ -8648,7 +8643,6 @@ extension on TranslationsJa {
 			'cast.connectedTo' => ({required Object device}) => '接続番号: ${device}',
 			'cast.device' => 'キャストデバイス',
 			'cast.readyToCast' => '投げる準備',
-			'cast.subtitle' => '字幕',
 			'cast.serverNotAvailable' => 'メディアサーバーは利用できません。',
 			'cast.stopCasting' => 'キャストをやめる',
 			'cast.startFailed' => 'サーバーをチェックして再度試してみる',
@@ -8727,11 +8721,11 @@ extension on TranslationsJa {
 			'homeLayout.showInRecommended' => '図書館で紹介される',
 			'homeLayout.customPlexRow' => '定制 Plex ライン',
 			'homeLayout.heroNeedsLibrary' => '図書館をチェックするには、まずヒーローがどこかで表示する必要があります。',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => '図書館またはホームをチェックするには、まず、ヒーローがどこかで表示する必要があります。',
 			'homeLayout.removeHub' => 'ハブを削除',
 			'homeLayout.noPlexRows' => '番号 Plex 管理行がこの図書館に戻りました。',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'オープン 詳細',
 			'homeLayout.heroCards' => 'ヒーローカード',
 			'homeLayout.tapHeroCard' => 'ヒーローカードを打ち出す',
@@ -9241,11 +9235,11 @@ extension on TranslationsJa {
 			'audiobook.recoveryHelp' => '同期データを移動または修正する前に、最近暗号化されたコピーを輸出します. インポートは現在の状態と合併し、現地の同期史を決して置き換えることはありません。',
 			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
 			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'この暗号化された回復ファイルを現在の読み込みポジションとノートと組み合わせますか? 既存の歴史が保存されます. 共有図書館およびアイテムIDは含まれていません。',
 			'audiobook.recoveryExported' => '暗号化されたリハビリファイルが保存されました。',
 			'audiobook.recoveryImported' => 'リハビリデータが合併。',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'ご自身のBookOrbitアカウントにサインインすると、本を閲覧して再生できます。未登録タイトルのリクエストは、接続済みのSeerrNGインスタンスを通じて送信されます。',
 			'sourceSetup.bookorbitOpen' => 'BookOrbitで開く',
 			'sourceSetup.bookorbitDetailHelp' => 'このタイトルをBookOrbitで表示して、ライブラリの詳細やPleazyngで開けない形式を管理できます。再生位置はBookOrbitアカウントと同期されます。',
@@ -9755,11 +9749,11 @@ extension on TranslationsJa {
 			'musicTools.home' => '音楽',
 			'musicTools.recent' => '最近再生した曲',
 			'musicTools.apiKey' => 'API キー',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分',
 			'musicTools.rules' => 'フィルター',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => '排他オーディオ出力',
 			'musicTools.preamp' => 'プリアンプ',
 			'musicTools.ratingPending' => 'この端末に保存済み・同期待ち',

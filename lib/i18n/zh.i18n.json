@@ -431,7 +431,6 @@
     "importSettings": "导入设置",
     "importSettingsDescription": "从文件恢复偏好设置",
     "importSettingsConfirm": "这将替换您当前的设置。继续吗？",
-    "importSettingsSuccess": "设置已导入",
     "importSettingsCounts": "已应用设置：${applied} 项。已跳过：${skipped} 项。",
     "importSettingsInvalidFile": "此文件不是有效的 Pleazyng 设置导出",
     "importSettingsNoUser": "导入设置前请先登录",
@@ -445,7 +444,6 @@
     "cloudBackupComplete": "备份已上传。请保存此网址。重新安装后，在云备份中输入此网址，然后选择“${action}”。",
     "cloudBackupRestore": "恢复备份",
     "cloudBackupRestoreConfirm": "此将取代该设备上的相匹配移动设置。",
-    "cloudBackupRestored": "從雲端儲備恢復的設定",
     "shortcutsReset": "快捷键已重置为默认值",
     "resetShortcutsConfirm": "这将用默认快捷键替换你的自定义快捷键。继续吗？",
     "about": "关于",
@@ -3673,7 +3671,6 @@
     "connectedTo": "连接到 ${device}",
     "device": "加密装置",
     "readyToCast": "准备放",
-    "subtitle": "字幕",
     "serverNotAvailable": "媒体服务器不适用。",
     "stopCasting": "停止加密",
     "startFailed": "无法开始投射,检查服务器并尝试一次。"

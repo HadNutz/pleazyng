@@ -577,7 +577,6 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get importSettings => 'הגדרות ייבוא';
 	@override String get importSettingsDescription => 'לשחזר העדפות מתוך קובץ';
 	@override String get importSettingsConfirm => 'זה יחליף את ההגדרות הנוכחיות שלך.';
-	@override String get importSettingsSuccess => 'הגדרות ייבוא';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'הגדרות שהוחלו: ${applied}. הגדרות שדולגו: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'קובץ זה אינו ייצוא של הגדרות Pleazyng בתוקף';
 	@override String get importSettingsNoUser => 'הקלד לפני ייבוא ההגדרות';
@@ -591,7 +590,6 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'הגיבוי הועלה. יש לשמור את הכתובת הזו. לאחר התקנה חדשה, יש להזין אותה במסך הגיבוי בענן ולבחור באפשרות „${action}”.';
 	@override String get cloudBackupRestore => 'לשחזר גיבוי';
 	@override String get cloudBackupRestoreConfirm => 'זה יחליף את ההגדרות הניידות המתאימות במכשיר זה.';
-	@override String get cloudBackupRestored => 'הגדרות שחוזרות מענן גיבוי';
 	@override String get shortcutsReset => 'קצוות מחדש לתוך הפסקות';
 	@override String get resetShortcutsConfirm => 'זה יחליף את הקצוות המותאמים אישית שלך עם הפסקות.';
 	@override String get about => 'אודות';
@@ -3129,7 +3127,6 @@ class _Translations$cast$he extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'חיבור ל- ${device}';
 	@override String get device => 'מכשיר לשידור';
 	@override String get readyToCast => 'מוכן לשידור';
-	@override String get subtitle => 'כתוביות';
 	@override String get serverNotAvailable => 'שרת התקשורת אינו זמין.';
 	@override String get stopCasting => 'הפסקת השידור';
 	@override String get startFailed => 'לא יכול להתחיל לגרד.בדוק את השרת ולנסות שוב.';
@@ -6058,7 +6055,6 @@ extension on TranslationsHe {
 			'settings.importSettings' => 'הגדרות ייבוא',
 			'settings.importSettingsDescription' => 'לשחזר העדפות מתוך קובץ',
 			'settings.importSettingsConfirm' => 'זה יחליף את ההגדרות הנוכחיות שלך.',
-			'settings.importSettingsSuccess' => 'הגדרות ייבוא',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'הגדרות שהוחלו: ${applied}. הגדרות שדולגו: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'קובץ זה אינו ייצוא של הגדרות Pleazyng בתוקף',
 			'settings.importSettingsNoUser' => 'הקלד לפני ייבוא ההגדרות',
@@ -6072,7 +6068,6 @@ extension on TranslationsHe {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'הגיבוי הועלה. יש לשמור את הכתובת הזו. לאחר התקנה חדשה, יש להזין אותה במסך הגיבוי בענן ולבחור באפשרות „${action}”.',
 			'settings.cloudBackupRestore' => 'לשחזר גיבוי',
 			'settings.cloudBackupRestoreConfirm' => 'זה יחליף את ההגדרות הניידות המתאימות במכשיר זה.',
-			'settings.cloudBackupRestored' => 'הגדרות שחוזרות מענן גיבוי',
 			'settings.shortcutsReset' => 'קצוות מחדש לתוך הפסקות',
 			'settings.resetShortcutsConfirm' => 'זה יחליף את הקצוות המותאמים אישית שלך עם הפסקות.',
 			'settings.about' => 'אודות',
@@ -6170,10 +6165,10 @@ extension on TranslationsHe {
 			'settings.manageLibrariesDescription' => 'מחזירים ומסתירים ספרייה',
 			'settings.companionRemoteServer' => 'שרת מרחוק',
 			'settings.companionRemoteServerDescription' => 'תאפשר למכשירים ניידים ברשת שלך לשלוט באפליקציה זו',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'לא יכולתי להתחיל את שרת החברות',
 			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'צילום: Auto Picture in Picture',
 			'settings.autoPipDescription' => 'כניסת תמונה בתמונה באופן אוטומטי כאשר אתה עוזב את האפליקציה במהלך הצגת',
 			'settings.matchContentFrameRate' => 'תחרות תוכן Frame',
@@ -6684,10 +6679,10 @@ extension on TranslationsHe {
 			'accessibility.boldTextHint' => 'השתמש במשקל כבד יותר עבור תוויות ממשק והודעות כדי להפוך אותם קל יותר להבדיל.',
 			'tooltips.shufflePlay' => 'שושן משחק',
 			'tooltips.playTrailer' => 'משחק טריילר',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'מארק כפי שנצפה',
 			'tooltips.markAsUnwatched' => 'מארק כבלתי צפוי',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'אודיו טרק ${n}',
 			'videoControls.audioLabel' => 'שמע',
 			'videoControls.subtitlesLabel' => 'כתוביות',
@@ -7198,10 +7193,10 @@ extension on TranslationsHe {
 			'errors.connectionTimeout' => ({required Object context}) => 'זמן חיבור בזמן הטעינה ${context}',
 			'errors.connectionFailed' => 'אי אפשר להתחבר לשרת מדיה',
 			'errors.unableToLoad' => ({required Object context}) => 'אין אפשרות להעלות ${context}.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'אין לקוחות זמינים',
 			'errors.pleaseEnterToken' => 'אנא הקלד טוקן',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'טוקיו חסר תועלת',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'לא ניתן לבדוק טוקן: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'לא הצלחתי לעבור ל- ${displayName}',
@@ -7712,10 +7707,10 @@ extension on TranslationsHe {
 			'playlists.emptyPlaylist' => 'רשימת המשחקים הזאת ריקה',
 			'playlists.deleteConfirm' => 'לשחרר את Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'האם אתה בטוח שאתה רוצה למחוק את "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist שנוצר',
 			'playlists.deleted' => 'Playlist מוחלף',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'הוספת ל playlist',
 			'playlists.itemRemoved' => 'הוסרו מהפלאי',
 			'playlists.selectPlaylist' => 'בחר Playlist',
@@ -8226,10 +8221,10 @@ extension on TranslationsHe {
 			'performanceOverlay.transfer' => 'העברה',
 			'performanceOverlay.renderFps' => 'רנדה FPS',
 			'performanceOverlay.displayFps' => 'תצוגה FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V סינכרון',
 			'performanceOverlay.dropped' => 'נופל',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'דב RPU',
 			'performanceOverlay.dvRpuAverage' => 'ה-RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'דוגמאות AVG',
@@ -8661,7 +8656,6 @@ extension on TranslationsHe {
 			'cast.connectedTo' => ({required Object device}) => 'חיבור ל- ${device}',
 			'cast.device' => 'מכשיר לשידור',
 			'cast.readyToCast' => 'מוכן לשידור',
-			'cast.subtitle' => 'כתוביות',
 			'cast.serverNotAvailable' => 'שרת התקשורת אינו זמין.',
 			'cast.stopCasting' => 'הפסקת השידור',
 			'cast.startFailed' => 'לא יכול להתחיל לגרד.בדוק את השרת ולנסות שוב.',
@@ -8740,11 +8734,11 @@ extension on TranslationsHe {
 			'homeLayout.showInRecommended' => 'תגית: הספרייה המומלצת',
 			'homeLayout.customPlexRow' => 'אישית Plex שורה',
 			'homeLayout.heroNeedsLibrary' => 'ראשית, בדוק את הספרייה – גיבור צריך איפשהו להראות',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'ראשית בדוק את הספרייה או הבית – גיבור צריך איפשהו להראות',
 			'homeLayout.removeHub' => 'להסיר Hub',
 			'homeLayout.noPlexRows' => 'מספר Plex שורות המנוהלות חזרה לספריה זו.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'פרטים פתוחים',
 			'homeLayout.heroCards' => 'כרטיסי גיבור',
 			'homeLayout.tapHeroCard' => 'להדביק כרטיס גיבור',
@@ -9254,11 +9248,11 @@ extension on TranslationsHe {
 			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'שילוב זה קובץ ההחזרה מוצפן עם עמדות הקריאה הנוכחיות והערות? ההיסטוריה הקיימת תישמר. ספרייה משותפת ו- פריטים מזהים אינם נכללים; הגדרת מזהים מתאימים על כל מכשיר לפני ייבוא.',
 			'audiobook.recoveryExported' => 'קובץ ההחזרה מוצפן נשמר.',
 			'audiobook.recoveryImported' => 'נתוני ההחזרה מתמזגים.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'יש להתחבר לחשבון BookOrbit האישי שלך כדי לעיין בספרים ולנגן אותם. בקשות לכותרות חסרות עדיין עוברות דרך מופע SeerrNG המחובר שלך.',
 			'sourceSetup.bookorbitOpen' => 'פתיחה ב-BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'אפשר לצפות בכותר הזה ב-BookOrbit כדי לנהל את פרטי הספרייה ואת הפורמטים ש-Pleazyng לא יכול לפתוח. התקדמות ההאזנה מסתנכרנת עם חשבון BookOrbit שלך.',
@@ -9768,11 +9762,11 @@ extension on TranslationsHe {
 			'musicTools.home' => 'מוסיקה',
 			'musicTools.recent' => 'הושמעו לאחרונה',
 			'musicTools.apiKey' => 'מפתח API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'דקות',
 			'musicTools.rules' => 'מסננים',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'פלט שמע בלעדי',
 			'musicTools.preamp' => 'קדם־הגברה',
 			'musicTools.ratingPending' => 'נשמר במכשיר הזה; ממתין לסנכרון',

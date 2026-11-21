@@ -433,7 +433,6 @@
     "importSettings": "Importera inställningar",
     "importSettingsDescription": "Återställ inställningar från en fil",
     "importSettingsConfirm": "Detta ersätter dina nuvarande inställningar. Fortsätta?",
-    "importSettingsSuccess": "Inställningar importerade",
     "importSettingsCounts": "Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.",
     "importSettingsInvalidFile": "Filen är inte en giltig export av Pleazyng-inställningar",
     "importSettingsNoUser": "Logga in innan du importerar inställningar",
@@ -447,7 +446,6 @@
     "cloudBackupComplete": "Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.",
     "cloudBackupRestore": "Återställ backup",
     "cloudBackupRestoreConfirm": "Detta kommer att ersätta matchande bärbara inställningar på denna enhet.",
-    "cloudBackupRestored": "Inställningar återställda från moln backup",
     "shortcutsReset": "Genvägarna har återställts till standard",
     "resetShortcutsConfirm": "Detta ersätter dina anpassade genvägar med standardgenvägarna. Fortsätta?",
     "about": "Om",
@@ -3677,7 +3675,6 @@
     "connectedTo": "Anslut till ${device}",
     "device": "Castanläggning",
     "readyToCast": "Redo att kasta",
-    "subtitle": "Undertexter",
     "serverNotAvailable": "Media server är inte tillgänglig.",
     "stopCasting": "Sluta casting",
     "startFailed": "Kan inte börja kastar. kontrollera serveren och försök igen."

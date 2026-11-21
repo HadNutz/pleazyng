@@ -575,7 +575,6 @@ class _Translations$settings$hi extends Translations$settings$en {
 	@override String get importSettings => 'आयात सेटिंग्स';
 	@override String get importSettingsDescription => 'फ़ाइल से प्राथमिकताओं को पुनर्स्थापित करें';
 	@override String get importSettingsConfirm => 'यह आपके वर्तमान सेटिंग्स को प्रतिस्थापित करेगा. आगे?';
-	@override String get importSettingsSuccess => 'आयातित सेटिंग्स';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'लागू की गई सेटिंग: ${applied}। छोड़ी गई सेटिंग: ${skipped}।';
 	@override String get importSettingsInvalidFile => 'यह फ़ाइल एक वैध Pleazyng सेटिंग्स निर्यात नहीं है';
 	@override String get importSettingsNoUser => 'आयात से पहले इनपुट करें';
@@ -589,7 +588,6 @@ class _Translations$settings$hi extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'बैकअप अपलोड हो गया है। यह URL सहेज लें। नई स्थापना के बाद इसे क्लाउड बैकअप में दर्ज करें और “${action}” चुनें।';
 	@override String get cloudBackupRestore => 'बैकअप पुनर्स्थापित करें';
 	@override String get cloudBackupRestoreConfirm => 'यह इस डिवाइस पर फिट पोर्टेबल सेटिंग्स को प्रतिस्थापित करेगा. आगे?';
-	@override String get cloudBackupRestored => 'Cloud Backup से पुनर्स्थापित सेटिंग्स';
 	@override String get shortcutsReset => 'डिफ़ॉल्ट में पुनर्स्थापित करें';
 	@override String get resetShortcutsConfirm => 'यह आपके कस्टम छूट को डिफ़ॉल्ट के साथ प्रतिस्थापित करेगा. आगे?';
 	@override String get about => 'के बारे';
@@ -3125,7 +3123,6 @@ class _Translations$cast$hi extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '${device} पर कनेक्ट करें';
 	@override String get device => 'कास्ट डिवाइस';
 	@override String get readyToCast => 'कास्ट करने के लिए तैयार';
-	@override String get subtitle => 'उपशीर्षक';
 	@override String get serverNotAvailable => 'मीडिया सर्वर उपलब्ध नहीं है।';
 	@override String get stopCasting => 'कास्ट करना बंद करें';
 	@override String get startFailed => 'सर्वर की जांच करें और फिर से कोशिश करें।';
@@ -6050,7 +6047,6 @@ extension on TranslationsHi {
 			'settings.importSettings' => 'आयात सेटिंग्स',
 			'settings.importSettingsDescription' => 'फ़ाइल से प्राथमिकताओं को पुनर्स्थापित करें',
 			'settings.importSettingsConfirm' => 'यह आपके वर्तमान सेटिंग्स को प्रतिस्थापित करेगा. आगे?',
-			'settings.importSettingsSuccess' => 'आयातित सेटिंग्स',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'लागू की गई सेटिंग: ${applied}। छोड़ी गई सेटिंग: ${skipped}।',
 			'settings.importSettingsInvalidFile' => 'यह फ़ाइल एक वैध Pleazyng सेटिंग्स निर्यात नहीं है',
 			'settings.importSettingsNoUser' => 'आयात से पहले इनपुट करें',
@@ -6064,7 +6060,6 @@ extension on TranslationsHi {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'बैकअप अपलोड हो गया है। यह URL सहेज लें। नई स्थापना के बाद इसे क्लाउड बैकअप में दर्ज करें और “${action}” चुनें।',
 			'settings.cloudBackupRestore' => 'बैकअप पुनर्स्थापित करें',
 			'settings.cloudBackupRestoreConfirm' => 'यह इस डिवाइस पर फिट पोर्टेबल सेटिंग्स को प्रतिस्थापित करेगा. आगे?',
-			'settings.cloudBackupRestored' => 'Cloud Backup से पुनर्स्थापित सेटिंग्स',
 			'settings.shortcutsReset' => 'डिफ़ॉल्ट में पुनर्स्थापित करें',
 			'settings.resetShortcutsConfirm' => 'यह आपके कस्टम छूट को डिफ़ॉल्ट के साथ प्रतिस्थापित करेगा. आगे?',
 			'settings.about' => 'के बारे',
@@ -6162,10 +6157,10 @@ extension on TranslationsHi {
 			'settings.manageLibrariesDescription' => 'पुस्तकालयों को रिकॉर्ड और छिपाना',
 			'settings.companionRemoteServer' => 'रिमोट सर्वर',
 			'settings.companionRemoteServerDescription' => 'अपने नेटवर्क पर मोबाइल उपकरणों को इस ऐप को नियंत्रित करने की अनुमति दें',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'साथी सर्वर शुरू नहीं किया जा सकता',
 			'settings.companionRemoteServerStopFailed' => 'साथी सर्वर को रोक नहीं पाया',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Auto Picture-in-Picture के बारे में टिप्पणियाँ',
 			'settings.autoPipDescription' => 'स्वचालित रूप से छवि-इन-चित्र दर्ज करें जब आप प्लेबैक के दौरान ऐप छोड़ देते हैं',
 			'settings.matchContentFrameRate' => 'मैच सामग्री फ्रेम दर',
@@ -6676,10 +6671,10 @@ extension on TranslationsHi {
 			'accessibility.boldTextHint' => 'इंटरफ़ेस लेबल और संदेशों के लिए एक भारी वजन का उपयोग करें ताकि उन्हें अलग करना आसान हो सके।',
 			'tooltips.shufflePlay' => 'शूफ खेल',
 			'tooltips.playTrailer' => 'ट्रेलर खेलना',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'मार्क देखने के लिए',
 			'tooltips.markAsUnwatched' => 'अनदेखी के रूप में मार्क',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'ऑडियो ट्रैक ${n}',
 			'videoControls.audioLabel' => 'ऑडियो',
 			'videoControls.subtitlesLabel' => 'उपशीर्षक',
@@ -7190,10 +7185,10 @@ extension on TranslationsHi {
 			'errors.connectionTimeout' => ({required Object context}) => 'लोड करते समय कनेक्शन टाइम-आउट ${context}',
 			'errors.connectionFailed' => 'मीडिया सर्वर से कनेक्ट नहीं कर सकते',
 			'errors.unableToLoad' => ({required Object context}) => '${context} लोड करने में असमर्थ है. कृपया फिर से कोशिश करें.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'कोई ग्राहक उपलब्ध नहीं',
 			'errors.pleaseEnterToken' => 'कृपया एक टोकन दर्ज करें',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'अयोग्य टोकन',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'टोकन की पुष्टि नहीं की गई: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} पर स्विच करने में विफल',
@@ -7704,10 +7699,10 @@ extension on TranslationsHi {
 			'playlists.emptyPlaylist' => 'यह प्लेलिस्ट खाली है',
 			'playlists.deleteConfirm' => 'प्लेलिस्ट को हटा दें?',
 			'playlists.deleteMessage' => ({required Object name}) => 'क्या आप निश्चित हैं कि आप "${name}" को हटाना चाहते हैं?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist बनाया गया',
 			'playlists.deleted' => 'Playlist हटा दिया गया',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Playlist में शामिल',
 			'playlists.itemRemoved' => 'Playlist से हटाए गए',
 			'playlists.selectPlaylist' => 'Playlist का चयन करें',
@@ -8218,10 +8213,10 @@ extension on TranslationsHi {
 			'performanceOverlay.transfer' => 'स्थानांतरण',
 			'performanceOverlay.renderFps' => 'एफपीएस',
 			'performanceOverlay.displayFps' => 'FPS प्रदर्शित करें',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V सिंक्रनाइज़ेशन',
 			'performanceOverlay.dropped' => 'टूट गया',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'डीवी आरपीयू',
 			'performanceOverlay.dvRpuAverage' => 'डीवी आरपीयू AVG',
 			'performanceOverlay.dvSampleAverage' => 'डीवी नमूना AVG',
@@ -8653,7 +8648,6 @@ extension on TranslationsHi {
 			'cast.connectedTo' => ({required Object device}) => '${device} पर कनेक्ट करें',
 			'cast.device' => 'कास्ट डिवाइस',
 			'cast.readyToCast' => 'कास्ट करने के लिए तैयार',
-			'cast.subtitle' => 'उपशीर्षक',
 			'cast.serverNotAvailable' => 'मीडिया सर्वर उपलब्ध नहीं है।',
 			'cast.stopCasting' => 'कास्ट करना बंद करें',
 			'cast.startFailed' => 'सर्वर की जांच करें और फिर से कोशिश करें।',
@@ -8732,11 +8726,11 @@ extension on TranslationsHi {
 			'homeLayout.showInRecommended' => 'पुस्तकालय में प्रदर्शित की सिफारिश',
 			'homeLayout.customPlexRow' => 'कस्टम Plex पंक्ति',
 			'homeLayout.heroNeedsLibrary' => 'पहले पुस्तकालय की जांच करें - नायक को कहीं दिखाने की जरूरत है',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'पहले पुस्तकालय या होम की जांच करें — नायक को कहीं दिखाने की जरूरत है',
 			'homeLayout.removeHub' => 'Hub को हटाने के लिए',
 			'homeLayout.noPlexRows' => 'नंबर Plex-प्रबंधित पंक्तियां इस पुस्तकालय के लिए वापस आ गई हैं।',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'खुले विवरण',
 			'homeLayout.heroCards' => 'नायक कार्ड',
 			'homeLayout.tapHeroCard' => 'एक नायक का कार्ड',
@@ -9246,11 +9240,11 @@ extension on TranslationsHi {
 			'audiobook.recoveryHelp' => 'सिंक डेटा को स्थानांतरित या ठीक करने से पहले हाल की एन्क्रिप्टेड कॉपी निर्यात करें। आयात मौजूदा स्थिति के साथ मिलते हैं; वे स्थानीय सिंक इतिहास को कभी नहीं बदलते। सिंक कोड अलग से रखें।',
 			'audiobook.recoveryExport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइलों का निर्यात',
 			'audiobook.recoveryImport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल आयात',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'मौजूदा इतिहास बनाए रखा जाएगा. साझा पुस्तकालय और आइटम आईडी शामिल नहीं हैं; आयात करने से पहले प्रत्येक डिवाइस पर फिट आईडी सेट करें.',
 			'audiobook.recoveryExported' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल बचाया गया है।',
 			'audiobook.recoveryImported' => 'पुनर्प्राप्ति डेटा मिश्रित है।',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'अपनी BookOrbit पुस्तकों को ब्राउज़ करने और चलाने के लिए अपने BookOrbit खाते से साइन इन करें। अनुपलब्ध शीर्षकों के अनुरोध फिर भी आपके कनेक्ट किए गए SeerrNG इंस्टेंस से भेजे जाते हैं।',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit में खोलें',
 			'sourceSetup.bookorbitDetailHelp' => 'लाइब्रेरी का विवरण और वे फ़ॉर्मैट प्रबंधित करने के लिए यह शीर्षक BookOrbit में देखें जिन्हें Pleazyng खोल नहीं सकता। सुनने की प्रगति आपके BookOrbit खाते के साथ सिंक होती है।',
@@ -9760,11 +9754,11 @@ extension on TranslationsHi {
 			'musicTools.home' => 'संगीत',
 			'musicTools.recent' => 'हाल ही में सुने गए',
 			'musicTools.apiKey' => 'API कुंजी',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'ए / ए',
 			'musicTools.minutes' => 'मिनट',
 			'musicTools.rules' => 'फ़िल्टर',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'विशेष ऑडियो आउटपुट',
 			'musicTools.preamp' => 'प्रीएम्प',
 			'musicTools.ratingPending' => 'इस डिवाइस पर सहेजा गया; सिंक की प्रतीक्षा में',

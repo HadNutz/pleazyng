@@ -435,7 +435,6 @@
     "importSettings": "הגדרות ייבוא",
     "importSettingsDescription": "לשחזר העדפות מתוך קובץ",
     "importSettingsConfirm": "זה יחליף את ההגדרות הנוכחיות שלך.",
-    "importSettingsSuccess": "הגדרות ייבוא",
     "importSettingsCounts": "הגדרות שהוחלו: ${applied}. הגדרות שדולגו: ${skipped}.",
     "importSettingsInvalidFile": "קובץ זה אינו ייצוא של הגדרות Pleazyng בתוקף",
     "importSettingsNoUser": "הקלד לפני ייבוא ההגדרות",
@@ -449,7 +448,6 @@
     "cloudBackupComplete": "הגיבוי הועלה. יש לשמור את הכתובת הזו. לאחר התקנה חדשה, יש להזין אותה במסך הגיבוי בענן ולבחור באפשרות „${action}”.",
     "cloudBackupRestore": "לשחזר גיבוי",
     "cloudBackupRestoreConfirm": "זה יחליף את ההגדרות הניידות המתאימות במכשיר זה.",
-    "cloudBackupRestored": "הגדרות שחוזרות מענן גיבוי",
     "shortcutsReset": "קצוות מחדש לתוך הפסקות",
     "resetShortcutsConfirm": "זה יחליף את הקצוות המותאמים אישית שלך עם הפסקות.",
     "about": "אודות",
@@ -3681,7 +3679,6 @@
     "connectedTo": "חיבור ל- ${device}",
     "device": "מכשיר לשידור",
     "readyToCast": "מוכן לשידור",
-    "subtitle": "כתוביות",
     "serverNotAvailable": "שרת התקשורת אינו זמין.",
     "stopCasting": "הפסקת השידור",
     "startFailed": "לא יכול להתחיל לגרד.בדוק את השרת ולנסות שוב."

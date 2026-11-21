@@ -573,7 +573,6 @@ class _Translations$settings$id extends Translations$settings$en {
 	@override String get importSettings => 'Pengaturan Import';
 	@override String get importSettingsDescription => 'Memulihkan preferensi dari file';
 	@override String get importSettingsConfirm => 'Ini akan menggantikan pengaturan Anda saat ini. lanjutkan?';
-	@override String get importSettingsSuccess => 'Pengaturan yang diimpor';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Pengaturan diterapkan: ${applied}. Dilewati: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Fail ini tidak valid Pleazyng pengeksportan pengaturan';
 	@override String get importSettingsNoUser => 'Mendaftar sebelum mengimport pengaturan';
@@ -587,7 +586,6 @@ class _Translations$settings$id extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Cadangan telah diunggah. Simpan URL ini. Setelah memasang ulang aplikasi, masukkan URL ini di bagian pencadangan cloud dan pilih “${action}”.';
 	@override String get cloudBackupRestore => 'Restorasi Backup';
 	@override String get cloudBackupRestoreConfirm => 'Ini akan menggantikan pengaturan portabel yang sepadan pada perangkat ini.';
-	@override String get cloudBackupRestored => 'Pengaturan yang dikembalikan dari cloud backup';
 	@override String get shortcutsReset => 'Kembali ke default';
 	@override String get resetShortcutsConfirm => 'Ini akan menggantikan singkatan yang disesuaikan dengan default.';
 	@override String get about => 'Tentang';
@@ -3106,7 +3104,6 @@ class _Translations$cast$id extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Menghubungkan ke ${device}';
 	@override String get device => 'Perangkat transmisi';
 	@override String get readyToCast => 'Siap mentransmisikan';
-	@override String get subtitle => 'Subtitel';
 	@override String get serverNotAvailable => 'Media server tidak tersedia.';
 	@override String get stopCasting => 'Hentikan transmisi';
 	@override String get startFailed => 'Tidak bisa memulai casting. periksa server dan coba lagi.';
@@ -6025,7 +6022,6 @@ extension on TranslationsId {
 			'settings.importSettings' => 'Pengaturan Import',
 			'settings.importSettingsDescription' => 'Memulihkan preferensi dari file',
 			'settings.importSettingsConfirm' => 'Ini akan menggantikan pengaturan Anda saat ini. lanjutkan?',
-			'settings.importSettingsSuccess' => 'Pengaturan yang diimpor',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Pengaturan diterapkan: ${applied}. Dilewati: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Fail ini tidak valid Pleazyng pengeksportan pengaturan',
 			'settings.importSettingsNoUser' => 'Mendaftar sebelum mengimport pengaturan',
@@ -6039,7 +6035,6 @@ extension on TranslationsId {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Cadangan telah diunggah. Simpan URL ini. Setelah memasang ulang aplikasi, masukkan URL ini di bagian pencadangan cloud dan pilih “${action}”.',
 			'settings.cloudBackupRestore' => 'Restorasi Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Ini akan menggantikan pengaturan portabel yang sepadan pada perangkat ini.',
-			'settings.cloudBackupRestored' => 'Pengaturan yang dikembalikan dari cloud backup',
 			'settings.shortcutsReset' => 'Kembali ke default',
 			'settings.resetShortcutsConfirm' => 'Ini akan menggantikan singkatan yang disesuaikan dengan default.',
 			'settings.about' => 'Tentang',
@@ -6137,10 +6132,10 @@ extension on TranslationsId {
 			'settings.manageLibrariesDescription' => 'Membuka dan menyembunyikan perpustakaan',
 			'settings.companionRemoteServer' => 'Layanan Remote Server',
 			'settings.companionRemoteServerDescription' => 'Memungkinkan perangkat mobile di jaringan Anda untuk mengontrol aplikasi ini',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Tidak bisa memulai server',
 			'settings.companionRemoteServerStopFailed' => 'Tidak bisa menghentikan server',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Foto-foto dalam gambar',
 			'settings.autoPipDescription' => 'Secara otomatis masuk gambar-in-gambar ketika Anda meninggalkan aplikasi selama pemutaran',
 			'settings.matchContentFrameRate' => 'Perbandingan Content Frame Rate',
@@ -6651,10 +6646,10 @@ extension on TranslationsId {
 			'accessibility.boldTextHint' => 'Gunakan berat yang lebih berat untuk label dan pesan antarmuka untuk membuat mereka lebih mudah dibedakan.',
 			'tooltips.shufflePlay' => 'Permainan Shuffle',
 			'tooltips.playTrailer' => 'Bermain Trailer',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Mark yang ditonton',
 			'tooltips.markAsUnwatched' => 'Mark yang tidak diperhatikan',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Trek audio ${n}',
 			'videoControls.audioLabel' => 'Audio yang',
 			'videoControls.subtitlesLabel' => 'Subtitel',
@@ -7165,10 +7160,10 @@ extension on TranslationsId {
 			'errors.connectionTimeout' => ({required Object context}) => 'Menghubungkan timeout saat muat ${context}',
 			'errors.connectionFailed' => 'Tidak dapat terhubung ke server media',
 			'errors.unableToLoad' => ({required Object context}) => 'Tidak dapat mengisi ${context}. silakan coba lagi.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Tidak ada klien yang tersedia',
 			'errors.pleaseEnterToken' => 'Silakan masukkan token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Token tidak valid',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Tidak dapat mengkonfirmasi token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Tidak dapat beralih ke ${displayName}',
@@ -7679,10 +7674,10 @@ extension on TranslationsId {
 			'playlists.emptyPlaylist' => 'Playlist ini kosong',
 			'playlists.deleteConfirm' => 'Menghapus Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Apakah Anda yakin Anda ingin menghapus "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist yang diciptakan',
 			'playlists.deleted' => 'Playlist dihapus',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Ditambahkan ke playlist',
 			'playlists.itemRemoved' => 'Menghapus dari playlist',
 			'playlists.selectPlaylist' => 'Pilih Playlist',
@@ -8193,10 +8188,10 @@ extension on TranslationsId {
 			'performanceOverlay.transfer' => 'Pindahkan',
 			'performanceOverlay.renderFps' => 'Keterangan FPS',
 			'performanceOverlay.displayFps' => 'Tampilan FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'pecah',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'RPU yang',
 			'performanceOverlay.dvRpuAverage' => 'RPU AVG',
 			'performanceOverlay.dvSampleAverage' => 'Sebutkan Sample Avg',
@@ -8628,7 +8623,6 @@ extension on TranslationsId {
 			'cast.connectedTo' => ({required Object device}) => 'Menghubungkan ke ${device}',
 			'cast.device' => 'Perangkat transmisi',
 			'cast.readyToCast' => 'Siap mentransmisikan',
-			'cast.subtitle' => 'Subtitel',
 			'cast.serverNotAvailable' => 'Media server tidak tersedia.',
 			'cast.stopCasting' => 'Hentikan transmisi',
 			'cast.startFailed' => 'Tidak bisa memulai casting. periksa server dan coba lagi.',
@@ -8707,11 +8701,11 @@ extension on TranslationsId {
 			'homeLayout.showInRecommended' => 'Perpustakaan yang disarankan',
 			'homeLayout.customPlexRow' => 'Keterampilan Plex baris',
 			'homeLayout.heroNeedsLibrary' => 'Periksa perpustakaan pertama — Hero perlu di suatu tempat untuk menunjukkan',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di suatu tempat untuk menunjukkan',
 			'homeLayout.removeHub' => 'Menghapus Hub',
 			'homeLayout.noPlexRows' => 'No. Plex baris yang dikelola kembali untuk perpustakaan ini.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Detail Terbuka',
 			'homeLayout.heroCards' => 'Kartu Hero',
 			'homeLayout.tapHeroCard' => 'Menangkap Kartu Pahlawan',
@@ -9221,11 +9215,11 @@ extension on TranslationsId {
 			'audiobook.recoveryHelp' => 'Ekspor salinan yang disulitkan baru-baru ini sebelum memindahkan atau memperbaiki data sink. Import bergabung dengan keadaan saat ini; mereka tidak pernah mengganti sejarah sink lokal.',
 			'audiobook.recoveryExport' => 'Mengekspor file pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Mengimport file pemulihan yang disulitkan',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'Menggabungkan file pemulihan yang disulitkan ini dengan posisi bacaan dan catatan saat ini? sejarah yang ada akan disimpan. perpustakaan berbagi dan ID item tidak termasuk; menetapkan ID yang sepadan pada setiap perangkat sebelum mengimpor.',
 			'audiobook.recoveryExported' => 'File pemulihan yang disulitkan disimpan.',
 			'audiobook.recoveryImported' => 'Data pemulihan digabungkan.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Masuk dengan akun BookOrbit Anda sendiri untuk menelusuri dan memutar buku. Permintaan untuk judul yang tidak tersedia tetap dikirim melalui instans SeerrNG yang terhubung.',
 			'sourceSetup.bookorbitOpen' => 'Buka di BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Lihat judul ini di BookOrbit untuk mengelola detail pustaka dan format yang tidak dapat dibuka Pleazyng. Progres mendengarkan disinkronkan dengan akun BookOrbit Anda.',
@@ -9735,11 +9729,11 @@ extension on TranslationsId {
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Baru diputar',
 			'musicTools.apiKey' => 'Kunci API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'Minit',
 			'musicTools.rules' => 'Filter',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Keluaran audio eksklusif',
 			'musicTools.preamp' => 'Prapenguatan',
 			'musicTools.ratingPending' => 'Disimpan di perangkat ini; menunggu sinkronisasi',

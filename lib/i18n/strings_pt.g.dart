@@ -577,7 +577,6 @@ class Translations$settings$pt extends Translations$settings$en {
 	@override String get importSettings => 'Importar Configurações';
 	@override String get importSettingsDescription => 'Restaurar preferências a partir de um arquivo';
 	@override String get importSettingsConfirm => 'Isso substituirá suas configurações atuais. Continuar?';
-	@override String get importSettingsSuccess => 'Configurações importadas';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Configurações aplicadas: ${applied}. Ignoradas: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Este arquivo não é uma exportação válida do Pleazyng';
 	@override String get importSettingsNoUser => 'Entre na conta antes de importar as configurações';
@@ -591,7 +590,6 @@ class Translations$settings$pt extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Cópia de segurança enviada. Guarde este URL. Após uma nova instalação, introduza-o na secção de cópias de segurança na nuvem e selecione «${action}».';
 	@override String get cloudBackupRestore => 'Restauração de backup';
 	@override String get cloudBackupRestoreConfirm => 'Isso substituirá as configurações portáteis correspondentes neste dispositivo.';
-	@override String get cloudBackupRestored => 'Atualização de configurações recuperadas da backup da nuvem';
 	@override String get shortcutsReset => 'Atalhos redefinidos para o padrão';
 	@override String get resetShortcutsConfirm => 'Isso substituirá seus atalhos personalizados pelos padrões. Continuar?';
 	@override String get about => 'Sobre';
@@ -3128,7 +3126,6 @@ class Translations$cast$pt extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Conectado a ${device}';
 	@override String get device => 'CAST DEFINITOR';
 	@override String get readyToCast => 'Pronto para jogar';
-	@override String get subtitle => 'Legendas';
 	@override String get serverNotAvailable => 'O servidor de mídia não está disponível.';
 	@override String get stopCasting => 'Parar de casting';
 	@override String get startFailed => 'Não pode começar a casting. verificar o servidor e tentar novamente.';
@@ -6057,7 +6054,6 @@ extension on TranslationsPt {
 			'settings.importSettings' => 'Importar Configurações',
 			'settings.importSettingsDescription' => 'Restaurar preferências a partir de um arquivo',
 			'settings.importSettingsConfirm' => 'Isso substituirá suas configurações atuais. Continuar?',
-			'settings.importSettingsSuccess' => 'Configurações importadas',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Configurações aplicadas: ${applied}. Ignoradas: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Este arquivo não é uma exportação válida do Pleazyng',
 			'settings.importSettingsNoUser' => 'Entre na conta antes de importar as configurações',
@@ -6071,7 +6067,6 @@ extension on TranslationsPt {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Cópia de segurança enviada. Guarde este URL. Após uma nova instalação, introduza-o na secção de cópias de segurança na nuvem e selecione «${action}».',
 			'settings.cloudBackupRestore' => 'Restauração de backup',
 			'settings.cloudBackupRestoreConfirm' => 'Isso substituirá as configurações portáteis correspondentes neste dispositivo.',
-			'settings.cloudBackupRestored' => 'Atualização de configurações recuperadas da backup da nuvem',
 			'settings.shortcutsReset' => 'Atalhos redefinidos para o padrão',
 			'settings.resetShortcutsConfirm' => 'Isso substituirá seus atalhos personalizados pelos padrões. Continuar?',
 			'settings.about' => 'Sobre',
@@ -6169,10 +6164,10 @@ extension on TranslationsPt {
 			'settings.manageLibrariesDescription' => 'Reordene e oculte bibliotecas',
 			'settings.companionRemoteServer' => 'Servidor de controle remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móveis na sua rede controlem este app',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Não foi possível iniciar o servidor de controle remoto',
 			'settings.companionRemoteServerStopFailed' => 'Não foi possível parar o servidor de controle remoto',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Picture-in-picture automático',
 			'settings.autoPipDescription' => 'Entrar automaticamente no modo picture-in-picture ao sair do app durante a reprodução',
 			'settings.matchContentFrameRate' => 'Ajustar à taxa de quadros do conteúdo',
@@ -6683,10 +6678,10 @@ extension on TranslationsPt {
 			'accessibility.boldTextHint' => 'Use um peso mais pesado para etiquetas de interface e mensagens para torná-los mais fáceis de distinguir.',
 			'tooltips.shufflePlay' => 'Reprodução aleatória',
 			'tooltips.playTrailer' => 'Reproduzir trailer',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Marcar como assistido',
 			'tooltips.markAsUnwatched' => 'Marcar como não assistido',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Faixa de áudio ${n}',
 			'videoControls.audioLabel' => 'Áudio',
 			'videoControls.subtitlesLabel' => 'Legendas',
@@ -7197,10 +7192,10 @@ extension on TranslationsPt {
 			'errors.connectionTimeout' => ({required Object context}) => 'Tempo de conexão esgotado ao carregar ${context}',
 			'errors.connectionFailed' => 'Não foi possível conectar ao servidor de mídia',
 			'errors.unableToLoad' => ({required Object context}) => 'Não foi possível carregar ${context}. Tente novamente.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Nenhum cliente disponível',
 			'errors.pleaseEnterToken' => 'Insira um token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Token inválido',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Falha ao verificar token: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Falha ao trocar para ${displayName}',
@@ -7711,10 +7706,10 @@ extension on TranslationsPt {
 			'playlists.emptyPlaylist' => 'Esta playlist está vazia',
 			'playlists.deleteConfirm' => 'Excluir Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Tem certeza de que deseja excluir "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist criada',
 			'playlists.deleted' => 'Playlist excluída',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Adicionado à playlist',
 			'playlists.itemRemoved' => 'Removido da playlist',
 			'playlists.selectPlaylist' => 'Selecionar Playlist',
@@ -8225,10 +8220,10 @@ extension on TranslationsPt {
 			'performanceOverlay.transfer' => 'Transferência',
 			'performanceOverlay.renderFps' => 'FPS de renderização',
 			'performanceOverlay.displayFps' => 'FPS da tela',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'Sincronia A/V',
 			'performanceOverlay.dropped' => 'Descartados',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPUs',
 			'performanceOverlay.dvRpuAverage' => 'Média DV RPU',
 			'performanceOverlay.dvSampleAverage' => 'Média amostra DV',
@@ -8660,7 +8655,6 @@ extension on TranslationsPt {
 			'cast.connectedTo' => ({required Object device}) => 'Conectado a ${device}',
 			'cast.device' => 'CAST DEFINITOR',
 			'cast.readyToCast' => 'Pronto para jogar',
-			'cast.subtitle' => 'Legendas',
 			'cast.serverNotAvailable' => 'O servidor de mídia não está disponível.',
 			'cast.stopCasting' => 'Parar de casting',
 			'cast.startFailed' => 'Não pode começar a casting. verificar o servidor e tentar novamente.',
@@ -8739,11 +8733,11 @@ extension on TranslationsPt {
 			'homeLayout.showInRecommended' => 'Exposição em Biblioteca Recomendada',
 			'homeLayout.customPlexRow' => 'Cadeia de Cadeia Plex',
 			'homeLayout.heroNeedsLibrary' => 'Veja a Biblioteca primeiro – Hero precisa de algum lugar para mostrar',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'Veja a Biblioteca ou a Casa primeiro — Hero precisa de algum lugar para mostrar',
 			'homeLayout.removeHub' => 'Remover o Hub',
 			'homeLayout.noPlexRows' => 'No Plex linhas gerenciadas retornou para esta biblioteca.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Detalhes abertos',
 			'homeLayout.heroCards' => 'Cartões de herói',
 			'homeLayout.tapHeroCard' => 'Tapeando um cartão de herói',
@@ -9253,11 +9247,11 @@ extension on TranslationsPt {
 			'audiobook.recoveryHelp' => 'Exportar uma cópia recentemente criptografada antes de mover ou reparar dados de sincronização. Importações se misturam com o estado atual; eles nunca substituem a história local da sincronización.',
 			'audiobook.recoveryExport' => 'Exportação de arquivos de recuperação criptografados',
 			'audiobook.recoveryImport' => 'Importar arquivo de recuperação criptografado',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'Combine este arquivo de recuperação criptografado com as posições e notas de leitura atuais? História existente será mantida. bibliotecas compartilhadas e IDs de itens não são incluídos; definir IDs correspondentes em cada dispositivo antes da importação.',
 			'audiobook.recoveryExported' => 'arquivo de recuperação criptografado salvo.',
 			'audiobook.recoveryImported' => 'Dados de recuperação combinados.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Entre com sua própria conta BookOrbit para navegar e reproduzir seus livros. Pedidos de títulos ausentes continuam passando pela sua instância SeerrNG conectada.',
 			'sourceSetup.bookorbitOpen' => 'Abrir no BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Veja este título no BookOrbit para gerir os detalhes da biblioteca e os formatos que o Pleazyng não consegue abrir. O progresso de audição é sincronizado com a sua conta BookOrbit.',
@@ -9767,11 +9761,11 @@ extension on TranslationsPt {
 			'musicTools.home' => 'Música',
 			'musicTools.recent' => 'Reproduzidas recentemente',
 			'musicTools.apiKey' => 'Chave API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minutos',
 			'musicTools.rules' => 'Filtros',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Saída de áudio exclusiva',
 			'musicTools.preamp' => 'Pré-amplificação',
 			'musicTools.ratingPending' => 'Salvo neste dispositivo; aguardando sincronização',

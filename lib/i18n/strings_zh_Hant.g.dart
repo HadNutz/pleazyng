@@ -574,7 +574,6 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	@override String get importSettings => '匯入設定';
 	@override String get importSettingsDescription => '從檔案還原偏好設定';
 	@override String get importSettingsConfirm => '這將覆蓋您目前的設定。要繼續嗎？';
-	@override String get importSettingsSuccess => '設定已匯入';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => '已套用設定：${applied} 項。已略過：${skipped} 項。';
 	@override String get importSettingsInvalidFile => '此檔案不是有效的 Pleazyng 設定匯出檔';
 	@override String get importSettingsNoUser => '匯入設定前請先登入';
@@ -588,7 +587,6 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	@override String cloudBackupComplete({required Object action}) => '備份已上傳。請儲存這個網址。重新安裝後，在雲端備份中輸入這個網址，再選擇「${action}」。';
 	@override String get cloudBackupRestore => '恢復備份';
 	@override String get cloudBackupRestoreConfirm => '此將取代該裝置上的相匹配移動設定。';
-	@override String get cloudBackupRestored => '從雲端儲備恢復的設定';
 	@override String get shortcutsReset => '快速鍵已重設為預設值';
 	@override String get resetShortcutsConfirm => '這會將您的自訂快速鍵替換為預設值。要繼續嗎？';
 	@override String get about => '關於';
@@ -3122,7 +3120,6 @@ class _Translations$cast$zh_Hant extends Translations$cast$zh {
 	@override String connectedTo({required Object device}) => '連線到 ${device}';
 	@override String get device => '加密裝置';
 	@override String get readyToCast => '準備放';
-	@override String get subtitle => '字幕';
 	@override String get serverNotAvailable => '媒體伺服器不適用。';
 	@override String get stopCasting => '停止加密';
 	@override String get startFailed => '無法開始投射,檢查伺服器並嘗試一次。';
@@ -6046,7 +6043,6 @@ extension on TranslationsZhHant {
 			'settings.importSettings' => '匯入設定',
 			'settings.importSettingsDescription' => '從檔案還原偏好設定',
 			'settings.importSettingsConfirm' => '這將覆蓋您目前的設定。要繼續嗎？',
-			'settings.importSettingsSuccess' => '設定已匯入',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '已套用設定：${applied} 項。已略過：${skipped} 項。',
 			'settings.importSettingsInvalidFile' => '此檔案不是有效的 Pleazyng 設定匯出檔',
 			'settings.importSettingsNoUser' => '匯入設定前請先登入',
@@ -6060,7 +6056,6 @@ extension on TranslationsZhHant {
 			'settings.cloudBackupComplete' => ({required Object action}) => '備份已上傳。請儲存這個網址。重新安裝後，在雲端備份中輸入這個網址，再選擇「${action}」。',
 			'settings.cloudBackupRestore' => '恢復備份',
 			'settings.cloudBackupRestoreConfirm' => '此將取代該裝置上的相匹配移動設定。',
-			'settings.cloudBackupRestored' => '從雲端儲備恢復的設定',
 			'settings.shortcutsReset' => '快速鍵已重設為預設值',
 			'settings.resetShortcutsConfirm' => '這會將您的自訂快速鍵替換為預設值。要繼續嗎？',
 			'settings.about' => '關於',
@@ -6158,10 +6153,10 @@ extension on TranslationsZhHant {
 			'settings.manageLibrariesDescription' => '重新排序與隱藏媒體庫',
 			'settings.companionRemoteServer' => '隨身遙控器伺服器',
 			'settings.companionRemoteServerDescription' => '允許區域網路中的行動裝置控制此應用程式',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => '無法啟動隨身遙控器伺服器',
 			'settings.companionRemoteServerStopFailed' => '無法停止隨身遙控器伺服器',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => '自動進入子母畫面',
 			'settings.autoPipDescription' => '播放影片時離開應用程式將自動進入子母畫面模式',
 			'settings.matchContentFrameRate' => '符合影片影格率',
@@ -6672,10 +6667,10 @@ extension on TranslationsZhHant {
 			'accessibility.boldTextHint' => '加粗介面標籤與訊息的字重，讓它們更容易辨識。',
 			'tooltips.shufflePlay' => '隨機播放',
 			'tooltips.playTrailer' => '播放預告片',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => '標記為已觀看',
 			'tooltips.markAsUnwatched' => '標記為未觀看',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => '音軌 ${n}',
 			'videoControls.audioLabel' => '音訊',
 			'videoControls.subtitlesLabel' => '字幕',
@@ -7186,10 +7181,10 @@ extension on TranslationsZhHant {
 			'errors.connectionTimeout' => ({required Object context}) => '載入 ${context} 時連線逾時',
 			'errors.connectionFailed' => '無法連線至媒體伺服器',
 			'errors.unableToLoad' => ({required Object context}) => '無法載入 ${context}。請重試。',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => '沒有可用用戶端',
 			'errors.pleaseEnterToken' => '請輸入 Token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Token 無效',
 			'errors.failedToVerifyToken' => ({required Object error}) => '無法驗證 Token：${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '無法切換至 ${displayName}',
@@ -7700,10 +7695,10 @@ extension on TranslationsZhHant {
 			'playlists.emptyPlaylist' => '此播放清單為空',
 			'playlists.deleteConfirm' => '刪除播放清單？',
 			'playlists.deleteMessage' => ({required Object name}) => '確定要刪除「${name}」嗎？',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => '播放清單已建立',
 			'playlists.deleted' => '播放清單已刪除',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => '已新增至播放清單',
 			'playlists.itemRemoved' => '已從播放清單移除',
 			'playlists.selectPlaylist' => '選擇播放清單',
@@ -8214,10 +8209,10 @@ extension on TranslationsZhHant {
 			'performanceOverlay.transfer' => '傳輸特性',
 			'performanceOverlay.renderFps' => '渲染 FPS',
 			'performanceOverlay.displayFps' => '螢幕 FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => '影音同步（A/V Sync）',
 			'performanceOverlay.dropped' => '丟格數（Dropped）',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU 數',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 平均',
 			'performanceOverlay.dvSampleAverage' => 'DV 取樣平均',
@@ -8649,7 +8644,6 @@ extension on TranslationsZhHant {
 			'cast.connectedTo' => ({required Object device}) => '連線到 ${device}',
 			'cast.device' => '加密裝置',
 			'cast.readyToCast' => '準備放',
-			'cast.subtitle' => '字幕',
 			'cast.serverNotAvailable' => '媒體伺服器不適用。',
 			'cast.stopCasting' => '停止加密',
 			'cast.startFailed' => '無法開始投射,檢查伺服器並嘗試一次。',
@@ -8728,11 +8722,11 @@ extension on TranslationsZhHant {
 			'homeLayout.showInRecommended' => '圖書館推薦',
 			'homeLayout.customPlexRow' => '定製 Plex 行',
 			'homeLayout.heroNeedsLibrary' => '檢視圖書館首先 - 英雄需要在某處展示',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => '檢視圖書館或家先 - 英雄需要在某處展示',
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex號管理行返回此圖書館。',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => '開放細節',
 			'homeLayout.heroCards' => '英雄卡',
 			'homeLayout.tapHeroCard' => '打破英雄卡',
@@ -9242,11 +9236,11 @@ extension on TranslationsZhHant {
 			'audiobook.recoveryHelp' => '移動或修復同步資料前，請先匯出近期的加密備份。匯入資料會與目前狀態合併，不會取代本機同步記錄。請另外保存同步代碼。',
 			'audiobook.recoveryExport' => '輸出加密恢復檔案',
 			'audiobook.recoveryImport' => '輸入加密恢復檔案',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => '將此加密恢復檔案與當前閱讀位置和筆記相結合嗎?現有歷史記錄將被保留. 共享圖書館和專案 ID 不包含; 在進口之前,在每個裝置上設定匹配 ID。',
 			'audiobook.recoveryExported' => '加密恢復檔案儲存。',
 			'audiobook.recoveryImported' => '恢復資料合併。',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => '使用您自己的 BookOrbit 帳戶登入，即可瀏覽及播放書籍。缺少的書名仍會透過已連線的 SeerrNG 執行個體提出請求。',
 			'sourceSetup.bookorbitOpen' => '在 BookOrbit 中開啟',
 			'sourceSetup.bookorbitDetailHelp' => '在 BookOrbit 中查看此書，以管理書庫詳細資料和 Pleazyng 無法開啟的格式。聆聽進度會與您的 BookOrbit 帳戶同步。',
@@ -9756,11 +9750,11 @@ extension on TranslationsZhHant {
 			'musicTools.home' => '音樂',
 			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 金鑰',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分鐘',
 			'musicTools.rules' => '篩選器',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => '獨佔音訊輸出',
 			'musicTools.preamp' => '前置放大',
 			'musicTools.ratingPending' => '已儲存在此裝置；等待同步',

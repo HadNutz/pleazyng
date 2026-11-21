@@ -579,7 +579,6 @@ class _Translations$settings$pl extends Translations$settings$en {
 	@override String get importSettings => 'Importuj ustawienia';
 	@override String get importSettingsDescription => 'Przywróć preferencje z pliku';
 	@override String get importSettingsConfirm => 'Bieżące ustawienia zostaną zastąpione. Kontynuować?';
-	@override String get importSettingsSuccess => 'Ustawienia zaimportowane';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Zastosowane ustawienia: ${applied}. Pominięte: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Ten plik nie jest prawidłowym eksportem Pleazyng';
 	@override String get importSettingsNoUser => 'Zaloguj się przed importem ustawień';
@@ -593,7 +592,6 @@ class _Translations$settings$pl extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Przesłano kopię zapasową. Zachowaj ten adres URL. Po ponownej instalacji wpisz go w ustawieniach kopii zapasowej w chmurze i wybierz „${action}”.';
 	@override String get cloudBackupRestore => 'Odzyskiwanie backup';
 	@override String get cloudBackupRestoreConfirm => 'To zastąpi dopasowane ustawienia przenośne na tym urządzeniu.';
-	@override String get cloudBackupRestored => 'Ustawienia przywróciły się z kopii zapasowej w chmurze';
 	@override String get shortcutsReset => 'Skróty przywrócone do domyślnych';
 	@override String get resetShortcutsConfirm => 'Twoje własne skróty zostaną zastąpione domyślnymi. Kontynuować?';
 	@override String get about => 'O aplikacji';
@@ -3163,7 +3161,6 @@ class _Translations$cast$pl extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Źródło: ${device}';
 	@override String get device => 'Urządzenie Cast';
 	@override String get readyToCast => 'gotowy do wyrzucenia';
-	@override String get subtitle => 'Napisy';
 	@override String get serverNotAvailable => 'Serwer medialny nie jest dostępny.';
 	@override String get stopCasting => 'Przestań casting';
 	@override String get startFailed => 'Nie można zacząć casting. sprawdź serwer i spróbuj ponownie.';
@@ -6100,7 +6097,6 @@ extension on TranslationsPl {
 			'settings.importSettings' => 'Importuj ustawienia',
 			'settings.importSettingsDescription' => 'Przywróć preferencje z pliku',
 			'settings.importSettingsConfirm' => 'Bieżące ustawienia zostaną zastąpione. Kontynuować?',
-			'settings.importSettingsSuccess' => 'Ustawienia zaimportowane',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Zastosowane ustawienia: ${applied}. Pominięte: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Ten plik nie jest prawidłowym eksportem Pleazyng',
 			'settings.importSettingsNoUser' => 'Zaloguj się przed importem ustawień',
@@ -6114,7 +6110,6 @@ extension on TranslationsPl {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Przesłano kopię zapasową. Zachowaj ten adres URL. Po ponownej instalacji wpisz go w ustawieniach kopii zapasowej w chmurze i wybierz „${action}”.',
 			'settings.cloudBackupRestore' => 'Odzyskiwanie backup',
 			'settings.cloudBackupRestoreConfirm' => 'To zastąpi dopasowane ustawienia przenośne na tym urządzeniu.',
-			'settings.cloudBackupRestored' => 'Ustawienia przywróciły się z kopii zapasowej w chmurze',
 			'settings.shortcutsReset' => 'Skróty przywrócone do domyślnych',
 			'settings.resetShortcutsConfirm' => 'Twoje własne skróty zostaną zastąpione domyślnymi. Kontynuować?',
 			'settings.about' => 'O aplikacji',
@@ -6212,10 +6207,10 @@ extension on TranslationsPl {
 			'settings.manageLibrariesDescription' => 'Zmieniaj kolejność i ukrywaj biblioteki',
 			'settings.companionRemoteServer' => 'Serwer zdalnego sterowania',
 			'settings.companionRemoteServerDescription' => 'Pozwól urządzeniom mobilnym w sieci sterować tą aplikacją',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Nie udało się uruchomić serwera zdalnego sterowania',
 			'settings.companionRemoteServerStopFailed' => 'Nie udało się zatrzymać serwera zdalnego sterowania',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Automatyczny obraz w obrazie',
 			'settings.autoPipDescription' => 'Automatycznie włączaj tryb obrazu w obrazie po opuszczeniu aplikacji podczas odtwarzania',
 			'settings.matchContentFrameRate' => 'Dopasuj częstotliwość klatek do treści',
@@ -6726,10 +6721,10 @@ extension on TranslationsPl {
 			'accessibility.boldTextHint' => 'Użyj cięższej masy dla etykiet interfejsu i wiadomości, aby ułatwić im rozróżnienie.',
 			'tooltips.shufflePlay' => 'Odtwarzanie losowe',
 			'tooltips.playTrailer' => 'Odtwórz zwiastun',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Oznacz jako obejrzane',
 			'tooltips.markAsUnwatched' => 'Oznacz jako nieobejrzane',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Ścieżka audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
 			'videoControls.subtitlesLabel' => 'Napisy',
@@ -7240,10 +7235,10 @@ extension on TranslationsPl {
 			'errors.connectionTimeout' => ({required Object context}) => 'Limit czasu połączenia przy ładowaniu ${context}',
 			'errors.connectionFailed' => 'Nie można połączyć się z serwerem multimediów',
 			'errors.unableToLoad' => ({required Object context}) => 'Nie udało się załadować ${context}. Spróbuj ponownie.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Brak dostępnego klienta',
 			'errors.pleaseEnterToken' => 'Wprowadź token',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Nieprawidłowy token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Nie udało się zweryfikować tokena: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => 'Nie udało się przełączyć na ${displayName}',
@@ -7754,10 +7749,10 @@ extension on TranslationsPl {
 			'playlists.emptyPlaylist' => 'Ta playlista jest pusta',
 			'playlists.deleteConfirm' => 'Usunąć playlistę?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Czy na pewno chcesz usunąć "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlista utworzona',
 			'playlists.deleted' => 'Playlista usunięta',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Dodano do playlisty',
 			'playlists.itemRemoved' => 'Usunięto z playlisty',
 			'playlists.selectPlaylist' => 'Wybierz playlistę',
@@ -8268,10 +8263,10 @@ extension on TranslationsPl {
 			'performanceOverlay.transfer' => 'Charakterystyka przenoszenia',
 			'performanceOverlay.renderFps' => 'FPS renderowania',
 			'performanceOverlay.displayFps' => 'FPS ekranu',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'Synchronizacja A/V',
 			'performanceOverlay.dropped' => 'Pominięte',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'Śr. DV RPU',
 			'performanceOverlay.dvSampleAverage' => 'Śr. próbki DV',
@@ -8703,7 +8698,6 @@ extension on TranslationsPl {
 			'cast.connectedTo' => ({required Object device}) => 'Źródło: ${device}',
 			'cast.device' => 'Urządzenie Cast',
 			'cast.readyToCast' => 'gotowy do wyrzucenia',
-			'cast.subtitle' => 'Napisy',
 			'cast.serverNotAvailable' => 'Serwer medialny nie jest dostępny.',
 			'cast.stopCasting' => 'Przestań casting',
 			'cast.startFailed' => 'Nie można zacząć casting. sprawdź serwer i spróbuj ponownie.',
@@ -8782,11 +8776,11 @@ extension on TranslationsPl {
 			'homeLayout.showInRecommended' => 'W bibliotece zalecane',
 			'homeLayout.customPlexRow' => 'Zestawienie Plex',
 			'homeLayout.heroNeedsLibrary' => 'Przeczytaj bibliotekę najpierw – bohater musi gdzieś pokazać',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'Przeczytaj bibliotekę lub dom najpierw — Hero potrzebuje gdzieś, aby pokazać',
 			'homeLayout.removeHub' => 'Usuń Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex rzędy zarządzane powróciły do tej biblioteki.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Szczegóły otwarte',
 			'homeLayout.heroCards' => 'Karta bohatera',
 			'homeLayout.tapHeroCard' => 'Złapanie karty bohatera',
@@ -9296,11 +9290,11 @@ extension on TranslationsPl {
 			'audiobook.recoveryHelp' => 'Eksportuj niedawno szyfrowaną kopię przed przeniesieniem lub naprawą danych synchronizacyjnych.Importy spotykają się z bieżącym stanem; nigdy nie zastępują lokalnej historii synchrowania.',
 			'audiobook.recoveryExport' => 'Eksportowanie szyfrowanego pliku odzyskiwania',
 			'audiobook.recoveryImport' => 'Importowanie szyfrowanego pliku odzyskiwania',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'Połączenie tego szyfrowanego pliku odzyskiwania z bieżących pozycji czytania i notatek? istniejąca historia zostanie zachowana. udostępniona biblioteka i identyfikatory elementów nie są włączone; ustawić identyfikator odpowiadający na każdym urządzeniu przed importowaniem.',
 			'audiobook.recoveryExported' => 'Szyfrowane pliki odzyskiwania zostały zapisane.',
 			'audiobook.recoveryImported' => 'Dane odzyskiwania połączenia.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Zaloguj się na własne konto BookOrbit, aby przeglądać i odtwarzać zawarte w nim książki. Zamówienia niedostępnych tytułów nadal są wysyłane przez połączoną instancję SeerrNG.',
 			'sourceSetup.bookorbitOpen' => 'Otwórz w BookOrbit',
 			'sourceSetup.bookorbitDetailHelp' => 'Wyświetl ten tytuł w BookOrbit, aby zarządzać szczegółami biblioteki i formatami, których Pleazyng nie może otworzyć. Postęp słuchania synchronizuje się z kontem BookOrbit.',
@@ -9810,11 +9804,11 @@ extension on TranslationsPl {
 			'musicTools.home' => 'Muzyka',
 			'musicTools.recent' => 'Ostatnio odtwarzane',
 			'musicTools.apiKey' => 'Klucz API',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minuty',
 			'musicTools.rules' => 'Filtry',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Wyłączne wyjście audio',
 			'musicTools.preamp' => 'Wzmocnienie wstępne',
 			'musicTools.ratingPending' => 'Zapisano na tym urządzeniu; oczekuje na synchronizację',

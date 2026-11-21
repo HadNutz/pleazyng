@@ -575,7 +575,6 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String get importSettings => 'Sozlamalarni import qilish';
 	@override String get importSettingsDescription => 'Parametrlarni fayldan tiklang';
 	@override String get importSettingsConfirm => 'Bu joriy sozlamalaringiz ustidan yoziladi. Davom etasizmi?';
-	@override String get importSettingsSuccess => 'Sozlamalar import qilindi';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Qo‘llangan sozlamalar: ${applied}. O‘tkazib yuborilgan: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Ushbu fayl toʻgʻri Pleazyng sozlamalar fayli emas';
 	@override String get importSettingsNoUser => 'Sozlamalarni import qilishdan oldin tizimga kiring';
@@ -589,7 +588,6 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Zaxira nusxasi yuklandi. Ushbu URL manzilini saqlang. Ilovani qayta oʻrnatgach, uni bulutga zaxiralash boʻlimiga kiriting va “${action}” bandini tanlang.';
 	@override String get cloudBackupRestore => 'Backup qaytarga';
 	@override String get cloudBackupRestoreConfirm => 'Bu ayarlar bu cihazda uyumlanga mobil ayarlar qaytadi.';
-	@override String get cloudBackupRestored => 'Uqqqqlarlar bilan qaytarga qotlar.';
 	@override String get shortcutsReset => 'Tugmalar birlashmasi standart holatga qaytarildi';
 	@override String get resetShortcutsConfirm => 'Bu oʻzingiz sozlagan tugmalar birlashmalarini standart holatga qaytaradi. Davom etasizmi?';
 	@override String get about => 'Dastur haqida';
@@ -3125,7 +3123,6 @@ class _Translations$cast$uz extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '${device} qizga qizga';
 	@override String get device => 'Tadiqadi';
 	@override String get readyToCast => 'Hazardga bo‘qadi';
-	@override String get subtitle => 'Subtitrlar';
 	@override String get serverNotAvailable => 'Media server qiziziz.';
 	@override String get stopCasting => 'Castingdan qurtum';
 	@override String get startFailed => 'U\'zizga qurtlar. serveri kontroldan qurtlar, qaytarga qurtlam.';
@@ -6050,7 +6047,6 @@ extension on TranslationsUz {
 			'settings.importSettings' => 'Sozlamalarni import qilish',
 			'settings.importSettingsDescription' => 'Parametrlarni fayldan tiklang',
 			'settings.importSettingsConfirm' => 'Bu joriy sozlamalaringiz ustidan yoziladi. Davom etasizmi?',
-			'settings.importSettingsSuccess' => 'Sozlamalar import qilindi',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Qo‘llangan sozlamalar: ${applied}. O‘tkazib yuborilgan: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Ushbu fayl toʻgʻri Pleazyng sozlamalar fayli emas',
 			'settings.importSettingsNoUser' => 'Sozlamalarni import qilishdan oldin tizimga kiring',
@@ -6064,7 +6060,6 @@ extension on TranslationsUz {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Zaxira nusxasi yuklandi. Ushbu URL manzilini saqlang. Ilovani qayta oʻrnatgach, uni bulutga zaxiralash boʻlimiga kiriting va “${action}” bandini tanlang.',
 			'settings.cloudBackupRestore' => 'Backup qaytarga',
 			'settings.cloudBackupRestoreConfirm' => 'Bu ayarlar bu cihazda uyumlanga mobil ayarlar qaytadi.',
-			'settings.cloudBackupRestored' => 'Uqqqqlarlar bilan qaytarga qotlar.',
 			'settings.shortcutsReset' => 'Tugmalar birlashmasi standart holatga qaytarildi',
 			'settings.resetShortcutsConfirm' => 'Bu oʻzingiz sozlagan tugmalar birlashmalarini standart holatga qaytaradi. Davom etasizmi?',
 			'settings.about' => 'Dastur haqida',
@@ -6162,10 +6157,10 @@ extension on TranslationsUz {
 			'settings.manageLibrariesDescription' => 'Kutubxonalarni tartiblash va yashirish',
 			'settings.companionRemoteServer' => 'Yordamchi pult serveri',
 			'settings.companionRemoteServerDescription' => 'Tarmoqdagi mobil qurilmalarga ushbu ilovani boshqarishga ruxsat berish',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => 'Yordamchi pult serverini ishga tushirib bo‘lmadi',
 			'settings.companionRemoteServerStopFailed' => 'Yordamchi pult serverini to‘xtatib bo‘lmadi',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => 'Avtomatik Rasm ichida rasm (PiP)',
 			'settings.autoPipDescription' => 'Video ijro etilayotganda ilovadan chiqilganda avto-PiP rejimiga oʻtish',
 			'settings.matchContentFrameRate' => 'Kadrlar chastotasini moslashtirish',
@@ -6676,10 +6671,10 @@ extension on TranslationsUz {
 			'accessibility.boldTextHint' => 'Interface etiketleri ve mesajlar için daha ağır bir ağır kullanın, onları ayırt etmek daha kolaydır.',
 			'tooltips.shufflePlay' => 'Aralashtirib ijro etish',
 			'tooltips.playTrailer' => 'Treylerni koʻrish',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => 'Koʻrilgan deb belgilash',
 			'tooltips.markAsUnwatched' => 'Koʻrilmagan deb belgilash',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => 'Audio yoʻlak ${n}',
 			'videoControls.audioLabel' => 'Ovoz',
 			'videoControls.subtitlesLabel' => 'Subtitr',
@@ -7190,10 +7185,10 @@ extension on TranslationsUz {
 			'errors.connectionTimeout' => ({required Object context}) => '${context} yuklanish vaqti tugadi',
 			'errors.connectionFailed' => 'Media serveriga ulanib boʻlmadi',
 			'errors.unableToLoad' => ({required Object context}) => '${context} yuklab boʻlmadi.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Mavjud mijoz yoʻq',
 			'errors.pleaseEnterToken' => 'Tokenni kiriting',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => 'Notoʻgʻri token',
 			'errors.failedToVerifyToken' => ({required Object error}) => 'Tokenni tekshirib boʻlmadi: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName} profiliga oʻtib boʻlmadi',
@@ -7704,10 +7699,10 @@ extension on TranslationsUz {
 			'playlists.emptyPlaylist' => 'Ushbu roʻyxat boʻsh',
 			'playlists.deleteConfirm' => 'Ijro roʻyxati oʻchirilsinmi?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" oʻchirilsinmi?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Ijro roʻyxati yaratildi',
 			'playlists.deleted' => 'Ijro roʻyxati oʻchirildi',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => 'Roʻyxatga qoʻshildi',
 			'playlists.itemRemoved' => 'Roʻyxatdan oʻchirildi',
 			'playlists.selectPlaylist' => 'Roʻyxatni tanlash',
@@ -8218,10 +8213,10 @@ extension on TranslationsUz {
 			'performanceOverlay.transfer' => 'Uzatish',
 			'performanceOverlay.renderFps' => 'Render FPS',
 			'performanceOverlay.displayFps' => 'Displey FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V sinxronlash',
 			'performanceOverlay.dropped' => 'Tushirib qoldirilgan kadrlar',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU-lar',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU Oʻrt.',
 			'performanceOverlay.dvSampleAverage' => 'DV Namuna Oʻrt.',
@@ -8653,7 +8648,6 @@ extension on TranslationsUz {
 			'cast.connectedTo' => ({required Object device}) => '${device} qizga qizga',
 			'cast.device' => 'Tadiqadi',
 			'cast.readyToCast' => 'Hazardga bo‘qadi',
-			'cast.subtitle' => 'Subtitrlar',
 			'cast.serverNotAvailable' => 'Media server qiziziz.',
 			'cast.stopCasting' => 'Castingdan qurtum',
 			'cast.startFailed' => 'U\'zizga qurtlar. serveri kontroldan qurtlar, qaytarga qurtlam.',
@@ -8732,11 +8726,11 @@ extension on TranslationsUz {
 			'homeLayout.showInRecommended' => 'Librarikda qaytadi qaytadi.',
 			'homeLayout.customPlexRow' => 'Maxsus Plex qatori',
 			'homeLayout.heroNeedsLibrary' => 'Avval “Kutubxona” bandini belgilang — asosiy banner ko‘rsatiladigan joy kerak',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => 'Birincisi Library o Home ko‘shayt — Hero\'s need somewhere to show',
 			'homeLayout.removeHub' => 'Hub qiziziz',
 			'homeLayout.noPlexRows' => 'No Plex-manadi ruzlar bu librariyaya qaytardi.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => 'Detaylar',
 			'homeLayout.heroCards' => 'Karta qiziziz',
 			'homeLayout.tapHeroCard' => 'Bir kahraman kartta bo‘yadi',
@@ -9246,11 +9240,11 @@ extension on TranslationsUz {
 			'audiobook.recoveryHelp' => 'Sinklik data\'ni transfer o‘yadi.Sinkliklar ko‘yad qo‘yingiz, lokal sinklik tarihini qaytarmaymazlar.Sinqlik kodini separata tutan.',
 			'audiobook.recoveryExport' => 'Filiya qaytarga xifratsiya',
 			'audiobook.recoveryImport' => 'İthalat xifratni qaytarga faili',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => 'Ushbu shifrlangan tiklash faylini joriy o‘qish joylari va qaydlar bilan birlashtirasizmi? Mavjud tarix saqlanadi. Umumiy kutubxona va element IDlari kiritilmagan; importdan oldin har bir qurilmada mos IDlarni o‘rnating.',
 			'audiobook.recoveryExported' => 'Filiya qaytarga saladi.',
 			'audiobook.recoveryImported' => 'Recovery data qaytadi.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'Kitoblaringizni ko‘rish va tinglash uchun o‘z BookOrbit hisobingizga kiring. Mavjud bo‘lmagan nomlar uchun so‘rovlar ulangan SeerrNG nusxangiz orqali yuboriladi.',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit’da ochish',
 			'sourceSetup.bookorbitDetailHelp' => 'Kutubxona tafsilotlari va Pleazyng ocholmaydigan formatlarni boshqarish uchun bu nomni BookOrbit’da ko‘ring. Tinglash jarayoni BookOrbit hisobingiz bilan sinxronlanadi.',
@@ -9760,11 +9754,11 @@ extension on TranslationsUz {
 			'musicTools.home' => 'Musiqa',
 			'musicTools.recent' => 'Yaqinda ijro etilgan',
 			'musicTools.apiKey' => 'API kaliti',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Daqiqa',
 			'musicTools.rules' => 'Filtrlar',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => 'Eksklyuziv audio chiqish',
 			'musicTools.preamp' => 'Oldindan kuchaytirish',
 			'musicTools.ratingPending' => 'Ushbu qurilmada saqlandi; sinxronlash kutilmoqda',

@@ -431,7 +431,6 @@
     "importSettings": "Pengaturan Import",
     "importSettingsDescription": "Memulihkan preferensi dari file",
     "importSettingsConfirm": "Ini akan menggantikan pengaturan Anda saat ini. lanjutkan?",
-    "importSettingsSuccess": "Pengaturan yang diimpor",
     "importSettingsCounts": "Pengaturan diterapkan: ${applied}. Dilewati: ${skipped}.",
     "importSettingsInvalidFile": "Fail ini tidak valid Pleazyng pengeksportan pengaturan",
     "importSettingsNoUser": "Mendaftar sebelum mengimport pengaturan",
@@ -445,7 +444,6 @@
     "cloudBackupComplete": "Cadangan telah diunggah. Simpan URL ini. Setelah memasang ulang aplikasi, masukkan URL ini di bagian pencadangan cloud dan pilih “${action}”.",
     "cloudBackupRestore": "Restorasi Backup",
     "cloudBackupRestoreConfirm": "Ini akan menggantikan pengaturan portabel yang sepadan pada perangkat ini.",
-    "cloudBackupRestored": "Pengaturan yang dikembalikan dari cloud backup",
     "shortcutsReset": "Kembali ke default",
     "resetShortcutsConfirm": "Ini akan menggantikan singkatan yang disesuaikan dengan default.",
     "about": "Tentang",
@@ -3656,7 +3654,6 @@
     "connectedTo": "Menghubungkan ke ${device}",
     "device": "Perangkat transmisi",
     "readyToCast": "Siap mentransmisikan",
-    "subtitle": "Subtitel",
     "serverNotAvailable": "Media server tidak tersedia.",
     "stopCasting": "Hentikan transmisi",
     "startFailed": "Tidak bisa memulai casting. periksa server dan coba lagi."

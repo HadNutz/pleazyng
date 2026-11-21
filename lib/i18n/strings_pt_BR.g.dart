@@ -43,7 +43,6 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	// Translations
 	@override late final Translations$mediaConveniences$pt_BR mediaConveniences = Translations$mediaConveniences$pt_BR.internal(_root);
 	@override late final Translations$viewing$pt_BR viewing = Translations$viewing$pt_BR.internal(_root);
-	@override late final Translations$cast$pt_BR cast = Translations$cast$pt_BR.internal(_root);
 	@override late final Translations$appIcon$pt_BR appIcon = Translations$appIcon$pt_BR.internal(_root);
 	@override late final Translations$auth$pt_BR auth = Translations$auth$pt_BR.internal(_root);
 	@override late final Translations$common$pt_BR common = Translations$common$pt_BR.internal(_root);
@@ -124,16 +123,6 @@ class Translations$viewing$pt_BR extends Translations$viewing$pt {
 	@override String get pairPage => 'Voltar a agrupar esta página';
 	@override String get listenPhone => 'Ouvir neste celular';
 	@override String get audioUnavailable => 'O arquivo ou a faixa de áudio não está disponível neste celular.';
-}
-
-// Path: cast
-class Translations$cast$pt_BR extends Translations$cast$pt {
-	Translations$cast$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
-
-	final TranslationsPtBr _root; // ignore: unused_field
-
-	// Translations
-	@override String get subtitle => 'Legendas';
 }
 
 // Path: appIcon
@@ -1422,7 +1411,6 @@ extension on TranslationsPtBr {
 			'viewing.pairPage' => 'Voltar a agrupar esta página',
 			'viewing.listenPhone' => 'Ouvir neste celular',
 			'viewing.audioUnavailable' => 'O arquivo ou a faixa de áudio não está disponível neste celular.',
-			'cast.subtitle' => 'Legendas',
 			'appIcon.defaultIcon' => 'Padrão',
 			'auth.quickConnect' => 'Conexão rápida',
 			'auth.useQuickConnect' => 'Usar Conexão Rápida',
@@ -1920,9 +1908,9 @@ extension on TranslationsPtBr {
 			'romm.manual' => 'Manual',
 			'romm.importSave' => 'Import save',
 			'romm.exportSave' => 'Export',
+			'romm.importState' => 'Import state',
 			_ => null,
 		} ?? switch (path) {
-			'romm.importState' => 'Import state',
 			'romm.saveImported' => 'Save imported',
 			'romm.saveExported' => 'Save exported',
 			'romm.engine' => 'Emulator identity',

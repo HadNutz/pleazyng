@@ -573,7 +573,6 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get importSettings => '설정 가져오기';
 	@override String get importSettingsDescription => '파일에서 기본 설정 복원';
 	@override String get importSettingsConfirm => '현재 설정을 대체합니다. 계속하시겠습니까?';
-	@override String get importSettingsSuccess => '설정 가져오기 완료';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => '적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.';
 	@override String get importSettingsInvalidFile => '유효한 Pleazyng 설정 내보내기 파일이 아닙니다';
 	@override String get importSettingsNoUser => '설정을 가져오기 전에 로그인하세요';
@@ -587,7 +586,6 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => '백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.';
 	@override String get cloudBackupRestore => 'Backup 복구';
 	@override String get cloudBackupRestoreConfirm => '이 장치에서 해당 휴대용 설정을 대체합니다.';
-	@override String get cloudBackupRestored => 'Cloud Backup에서 복구된 설정';
 	@override String get shortcutsReset => '단축키가 기본값으로 재설정되었습니다';
 	@override String get resetShortcutsConfirm => '사용자 지정 단축키가 기본값으로 대체됩니다. 계속하시겠습니까?';
 	@override String get about => '정보';
@@ -3121,7 +3119,6 @@ class _Translations$cast$ko extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '${device}에 연결된';
 	@override String get device => '장치 캡처';
 	@override String get readyToCast => '던져질 준비';
-	@override String get subtitle => '자막';
 	@override String get serverNotAvailable => '미디어 서버는 사용할 수 없습니다.';
 	@override String get stopCasting => '카스팅을 멈추세요';
 	@override String get startFailed => '캐스트를 시작할 수 없습니다. 서버를 확인하고 다시 시도하세요.';
@@ -6045,7 +6042,6 @@ extension on TranslationsKo {
 			'settings.importSettings' => '설정 가져오기',
 			'settings.importSettingsDescription' => '파일에서 기본 설정 복원',
 			'settings.importSettingsConfirm' => '현재 설정을 대체합니다. 계속하시겠습니까?',
-			'settings.importSettingsSuccess' => '설정 가져오기 완료',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.',
 			'settings.importSettingsInvalidFile' => '유효한 Pleazyng 설정 내보내기 파일이 아닙니다',
 			'settings.importSettingsNoUser' => '설정을 가져오기 전에 로그인하세요',
@@ -6059,7 +6055,6 @@ extension on TranslationsKo {
 			'settings.cloudBackupComplete' => ({required Object action}) => '백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.',
 			'settings.cloudBackupRestore' => 'Backup 복구',
 			'settings.cloudBackupRestoreConfirm' => '이 장치에서 해당 휴대용 설정을 대체합니다.',
-			'settings.cloudBackupRestored' => 'Cloud Backup에서 복구된 설정',
 			'settings.shortcutsReset' => '단축키가 기본값으로 재설정되었습니다',
 			'settings.resetShortcutsConfirm' => '사용자 지정 단축키가 기본값으로 대체됩니다. 계속하시겠습니까?',
 			'settings.about' => '정보',
@@ -6157,10 +6152,10 @@ extension on TranslationsKo {
 			'settings.manageLibrariesDescription' => '라이브러리 순서를 변경하거나 숨깁니다',
 			'settings.companionRemoteServer' => '컴패니언 리모트 서버',
 			'settings.companionRemoteServerDescription' => '네트워크의 모바일 기기가 이 앱을 제어할 수 있도록 허용',
-			_ => null,
-		} ?? switch (path) {
 			'settings.companionRemoteServerStartFailed' => '컴패니언 리모트 서버를 시작할 수 없습니다',
 			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
+			_ => null,
+		} ?? switch (path) {
 			'settings.autoPip' => '자동 PIP 모드',
 			'settings.autoPipDescription' => '재생 중 앱을 떠나면 자동으로 화면 속 화면 모드로 전환합니다',
 			'settings.matchContentFrameRate' => '콘텐츠 프레임 레이트 맞춤',
@@ -6671,10 +6666,10 @@ extension on TranslationsKo {
 			'accessibility.boldTextHint' => '인터페이스 라벨과 메시지에 더 무거운 무게를 사용하여 구별하기 쉽습니다.',
 			'tooltips.shufflePlay' => '무작위 재생',
 			'tooltips.playTrailer' => '예고편 재생',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsWatched' => '시청 완료로 표시',
 			'tooltips.markAsUnwatched' => '미시청으로 표시',
+			_ => null,
+		} ?? switch (path) {
 			'audioTracks.track' => ({required Object n}) => '오디오 트랙 ${n}',
 			'videoControls.audioLabel' => '오디오',
 			'videoControls.subtitlesLabel' => '자막',
@@ -7185,10 +7180,10 @@ extension on TranslationsKo {
 			'errors.connectionTimeout' => ({required Object context}) => '${context} 로드 중 연결 시간 초과',
 			'errors.connectionFailed' => '미디어 서버에 연결할 수 없습니다',
 			'errors.unableToLoad' => ({required Object context}) => '${context}을(를) 불러올 수 없습니다. 다시 시도하세요.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => '사용 가능한 클라이언트가 없습니다',
 			'errors.pleaseEnterToken' => '토큰을 입력해 주세요',
+			_ => null,
+		} ?? switch (path) {
 			'errors.invalidToken' => '토큰이 유효하지 않습니다',
 			'errors.failedToVerifyToken' => ({required Object error}) => '토큰을 확인할 수 없습니다: ${error}',
 			'errors.failedToSwitchProfile' => ({required Object displayName}) => '${displayName}으로 전환할 수 없습니다',
@@ -7699,10 +7694,10 @@ extension on TranslationsKo {
 			'playlists.emptyPlaylist' => '이 재생 목록은 비어 있습니다',
 			'playlists.deleteConfirm' => '재생 목록을 삭제하시겠습니까?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}"을(를) 삭제하시겠습니까?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => '재생 목록이 생성되었습니다',
 			'playlists.deleted' => '재생 목록이 삭제되었습니다',
+			_ => null,
+		} ?? switch (path) {
 			'playlists.itemAdded' => '재생 목록에 추가되었습니다',
 			'playlists.itemRemoved' => '재생 목록에서 제거됨',
 			'playlists.selectPlaylist' => '재생 목록 선택',
@@ -8213,10 +8208,10 @@ extension on TranslationsKo {
 			'performanceOverlay.transfer' => '전송',
 			'performanceOverlay.renderFps' => '렌더 FPS',
 			'performanceOverlay.displayFps' => '디스플레이 FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V 동기화',
 			'performanceOverlay.dropped' => '드롭됨',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRpus' => 'DV RPU',
 			'performanceOverlay.dvRpuAverage' => 'DV RPU 평균',
 			'performanceOverlay.dvSampleAverage' => 'DV 샘플 평균',
@@ -8648,7 +8643,6 @@ extension on TranslationsKo {
 			'cast.connectedTo' => ({required Object device}) => '${device}에 연결된',
 			'cast.device' => '장치 캡처',
 			'cast.readyToCast' => '던져질 준비',
-			'cast.subtitle' => '자막',
 			'cast.serverNotAvailable' => '미디어 서버는 사용할 수 없습니다.',
 			'cast.stopCasting' => '카스팅을 멈추세요',
 			'cast.startFailed' => '캐스트를 시작할 수 없습니다. 서버를 확인하고 다시 시도하세요.',
@@ -8727,11 +8721,11 @@ extension on TranslationsKo {
 			'homeLayout.showInRecommended' => '추천 도서관에서 제공하는',
 			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
 			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
 			'homeLayout.removeHub' => 'Hub 삭제',
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.openDetails' => '개방된 세부 사항',
 			'homeLayout.heroCards' => '영웅 카드',
 			'homeLayout.tapHeroCard' => '히어로 카드를 탭할 때',
@@ -9241,11 +9235,11 @@ extension on TranslationsKo {
 			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
 			'audiobook.recoveryExported' => '암호화 된 복구 파일이 저장되었습니다.',
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.bookorbitHelp' => 'BookOrbit 도서를 둘러보고 재생하려면 본인 BookOrbit 계정으로 로그인하세요. 없는 작품의 요청은 계속 연결된 SeerrNG 인스턴스를 통해 전송됩니다.',
 			'sourceSetup.bookorbitOpen' => 'BookOrbit에서 열기',
 			'sourceSetup.bookorbitDetailHelp' => '라이브러리 세부 정보와 Pleazyng에서 열 수 없는 형식을 관리하려면 BookOrbit에서 이 작품을 확인하세요. 청취 진행 상황은 BookOrbit 계정과 동기화됩니다.',
@@ -9755,11 +9749,11 @@ extension on TranslationsKo {
 			'musicTools.home' => '음악',
 			'musicTools.recent' => '최근 재생한 음악',
 			'musicTools.apiKey' => 'API 키',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '분',
 			'musicTools.rules' => '필터',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',
 			'musicTools.preamp' => '프리앰프',
 			'musicTools.ratingPending' => '이 기기에 저장됨; 동기화 대기 중',
