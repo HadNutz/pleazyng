@@ -609,10 +609,10 @@
       "author": "infixlabs",
       "state": "open",
       "title": "feat(settings): live subtitle styling preview",
-      "decision": "Retained in Pleazyng. Retain the existing player subtitle preview and its per-track settings. See `lib/services/playback_track_preview.dart`.",
+      "decision": "Retained in Pleazyng. Retain the existing live subtitle styling overlay and its setting-specific preview controls. See `lib/screens/settings/subtitle_style_preview.dart`.",
       "disposition": "retained",
       "evidence_files": [
-        "lib/services/playback_track_preview.dart"
+        "lib/screens/settings/subtitle_style_preview.dart"
       ]
     },
     {
