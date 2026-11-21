@@ -1658,21 +1658,21 @@ class _Translations$iptv$nb extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Reservekilder i avspillingsrekkefølge';
+	@override String get exportPrivate => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.';
+	@override String get dynamicStreamExport => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.';
 	@override String get lineupOrder => 'Kanalrekkefølge';
+	@override String get moveUp => 'Flytt opp';
+	@override String get moveDown => 'Flytt ned';
 	@override String get orderChanged => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.';
+	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 	@override String get localPlaylist => 'M3U-fil';
 	@override String get pastePlaylist => 'Lim inn spillelistetekst';
+	@override String get choosePlaylist => 'Velg Playlist filer';
 	@override String get playlistBase => 'Basisadresse for relative lenker (valgfritt)';
 	@override String get localPlaylistHelp => 'Importer en privat kopi av en M3U- eller M3U8-kanalliste. Velg en annen fil for å erstatte den.';
 	@override String get showMatches => 'Vis samsvarende kanaler';
 	@override String get hideMatches => 'Skjul samsvarende kanaler';
 	@override String get pickerCredit => 'Inspirert av · M3U Web Picker · Zachary Schmook (@zschmook) og bidragsytere';
-	@override String get exportPrivate => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.';
-	@override String get dynamicStreamExport => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.';
-	@override String get moveUp => 'Flytt opp';
-	@override String get moveDown => 'Flytt ned';
-	@override String get choosePlaylist => 'Velg Playlist filer';
-	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 }
 
 // Path: accountPreferences
@@ -7058,21 +7058,21 @@ extension on TranslationsNb {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Rediger ${product}-tilkobling',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Legg til eller fjern URL-er for ${serverName}. Pleazyng vil bruke den nåbare URL-en med lavest ventetid.',
 			'iptv.backupFeeds' => 'Reservekilder i avspillingsrekkefølge',
+			'iptv.exportPrivate' => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.',
+			'iptv.dynamicStreamExport' => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.',
 			'iptv.lineupOrder' => 'Kanalrekkefølge',
+			'iptv.moveUp' => 'Flytt opp',
+			'iptv.moveDown' => 'Flytt ned',
 			'iptv.orderChanged' => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'iptv.localPlaylist' => 'M3U-fil',
 			'iptv.pastePlaylist' => 'Lim inn spillelistetekst',
+			'iptv.choosePlaylist' => 'Velg Playlist filer',
 			'iptv.playlistBase' => 'Basisadresse for relative lenker (valgfritt)',
 			'iptv.localPlaylistHelp' => 'Importer en privat kopi av en M3U- eller M3U8-kanalliste. Velg en annen fil for å erstatte den.',
 			'iptv.showMatches' => 'Vis samsvarende kanaler',
 			'iptv.hideMatches' => 'Skjul samsvarende kanaler',
 			'iptv.pickerCredit' => 'Inspirert av · M3U Web Picker · Zachary Schmook (@zschmook) og bidragsytere',
-			'iptv.exportPrivate' => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.',
-			'iptv.dynamicStreamExport' => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.',
-			'iptv.moveUp' => 'Flytt opp',
-			'iptv.moveDown' => 'Flytt ned',
-			'iptv.choosePlaylist' => 'Velg Playlist filer',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'accountPreferences.sectionTitle' => 'Kontoinnstillinger',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Lyd-, undertekst- og bibliotekalternativer lagret på ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Lyd-, undertekst- og bibliotekalternativer lagret på ${count} kontoer',

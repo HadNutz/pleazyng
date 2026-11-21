@@ -1651,21 +1651,21 @@ class _Translations$iptv$th extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'แหล่งสำรองตามลำดับการเล่น';
+	@override String get exportPrivate => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว';
+	@override String get dynamicStreamExport => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้';
 	@override String get lineupOrder => 'ลำดับช่อง';
+	@override String get moveUp => 'ขึ้นไป';
+	@override String get moveDown => 'การเคลื่อนไหวลง';
 	@override String get orderChanged => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง';
+	@override String affectedChannels({required Object count}) => 'ช่อง · ${count}';
 	@override String get localPlaylist => 'ไฟล์ M3U';
 	@override String get pastePlaylist => 'วางข้อความเพลย์ลิสต์';
+	@override String get choosePlaylist => 'เลือกไฟล์ Playlist';
 	@override String get playlistBase => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)';
 	@override String get localPlaylistHelp => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้';
 	@override String get showMatches => 'แสดงช่องที่ตรงกัน';
 	@override String get hideMatches => 'ซ่อนช่องที่ตรงกัน';
 	@override String get pickerCredit => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา';
-	@override String get exportPrivate => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว';
-	@override String get dynamicStreamExport => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้';
-	@override String get moveUp => 'ขึ้นไป';
-	@override String get moveDown => 'การเคลื่อนไหวลง';
-	@override String get choosePlaylist => 'เลือกไฟล์ Playlist';
-	@override String affectedChannels({required Object count}) => 'ช่อง · ${count}';
 }
 
 // Path: accountPreferences
@@ -7033,21 +7033,21 @@ extension on TranslationsTh {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} การเชื่อมต่อ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด',
 			'iptv.backupFeeds' => 'แหล่งสำรองตามลำดับการเล่น',
+			'iptv.exportPrivate' => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว',
+			'iptv.dynamicStreamExport' => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้',
 			'iptv.lineupOrder' => 'ลำดับช่อง',
+			'iptv.moveUp' => 'ขึ้นไป',
+			'iptv.moveDown' => 'การเคลื่อนไหวลง',
 			'iptv.orderChanged' => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง',
+			'iptv.affectedChannels' => ({required Object count}) => 'ช่อง · ${count}',
 			'iptv.localPlaylist' => 'ไฟล์ M3U',
 			'iptv.pastePlaylist' => 'วางข้อความเพลย์ลิสต์',
+			'iptv.choosePlaylist' => 'เลือกไฟล์ Playlist',
 			'iptv.playlistBase' => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)',
 			'iptv.localPlaylistHelp' => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้',
 			'iptv.showMatches' => 'แสดงช่องที่ตรงกัน',
 			'iptv.hideMatches' => 'ซ่อนช่องที่ตรงกัน',
 			'iptv.pickerCredit' => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา',
-			'iptv.exportPrivate' => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว',
-			'iptv.dynamicStreamExport' => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้',
-			'iptv.moveUp' => 'ขึ้นไป',
-			'iptv.moveDown' => 'การเคลื่อนไหวลง',
-			'iptv.choosePlaylist' => 'เลือกไฟล์ Playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'ช่อง · ${count}',
 			'accountPreferences.sectionTitle' => 'การตั้งค่าบัญชี',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'ออฟต์แวร์เสียงและตัวเลือกห้องสมุดที่บันทึกไว้บน ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'ออฟต์แวร์อัตโนมัติและตัวเลือกห้องสมุดที่บันทึกไว้ในบัญชี ${count}',

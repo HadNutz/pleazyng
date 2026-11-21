@@ -1,7 +1,7 @@
 {
   "locale": "zh",
   "inherits": null,
-  "catalogSha256": "6641e0bf139acc16b14b8b94a4edb737011cc376b801af75c8ede5db7244b1a5",
+  "catalogSha256": "a076622d9d8bd3ef61887c67b605bb6b5b20a439340bc02ee6a54804e590be34",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",

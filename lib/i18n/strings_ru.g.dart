@@ -1672,21 +1672,21 @@ class _Translations$iptv$ru extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Резервные источники в порядке воспроизведения';
+	@override String get exportPrivate => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.';
+	@override String get dynamicStreamExport => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.';
 	@override String get lineupOrder => 'Порядок каналов';
+	@override String get moveUp => 'Перемещаться';
+	@override String get moveDown => 'Переместите вниз';
 	@override String get orderChanged => 'Порядок каналов изменился. Проверьте его и повторите попытку.';
+	@override String affectedChannels({required Object count}) => 'Каналы · ${count}';
 	@override String get localPlaylist => 'Файл M3U';
 	@override String get pastePlaylist => 'Вставить текст плейлиста';
+	@override String get choosePlaylist => 'Выберите файл playlist';
 	@override String get playlistBase => 'Базовый URL для относительных ссылок (необязательно)';
 	@override String get localPlaylistHelp => 'Импортируйте личную копию списка каналов M3U или M3U8. Её можно заменить другим файлом.';
 	@override String get showMatches => 'Показать подходящие каналы';
 	@override String get hideMatches => 'Скрыть подходящие каналы';
 	@override String get pickerCredit => 'Источник вдохновения · M3U Web Picker · Zachary Schmook (@zschmook) и другие участники';
-	@override String get exportPrivate => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.';
-	@override String get dynamicStreamExport => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.';
-	@override String get moveUp => 'Перемещаться';
-	@override String get moveDown => 'Переместите вниз';
-	@override String get choosePlaylist => 'Выберите файл playlist';
-	@override String affectedChannels({required Object count}) => 'Каналы · ${count}';
 }
 
 // Path: accountPreferences
@@ -7108,21 +7108,21 @@ extension on TranslationsRu {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Изменить подключение ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Добавьте или удалите URL-адреса для ${serverName}. Pleazyng будет использовать доступный URL с наименьшей задержкой.',
 			'iptv.backupFeeds' => 'Резервные источники в порядке воспроизведения',
+			'iptv.exportPrivate' => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.',
+			'iptv.dynamicStreamExport' => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.',
 			'iptv.lineupOrder' => 'Порядок каналов',
+			'iptv.moveUp' => 'Перемещаться',
+			'iptv.moveDown' => 'Переместите вниз',
 			'iptv.orderChanged' => 'Порядок каналов изменился. Проверьте его и повторите попытку.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Каналы · ${count}',
 			'iptv.localPlaylist' => 'Файл M3U',
 			'iptv.pastePlaylist' => 'Вставить текст плейлиста',
+			'iptv.choosePlaylist' => 'Выберите файл playlist',
 			'iptv.playlistBase' => 'Базовый URL для относительных ссылок (необязательно)',
 			'iptv.localPlaylistHelp' => 'Импортируйте личную копию списка каналов M3U или M3U8. Её можно заменить другим файлом.',
 			'iptv.showMatches' => 'Показать подходящие каналы',
 			'iptv.hideMatches' => 'Скрыть подходящие каналы',
 			'iptv.pickerCredit' => 'Источник вдохновения · M3U Web Picker · Zachary Schmook (@zschmook) и другие участники',
-			'iptv.exportPrivate' => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.',
-			'iptv.dynamicStreamExport' => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.',
-			'iptv.moveUp' => 'Перемещаться',
-			'iptv.moveDown' => 'Переместите вниз',
-			'iptv.choosePlaylist' => 'Выберите файл playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Каналы · ${count}',
 			'accountPreferences.sectionTitle' => 'Настройки аккаунта',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Параметры аудио, субтитров и библиотеки сохранены на аккаунте ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Параметры аудио, субтитров и библиотеки сохранены на ${count} аккаунтах',

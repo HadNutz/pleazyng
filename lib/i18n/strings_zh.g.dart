@@ -1656,21 +1656,21 @@ class Translations$iptv$zh extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => '按播放顺序排列的备用来源';
+	@override String get exportPrivate => '直播地址可能包含服务商的登录凭据。请将列表保存到私密位置。';
+	@override String get dynamicStreamExport => '此门户每次播放都会生成新链接。您可以导出节目指南。';
 	@override String get lineupOrder => '频道顺序';
+	@override String get moveUp => '移动上';
+	@override String get moveDown => '移动下';
 	@override String get orderChanged => '频道顺序已更改。请检查后重试。';
+	@override String affectedChannels({required Object count}) => '频道 · ${count}';
 	@override String get localPlaylist => 'M3U 文件';
 	@override String get pastePlaylist => '粘贴播放列表文本';
+	@override String get choosePlaylist => '选择 Playlist 文件';
 	@override String get playlistBase => '相对链接的基础 URL（可选）';
 	@override String get localPlaylistHelp => '导入 M3U 或 M3U8 频道列表的私人副本。可以选择其他文件替换。';
 	@override String get showMatches => '显示匹配的频道';
 	@override String get hideMatches => '隐藏匹配的频道';
 	@override String get pickerCredit => '灵感来源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他贡献者';
-	@override String get exportPrivate => '直播地址可能包含服务商的登录凭据。请将列表保存到私密位置。';
-	@override String get dynamicStreamExport => '此门户每次播放都会生成新链接。您可以导出节目指南。';
-	@override String get moveUp => '移动上';
-	@override String get moveDown => '移动下';
-	@override String get choosePlaylist => '选择 Playlist 文件';
-	@override String affectedChannels({required Object count}) => '频道 · ${count}';
 }
 
 // Path: accountPreferences
@@ -7053,21 +7053,21 @@ extension on TranslationsZh {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '编辑 ${product} 连接',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '为 ${serverName} 添加或移除 URL。Pleazyng 会使用延迟最低且可访问的 URL。',
 			'iptv.backupFeeds' => '按播放顺序排列的备用来源',
+			'iptv.exportPrivate' => '直播地址可能包含服务商的登录凭据。请将列表保存到私密位置。',
+			'iptv.dynamicStreamExport' => '此门户每次播放都会生成新链接。您可以导出节目指南。',
 			'iptv.lineupOrder' => '频道顺序',
+			'iptv.moveUp' => '移动上',
+			'iptv.moveDown' => '移动下',
 			'iptv.orderChanged' => '频道顺序已更改。请检查后重试。',
+			'iptv.affectedChannels' => ({required Object count}) => '频道 · ${count}',
 			'iptv.localPlaylist' => 'M3U 文件',
 			'iptv.pastePlaylist' => '粘贴播放列表文本',
+			'iptv.choosePlaylist' => '选择 Playlist 文件',
 			'iptv.playlistBase' => '相对链接的基础 URL（可选）',
 			'iptv.localPlaylistHelp' => '导入 M3U 或 M3U8 频道列表的私人副本。可以选择其他文件替换。',
 			'iptv.showMatches' => '显示匹配的频道',
 			'iptv.hideMatches' => '隐藏匹配的频道',
 			'iptv.pickerCredit' => '灵感来源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他贡献者',
-			'iptv.exportPrivate' => '直播地址可能包含服务商的登录凭据。请将列表保存到私密位置。',
-			'iptv.dynamicStreamExport' => '此门户每次播放都会生成新链接。您可以导出节目指南。',
-			'iptv.moveUp' => '移动上',
-			'iptv.moveDown' => '移动下',
-			'iptv.choosePlaylist' => '选择 Playlist 文件',
-			'iptv.affectedChannels' => ({required Object count}) => '频道 · ${count}',
 			'accountPreferences.sectionTitle' => '账户偏好',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '音频、字幕和媒体库选项已保存在 ${account} 上',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '音频、字幕和媒体库选项已保存在 ${count} 个账户上',

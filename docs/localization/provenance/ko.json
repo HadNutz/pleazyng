@@ -1,7 +1,7 @@
 {
   "locale": "ko",
   "inherits": null,
-  "catalogSha256": "a594c321a03772309e0fad5e43ff2ae9873722b3dec8a1869f341af01d3c642b",
+  "catalogSha256": "194b9548a67e2c940a93ad123535833e27c8a4a7d72884da0e350eca2ca58332",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",

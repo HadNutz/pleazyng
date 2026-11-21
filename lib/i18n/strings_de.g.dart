@@ -1658,21 +1658,21 @@ class _Translations$iptv$de extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Ersatzquellen in Wiedergabereihenfolge';
+	@override String get exportPrivate => 'Streamadressen können Zugangsdaten des Anbieters enthalten. Die Liste an einem privaten Ort speichern.';
+	@override String get dynamicStreamExport => 'Das Portal erstellt bei jeder Wiedergabe einen neuen Link. Der Programmführer lässt sich exportieren.';
 	@override String get lineupOrder => 'Kanalreihenfolge';
+	@override String get moveUp => 'Bewegung auf';
+	@override String get moveDown => 'Bewegung nach unten';
 	@override String get orderChanged => 'Die Reihenfolge hat sich geändert. Bitte prüfen und erneut versuchen.';
+	@override String affectedChannels({required Object count}) => 'Kanäle · ${count}';
 	@override String get localPlaylist => 'M3U-Datei';
 	@override String get pastePlaylist => 'Playlist-Text einfügen';
+	@override String get choosePlaylist => 'Wählen Sie Playlist-Datei';
 	@override String get playlistBase => 'Basis-URL für relative Links (optional)';
 	@override String get localPlaylistHelp => 'Eine private Kopie einer M3U- oder M3U8-Kanalliste importieren. Zum Ersetzen eine andere Datei wählen.';
 	@override String get showMatches => 'Passende Kanäle einblenden';
 	@override String get hideMatches => 'Passende Kanäle ausblenden';
 	@override String get pickerCredit => 'Inspiriert von · M3U Web Picker · Zachary Schmook (@zschmook) und Mitwirkenden';
-	@override String get exportPrivate => 'Streamadressen können Zugangsdaten des Anbieters enthalten. Die Liste an einem privaten Ort speichern.';
-	@override String get dynamicStreamExport => 'Das Portal erstellt bei jeder Wiedergabe einen neuen Link. Der Programmführer lässt sich exportieren.';
-	@override String get moveUp => 'Bewegung auf';
-	@override String get moveDown => 'Bewegung nach unten';
-	@override String get choosePlaylist => 'Wählen Sie Playlist-Datei';
-	@override String affectedChannels({required Object count}) => 'Kanäle · ${count}';
 }
 
 // Path: accountPreferences
@@ -7058,21 +7058,21 @@ extension on TranslationsDe {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Verbindung zu ${product} bearbeiten',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'URLs für ${serverName} hinzufügen oder entfernen. Pleazyng verwendet die erreichbare URL mit der geringsten Latenz.',
 			'iptv.backupFeeds' => 'Ersatzquellen in Wiedergabereihenfolge',
+			'iptv.exportPrivate' => 'Streamadressen können Zugangsdaten des Anbieters enthalten. Die Liste an einem privaten Ort speichern.',
+			'iptv.dynamicStreamExport' => 'Das Portal erstellt bei jeder Wiedergabe einen neuen Link. Der Programmführer lässt sich exportieren.',
 			'iptv.lineupOrder' => 'Kanalreihenfolge',
+			'iptv.moveUp' => 'Bewegung auf',
+			'iptv.moveDown' => 'Bewegung nach unten',
 			'iptv.orderChanged' => 'Die Reihenfolge hat sich geändert. Bitte prüfen und erneut versuchen.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanäle · ${count}',
 			'iptv.localPlaylist' => 'M3U-Datei',
 			'iptv.pastePlaylist' => 'Playlist-Text einfügen',
+			'iptv.choosePlaylist' => 'Wählen Sie Playlist-Datei',
 			'iptv.playlistBase' => 'Basis-URL für relative Links (optional)',
 			'iptv.localPlaylistHelp' => 'Eine private Kopie einer M3U- oder M3U8-Kanalliste importieren. Zum Ersetzen eine andere Datei wählen.',
 			'iptv.showMatches' => 'Passende Kanäle einblenden',
 			'iptv.hideMatches' => 'Passende Kanäle ausblenden',
 			'iptv.pickerCredit' => 'Inspiriert von · M3U Web Picker · Zachary Schmook (@zschmook) und Mitwirkenden',
-			'iptv.exportPrivate' => 'Streamadressen können Zugangsdaten des Anbieters enthalten. Die Liste an einem privaten Ort speichern.',
-			'iptv.dynamicStreamExport' => 'Das Portal erstellt bei jeder Wiedergabe einen neuen Link. Der Programmführer lässt sich exportieren.',
-			'iptv.moveUp' => 'Bewegung auf',
-			'iptv.moveDown' => 'Bewegung nach unten',
-			'iptv.choosePlaylist' => 'Wählen Sie Playlist-Datei',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanäle · ${count}',
 			'accountPreferences.sectionTitle' => 'Kontoeinstellungen',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio-, Untertitel- und Mediathek-Optionen werden auf ${account} gespeichert',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio-, Untertitel- und Mediathek-Optionen werden auf ${count} Konten gespeichert',

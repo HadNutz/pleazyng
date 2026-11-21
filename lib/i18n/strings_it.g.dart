@@ -1660,21 +1660,21 @@ class _Translations$iptv$it extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Fonti di riserva in ordine di riproduzione';
+	@override String get exportPrivate => 'Gli indirizzi dei flussi potrebbero includere le credenziali del fornitore. Salva l’elenco in un luogo privato.';
+	@override String get dynamicStreamExport => 'Il portale crea un nuovo collegamento a ogni riproduzione. Puoi esportare la guida.';
 	@override String get lineupOrder => 'Ordine dei canali';
+	@override String get moveUp => 'Move in alto';
+	@override String get moveDown => 'Move verso il basso';
 	@override String get orderChanged => 'L’ordine dei canali è cambiato. Controllalo e riprova.';
+	@override String affectedChannels({required Object count}) => 'Canali · ${count}';
 	@override String get localPlaylist => 'File M3U';
 	@override String get pastePlaylist => 'Incolla il testo della playlist';
+	@override String get choosePlaylist => 'Scegli il file di playlist';
 	@override String get playlistBase => 'URL di base per i collegamenti relativi (facoltativo)';
 	@override String get localPlaylistHelp => 'Importa una copia privata di un elenco di canali M3U o M3U8. Puoi sostituirla con un altro file.';
 	@override String get showMatches => 'Mostra i canali corrispondenti';
 	@override String get hideMatches => 'Nascondi i canali corrispondenti';
 	@override String get pickerCredit => 'Ispirato a · M3U Web Picker · Zachary Schmook (@zschmook) e collaboratori';
-	@override String get exportPrivate => 'Gli indirizzi dei flussi potrebbero includere le credenziali del fornitore. Salva l’elenco in un luogo privato.';
-	@override String get dynamicStreamExport => 'Il portale crea un nuovo collegamento a ogni riproduzione. Puoi esportare la guida.';
-	@override String get moveUp => 'Move in alto';
-	@override String get moveDown => 'Move verso il basso';
-	@override String get choosePlaylist => 'Scegli il file di playlist';
-	@override String affectedChannels({required Object count}) => 'Canali · ${count}';
 }
 
 // Path: accountPreferences
@@ -7065,21 +7065,21 @@ extension on TranslationsIt {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Modifica connessione ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Aggiungi o rimuovi gli URL per ${serverName}. Pleazyng userà l\'URL raggiungibile con la latenza più bassa.',
 			'iptv.backupFeeds' => 'Fonti di riserva in ordine di riproduzione',
+			'iptv.exportPrivate' => 'Gli indirizzi dei flussi potrebbero includere le credenziali del fornitore. Salva l’elenco in un luogo privato.',
+			'iptv.dynamicStreamExport' => 'Il portale crea un nuovo collegamento a ogni riproduzione. Puoi esportare la guida.',
 			'iptv.lineupOrder' => 'Ordine dei canali',
+			'iptv.moveUp' => 'Move in alto',
+			'iptv.moveDown' => 'Move verso il basso',
 			'iptv.orderChanged' => 'L’ordine dei canali è cambiato. Controllalo e riprova.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canali · ${count}',
 			'iptv.localPlaylist' => 'File M3U',
 			'iptv.pastePlaylist' => 'Incolla il testo della playlist',
+			'iptv.choosePlaylist' => 'Scegli il file di playlist',
 			'iptv.playlistBase' => 'URL di base per i collegamenti relativi (facoltativo)',
 			'iptv.localPlaylistHelp' => 'Importa una copia privata di un elenco di canali M3U o M3U8. Puoi sostituirla con un altro file.',
 			'iptv.showMatches' => 'Mostra i canali corrispondenti',
 			'iptv.hideMatches' => 'Nascondi i canali corrispondenti',
 			'iptv.pickerCredit' => 'Ispirato a · M3U Web Picker · Zachary Schmook (@zschmook) e collaboratori',
-			'iptv.exportPrivate' => 'Gli indirizzi dei flussi potrebbero includere le credenziali del fornitore. Salva l’elenco in un luogo privato.',
-			'iptv.dynamicStreamExport' => 'Il portale crea un nuovo collegamento a ogni riproduzione. Puoi esportare la guida.',
-			'iptv.moveUp' => 'Move in alto',
-			'iptv.moveDown' => 'Move verso il basso',
-			'iptv.choosePlaylist' => 'Scegli il file di playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Canali · ${count}',
 			'accountPreferences.sectionTitle' => 'Preferenze dell\'account',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Opzioni di audio, sottotitoli e libreria salvate su ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Opzioni di audio, sottotitoli e libreria salvate su ${count} account',

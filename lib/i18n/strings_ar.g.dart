@@ -1686,21 +1686,21 @@ class _Translations$iptv$ar extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'المصادر الاحتياطية بترتيب التشغيل';
+	@override String get exportPrivate => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.';
+	@override String get dynamicStreamExport => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.';
 	@override String get lineupOrder => 'ترتيب القنوات';
+	@override String get moveUp => 'تحرك إلى الأعلى';
+	@override String get moveDown => 'تحرك إلى أسفل';
 	@override String get orderChanged => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.';
+	@override String affectedChannels({required Object count}) => 'القنوات · ${count}';
 	@override String get localPlaylist => 'ملف M3U';
 	@override String get pastePlaylist => 'لصق نص قائمة التشغيل';
+	@override String get choosePlaylist => 'اختيار ملف Playlist';
 	@override String get playlistBase => 'عنوان أساسي للروابط النسبية (اختياري)';
 	@override String get localPlaylistHelp => 'استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.';
 	@override String get showMatches => 'إظهار القنوات المطابقة';
 	@override String get hideMatches => 'إخفاء القنوات المطابقة';
 	@override String get pickerCredit => 'مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين';
-	@override String get exportPrivate => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.';
-	@override String get dynamicStreamExport => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.';
-	@override String get moveUp => 'تحرك إلى الأعلى';
-	@override String get moveDown => 'تحرك إلى أسفل';
-	@override String get choosePlaylist => 'اختيار ملف Playlist';
-	@override String affectedChannels({required Object count}) => 'القنوات · ${count}';
 }
 
 // Path: accountPreferences
@@ -7158,21 +7158,21 @@ extension on TranslationsAr {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'تحرير ${product} الاتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير.',
 			'iptv.backupFeeds' => 'المصادر الاحتياطية بترتيب التشغيل',
+			'iptv.exportPrivate' => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.',
+			'iptv.dynamicStreamExport' => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.',
 			'iptv.lineupOrder' => 'ترتيب القنوات',
+			'iptv.moveUp' => 'تحرك إلى الأعلى',
+			'iptv.moveDown' => 'تحرك إلى أسفل',
 			'iptv.orderChanged' => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.',
+			'iptv.affectedChannels' => ({required Object count}) => 'القنوات · ${count}',
 			'iptv.localPlaylist' => 'ملف M3U',
 			'iptv.pastePlaylist' => 'لصق نص قائمة التشغيل',
+			'iptv.choosePlaylist' => 'اختيار ملف Playlist',
 			'iptv.playlistBase' => 'عنوان أساسي للروابط النسبية (اختياري)',
 			'iptv.localPlaylistHelp' => 'استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.',
 			'iptv.showMatches' => 'إظهار القنوات المطابقة',
 			'iptv.hideMatches' => 'إخفاء القنوات المطابقة',
 			'iptv.pickerCredit' => 'مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين',
-			'iptv.exportPrivate' => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.',
-			'iptv.dynamicStreamExport' => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.',
-			'iptv.moveUp' => 'تحرك إلى الأعلى',
-			'iptv.moveDown' => 'تحرك إلى أسفل',
-			'iptv.choosePlaylist' => 'اختيار ملف Playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'القنوات · ${count}',
 			'accountPreferences.sectionTitle' => 'تفضيلات الحساب',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'تم حفظ خيارات الصوت والعنوان والمكتبة على ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'تم حفظ خيارات الصوت والعنوان والمكتبة على حسابات ${count}',

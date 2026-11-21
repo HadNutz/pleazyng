@@ -1651,21 +1651,21 @@ class _Translations$iptv$ms extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Sumber sandaran mengikut turutan main balik';
+	@override String get exportPrivate => 'Alamat strim mungkin mengandungi butiran log masuk penyedia anda. Simpan senarai di lokasi peribadi.';
+	@override String get dynamicStreamExport => 'Portal menjana pautan baharu setiap kali dimainkan. Panduan rancangan boleh dieksport.';
 	@override String get lineupOrder => 'Susunan saluran';
+	@override String get moveUp => 'bergerak ke atas';
+	@override String get moveDown => 'bergerak ke bawah';
 	@override String get orderChanged => 'Susunan saluran telah berubah. Semak dan cuba lagi.';
+	@override String affectedChannels({required Object count}) => 'Saluran · ${count}';
 	@override String get localPlaylist => 'Fail M3U';
 	@override String get pastePlaylist => 'Tampal teks senarai main';
+	@override String get choosePlaylist => 'Pilih fail playlist';
 	@override String get playlistBase => 'URL asas untuk pautan relatif (pilihan)';
 	@override String get localPlaylistHelp => 'Import salinan peribadi senarai saluran M3U atau M3U8. Pilih fail lain untuk menggantikannya.';
 	@override String get showMatches => 'Tunjukkan saluran yang sepadan';
 	@override String get hideMatches => 'Sembunyikan saluran yang sepadan';
 	@override String get pickerCredit => 'Diilhamkan oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan penyumbang';
-	@override String get exportPrivate => 'Alamat strim mungkin mengandungi butiran log masuk penyedia anda. Simpan senarai di lokasi peribadi.';
-	@override String get dynamicStreamExport => 'Portal menjana pautan baharu setiap kali dimainkan. Panduan rancangan boleh dieksport.';
-	@override String get moveUp => 'bergerak ke atas';
-	@override String get moveDown => 'bergerak ke bawah';
-	@override String get choosePlaylist => 'Pilih fail playlist';
-	@override String affectedChannels({required Object count}) => 'Saluran · ${count}';
 }
 
 // Path: accountPreferences
@@ -7033,21 +7033,21 @@ extension on TranslationsMs {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} sambungan',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Menambah atau menghapuskan URL untuk ${serverName}. Pleazyng akan menggunakan URL yang boleh dicapai dengan latensi terendah.',
 			'iptv.backupFeeds' => 'Sumber sandaran mengikut turutan main balik',
+			'iptv.exportPrivate' => 'Alamat strim mungkin mengandungi butiran log masuk penyedia anda. Simpan senarai di lokasi peribadi.',
+			'iptv.dynamicStreamExport' => 'Portal menjana pautan baharu setiap kali dimainkan. Panduan rancangan boleh dieksport.',
 			'iptv.lineupOrder' => 'Susunan saluran',
+			'iptv.moveUp' => 'bergerak ke atas',
+			'iptv.moveDown' => 'bergerak ke bawah',
 			'iptv.orderChanged' => 'Susunan saluran telah berubah. Semak dan cuba lagi.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Saluran · ${count}',
 			'iptv.localPlaylist' => 'Fail M3U',
 			'iptv.pastePlaylist' => 'Tampal teks senarai main',
+			'iptv.choosePlaylist' => 'Pilih fail playlist',
 			'iptv.playlistBase' => 'URL asas untuk pautan relatif (pilihan)',
 			'iptv.localPlaylistHelp' => 'Import salinan peribadi senarai saluran M3U atau M3U8. Pilih fail lain untuk menggantikannya.',
 			'iptv.showMatches' => 'Tunjukkan saluran yang sepadan',
 			'iptv.hideMatches' => 'Sembunyikan saluran yang sepadan',
 			'iptv.pickerCredit' => 'Diilhamkan oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan penyumbang',
-			'iptv.exportPrivate' => 'Alamat strim mungkin mengandungi butiran log masuk penyedia anda. Simpan senarai di lokasi peribadi.',
-			'iptv.dynamicStreamExport' => 'Portal menjana pautan baharu setiap kali dimainkan. Panduan rancangan boleh dieksport.',
-			'iptv.moveUp' => 'bergerak ke atas',
-			'iptv.moveDown' => 'bergerak ke bawah',
-			'iptv.choosePlaylist' => 'Pilih fail playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Saluran · ${count}',
 			'accountPreferences.sectionTitle' => 'Keutamaan akaun',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle dan pilihan perpustakaan disimpan pada ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle dan pilihan perpustakaan disimpan pada ${count} akaun',

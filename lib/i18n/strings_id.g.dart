@@ -1651,21 +1651,21 @@ class _Translations$iptv$id extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Sumber cadangan menurut urutan pemutaran';
+	@override String get exportPrivate => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.';
+	@override String get dynamicStreamExport => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.';
 	@override String get lineupOrder => 'Urutan saluran';
+	@override String get moveUp => 'bergerak ke atas';
+	@override String get moveDown => 'Memuat turun';
 	@override String get orderChanged => 'Urutan saluran berubah. Periksa lalu coba lagi.';
+	@override String affectedChannels({required Object count}) => 'Saluran · ${count}';
 	@override String get localPlaylist => 'Berkas M3U';
 	@override String get pastePlaylist => 'Tempel teks daftar putar';
+	@override String get choosePlaylist => 'Pilih file playlist';
 	@override String get playlistBase => 'URL dasar untuk tautan relatif (opsional)';
 	@override String get localPlaylistHelp => 'Impor salinan pribadi daftar saluran M3U atau M3U8. Ganti dengan berkas lain jika perlu.';
 	@override String get showMatches => 'Tampilkan saluran yang cocok';
 	@override String get hideMatches => 'Sembunyikan saluran yang cocok';
 	@override String get pickerCredit => 'Terinspirasi oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan para kontributor';
-	@override String get exportPrivate => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.';
-	@override String get dynamicStreamExport => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.';
-	@override String get moveUp => 'bergerak ke atas';
-	@override String get moveDown => 'Memuat turun';
-	@override String get choosePlaylist => 'Pilih file playlist';
-	@override String affectedChannels({required Object count}) => 'Saluran · ${count}';
 }
 
 // Path: accountPreferences
@@ -7033,21 +7033,21 @@ extension on TranslationsId {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Mengedit ${product} koneksi',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Menambahkan atau menghapus URL untuk ${serverName}. Pleazyng akan menggunakan URL yang dapat diakses dengan latensi terendah.',
 			'iptv.backupFeeds' => 'Sumber cadangan menurut urutan pemutaran',
+			'iptv.exportPrivate' => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.',
+			'iptv.dynamicStreamExport' => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.',
 			'iptv.lineupOrder' => 'Urutan saluran',
+			'iptv.moveUp' => 'bergerak ke atas',
+			'iptv.moveDown' => 'Memuat turun',
 			'iptv.orderChanged' => 'Urutan saluran berubah. Periksa lalu coba lagi.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Saluran · ${count}',
 			'iptv.localPlaylist' => 'Berkas M3U',
 			'iptv.pastePlaylist' => 'Tempel teks daftar putar',
+			'iptv.choosePlaylist' => 'Pilih file playlist',
 			'iptv.playlistBase' => 'URL dasar untuk tautan relatif (opsional)',
 			'iptv.localPlaylistHelp' => 'Impor salinan pribadi daftar saluran M3U atau M3U8. Ganti dengan berkas lain jika perlu.',
 			'iptv.showMatches' => 'Tampilkan saluran yang cocok',
 			'iptv.hideMatches' => 'Sembunyikan saluran yang cocok',
 			'iptv.pickerCredit' => 'Terinspirasi oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan para kontributor',
-			'iptv.exportPrivate' => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.',
-			'iptv.dynamicStreamExport' => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.',
-			'iptv.moveUp' => 'bergerak ke atas',
-			'iptv.moveDown' => 'Memuat turun',
-			'iptv.choosePlaylist' => 'Pilih file playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Saluran · ${count}',
 			'accountPreferences.sectionTitle' => 'Keutamaan Akun',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle, dan pilihan perpustakaan disimpan pada ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle, dan pilihan perpustakaan disimpan pada ${count} akun',

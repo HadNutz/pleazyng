@@ -1,7 +1,7 @@
 {
   "locale": "bn",
   "inherits": null,
-  "catalogSha256": "8f0d694b378830628db3bae800e2a1e572335717993fc7cbd0f05b8288193e5f",
+  "catalogSha256": "ecaccc21bd8712e14cdc17663a9be0d39684feecf51fb4245dfc3335cf2883f4",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",

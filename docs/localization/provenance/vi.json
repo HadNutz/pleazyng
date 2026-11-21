@@ -1,7 +1,7 @@
 {
   "locale": "vi",
   "inherits": null,
-  "catalogSha256": "f8187d83e253d6c7fa363a0457c3483a365e3b4f69da307d9c7553005b3a6b15",
+  "catalogSha256": "2d9ddb9d4edef54e322852b554d276f249e2e8375deba7d6644a269ad6ddb36f",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",

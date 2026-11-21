@@ -1,7 +1,7 @@
 {
   "locale": "hu",
   "inherits": null,
-  "catalogSha256": "ff6c9760159447fcc24d155e5366576c8b6517b3a2380fdd0fbdd7b89e4a0714",
+  "catalogSha256": "9a98e6d5171bdb49780c14d307e878b56959ef0bc96f51db1c4cd48dc004d1a8",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",

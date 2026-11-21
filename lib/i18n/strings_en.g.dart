@@ -12794,9 +12794,6 @@ class Translations$podcasts$en {
 	/// en: 'Export subscriptions (OPML)'
 	String get exportOpml => 'Export subscriptions (OPML)';
 
-	/// en: 'Subscriptions imported.'
-	String get imported => 'Subscriptions imported.';
-
 	/// en: 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.'
 	String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.';
 
@@ -22982,7 +22979,6 @@ extension on Translations {
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
-			'podcasts.imported' => 'Subscriptions imported.',
 			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
@@ -23475,9 +23471,9 @@ extension on Translations {
 			'subtitleCapture.transcribingProgress' => ({required Object percent}) => 'Transcribing audio locally (${percent}%)…',
 			'subtitleCapture.translating' => 'Translating speech to English locally…',
 			'subtitleCapture.translatingProgress' => ({required Object percent}) => 'Translating speech to English locally (${percent}%)…',
+			'subtitleCapture.processingAudio' => 'Processing audio locally…',
 			_ => null,
 		} ?? switch (path) {
-			'subtitleCapture.processingAudio' => 'Processing audio locally…',
 			'subtitleCapture.processingAudioProgress' => ({required Object percent}) => 'Processing audio locally (${percent}%)…',
 			'subtitleCapture.cpuFallback' => 'GPU speech processing failed. Retrying on CPU…',
 			'karaokeUi.chooseAMicrophone' => 'Choose a microphone',

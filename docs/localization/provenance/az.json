@@ -1,7 +1,7 @@
 {
   "locale": "az",
   "inherits": null,
-  "catalogSha256": "3cbf8009108f3186566079f38fe166f26dff37c89c2ae0673f76e520701da2a6",
+  "catalogSha256": "6bd2bad6dbeb6d2d14c8f5354feb02e84f5b032cf9820fd12ab2e9c781e3b112",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",

@@ -1658,21 +1658,21 @@ class _Translations$iptv$hu extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Tartalék források lejátszási sorrendben';
+	@override String get exportPrivate => 'A streamcímek tartalmazhatják a szolgáltatói bejelentkezési adatokat. A listát privát helyre mentse.';
+	@override String get dynamicStreamExport => 'A portál minden lejátszáskor új hivatkozást készít. A műsorújság exportálható.';
 	@override String get lineupOrder => 'Csatornasorrend';
+	@override String get moveUp => 'mozgatni fel';
+	@override String get moveDown => 'Mozgás le';
 	@override String get orderChanged => 'A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.';
+	@override String affectedChannels({required Object count}) => 'Csatornák · ${count}';
 	@override String get localPlaylist => 'M3U-fájl';
 	@override String get pastePlaylist => 'Lejátszási lista szövegének beillesztése';
+	@override String get choosePlaylist => 'Válassza ki a Playlist fájlt';
 	@override String get playlistBase => 'Alap URL a relatív hivatkozásokhoz (opcionális)';
 	@override String get localPlaylistHelp => 'Importálja egy M3U vagy M3U8 csatornalista saját példányát. Egy másik fájllal lecserélheti.';
 	@override String get showMatches => 'Egyező csatornák megjelenítése';
 	@override String get hideMatches => 'Egyező csatornák elrejtése';
 	@override String get pickerCredit => 'Ihletforrás · M3U Web Picker · Zachary Schmook (@zschmook) és a közreműködők';
-	@override String get exportPrivate => 'A streamcímek tartalmazhatják a szolgáltatói bejelentkezési adatokat. A listát privát helyre mentse.';
-	@override String get dynamicStreamExport => 'A portál minden lejátszáskor új hivatkozást készít. A műsorújság exportálható.';
-	@override String get moveUp => 'mozgatni fel';
-	@override String get moveDown => 'Mozgás le';
-	@override String get choosePlaylist => 'Válassza ki a Playlist fájlt';
-	@override String affectedChannels({required Object count}) => 'Csatornák · ${count}';
 }
 
 // Path: accountPreferences
@@ -7058,21 +7058,21 @@ extension on TranslationsHu {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'A(z) ${product} kapcsolat szerkesztése',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Adjon hozzá vagy távolítson el URL-eket a(z) ${serverName} esetén. A Pleazyng a legkisebb késleltetésű, elérhető URL-t fogja használni.',
 			'iptv.backupFeeds' => 'Tartalék források lejátszási sorrendben',
+			'iptv.exportPrivate' => 'A streamcímek tartalmazhatják a szolgáltatói bejelentkezési adatokat. A listát privát helyre mentse.',
+			'iptv.dynamicStreamExport' => 'A portál minden lejátszáskor új hivatkozást készít. A műsorújság exportálható.',
 			'iptv.lineupOrder' => 'Csatornasorrend',
+			'iptv.moveUp' => 'mozgatni fel',
+			'iptv.moveDown' => 'Mozgás le',
 			'iptv.orderChanged' => 'A csatornasorrend megváltozott. Ellenőrizze, majd próbálja újra.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Csatornák · ${count}',
 			'iptv.localPlaylist' => 'M3U-fájl',
 			'iptv.pastePlaylist' => 'Lejátszási lista szövegének beillesztése',
+			'iptv.choosePlaylist' => 'Válassza ki a Playlist fájlt',
 			'iptv.playlistBase' => 'Alap URL a relatív hivatkozásokhoz (opcionális)',
 			'iptv.localPlaylistHelp' => 'Importálja egy M3U vagy M3U8 csatornalista saját példányát. Egy másik fájllal lecserélheti.',
 			'iptv.showMatches' => 'Egyező csatornák megjelenítése',
 			'iptv.hideMatches' => 'Egyező csatornák elrejtése',
 			'iptv.pickerCredit' => 'Ihletforrás · M3U Web Picker · Zachary Schmook (@zschmook) és a közreműködők',
-			'iptv.exportPrivate' => 'A streamcímek tartalmazhatják a szolgáltatói bejelentkezési adatokat. A listát privát helyre mentse.',
-			'iptv.dynamicStreamExport' => 'A portál minden lejátszáskor új hivatkozást készít. A műsorújság exportálható.',
-			'iptv.moveUp' => 'mozgatni fel',
-			'iptv.moveDown' => 'Mozgás le',
-			'iptv.choosePlaylist' => 'Válassza ki a Playlist fájlt',
-			'iptv.affectedChannels' => ({required Object count}) => 'Csatornák · ${count}',
 			'accountPreferences.sectionTitle' => 'Fiókbeállítások',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Hang-, felirat- és könyvtárbeállítások mentve a(z) ${account} fiókra',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Hang-, felirat- és könyvtárbeállítások mentve ${count} fiókra',

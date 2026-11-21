@@ -1658,21 +1658,21 @@ class _Translations$iptv$da extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Reservekilder i afspilningsrækkefølge';
+	@override String get exportPrivate => 'Streamadresserne kan indeholde dine loginoplysninger. Gem listen et privat sted.';
+	@override String get dynamicStreamExport => 'Portalen opretter et nyt link ved hver afspilning. Programguiden kan eksporteres.';
 	@override String get lineupOrder => 'Kanalrækkefølge';
+	@override String get moveUp => 'Flyt op';
+	@override String get moveDown => 'Flyt ned';
 	@override String get orderChanged => 'Kanalrækkefølgen er ændret. Gennemse den og prøv igen.';
+	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 	@override String get localPlaylist => 'M3U-fil';
 	@override String get pastePlaylist => 'Indsæt afspilningslistens tekst';
+	@override String get choosePlaylist => 'Vælg Playlist fil';
 	@override String get playlistBase => 'Basis-URL til relative links (valgfri)';
 	@override String get localPlaylistHelp => 'Importér en privat kopi af en M3U- eller M3U8-kanalliste. Vælg en anden fil for at erstatte den.';
 	@override String get showMatches => 'Vis matchende kanaler';
 	@override String get hideMatches => 'Skjul matchende kanaler';
 	@override String get pickerCredit => 'Inspireret af · M3U Web Picker · Zachary Schmook (@zschmook) og bidragydere';
-	@override String get exportPrivate => 'Streamadresserne kan indeholde dine loginoplysninger. Gem listen et privat sted.';
-	@override String get dynamicStreamExport => 'Portalen opretter et nyt link ved hver afspilning. Programguiden kan eksporteres.';
-	@override String get moveUp => 'Flyt op';
-	@override String get moveDown => 'Flyt ned';
-	@override String get choosePlaylist => 'Vælg Playlist fil';
-	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 }
 
 // Path: accountPreferences
@@ -7058,21 +7058,21 @@ extension on TranslationsDa {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Rediger ${product}-forbindelse',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Tilføj eller fjern URL\'er for ${serverName}. Pleazyng bruger den tilgængelige URL med laveste latenstid.',
 			'iptv.backupFeeds' => 'Reservekilder i afspilningsrækkefølge',
+			'iptv.exportPrivate' => 'Streamadresserne kan indeholde dine loginoplysninger. Gem listen et privat sted.',
+			'iptv.dynamicStreamExport' => 'Portalen opretter et nyt link ved hver afspilning. Programguiden kan eksporteres.',
 			'iptv.lineupOrder' => 'Kanalrækkefølge',
+			'iptv.moveUp' => 'Flyt op',
+			'iptv.moveDown' => 'Flyt ned',
 			'iptv.orderChanged' => 'Kanalrækkefølgen er ændret. Gennemse den og prøv igen.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'iptv.localPlaylist' => 'M3U-fil',
 			'iptv.pastePlaylist' => 'Indsæt afspilningslistens tekst',
+			'iptv.choosePlaylist' => 'Vælg Playlist fil',
 			'iptv.playlistBase' => 'Basis-URL til relative links (valgfri)',
 			'iptv.localPlaylistHelp' => 'Importér en privat kopi af en M3U- eller M3U8-kanalliste. Vælg en anden fil for at erstatte den.',
 			'iptv.showMatches' => 'Vis matchende kanaler',
 			'iptv.hideMatches' => 'Skjul matchende kanaler',
 			'iptv.pickerCredit' => 'Inspireret af · M3U Web Picker · Zachary Schmook (@zschmook) og bidragydere',
-			'iptv.exportPrivate' => 'Streamadresserne kan indeholde dine loginoplysninger. Gem listen et privat sted.',
-			'iptv.dynamicStreamExport' => 'Portalen opretter et nyt link ved hver afspilning. Programguiden kan eksporteres.',
-			'iptv.moveUp' => 'Flyt op',
-			'iptv.moveDown' => 'Flyt ned',
-			'iptv.choosePlaylist' => 'Vælg Playlist fil',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'accountPreferences.sectionTitle' => 'Kontopræferencer',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Lyd-, undertekst- og biblioteksindstillinger gemt på ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Lyd-, undertekst- og biblioteksindstillinger gemt på ${count} konti',

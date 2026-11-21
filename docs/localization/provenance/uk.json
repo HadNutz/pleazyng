@@ -1,7 +1,7 @@
 {
   "locale": "uk",
   "inherits": null,
-  "catalogSha256": "dbfeba85026fcf652b536533959b89978632f296588193abf559e79314fee42e",
+  "catalogSha256": "d7845a08db111b1395cdba55152ecc9e5b912c2712fee8b6bc6f01e378cee6ba",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",

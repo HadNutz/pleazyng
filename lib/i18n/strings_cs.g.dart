@@ -1670,21 +1670,21 @@ class _Translations$iptv$cs extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Záložní zdroje v pořadí přehrávání';
+	@override String get exportPrivate => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.';
+	@override String get dynamicStreamExport => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.';
 	@override String get lineupOrder => 'Pořadí kanálů';
+	@override String get moveUp => 'Přemístěte se';
+	@override String get moveDown => 'Přemístěte se dolů';
 	@override String get orderChanged => 'Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.';
+	@override String affectedChannels({required Object count}) => 'Kanály · ${count}';
 	@override String get localPlaylist => 'Soubor M3U';
 	@override String get pastePlaylist => 'Vložit text playlistu';
+	@override String get choosePlaylist => 'Vyberte soubor playlist';
 	@override String get playlistBase => 'Základní URL pro relativní odkazy (volitelné)';
 	@override String get localPlaylistHelp => 'Importujte soukromou kopii seznamu kanálů M3U nebo M3U8. Můžete ji nahradit jiným souborem.';
 	@override String get showMatches => 'Zobrazit odpovídající kanály';
 	@override String get hideMatches => 'Skrýt odpovídající kanály';
 	@override String get pickerCredit => 'Inspirováno projektem · M3U Web Picker · Zachary Schmook (@zschmook) a přispěvatelé';
-	@override String get exportPrivate => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.';
-	@override String get dynamicStreamExport => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.';
-	@override String get moveUp => 'Přemístěte se';
-	@override String get moveDown => 'Přemístěte se dolů';
-	@override String get choosePlaylist => 'Vyberte soubor playlist';
-	@override String affectedChannels({required Object count}) => 'Kanály · ${count}';
 }
 
 // Path: accountPreferences
@@ -7102,21 +7102,21 @@ extension on TranslationsCs {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} připojení',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Přidat nebo odstranit URL pro ${serverName}. Pleazyng bude používat přístupné URL s nejnižší latencí.',
 			'iptv.backupFeeds' => 'Záložní zdroje v pořadí přehrávání',
+			'iptv.exportPrivate' => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.',
+			'iptv.dynamicStreamExport' => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.',
 			'iptv.lineupOrder' => 'Pořadí kanálů',
+			'iptv.moveUp' => 'Přemístěte se',
+			'iptv.moveDown' => 'Přemístěte se dolů',
 			'iptv.orderChanged' => 'Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanály · ${count}',
 			'iptv.localPlaylist' => 'Soubor M3U',
 			'iptv.pastePlaylist' => 'Vložit text playlistu',
+			'iptv.choosePlaylist' => 'Vyberte soubor playlist',
 			'iptv.playlistBase' => 'Základní URL pro relativní odkazy (volitelné)',
 			'iptv.localPlaylistHelp' => 'Importujte soukromou kopii seznamu kanálů M3U nebo M3U8. Můžete ji nahradit jiným souborem.',
 			'iptv.showMatches' => 'Zobrazit odpovídající kanály',
 			'iptv.hideMatches' => 'Skrýt odpovídající kanály',
 			'iptv.pickerCredit' => 'Inspirováno projektem · M3U Web Picker · Zachary Schmook (@zschmook) a přispěvatelé',
-			'iptv.exportPrivate' => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.',
-			'iptv.dynamicStreamExport' => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.',
-			'iptv.moveUp' => 'Přemístěte se',
-			'iptv.moveDown' => 'Přemístěte se dolů',
-			'iptv.choosePlaylist' => 'Vyberte soubor playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanály · ${count}',
 			'accountPreferences.sectionTitle' => 'účetní preference',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Možnosti audio, podtitulů a knihovny uložené na ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Možnosti audio, podtitulů a knihovny uložené na účtech ${count}',

@@ -1656,21 +1656,21 @@ class _Translations$iptv$ko extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => '재생 순서에 따른 예비 소스';
+	@override String get exportPrivate => '스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.';
+	@override String get dynamicStreamExport => '이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.';
 	@override String get lineupOrder => '채널 순서';
+	@override String get moveUp => '움직이기 위하여';
+	@override String get moveDown => '아래로 이동';
 	@override String get orderChanged => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.';
+	@override String affectedChannels({required Object count}) => '채널 · ${count}';
 	@override String get localPlaylist => 'M3U 파일';
 	@override String get pastePlaylist => '재생목록 텍스트 붙여넣기';
+	@override String get choosePlaylist => '플레이리스트 파일 선택';
 	@override String get playlistBase => '상대 링크의 기본 URL(선택 사항)';
 	@override String get localPlaylistHelp => 'M3U 또는 M3U8 채널 목록을 비공개 사본으로 가져옵니다. 다른 파일로 교체할 수 있습니다.';
 	@override String get showMatches => '일치하는 채널 표시';
 	@override String get hideMatches => '일치하는 채널 숨기기';
 	@override String get pickerCredit => '아이디어 출처 · M3U Web Picker · Zachary Schmook (@zschmook) 외 기여자';
-	@override String get exportPrivate => '스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.';
-	@override String get dynamicStreamExport => '이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.';
-	@override String get moveUp => '움직이기 위하여';
-	@override String get moveDown => '아래로 이동';
-	@override String get choosePlaylist => '플레이리스트 파일 선택';
-	@override String affectedChannels({required Object count}) => '채널 · ${count}';
 }
 
 // Path: accountPreferences
@@ -7053,21 +7053,21 @@ extension on TranslationsKo {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} 연결 편집',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다.',
 			'iptv.backupFeeds' => '재생 순서에 따른 예비 소스',
+			'iptv.exportPrivate' => '스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.',
+			'iptv.dynamicStreamExport' => '이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.',
 			'iptv.lineupOrder' => '채널 순서',
+			'iptv.moveUp' => '움직이기 위하여',
+			'iptv.moveDown' => '아래로 이동',
 			'iptv.orderChanged' => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.',
+			'iptv.affectedChannels' => ({required Object count}) => '채널 · ${count}',
 			'iptv.localPlaylist' => 'M3U 파일',
 			'iptv.pastePlaylist' => '재생목록 텍스트 붙여넣기',
+			'iptv.choosePlaylist' => '플레이리스트 파일 선택',
 			'iptv.playlistBase' => '상대 링크의 기본 URL(선택 사항)',
 			'iptv.localPlaylistHelp' => 'M3U 또는 M3U8 채널 목록을 비공개 사본으로 가져옵니다. 다른 파일로 교체할 수 있습니다.',
 			'iptv.showMatches' => '일치하는 채널 표시',
 			'iptv.hideMatches' => '일치하는 채널 숨기기',
 			'iptv.pickerCredit' => '아이디어 출처 · M3U Web Picker · Zachary Schmook (@zschmook) 외 기여자',
-			'iptv.exportPrivate' => '스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.',
-			'iptv.dynamicStreamExport' => '이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.',
-			'iptv.moveUp' => '움직이기 위하여',
-			'iptv.moveDown' => '아래로 이동',
-			'iptv.choosePlaylist' => '플레이리스트 파일 선택',
-			'iptv.affectedChannels' => ({required Object count}) => '채널 · ${count}',
 			'accountPreferences.sectionTitle' => '계정 기본 설정',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account}에 저장된 오디오, 자막 및 라이브러리 옵션',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count}개 계정에 저장된 오디오, 자막 및 라이브러리 옵션',

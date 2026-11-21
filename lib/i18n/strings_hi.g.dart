@@ -1658,21 +1658,21 @@ class _Translations$iptv$hi extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'प्लेबैक क्रम में वैकल्पिक स्रोत';
+	@override String get exportPrivate => 'स्ट्रीम पतों में आपके सेवा प्रदाता की लॉगिन जानकारी हो सकती है। सूची को किसी निजी स्थान पर सहेजें।';
+	@override String get dynamicStreamExport => 'पोर्टल हर बार चलाने पर नया लिंक बनाता है। आप कार्यक्रम गाइड निर्यात कर सकते हैं।';
 	@override String get lineupOrder => 'चैनलों का क्रम';
+	@override String get moveUp => 'ऊपर चलना';
+	@override String get moveDown => 'नीचे उतरना';
 	@override String get orderChanged => 'चैनलों का क्रम बदल गया है। जाँचकर फिर से कोशिश करें।';
+	@override String affectedChannels({required Object count}) => 'चैनल · ${count}';
 	@override String get localPlaylist => 'M3U फ़ाइल';
 	@override String get pastePlaylist => 'प्लेलिस्ट का टेक्स्ट पेस्ट करें';
+	@override String get choosePlaylist => 'Playlist फ़ाइल का चयन करें';
 	@override String get playlistBase => 'सापेक्ष लिंक के लिए आधार URL (वैकल्पिक)';
 	@override String get localPlaylistHelp => 'M3U या M3U8 चैनल सूची की निजी प्रति आयात करें। इसे दूसरी फ़ाइल से बदल सकते हैं।';
 	@override String get showMatches => 'मेल खाने वाले चैनल दिखाएँ';
 	@override String get hideMatches => 'मेल खाने वाले चैनल छिपाएँ';
 	@override String get pickerCredit => 'प्रेरणा स्रोत · M3U Web Picker · Zachary Schmook (@zschmook) और योगदानकर्ता';
-	@override String get exportPrivate => 'स्ट्रीम पतों में आपके सेवा प्रदाता की लॉगिन जानकारी हो सकती है। सूची को किसी निजी स्थान पर सहेजें।';
-	@override String get dynamicStreamExport => 'पोर्टल हर बार चलाने पर नया लिंक बनाता है। आप कार्यक्रम गाइड निर्यात कर सकते हैं।';
-	@override String get moveUp => 'ऊपर चलना';
-	@override String get moveDown => 'नीचे उतरना';
-	@override String get choosePlaylist => 'Playlist फ़ाइल का चयन करें';
-	@override String affectedChannels({required Object count}) => 'चैनल · ${count}';
 }
 
 // Path: accountPreferences
@@ -7058,21 +7058,21 @@ extension on TranslationsHi {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'संपादित करें ${product} कनेक्शन',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} के लिए URL जोड़ें या हटा दें. Pleazyng सबसे कम देरी के साथ पहुंचने योग्य URL का उपयोग करेगा.',
 			'iptv.backupFeeds' => 'प्लेबैक क्रम में वैकल्पिक स्रोत',
+			'iptv.exportPrivate' => 'स्ट्रीम पतों में आपके सेवा प्रदाता की लॉगिन जानकारी हो सकती है। सूची को किसी निजी स्थान पर सहेजें।',
+			'iptv.dynamicStreamExport' => 'पोर्टल हर बार चलाने पर नया लिंक बनाता है। आप कार्यक्रम गाइड निर्यात कर सकते हैं।',
 			'iptv.lineupOrder' => 'चैनलों का क्रम',
+			'iptv.moveUp' => 'ऊपर चलना',
+			'iptv.moveDown' => 'नीचे उतरना',
 			'iptv.orderChanged' => 'चैनलों का क्रम बदल गया है। जाँचकर फिर से कोशिश करें।',
+			'iptv.affectedChannels' => ({required Object count}) => 'चैनल · ${count}',
 			'iptv.localPlaylist' => 'M3U फ़ाइल',
 			'iptv.pastePlaylist' => 'प्लेलिस्ट का टेक्स्ट पेस्ट करें',
+			'iptv.choosePlaylist' => 'Playlist फ़ाइल का चयन करें',
 			'iptv.playlistBase' => 'सापेक्ष लिंक के लिए आधार URL (वैकल्पिक)',
 			'iptv.localPlaylistHelp' => 'M3U या M3U8 चैनल सूची की निजी प्रति आयात करें। इसे दूसरी फ़ाइल से बदल सकते हैं।',
 			'iptv.showMatches' => 'मेल खाने वाले चैनल दिखाएँ',
 			'iptv.hideMatches' => 'मेल खाने वाले चैनल छिपाएँ',
 			'iptv.pickerCredit' => 'प्रेरणा स्रोत · M3U Web Picker · Zachary Schmook (@zschmook) और योगदानकर्ता',
-			'iptv.exportPrivate' => 'स्ट्रीम पतों में आपके सेवा प्रदाता की लॉगिन जानकारी हो सकती है। सूची को किसी निजी स्थान पर सहेजें।',
-			'iptv.dynamicStreamExport' => 'पोर्टल हर बार चलाने पर नया लिंक बनाता है। आप कार्यक्रम गाइड निर्यात कर सकते हैं।',
-			'iptv.moveUp' => 'ऊपर चलना',
-			'iptv.moveDown' => 'नीचे उतरना',
-			'iptv.choosePlaylist' => 'Playlist फ़ाइल का चयन करें',
-			'iptv.affectedChannels' => ({required Object count}) => 'चैनल · ${count}',
 			'accountPreferences.sectionTitle' => 'अकाउंट प्राथमिकताएं',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'ऑडियो, उप शीर्षक और पुस्तकालय विकल्पों को सहेजा गया है ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'ऑडियो, उप शीर्षक और पुस्तकालय विकल्प ${count} खातों पर सहेजे गए हैं',

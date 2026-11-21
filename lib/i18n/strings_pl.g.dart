@@ -1672,21 +1672,21 @@ class _Translations$iptv$pl extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Zapasowe źródła w kolejności odtwarzania';
+	@override String get exportPrivate => 'Adresy strumieni mogą zawierać dane logowania do usługodawcy. Zapisz listę w prywatnym miejscu.';
+	@override String get dynamicStreamExport => 'Portal tworzy nowy odnośnik przy każdym odtwarzaniu. Możesz wyeksportować przewodnik.';
 	@override String get lineupOrder => 'Kolejność kanałów';
+	@override String get moveUp => 'Move Up';
+	@override String get moveDown => 'Przeprowadź się w dół';
 	@override String get orderChanged => 'Kolejność kanałów uległa zmianie. Sprawdź ją i spróbuj ponownie.';
+	@override String affectedChannels({required Object count}) => 'Kanały · ${count}';
 	@override String get localPlaylist => 'Plik M3U';
 	@override String get pastePlaylist => 'Wklej tekst listy odtwarzania';
+	@override String get choosePlaylist => 'Wybierz plik playlist';
 	@override String get playlistBase => 'Bazowy URL odnośników względnych (opcjonalny)';
 	@override String get localPlaylistHelp => 'Zaimportuj prywatną kopię listy kanałów M3U lub M3U8. Możesz ją zastąpić innym plikiem.';
 	@override String get showMatches => 'Pokaż pasujące kanały';
 	@override String get hideMatches => 'Ukryj pasujące kanały';
 	@override String get pickerCredit => 'Inspiracja · M3U Web Picker · Zachary Schmook (@zschmook) i współtwórcy';
-	@override String get exportPrivate => 'Adresy strumieni mogą zawierać dane logowania do usługodawcy. Zapisz listę w prywatnym miejscu.';
-	@override String get dynamicStreamExport => 'Portal tworzy nowy odnośnik przy każdym odtwarzaniu. Możesz wyeksportować przewodnik.';
-	@override String get moveUp => 'Move Up';
-	@override String get moveDown => 'Przeprowadź się w dół';
-	@override String get choosePlaylist => 'Wybierz plik playlist';
-	@override String affectedChannels({required Object count}) => 'Kanały · ${count}';
 }
 
 // Path: accountPreferences
@@ -7108,21 +7108,21 @@ extension on TranslationsPl {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edytuj połączenie z ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Dodaj lub usuń adresy URL dla ${serverName}. Pleazyng będzie używać osiągalnego adresu URL o najniższym opóźnieniu.',
 			'iptv.backupFeeds' => 'Zapasowe źródła w kolejności odtwarzania',
+			'iptv.exportPrivate' => 'Adresy strumieni mogą zawierać dane logowania do usługodawcy. Zapisz listę w prywatnym miejscu.',
+			'iptv.dynamicStreamExport' => 'Portal tworzy nowy odnośnik przy każdym odtwarzaniu. Możesz wyeksportować przewodnik.',
 			'iptv.lineupOrder' => 'Kolejność kanałów',
+			'iptv.moveUp' => 'Move Up',
+			'iptv.moveDown' => 'Przeprowadź się w dół',
 			'iptv.orderChanged' => 'Kolejność kanałów uległa zmianie. Sprawdź ją i spróbuj ponownie.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanały · ${count}',
 			'iptv.localPlaylist' => 'Plik M3U',
 			'iptv.pastePlaylist' => 'Wklej tekst listy odtwarzania',
+			'iptv.choosePlaylist' => 'Wybierz plik playlist',
 			'iptv.playlistBase' => 'Bazowy URL odnośników względnych (opcjonalny)',
 			'iptv.localPlaylistHelp' => 'Zaimportuj prywatną kopię listy kanałów M3U lub M3U8. Możesz ją zastąpić innym plikiem.',
 			'iptv.showMatches' => 'Pokaż pasujące kanały',
 			'iptv.hideMatches' => 'Ukryj pasujące kanały',
 			'iptv.pickerCredit' => 'Inspiracja · M3U Web Picker · Zachary Schmook (@zschmook) i współtwórcy',
-			'iptv.exportPrivate' => 'Adresy strumieni mogą zawierać dane logowania do usługodawcy. Zapisz listę w prywatnym miejscu.',
-			'iptv.dynamicStreamExport' => 'Portal tworzy nowy odnośnik przy każdym odtwarzaniu. Możesz wyeksportować przewodnik.',
-			'iptv.moveUp' => 'Move Up',
-			'iptv.moveDown' => 'Przeprowadź się w dół',
-			'iptv.choosePlaylist' => 'Wybierz plik playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanały · ${count}',
 			'accountPreferences.sectionTitle' => 'Preferencje konta',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Opcje audio, napisów i biblioteki zapisane na koncie ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Opcje audio, napisów i biblioteki zapisane na ${count} kontach',

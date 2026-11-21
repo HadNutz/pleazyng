@@ -1658,21 +1658,21 @@ class _Translations$iptv$kk extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Ойнату ретімен қосалқы көздер';
+	@override String get exportPrivate => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.';
+	@override String get dynamicStreamExport => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.';
 	@override String get lineupOrder => 'Арналар реті';
+	@override String get moveUp => 'Өзінің';
+	@override String get moveDown => 'Қайтаны';
 	@override String get orderChanged => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.';
+	@override String affectedChannels({required Object count}) => 'Арналар · ${count}';
 	@override String get localPlaylist => 'M3U файлы';
 	@override String get pastePlaylist => 'Ойнату тізімінің мәтінін қою';
+	@override String get choosePlaylist => 'Серіктің қағидалары';
 	@override String get playlistBase => 'Салыстырмалы сілтемелерге арналған негізгі URL (міндетті емес)';
 	@override String get localPlaylistHelp => 'M3U немесе M3U8 арналар тізімінің жеке көшірмесін импорттаңыз. Оны басқа файлмен ауыстыруға болады.';
 	@override String get showMatches => 'Сәйкес арналарды көрсету';
 	@override String get hideMatches => 'Сәйкес арналарды жасыру';
 	@override String get pickerCredit => 'Шабыт көзі · M3U Web Picker · Zachary Schmook (@zschmook) және үлес қосушылар';
-	@override String get exportPrivate => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.';
-	@override String get dynamicStreamExport => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.';
-	@override String get moveUp => 'Өзінің';
-	@override String get moveDown => 'Қайтаны';
-	@override String get choosePlaylist => 'Серіктің қағидалары';
-	@override String affectedChannels({required Object count}) => 'Арналар · ${count}';
 }
 
 // Path: accountPreferences
@@ -7058,21 +7058,21 @@ extension on TranslationsKk {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} қосылымын өңдеу',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} үшін URL мекенжайларды қосыңыз немесе өшіріңіз. Pleazyng ең төмен кідірісі бар қолжетімді URL мекенжайды пайдаланады.',
 			'iptv.backupFeeds' => 'Ойнату ретімен қосалқы көздер',
+			'iptv.exportPrivate' => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.',
+			'iptv.dynamicStreamExport' => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.',
 			'iptv.lineupOrder' => 'Арналар реті',
+			'iptv.moveUp' => 'Өзінің',
+			'iptv.moveDown' => 'Қайтаны',
 			'iptv.orderChanged' => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Арналар · ${count}',
 			'iptv.localPlaylist' => 'M3U файлы',
 			'iptv.pastePlaylist' => 'Ойнату тізімінің мәтінін қою',
+			'iptv.choosePlaylist' => 'Серіктің қағидалары',
 			'iptv.playlistBase' => 'Салыстырмалы сілтемелерге арналған негізгі URL (міндетті емес)',
 			'iptv.localPlaylistHelp' => 'M3U немесе M3U8 арналар тізімінің жеке көшірмесін импорттаңыз. Оны басқа файлмен ауыстыруға болады.',
 			'iptv.showMatches' => 'Сәйкес арналарды көрсету',
 			'iptv.hideMatches' => 'Сәйкес арналарды жасыру',
 			'iptv.pickerCredit' => 'Шабыт көзі · M3U Web Picker · Zachary Schmook (@zschmook) және үлес қосушылар',
-			'iptv.exportPrivate' => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.',
-			'iptv.dynamicStreamExport' => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.',
-			'iptv.moveUp' => 'Өзінің',
-			'iptv.moveDown' => 'Қайтаны',
-			'iptv.choosePlaylist' => 'Серіктің қағидалары',
-			'iptv.affectedChannels' => ({required Object count}) => 'Арналар · ${count}',
 			'accountPreferences.sectionTitle' => 'Тіркелгі баптаулары',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account} тіркелгісінде сақталған аудио, субтитр және кітапхана баптаулары',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count} тіркелгіде сақталған аудио, субтитр және кітапхана баптаулары',

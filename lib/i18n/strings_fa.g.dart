@@ -1658,21 +1658,21 @@ class _Translations$iptv$fa extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'منابع پشتیبان به ترتیب پخش';
+	@override String get exportPrivate => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.';
+	@override String get dynamicStreamExport => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.';
 	@override String get lineupOrder => 'ترتیب کانال‌ها';
+	@override String get moveUp => 'حرکت بالا';
+	@override String get moveDown => 'حرکت به پایین';
 	@override String get orderChanged => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.';
+	@override String affectedChannels({required Object count}) => 'کانالها · ${count}';
 	@override String get localPlaylist => 'فایل M3U';
 	@override String get pastePlaylist => 'چسباندن متن فهرست پخش';
+	@override String get choosePlaylist => 'انتخاب فایل playlist';
 	@override String get playlistBase => 'نشانی پایه برای پیوندهای نسبی (اختیاری)';
 	@override String get localPlaylistHelp => 'یک نسخهٔ خصوصی از فهرست کانال‌های M3U یا M3U8 وارد کنید. می‌توانید آن را با فایل دیگری جایگزین کنید.';
 	@override String get showMatches => 'نمایش کانال‌های مطابق';
 	@override String get hideMatches => 'پنهان کردن کانال‌های مطابق';
 	@override String get pickerCredit => 'با الهام از · M3U Web Picker · Zachary Schmook (@zschmook) و مشارکت‌کنندگان';
-	@override String get exportPrivate => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.';
-	@override String get dynamicStreamExport => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.';
-	@override String get moveUp => 'حرکت بالا';
-	@override String get moveDown => 'حرکت به پایین';
-	@override String get choosePlaylist => 'انتخاب فایل playlist';
-	@override String affectedChannels({required Object count}) => 'کانالها · ${count}';
 }
 
 // Path: accountPreferences
@@ -7058,21 +7058,21 @@ extension on TranslationsFa {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'ویرایش ${product} اتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'اضافه کردن یا حذف URL برای ${serverName}. Pleazyng از URL قابل دسترسی با پایین ترین تاخیر استفاده می کند.',
 			'iptv.backupFeeds' => 'منابع پشتیبان به ترتیب پخش',
+			'iptv.exportPrivate' => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.',
+			'iptv.dynamicStreamExport' => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.',
 			'iptv.lineupOrder' => 'ترتیب کانال‌ها',
+			'iptv.moveUp' => 'حرکت بالا',
+			'iptv.moveDown' => 'حرکت به پایین',
 			'iptv.orderChanged' => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.',
+			'iptv.affectedChannels' => ({required Object count}) => 'کانالها · ${count}',
 			'iptv.localPlaylist' => 'فایل M3U',
 			'iptv.pastePlaylist' => 'چسباندن متن فهرست پخش',
+			'iptv.choosePlaylist' => 'انتخاب فایل playlist',
 			'iptv.playlistBase' => 'نشانی پایه برای پیوندهای نسبی (اختیاری)',
 			'iptv.localPlaylistHelp' => 'یک نسخهٔ خصوصی از فهرست کانال‌های M3U یا M3U8 وارد کنید. می‌توانید آن را با فایل دیگری جایگزین کنید.',
 			'iptv.showMatches' => 'نمایش کانال‌های مطابق',
 			'iptv.hideMatches' => 'پنهان کردن کانال‌های مطابق',
 			'iptv.pickerCredit' => 'با الهام از · M3U Web Picker · Zachary Schmook (@zschmook) و مشارکت‌کنندگان',
-			'iptv.exportPrivate' => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.',
-			'iptv.dynamicStreamExport' => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.',
-			'iptv.moveUp' => 'حرکت بالا',
-			'iptv.moveDown' => 'حرکت به پایین',
-			'iptv.choosePlaylist' => 'انتخاب فایل playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'کانالها · ${count}',
 			'accountPreferences.sectionTitle' => 'حسابداری ترجیحات',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'گزینه های صوتی، زیرنویس و کتابخانه در ${account} ذخیره شده است',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'گزینه های صوتی، زیرنویس و کتابخانه در حساب های ${count} ذخیره شده است',

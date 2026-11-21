@@ -1,7 +1,7 @@
 {
   "locale": "es",
   "inherits": null,
-  "catalogSha256": "285849d4cd08465eee818b01fd5cdb9285c38c9d0aa6d626a153f6dd80d4e1d4",
+  "catalogSha256": "0d41015ed907f01af349febd3fa49c8bffb9d27dfbd84b96dabac5fea54cf94b",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
