@@ -6,7 +6,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/dart/ast/token.dart';
 
-const script = 'scripts/checks/dart_source_ratchet.dart';
+const rollout = 'docs/maintainers/dart-source-policy.md';
 const generatedTables = {'lib/data/ducet_order.dart', 'lib/data/hid_key_labels.dart', 'lib/data/iso_639_data.dart'};
 
 bool maintained(String path) =>
@@ -69,10 +69,10 @@ String git(List<String> args) {
 void main(List<String> args) {
   if (args.length != 1) throw ArgumentError('Expected the comparison commit');
   var base = git(['merge-base', 'HEAD', args.single]).trim();
-  // The first rollout also contains upstream ports. Count changes from the
-  // commit that installed this policy when reviewing that initial rollout.
-  if (Process.runSync('git', ['cat-file', '-e', '$base:$script']).exitCode != 0) {
-    final bootstrap = git(['log', '--first-parent', '--diff-filter=A', '--format=%H', 'HEAD', '--', script]).trim();
+  // The initial integration brings in source from several parents. Its checked-in
+  // rollout records the post-migration starting point. Later branches use their base.
+  if (Process.runSync('git', ['cat-file', '-e', '$base:$rollout']).exitCode != 0) {
+    final bootstrap = git(['log', '--first-parent', '--diff-filter=A', '--format=%H', 'HEAD', '--', rollout]).trim();
     if (bootstrap.isNotEmpty) base = bootstrap.split('\n').last;
   }
   final delta = git(['diff', '--name-status', '--find-renames=80%', '-z', base, '--', 'lib']).split('\x00');

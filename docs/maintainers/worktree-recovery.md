@@ -1,5 +1,8 @@
 # Worktree recovery and retention
 
+The workstation cleanup record and the names of the three owner-review lists are in [worktree hygiene](worktree-hygiene.md#2026-11-21-cleanup-record). Use that inventory for the November 21 cleanup. The verifier below additionally preserves ignored evidence, file modes, symlinks and hardlinks, and tests restoration in an isolated repository.
+
+
 The authoritative clone is `/home/keith/Documents/code/pleazyng`. Run the inventory there before freeing space. Linked checkout metadata, stash reflogs, staged data and ignored capture files belong to that clone. A GitHub clone cannot recover them.
 
 Run `python3 scripts/checks/worktree_inventory.py` from the authoritative clone to list checkouts and stashes. A count above 50 is a warning. The four previously reported population counts sum to 416 for a reported 398 worktrees. Reconcile paths before using any of the proposed removal counts.
