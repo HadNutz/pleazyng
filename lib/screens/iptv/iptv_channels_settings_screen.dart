@@ -18,6 +18,7 @@ import '../../widgets/app_icon.dart';
 import '../../widgets/focused_scroll_scaffold.dart';
 import '../../widgets/optimized_media_image.dart';
 import 'iptv_lineup_order_screen.dart';
+import 'iptv_picker_credit.dart';
 
 class IptvChannelsSettingsScreen extends StatefulWidget {
   const IptvChannelsSettingsScreen({super.key, required this.profileId, required this.sourceId});
@@ -227,7 +228,7 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
           ),
         );
         if (accepted != true || !mounted) return;
-        await repository.setChannelsHidden(profileId, widget.sourceId, ids, hidden, expectedHidden:!hidden);
+        await repository.setChannelsHidden(profileId, widget.sourceId, ids, hidden, expectedHidden: !hidden);
       }
       await _load();
     } on IptvImportException catch (error) {
@@ -520,11 +521,8 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
               ),
             ),
           ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Text(t.iptv.pickerCredit, style: Theme.of(context).textTheme.bodySmall),
-          ),
+        const SliverToBoxAdapter(
+          child: Padding(padding: EdgeInsets.fromLTRB(16, 0, 16, 8), child: IptvPickerCredit()),
         ),
         if (_loading)
           const SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator()))

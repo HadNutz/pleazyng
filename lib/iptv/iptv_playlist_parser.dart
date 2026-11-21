@@ -225,7 +225,7 @@ class IptvPlaylistParser {
         final tvgId = _cleanNullable(_first(attributes, const ['tvg-id', 'tvgid']), 180);
         final number = _cleanNullable(_first(attributes, const ['tvg-chno', 'channel-number']), 32);
         final group = _cleanNullable(_first(attributes, const ['group-title', 'group']), 120);
-        final logo = _safeLogo(_first(attributes, const ['tvg-logo', 'logo']), base, allowHttp);
+        final logo = safeLogo(_first(attributes, const ['tvg-logo', 'logo']), base, allowHttp);
         final id = feedId(uri, displayTitle, tvgId, number, group);
         if (!feedIds.add(id)) {
           skipped++;
@@ -307,7 +307,7 @@ class IptvPlaylistParser {
 
   static String? _cleanNullable(String? value, int max) => value == null ? null : _clean(value, max).ifNotEmpty;
 
-  static String? _safeLogo(String? value, Uri base, bool allowHttp) {
+  static String? safeLogo(String? value, Uri base, bool allowHttp) {
     if (value == null || value.length > 2048) return null;
     try {
       final uri = UniversalMediaAddress.parse(value, allowHttp: allowHttp, base: base);
@@ -484,7 +484,7 @@ class IptvXmltvParser {
           summary: _cleanXmlNullable(node.findElements('desc').firstOrNull?.innerText, 1200),
           category: _cleanXmlNullable(node.findElements('category').firstOrNull?.innerText, 100),
           episodeId: _cleanXmlNullable(node.findElements('episode-num').firstOrNull?.innerText, 180),
-          thumb: IptvPlaylistParser._safeLogo(icon, base, allowHttp),
+          thumb: IptvPlaylistParser.safeLogo(icon, base, allowHttp),
         ),
       );
     }
