@@ -104,10 +104,45 @@ struct PictureLease {
   }
 };
 
+#ifndef PLEAZYNG_TIZEN_EMBEDDER
+// webOS schedules DeleteTexture on the raster thread after unregister returns.
+// The C callback carries an opaque serial, never a pointer to a destroyed
+// TextureVariant. Late callbacks see an empty slot, even after another open.
+class WebosPictureSlots {
+ public:
+  static uintptr_t add(const std::shared_ptr<PictureSlot>& slot) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (next_ == UINTPTR_MAX) throw std::runtime_error("TV texture identifiers exhausted");
+    slots_[++next_] = slot;
+    return next_;
+  }
+  static void remove(uintptr_t key) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    slots_.erase(key);
+  }
+  static const FlutterDesktopPixelBuffer* copy(size_t, size_t, void* context) {
+    std::shared_ptr<PictureSlot> slot;
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      auto it = slots_.find(reinterpret_cast<uintptr_t>(context));
+      if (it == slots_.end()) return nullptr;
+      slot = it->second;
+    }
+    std::lock_guard<std::mutex> lock(slot->mutex);
+    return slot->picture ? &(new PictureLease(slot->picture))->buffer : nullptr;
+  }
+
+ private:
+  inline static std::mutex mutex_;
+  inline static uintptr_t next_ = 0;
+  inline static std::map<uintptr_t, std::shared_ptr<PictureSlot>> slots_;
+};
+#endif
+
 class Session {
  public:
-  explicit Session(flutter::TextureRegistrar* registrar, bool synchronous_upload = false)
-      : registrar_(registrar), api_(Api::instance()), synchronous_upload_(synchronous_upload) {}
+  explicit Session(flutter::TextureRegistrar* registrar, FlutterDesktopTextureRegistrarRef raw_textures)
+      : registrar_(registrar), api_(Api::instance()), raw_textures_(raw_textures) {}
   ~Session() {
     if (render_) api_.render_context_set_update_callback(render_, nullptr, nullptr);
     {
@@ -122,11 +157,14 @@ class Session {
       api_.ndl_overlay(nullptr, nullptr);
       api_.ndl_release();
     }
+#ifndef PLEAZYNG_TIZEN_EMBEDDER
+    if (picture_key_) WebosPictureSlots::remove(picture_key_);
+#endif
     if (texture_id_ >= 0) {
 #ifdef PLEAZYNG_TIZEN_EMBEDDER
       registrar_->UnregisterTexture(texture_id_, [keep = texture_] {});
 #else
-      registrar_->UnregisterTexture(texture_id_);
+      FlutterDesktopTextureRegistrarUnregisterExternalTexture(raw_textures_, texture_id_);
 #endif
     }
   }
@@ -183,21 +221,26 @@ class Session {
   void registerTexture() {
     mpv_render_param setup[] = {{MPV_RENDER_PARAM_API_TYPE, const_cast<char*>(MPV_RENDER_API_TYPE_SW)}, {}};
     if (!plane_) check(api_.render_context_create(&render_, core_, setup));
-    auto slot = slot_;
-    texture_ = std::make_shared<flutter::TextureVariant>(flutter::PixelBufferTexture(
-        [slot, synchronous = synchronous_upload_](size_t, size_t) -> const FlutterDesktopPixelBuffer* {
+#ifdef PLEAZYNG_TIZEN_EMBEDDER
+    texture_ = std::make_shared<flutter::TextureVariant>(
+        flutter::PixelBufferTexture([slot = slot_](size_t, size_t) -> const FlutterDesktopPixelBuffer* {
           std::lock_guard<std::mutex> lock(slot->mutex);
           if (!slot->picture) return nullptr;
-          if (synchronous) {
-            slot->presented = slot->picture;
-            slot->front.buffer = slot->presented->rgba.get();
-            slot->front.width = slot->presented->w;
-            slot->front.height = slot->presented->h;
-            return &slot->front;
-          }
-          return &(new PictureLease(slot->picture))->buffer;
+          slot->presented = slot->picture;
+          slot->front.buffer = slot->presented->rgba.get();
+          slot->front.width = slot->presented->w;
+          slot->front.height = slot->presented->h;
+          return &slot->front;
         }));
     texture_id_ = registrar_->RegisterTexture(texture_.get());
+#else
+    picture_key_ = WebosPictureSlots::add(slot_);
+    FlutterDesktopTextureInfo info{};
+    info.type = kFlutterDesktopPixelBufferTexture;
+    info.pixel_buffer_config.callback = WebosPictureSlots::copy;
+    info.pixel_buffer_config.user_data = reinterpret_cast<void*>(picture_key_);
+    texture_id_ = FlutterDesktopTextureRegistrarRegisterExternalTexture(raw_textures_, &info);
+#endif
     check(texture_id_ < 0 ? -1 : 0);
     if (plane_) return;
     worker_ = std::thread([this] { draw(); });
@@ -239,7 +282,8 @@ class Session {
       if (resized) signal();
     }
     return {
-        {Value("ready"), Value(loaded_ && (!plane_ || rendered_.load()))},
+        {Value("loaded"), Value(loaded_)},
+        {Value("ready"), Value(loaded_ && (rendered_.load() || (!plane_ && prop("vid") == "no")))},
         {Value("failed"), Value(failed_ || render_failed_.load())},
         {Value("overlayTexture"), Value(plane_ ? texture_id_ : int64_t(-1))},
         {Value("output"), Value(plane_ ? "webos-ndl" : "libmpv-texture")},
@@ -291,7 +335,10 @@ class Session {
  private:
   flutter::TextureRegistrar* registrar_;
   Api& api_;
-  bool synchronous_upload_;
+  FlutterDesktopTextureRegistrarRef raw_textures_;
+#ifndef PLEAZYNG_TIZEN_EMBEDDER
+  uintptr_t picture_key_ = 0;
+#endif
   bool motion_filter_ = false;
   mpv_handle* core_ = nullptr;
   mpv_render_context* render_ = nullptr;
@@ -394,8 +441,11 @@ class Session {
 
 class TvMpvPlugin : public flutter::Plugin {
  public:
-  explicit TvMpvPlugin(flutter::PluginRegistrar* registrar, List (*hardware_codecs)() = nullptr)
-      : textures_(registrar->texture_registrar()),
+  explicit TvMpvPlugin(
+      flutter::PluginRegistrar* registrar, List (*hardware_codecs)() = nullptr,
+      FlutterDesktopTextureRegistrarRef raw_textures = nullptr)
+      : raw_textures_(raw_textures),
+        textures_(registrar->texture_registrar()),
         channel_(
             registrar->messenger(), "org.snapetech.pleazyng/system_video",
             &flutter::StandardMethodCodec::GetInstance()) {
@@ -409,11 +459,7 @@ class TvMpvPlugin : public flutter::Plugin {
         auto id = map.at(Value("id")).LongValue();
         const auto& method = call.method_name();
         if (method == "create") {
-#ifdef PLEAZYNG_TIZEN_EMBEDDER
-          auto session = std::make_unique<Session>(textures_, true);
-#else
-          auto session = std::make_unique<Session>(textures_);
-#endif
+          auto session = std::make_unique<Session>(textures_, raw_textures_);
           const auto window = map.find(Value("windowId"));
           const auto fonts = map.find(Value("fontDir"));
           const auto hardware = map.find(Value("hardwareDecoding"));
@@ -475,6 +521,7 @@ class TvMpvPlugin : public flutter::Plugin {
   }
 
  private:
+  FlutterDesktopTextureRegistrarRef raw_textures_;
   flutter::TextureRegistrar* textures_;
   flutter::MethodChannel<Value> channel_;
   std::map<int64_t, std::unique_ptr<Session>> sessions_;

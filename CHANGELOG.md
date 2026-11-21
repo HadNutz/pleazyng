@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fix a webOS MPV crash when the Flutter renderer requests a retired video texture. Apply the OLED motion preset to eligible TV MPV sources and retry playback without smoothing if the first filtered frame fails.
+
 - Add hardware-probed motion blending to the LG webOS and Samsung Tizen MPV players, with software fallback and provider diagnostics. Add a libplacebo GPU route for Apple MPV smoothing and for devices without VideoToolbox interpolation support. Try software neural inference after eligible hardware providers on Android, Fire OS, Windows and Linux.
 - Keep Home layouts, pending watch actions and tracker updates with the account that made them when profiles switch or storage goes offline.
 - Preserve the selected edition, part, subtitles and resume position across downloads, Cast handoffs and external playback. Only offer audio sync on playback engines that apply the adjustment.

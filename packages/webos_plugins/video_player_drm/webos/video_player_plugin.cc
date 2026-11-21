@@ -23,7 +23,6 @@ void VideoPlayerPlugin::RegisterWithRegistrar(
     FlutterDesktopViewRef view) {
   auto plugin = std::make_unique<VideoPlayerPlugin>(registrar, view);
   registrar->AddPlugin(std::move(plugin));
-  registrar->AddPlugin(std::make_unique<pleazyng_tv::TvMpvPlugin>(registrar));
 }
 
 VideoPlayerPlugin::VideoPlayerPlugin(
@@ -561,8 +560,9 @@ void VideoPlayerPlugin::historyClear() {
 }
 
 void VideoPlayerWebOsPluginRegisterWithRegistrar(FlutterDesktopPluginRegistrarRef registrar) {
-  VideoPlayerPlugin::RegisterWithRegistrar(
-      flutter::PluginRegistrarManager::GetInstance()
-         ->GetRegistrar<flutter::PluginRegistrar>(registrar),
-      FlutterDesktopPluginRegistrarGetView(registrar));
+  auto* plugin_registrar = flutter::PluginRegistrarManager::GetInstance()
+      ->GetRegistrar<flutter::PluginRegistrar>(registrar);
+  VideoPlayerPlugin::RegisterWithRegistrar(plugin_registrar, FlutterDesktopPluginRegistrarGetView(registrar));
+  plugin_registrar->AddPlugin(std::make_unique<pleazyng_tv::TvMpvPlugin>(
+      plugin_registrar, nullptr, FlutterDesktopRegistrarGetTextureRegistrar(registrar)));
 }

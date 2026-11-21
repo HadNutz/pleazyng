@@ -2244,7 +2244,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
           PlatformDetector.usesNativeTvMedia() &&
           !widget.isLive &&
           !settingsService.prefs.containsKey(SettingsService.tvVideoBackend.key) &&
-          settingsService.read(SettingsService.motionProcessingMode) != MotionProcessingMode.off &&
+          _motionModeForPlayback(settingsService) != MotionProcessingMode.off &&
           MotionProcessingService.supportsTvMotionSource(
             _currentMetadata.mediaVersions?.elementAtOrNull(_effectiveSelectedMediaIndex),
           );

@@ -50,7 +50,11 @@ class PerformanceStatsService {
     PlaybackCapabilityReport? capabilityReport,
   }) {
     final settings = SettingsService.instanceOrNull;
-    final mode = settings?.read(SettingsService.motionProcessingMode);
+    final activePlayer = player;
+    final preferred = settings?.read(SettingsService.motionProcessingMode);
+    final mode = preferred == MotionProcessingMode.off && activePlayer is PlayerSystem && activePlayer.tvMotionRequested
+        ? MotionProcessingMode.mpv
+        : preferred;
     return mode == null
         ? null
         : MotionProcessingService.resolveForPlayer(

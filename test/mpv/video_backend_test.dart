@@ -151,6 +151,66 @@ void main() {
     }
   });
 
+  test('TV exposes surface dimensions while waiting for the first frame', () async {
+    final waiting = Completer<void>();
+    final painted = Completer<void>();
+    var polls = 0;
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      switch (call.method) {
+        case 'create':
+          return 1;
+        case 'state':
+          if (++polls == 1) return {'loaded': true, 'width': 640, 'height': 360};
+          if (!waiting.isCompleted) waiting.complete();
+          await painted.future;
+          return {'ready': true, 'frame': true, 'width': 640, 'height': 360};
+        case 'tracks':
+          return [];
+      }
+      return null;
+    });
+    final player = PlayerSystem('tvmpv');
+    try {
+      final open = player.open(Media('file:///movie.mp4'));
+      await waiting.future.timeout(const Duration(seconds: 3));
+      expect(await player.getProperty('width'), '640');
+      painted.complete();
+      await open;
+    } finally {
+      if (!painted.isCompleted) painted.complete();
+      await player.dispose();
+      messenger.setMockMethodCallHandler(channel, null);
+    }
+  });
+
+  test('TV motion preroll failure reopens the same source once without the filter', () async {
+    final creates = <Map<dynamic, dynamic>>[];
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      switch (call.method) {
+        case 'create':
+          creates.add(call.arguments as Map);
+          return 1;
+        case 'state':
+          if (creates.length == 1) return {'failed': true};
+          return {'ready': true, 'frame': true, 'width': 640, 'height': 360};
+        case 'tracks':
+          return [];
+      }
+      return null;
+    });
+    final player = PlayerSystem('tvmpv');
+    try {
+      player.prepareTvMotion(true);
+      await player.open(Media('file:///movie.mp4'));
+      expect(creates.map((request) => request['motion']), [true, null]);
+      expect(creates.last['uri'], creates.first['uri']);
+      expect(player.tvMotionRequested, isTrue);
+    } finally {
+      await player.dispose();
+      messenger.setMockMethodCallHandler(channel, null);
+    }
+  });
+
   test('a superseded prepare cannot start the old source', () async {
     final began = Completer<void>();
     final release = Completer<void>();
