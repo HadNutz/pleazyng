@@ -2736,7 +2736,7 @@ class Translations$metadataEdit$es extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Introducir URL de imagen';
 	@override String get imageUrl => 'URL de imagen';
 	@override String get metadataUpdated => 'Metadatos actualizados';
-	@override String get metadataConflict => 'Otra persona ha cambiado el mismo campo. Vuelve a abrir el editor y revisa los valores actuales antes de guardar.';
+	@override String get metadataConflict => 'Otra persona ha modificado el mismo campo. Vuelve a abrir el editor para revisar los valores actuales antes de guardar.';
 	@override String get metadataUpdateFailed => 'Error al actualizar los metadatos';
 	@override String get artworkUpdated => 'Imágenes actualizadas';
 	@override String get artworkUpdateFailed => 'Error al actualizar las imágenes';
@@ -4130,6 +4130,7 @@ class Translations$podcasts$es extends Translations$podcasts$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Suscripciones importadas: ${imported}. Duplicadas: ${duplicates}. Omitidas: ${skipped}.';
 	@override String get autoDownloadLatest => 'Descargar automáticamente los episodios más recientes';
 	@override String get removeFinishedAfter => 'Eliminar las descargas terminadas después de';
 }
@@ -8447,7 +8448,7 @@ extension on TranslationsEs {
 			'metadataEdit.enterImageUrl' => 'Introducir URL de imagen',
 			'metadataEdit.imageUrl' => 'URL de imagen',
 			'metadataEdit.metadataUpdated' => 'Metadatos actualizados',
-			'metadataEdit.metadataConflict' => 'Otra persona ha cambiado el mismo campo. Vuelve a abrir el editor y revisa los valores actuales antes de guardar.',
+			'metadataEdit.metadataConflict' => 'Otra persona ha modificado el mismo campo. Vuelve a abrir el editor para revisar los valores actuales antes de guardar.',
 			'metadataEdit.metadataUpdateFailed' => 'Error al actualizar los metadatos',
 			'metadataEdit.artworkUpdated' => 'Imágenes actualizadas',
 			'metadataEdit.artworkUpdateFailed' => 'Error al actualizar las imágenes',
@@ -9627,6 +9628,7 @@ extension on TranslationsEs {
 			'issueReport.privacy' => 'El borrador incluye la versión de la aplicación, la plataforma y el número de conexiones. No incluye direcciones de servidores, nombres de cuentas o perfiles, títulos ni rutas de archivos.',
 			'issueReport.logPrivacy' => 'Los registros son opcionales. Revísalos antes de subirlos. Su ID se añade al borrador, que podría ser público.',
 			'issueReport.openDraft' => 'Abrir borrador de GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Suscripciones importadas: ${imported}. Duplicadas: ${duplicates}. Omitidas: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Descargar automáticamente los episodios más recientes',
 			'podcasts.removeFinishedAfter' => 'Eliminar las descargas terminadas después de',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Vista previa de la codificación de subtítulos',
@@ -9887,9 +9889,9 @@ extension on TranslationsEs {
 			'bonusExtras.aiModel' => 'Nombre del modelo',
 			'bonusExtras.aiToken' => 'Token de acceso a la IA',
 			'bonusExtras.aiNotice' => 'La IA recibe tu pregunta y los fragmentos permitidos de la transcripción solo cuando buscas. Al desactivarla, la búsqueda normal por tema y en la transcripción sigue disponible.',
-			'bonusExtras.deviceNotice' => 'La opción «En este dispositivo» requiere un entorno de ejecución compatible con OpenAI instalado en localhost.',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.deviceNotice' => 'La opción «En este dispositivo» requiere un entorno de ejecución compatible con OpenAI instalado en localhost.',
 			'bonusExtras.save' => 'Guardar',
 			'bonusExtras.cancel' => 'Cancelar',
 			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',

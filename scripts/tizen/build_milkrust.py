@@ -78,9 +78,14 @@ def build(args):
         sysroot = f"--sysroot={tools['CMAKE_SYSROOT']}"
         env[f"CFLAGS_{suffix}"] = tools["CMAKE_C_FLAGS"] + " " + shlex.quote(sysroot)
         env[f"CXXFLAGS_{suffix}"] = tools["CMAKE_CXX_FLAGS"] + " " + shlex.quote(sysroot)
-        env[f"CARGO_TARGET_{suffix.upper()}_LINKER"] = tools["CMAKE_C_COMPILER"]
         flags = shlex.split(tools["CMAKE_C_FLAGS"] + " " + tools["CMAKE_EXE_LINKER_FLAGS"]) + [sysroot]
-        env["CARGO_ENCODED_RUSTFLAGS"] = "\x1f".join(value for flag in flags for value in ("-C", f"link-arg={flag}"))
+        # --target scopes rustflags to device objects. The x64 emulator and
+        # build host share a triple, so a Cargo target linker would also try
+        # to link host build scripts against the Tizen SDK.
+        rustflags = ["-C", f"linker={tools['CMAKE_C_COMPILER']}"]
+        for flag in flags:
+            rustflags.extend(["-C", f"link-arg={flag}"])
+        env["CARGO_ENCODED_RUSTFLAGS"] = "\x1f".join(rustflags)
         run("rustup", "run", rust, "cargo", "build", "--locked", "--release", "--package", "milkrust-native",
             "--target", target, "--manifest-path", source / "Cargo.toml", env=env)
         library = work / "target" / target / "release/libmilkrust_native.so"

@@ -3260,7 +3260,7 @@
     "enterImageUrl": "ইমেজ URL লিখুন",
     "imageUrl": "ইমেজ URL",
     "metadataUpdated": "মেটাদাডেট আপডেট",
-    "metadataConflict": "অন্য একজন সম্পাদক একই ক্ষেত্রটি পরিবর্তন করেছেন। সংরক্ষণের আগে সর্বশেষ মানগুলি দেখতে সম্পাদকটি আবার খুলুন।",
+    "metadataConflict": "অন্য একজন সম্পাদক একই ক্ষেত্র পরিবর্তন করেছেন। সংরক্ষণের আগে সর্বশেষ মানগুলি দেখতে সম্পাদকটি আবার খুলুন।",
     "metadataUpdateFailed": "মেটাদাটা আপডেট করতে পারেনি",
     "artworkUpdated": "অ্যাকাউন্ট আপডেট",
     "artworkUpdateFailed": "শিল্প কাজ আপডেট করতে পারিনি",
@@ -4897,6 +4897,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "আমদানি করা সাবস্ক্রিপশন: ${imported}। সদৃশ: ${duplicates}। বাদ দেওয়া হয়েছে: ${skipped}।",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5713,6 +5714,6 @@
   },
   "bookmarkMigration": {
     "unassigned": "অজানা সংস্করণের বুকমার্ক",
-    "assignToVersion": "এই সংস্করণে যুক্ত করুন"
+    "assignToVersion": "এই সংস্করণের সঙ্গে যুক্ত করুন"
   }
 }

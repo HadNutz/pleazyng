@@ -1195,17 +1195,22 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
   }
 
   Future<void> _showImportSettingsDialog() async {
+    final profile = context.read<ActiveProfileProvider>();
+    final ownerId = profile.activeId;
+    final generation = profile.identityMutationGeneration;
+    bool isCurrent() => mounted && profile.activeId == ownerId && profile.identityMutationGeneration == generation;
+
     final confirmed = await showConfirmDialog(
       context,
       title: t.settings.importSettings,
       message: t.settings.importSettingsConfirm,
       confirmText: t.settings.importSettings,
     );
-    if (!mounted || !confirmed) return;
-    await _handleImportSettings();
+    if (!confirmed || !isCurrent()) return;
+    await _handleImportSettings(ownerId, isCurrent);
   }
 
-  Future<void> _handleImportSettings() async {
+  Future<void> _handleImportSettings(String? ownerId, bool Function() isCurrent) async {
     await guardSettingsOperation<void, SettingsExportException>(
       context,
       operation: 'Settings import',
@@ -1214,8 +1219,10 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
         // handled here instead of falling through to the generic guard.
         try {
           final previousRootConfiguration = SettingsMutationService.captureRootConfiguration();
-          final result = await (widget.settingsImporter ?? SettingsExportService.importFromFile)();
-          if (!mounted) return;
+          final result =
+              await (widget.settingsImporter?.call() ??
+                  SettingsExportService.importFromFile(isCurrentSession: (id) => id == ownerId && isCurrent()));
+          if (!mounted || !isCurrent()) return;
           if (result == null) return; // user cancelled file picker
           if (result.keysImported == 0) {
             showAppSnackBar(context, result.summary);
@@ -1229,8 +1236,8 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
           // fresh values into active listenables before providers re-read settings.
           _settingsService.refreshListenables();
           await hiddenLibrariesProvider.refresh();
+          if (!mounted || !isCurrent()) return;
           unawaited(librariesProvider.refresh());
-          if (!mounted) return;
           var feedbackShown = false;
           final failures = await const SettingsMutationService().applyStoredEffects(
             context,

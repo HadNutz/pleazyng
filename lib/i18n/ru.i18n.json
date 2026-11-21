@@ -3302,7 +3302,7 @@
     "enterImageUrl": "Введите URL изображения",
     "imageUrl": "URL изображения",
     "metadataUpdated": "Метаданные обновлены",
-    "metadataConflict": "Другой редактор изменил то же поле. Перед сохранением снова откройте редактор и проверьте актуальные значения.",
+    "metadataConflict": "Кто-то ещё изменил это же поле. Перед сохранением откройте редактор заново и проверьте актуальные значения.",
     "metadataUpdateFailed": "Не удалось обновить метаданные",
     "artworkUpdated": "Обложка обновлена",
     "artworkUpdateFailed": "Не удалось обновить обложку",
@@ -4951,6 +4951,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Импортировано подписок: ${imported}. Дубликатов: ${duplicates}. Пропущено: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5766,7 +5767,7 @@
     "relayInvalid": "Введите HTTPS-адрес ретранслятора."
   },
   "bookmarkMigration": {
-    "unassigned": "Закладки из неопознанной версии",
+    "unassigned": "Закладки из неопределённой версии",
     "assignToVersion": "Привязать к этой версии"
   }
 }

@@ -20,6 +20,21 @@ HomeSectionConfig _section(HomeSectionKind kind) =>
     HomeSectionConfig(id: 'merged', title: 'Merged', kind: kind, showOnHome: true);
 
 void main() {
+  test('a collection spanning two selected libraries occupies one shelf slot', () {
+    final box = testMediaItem(id: 'shared', serverId: 'srv', kind: MediaKind.collection, libraryId: 'a');
+    final row = buildConfiguredHomeSections(
+      sourceHubs: const [],
+      collections: [
+        box,
+        box.copyWith(libraryId: 'b'),
+      ],
+      sections: [_section(HomeSectionKind.movieCollections)],
+      collectionLibraryKinds: {'srv:a': MediaKind.movie, 'srv:b': MediaKind.movie},
+    ).single;
+    expect(row.items.single.globalKey, box.globalKey);
+    expect(row.size, 1);
+  });
+
   group('orderManagedHubs', () {
     test('applies the saved order only to managed rows and preserves server rows', () {
       final hubs = [

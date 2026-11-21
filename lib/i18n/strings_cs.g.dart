@@ -2762,7 +2762,7 @@ class _Translations$metadataEdit$cs extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Vložte obrázek URL';
 	@override String get imageUrl => 'obrázek URL';
 	@override String get metadataUpdated => 'Aktualizované metadata';
-	@override String get metadataConflict => 'Jiný editor změnil stejné pole. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.';
+	@override String get metadataConflict => 'Stejné pole upravil někdo jiný. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.';
 	@override String get metadataUpdateFailed => 'Nedokázal aktualizovat metadata';
 	@override String get artworkUpdated => 'Umělecká aktualizace';
 	@override String get artworkUpdateFailed => 'Nedokázal aktualizovat umělecké dílo';
@@ -4155,6 +4155,7 @@ class _Translations$podcasts$cs extends Translations$podcasts$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importovaná předplatná: ${imported}. Duplicitní: ${duplicates}. Přeskočená: ${skipped}.';
 	@override String get autoDownloadLatest => 'Automaticky stahovat nejnovější epizody';
 	@override String get removeFinishedAfter => 'Odstranit dokončená stažení po';
 }
@@ -4576,7 +4577,7 @@ class _Translations$bookmarkMigration$cs extends Translations$bookmarkMigration$
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
-	@override String get unassigned => 'Záložky z neznámé verze';
+	@override String get unassigned => 'Záložky z neurčené verze';
 	@override String get assignToVersion => 'Přiřadit k této verzi';
 }
 
@@ -8348,7 +8349,7 @@ extension on TranslationsCs {
 			'metadataEdit.enterImageUrl' => 'Vložte obrázek URL',
 			'metadataEdit.imageUrl' => 'obrázek URL',
 			'metadataEdit.metadataUpdated' => 'Aktualizované metadata',
-			'metadataEdit.metadataConflict' => 'Jiný editor změnil stejné pole. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.',
+			'metadataEdit.metadataConflict' => 'Stejné pole upravil někdo jiný. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.',
 			'metadataEdit.metadataUpdateFailed' => 'Nedokázal aktualizovat metadata',
 			'metadataEdit.artworkUpdated' => 'Umělecká aktualizace',
 			'metadataEdit.artworkUpdateFailed' => 'Nedokázal aktualizovat umělecké dílo',
@@ -9520,6 +9521,7 @@ extension on TranslationsCs {
 			'issueReport.privacy' => 'Návrh obsahuje verzi aplikace, platformu a počty připojení. Neobsahuje adresy serverů, názvy účtů a profilů, názvy médií ani cesty k souborům.',
 			'issueReport.logPrivacy' => 'Protokoly jsou volitelné. Před nahráním je zkontrolujte. Jejich ID se přidá do návrhu, který může být veřejný.',
 			'issueReport.openDraft' => 'Otevřít návrh na GitHubu',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importovaná předplatná: ${imported}. Duplicitní: ${duplicates}. Přeskočená: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Automaticky stahovat nejnovější epizody',
 			'podcasts.removeFinishedAfter' => 'Odstranit dokončená stažení po',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Náhled kódování titulků',
@@ -9807,9 +9809,9 @@ extension on TranslationsCs {
 			'musicTools.promptHint' => 'Popište požadovanou hudbu',
 			'musicTools.noHistory' => 'Zatím není co zobrazit',
 			'musicTools.historyHint' => 'Historie přehrávání tohoto profilu',
-			'musicTools.days' => 'Dny',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Dny',
 			'musicTools.albumBlocks' => 'Ponechat celá alba pohromadě',
 			'musicTools.home' => 'Hudba',
 			'musicTools.recent' => 'Nedávno přehrané',
@@ -9871,7 +9873,7 @@ extension on TranslationsCs {
 			'musicDevices.relay' => 'URL hudebního relé',
 			'musicDevices.relayHint' => 'Zapněte na přijímajícím zařízení a jednou spárujte ve stejné síti. Nechte Pleazyng otevřený. Relé přenáší šifrované ovládání hudby a vidí síťové adresy. Každý přehrávač streamuje z vlastního mediálního serveru.',
 			'musicDevices.relayInvalid' => 'Zadejte HTTPS adresu relé.',
-			'bookmarkMigration.unassigned' => 'Záložky z neznámé verze',
+			'bookmarkMigration.unassigned' => 'Záložky z neurčené verze',
 			'bookmarkMigration.assignToVersion' => 'Přiřadit k této verzi',
 			_ => null,
 		};

@@ -4113,6 +4113,7 @@ class _Translations$podcasts$sv extends Translations$podcasts$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.';
 	@override String get autoDownloadLatest => 'Ladda ned de senaste avsnitten automatiskt';
 	@override String get removeFinishedAfter => 'Ta bort färdiglyssnade nedladdningar efter';
 }
@@ -9476,6 +9477,7 @@ extension on TranslationsSv {
 			'issueReport.privacy' => 'Utkastet innehåller appversion, plattform och antal anslutningar. Serveradresser, konto- och profilnamn, medietitlar och filsökvägar utelämnas.',
 			'issueReport.logPrivacy' => 'Loggar är valfria. Granska dem före uppladdning. Deras ID läggs till i utkastet, som kan vara offentligt.',
 			'issueReport.openDraft' => 'Öppna GitHub-utkast',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Ladda ned de senaste avsnitten automatiskt',
 			'podcasts.removeFinishedAfter' => 'Ta bort färdiglyssnade nedladdningar efter',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Förhandsgranska undertextkodning',
@@ -9763,9 +9765,9 @@ extension on TranslationsSv {
 			'musicTools.promptHint' => 'Beskriv musiken du vill ha',
 			'musicTools.noHistory' => 'Ingen musik att visa ännu',
 			'musicTools.historyHint' => 'Uppspelningshistorik för den här profilen',
-			'musicTools.days' => 'Dagar',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Dagar',
 			'musicTools.albumBlocks' => 'Håll hela album samman',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senast spelat',

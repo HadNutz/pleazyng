@@ -3260,7 +3260,7 @@
     "enterImageUrl": "Rasm URL-manzilini kiriting",
     "imageUrl": "Rasm URL-manzili",
     "metadataUpdated": "Metamaʼlumotlar yangilandi",
-    "metadataConflict": "Boshqa muharrir ayni maydonni o‘zgartirdi. Saqlashdan oldin oxirgi qiymatlarni tekshirish uchun muharrirni qayta oching.",
+    "metadataConflict": "Boshqa muharrir shu maydonni o‘zgartirdi. Saqlashdan oldin so‘nggi qiymatlarni tekshirish uchun muharrirni qayta oching.",
     "metadataUpdateFailed": "Metamaʼlumotlarni yangilab boʻlmadi",
     "artworkUpdated": "Rasmlar yangilandi",
     "artworkUpdateFailed": "Rasmlarni yangilab boʻlmadi",
@@ -4897,6 +4897,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Import qilingan obunalar: ${imported}. Takroriylari: ${duplicates}. O‘tkazib yuborilganlari: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5712,7 +5713,7 @@
     "relayInvalid": "HTTPS rele manzilini kiriting."
   },
   "bookmarkMigration": {
-    "unassigned": "Noma’lum versiyadagi xatcho‘plar",
+    "unassigned": "Qaysi versiyaga tegishli ekani noma’lum xatcho‘plar",
     "assignToVersion": "Shu versiyaga biriktirish"
   }
 }

@@ -31,7 +31,7 @@ void main() {
       _action(actionType: 'progress', updatedAt: 2, viewOffset: 5000, duration: 100000),
     ]);
 
-    expect(snapshot.isWatched, isNull);
+    expect(snapshot.isWatched, isTrue);
     expect(snapshot.hasViewOffsetMs, isTrue);
     expect(snapshot.viewOffsetMs, 5000);
   });

@@ -94,6 +94,7 @@ class WatchStateEvent with HierarchicalEventMixin {
   /// site that forgets to classify itself degrades to today's behaviour rather
   /// than silently becoming retireable.
   final bool serverAcknowledged;
+  final bool pendingActionsReconciled;
 
   /// Identity of the overlay entry this event creates, for later promotion.
   /// Null for events nothing will ever settle.
@@ -109,6 +110,7 @@ class WatchStateEvent with HierarchicalEventMixin {
     this.isNowWatched,
     this.librarySectionID,
     this.serverAcknowledged = false,
+    this.pendingActionsReconciled = false,
     this.patchId,
   }) : globalKey = buildGlobalKey(ServerId(serverId), itemId);
 
@@ -150,6 +152,7 @@ class WatchStateNotifier extends BaseNotifier<WatchStateEvent> {
     bool isNowWatched = true,
     String? cacheServerId,
     bool serverAcknowledged = false,
+    bool pendingActionsReconciled = false,
     WatchPatchId? patchId,
   }) {
     final serverId = serverIdForEvent(item, notifier: 'WatchStateNotifier', event: 'watched');
@@ -165,6 +168,7 @@ class WatchStateNotifier extends BaseNotifier<WatchStateEvent> {
         isNowWatched: isNowWatched,
         librarySectionID: item.libraryId,
         serverAcknowledged: serverAcknowledged,
+        pendingActionsReconciled: pendingActionsReconciled,
         patchId: id,
       ),
     );

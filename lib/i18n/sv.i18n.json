@@ -4897,6 +4897,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",

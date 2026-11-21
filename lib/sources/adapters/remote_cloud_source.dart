@@ -53,86 +53,75 @@ class RemoteCloudSourceAdapter extends SourceAdapter {
     if (parent != null && parent.isNotEmpty && providerParent == null) {
       throw const SourceException(SourceFailure.unavailable);
     }
-    return _loadPage(parent: parent, providerParent: providerParent, cursor: cursor, query: query);
-  }
-
-  Future<SourcePage> _loadPage({
-    required String? parent,
-    required String? providerParent,
-    String? cursor,
-    String? query,
-  }) async {
     final page = await loadPage(parentId: providerParent, cursor: cursor);
     final entries = <SourceEntry>[];
     final normalizedQuery = query?.trim().toLowerCase() ?? '';
     for (final item in page.items) {
-      if (item.accountId != accountId || item.service != service || item.id.isEmpty || item.id.length > 1024) {
-        continue;
-      }
       if (normalizedQuery.isNotEmpty && !item.name.toLowerCase().contains(normalizedQuery)) continue;
-      if (item.kind == RemoteCloudItemKind.folder) {
-        final providerId = item.providerId;
-        if (providerId == null || providerId.isEmpty || providerId.length > 256) continue;
-        _remember(item, providerParentId: providerId);
-        entries.add(
-          SourceEntry(
-            sourceId: source.id,
-            id: item.id,
-            title: item.name,
-            kind: SourceItemKind.folder,
-            parentId: parent,
-            identifiers: {'remoteCloudProviderId': providerId},
-          ),
-        );
-        continue;
-      }
-      final mimeType = _safeMimeType(item.mimeType, item.name);
-      if (classifySourceFile(item.name, mimeType) != SourceItemKind.video) continue;
-      _remember(item);
-      final identifiers = <String, String>{};
-      if (providerParent != null) identifiers['remoteCloudParentProviderId'] = providerParent;
-      if (item.providerId != null) identifiers['remoteCloudProviderId'] = item.providerId!;
-      if (item.providerFileId != null) identifiers['remoteCloudProviderFileId'] = item.providerFileId!;
-      entries.add(
-        SourceEntry(
-          sourceId: source.id,
-          id: item.id,
-          title: item.name,
-          kind: SourceItemKind.video,
-          parentId: parent,
-          identifiers: identifiers,
-          files: [PublicationFile(id: item.id, name: item.name, mimeType: mimeType, size: item.size)],
-        ),
-      );
+      final entry = _entryFor(item, parent, providerParent);
+      if (entry == null) continue;
+      _remember(item, providerParentId: entry.isFolder ? item.providerId : null);
+      entries.add(entry);
     }
     entries.sort((a, b) {
-      final folderOrder = (a.kind == SourceItemKind.folder ? 0 : 1).compareTo(b.kind == SourceItemKind.folder ? 0 : 1);
+      final folderOrder = (a.isFolder ? 0 : 1).compareTo(b.isFolder ? 0 : 1);
       return folderOrder == 0 ? a.title.toLowerCase().compareTo(b.title.toLowerCase()) : folderOrder;
     });
     return SourcePage(List.unmodifiable(entries), next: page.nextCursor);
   }
 
+  SourceEntry? _entryFor(RemoteCloudItem item, String? parent, String? providerParent) {
+    if (item.accountId != accountId || item.service != service || item.id.isEmpty || item.id.length > 1024) return null;
+    if (item.kind == RemoteCloudItemKind.folder) {
+      final providerId = item.providerId;
+      if (providerId == null || providerId.isEmpty || providerId.length > 256) return null;
+      return SourceEntry(
+        sourceId: source.id,
+        id: item.id,
+        title: item.name,
+        kind: SourceItemKind.folder,
+        parentId: parent,
+        identifiers: {'remoteCloudProviderId': providerId},
+      );
+    }
+    final mimeType = _safeMimeType(item.mimeType, item.name);
+    if (classifySourceFile(item.name, mimeType) != SourceItemKind.video) return null;
+    return SourceEntry(
+      sourceId: source.id,
+      id: item.id,
+      title: item.name,
+      kind: SourceItemKind.video,
+      parentId: parent,
+      identifiers: {
+        'remoteCloudParentProviderId': ?providerParent,
+        'remoteCloudProviderId': ?item.providerId,
+        'remoteCloudProviderFileId': ?item.providerFileId,
+      },
+      files: [PublicationFile(id: item.id, name: item.name, mimeType: mimeType, size: item.size)],
+    );
+  }
+
   @override
-  Future<SourceEntry> hydrate(SourceEntry entry) async {
+  Future<SourceEntry> hydrate(SourceEntry entry) async => (await _refreshFile(entry)).entry;
+
+  Future<({SourceEntry entry, RemoteCloudItem item})> _refreshFile(SourceEntry entry) async {
     if (entry.sourceId != source.id || entry.kind != SourceItemKind.video) {
       throw const SourceException(SourceFailure.unsupported);
     }
-    final storedParent = entry.identifiers['remoteCloudParentProviderId'];
-    if (storedParent != null) {
-      final page = await _loadPage(parent: entry.parentId, providerParent: storedParent);
-      return page.entries.where((value) => value.id == entry.id).firstOrNull ??
-          (throw const SourceException(SourceFailure.unavailable));
-    }
-
-    // A recent item may be opened from the cached shelf after an app restart.
-    // Refresh a bounded number of root pages to obtain a fresh signed link.
+    final parent = entry.identifiers['remoteCloudParentProviderId'];
     String? cursor;
+    final seen = <String>{};
     for (var i = 0; i < 20; i++) {
-      final page = await _loadPage(parent: null, providerParent: null, cursor: cursor);
-      final match = page.entries.where((value) => value.id == entry.id).firstOrNull;
-      if (match != null) return match;
-      cursor = page.next;
-      if (cursor == null) break;
+      final page = await loadPage(parentId: parent, cursor: cursor);
+      for (final item in page.items) {
+        if (item.id != entry.id || item.kind != RemoteCloudItemKind.file) continue;
+        final fresh = _entryFor(item, entry.parentId, parent);
+        if (fresh == null) continue;
+        _remember(item);
+        return (entry: fresh, item: item);
+      }
+      cursor = page.nextCursor;
+      if (cursor == null || !seen.add(cursor)) break;
     }
     throw const SourceException(SourceFailure.unavailable);
   }
@@ -145,9 +134,11 @@ class RemoteCloudSourceAdapter extends SourceAdapter {
     var item = _items[file.id];
     if (item == null) {
       final cachedEntry = await loadEntryById?.call(file.id);
-      if (cachedEntry != null && cachedEntry.sourceId == source.id && cachedEntry.kind == SourceItemKind.video) {
-        await hydrate(cachedEntry);
-        item = _items[file.id];
+      if (cachedEntry != null &&
+          cachedEntry.id == file.id &&
+          cachedEntry.sourceId == source.id &&
+          cachedEntry.kind == SourceItemKind.video) {
+        item = (await _refreshFile(cachedEntry)).item;
       }
     }
     if (item == null ||

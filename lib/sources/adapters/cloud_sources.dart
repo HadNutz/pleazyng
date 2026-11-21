@@ -85,7 +85,7 @@ class GoogleDriveSourceAdapter extends OAuthSourceAdapter {
   String _quote(String value) => value.replaceAll('\\', '\\\\').replaceAll("'", "\\'");
   @override
   Future<SourcePage> browse({String? parent, String? cursor, String? query}) async {
-    final parentKey = parent ?? (source.root.isEmpty ? 'root' : source.root);
+    final parentKey = parent ?? source.indexedRootParent!;
     final parentRef = parentKey.startsWith('{') ? sourceMap(jsonDecode(parentKey)) : {'id': parentKey};
     final folder = parentRef['id'] as String;
     final data = await api(
@@ -222,7 +222,7 @@ class OneDriveSourceAdapter extends OAuthSourceAdapter {
   Uri _uri(String path, [Map<String, String>? query]) => Uri.https('graph.microsoft.com', '/v1.0$_drive$path', query);
   @override
   Future<SourcePage> browse({String? parent, String? cursor, String? query}) async {
-    final folder = parent ?? source.root;
+    final folder = parent ?? source.indexedRootParent ?? '';
     final base = folder.isEmpty ? '/root' : '/items/$folder';
     final Uri uri;
     if (cursor != null) {
@@ -306,7 +306,7 @@ class DropboxSourceAdapter extends OAuthSourceAdapter {
   Uri _uri(String action) => Uri.https('api.dropboxapi.com', '/2/files/$action');
   @override
   Future<SourcePage> browse({String? parent, String? cursor, String? query}) async {
-    final folder = parent ?? source.root;
+    final folder = parent ?? source.indexedRootParent ?? '';
     final data = await api(
       'POST',
       _uri(cursor == null ? 'list_folder' : 'list_folder/continue'),

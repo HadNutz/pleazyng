@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$hi extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'इमेज URL';
 	@override String get imageUrl => 'इमेज URL';
 	@override String get metadataUpdated => 'मेटाडेटा अपडेट';
-	@override String get metadataConflict => 'किसी दूसरे संपादक ने यही फ़ील्ड बदल दिया है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।';
+	@override String get metadataConflict => 'किसी और ने इसी फ़ील्ड को बदला है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।';
 	@override String get metadataUpdateFailed => 'मेटाडेटा अपडेट करने में असफल';
 	@override String get artworkUpdated => 'Artwork अद्यतन';
 	@override String get artworkUpdateFailed => 'कला के काम को अपडेट करने में विफलता';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$hi extends Translations$podcasts$en {
 	final TranslationsHi _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'आयात की गई सदस्यताएँ: ${imported}। डुप्लिकेट: ${duplicates}। छोड़ी गईं: ${skipped}।';
 	@override String get autoDownloadLatest => 'नवीनतम एपिसोड अपने आप डाउनलोड करें';
 	@override String get removeFinishedAfter => 'पूरे सुने गए डाउनलोड इतने समय बाद हटाएँ';
 }
@@ -8304,7 +8305,7 @@ extension on TranslationsHi {
 			'metadataEdit.enterImageUrl' => 'इमेज URL',
 			'metadataEdit.imageUrl' => 'इमेज URL',
 			'metadataEdit.metadataUpdated' => 'मेटाडेटा अपडेट',
-			'metadataEdit.metadataConflict' => 'किसी दूसरे संपादक ने यही फ़ील्ड बदल दिया है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।',
+			'metadataEdit.metadataConflict' => 'किसी और ने इसी फ़ील्ड को बदला है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।',
 			'metadataEdit.metadataUpdateFailed' => 'मेटाडेटा अपडेट करने में असफल',
 			'metadataEdit.artworkUpdated' => 'Artwork अद्यतन',
 			'metadataEdit.artworkUpdateFailed' => 'कला के काम को अपडेट करने में विफलता',
@@ -9476,6 +9477,7 @@ extension on TranslationsHi {
 			'issueReport.privacy' => 'ड्राफ़्ट में ऐप संस्करण, प्लेटफ़ॉर्म और कनेक्शन की संख्या होती है। इसमें सर्वर पते, खाते या प्रोफ़ाइल के नाम, मीडिया शीर्षक या फ़ाइल पथ शामिल नहीं होते।',
 			'issueReport.logPrivacy' => 'लॉग वैकल्पिक हैं। अपलोड करने से पहले उन्हें देखें। उनका ID ड्राफ़्ट में जुड़ता है, जो सार्वजनिक हो सकता है।',
 			'issueReport.openDraft' => 'GitHub ड्राफ़्ट खोलें',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'आयात की गई सदस्यताएँ: ${imported}। डुप्लिकेट: ${duplicates}। छोड़ी गईं: ${skipped}।',
 			'podcasts.autoDownloadLatest' => 'नवीनतम एपिसोड अपने आप डाउनलोड करें',
 			'podcasts.removeFinishedAfter' => 'पूरे सुने गए डाउनलोड इतने समय बाद हटाएँ',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'सबटाइटल एन्कोडिंग का पूर्वावलोकन',
@@ -9763,9 +9765,9 @@ extension on TranslationsHi {
 			'musicTools.promptHint' => 'अपना पसंदीदा संगीत बताएं',
 			'musicTools.noHistory' => 'अभी दिखाने के लिए संगीत नहीं है',
 			'musicTools.historyHint' => 'इस प्रोफ़ाइल का प्लेबैक इतिहास',
-			'musicTools.days' => 'दिन',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'दिन',
 			'musicTools.albumBlocks' => 'पूरे एल्बम साथ रखें',
 			'musicTools.home' => 'संगीत',
 			'musicTools.recent' => 'हाल ही में सुने गए',

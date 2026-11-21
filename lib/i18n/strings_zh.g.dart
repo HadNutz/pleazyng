@@ -2724,7 +2724,7 @@ class Translations$metadataEdit$zh extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => '输入图片 URL';
 	@override String get imageUrl => '图片 URL';
 	@override String get metadataUpdated => '元数据已更新';
-	@override String get metadataConflict => '其他编辑者更改了同一字段。请重新打开编辑器，检查最新值后再保存。';
+	@override String get metadataConflict => '其他人已修改了同一字段。请重新打开编辑器，查看最新值后再保存。';
 	@override String get metadataUpdateFailed => '元数据更新失败';
 	@override String get artworkUpdated => '封面图片已更新';
 	@override String get artworkUpdateFailed => '封面图片更新失败';
@@ -4108,6 +4108,7 @@ class Translations$podcasts$zh extends Translations$podcasts$en {
 	final TranslationsZh _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => '已导入订阅：${imported}。重复：${duplicates}。已跳过：${skipped}。';
 	@override String get autoDownloadLatest => '自动下载最新单集';
 	@override String get removeFinishedAfter => '在以下时间后移除已听完的下载';
 }
@@ -8299,7 +8300,7 @@ extension on TranslationsZh {
 			'metadataEdit.enterImageUrl' => '输入图片 URL',
 			'metadataEdit.imageUrl' => '图片 URL',
 			'metadataEdit.metadataUpdated' => '元数据已更新',
-			'metadataEdit.metadataConflict' => '其他编辑者更改了同一字段。请重新打开编辑器，检查最新值后再保存。',
+			'metadataEdit.metadataConflict' => '其他人已修改了同一字段。请重新打开编辑器，查看最新值后再保存。',
 			'metadataEdit.metadataUpdateFailed' => '元数据更新失败',
 			'metadataEdit.artworkUpdated' => '封面图片已更新',
 			'metadataEdit.artworkUpdateFailed' => '封面图片更新失败',
@@ -9471,6 +9472,7 @@ extension on TranslationsZh {
 			'issueReport.privacy' => '草稿包含应用版本、平台和连接数量，不包含服务器地址、账户或个人资料名称、媒体标题及文件路径。',
 			'issueReport.logPrivacy' => '日志为可选项。上传前请先检查。日志 ID 会加入草稿，而问题可能是公开的。',
 			'issueReport.openDraft' => '打开 GitHub 草稿',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => '已导入订阅：${imported}。重复：${duplicates}。已跳过：${skipped}。',
 			'podcasts.autoDownloadLatest' => '自动下载最新单集',
 			'podcasts.removeFinishedAfter' => '在以下时间后移除已听完的下载',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => '预览字幕编码',
@@ -9758,9 +9760,9 @@ extension on TranslationsZh {
 			'musicTools.promptHint' => '描述想听的音乐',
 			'musicTools.noHistory' => '暂无可显示的音乐',
 			'musicTools.historyHint' => '此个人资料的播放历史',
-			'musicTools.days' => '天',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => '天',
 			'musicTools.albumBlocks' => '保持专辑完整',
 			'musicTools.home' => '音乐',
 			'musicTools.recent' => '最近播放',

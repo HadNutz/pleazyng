@@ -3344,7 +3344,7 @@
     "enterImageUrl": "إدخال صورة URL",
     "imageUrl": "صورة URL",
     "metadataUpdated": "متاجدات تحديثات",
-    "metadataConflict": "غيّر محرر آخر الحقل نفسه. أعد فتح المحرر لمراجعة أحدث القيم قبل الحفظ.",
+    "metadataConflict": "عدّل محرر آخر الحقل نفسه. افتح المحرر من جديد لمراجعة أحدث القيم قبل الحفظ.",
     "metadataUpdateFailed": "فشل في تحديث البيانات الميتا",
     "artworkUpdated": "الفنون المحدثة",
     "artworkUpdateFailed": "فشل في تحديث أعمال الفن",
@@ -5005,6 +5005,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "الاشتراكات المستوردة: ${imported}. المكررة: ${duplicates}. التي تم تخطيها: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5820,7 +5821,7 @@
     "relayInvalid": "أدخل عنوان مرحّل يستخدم HTTPS."
   },
   "bookmarkMigration": {
-    "unassigned": "إشارات مرجعية من إصدار غير معروف",
-    "assignToVersion": "إسناد إلى هذا الإصدار"
+    "unassigned": "إشارات مرجعية من نسخة غير معروفة",
+    "assignToVersion": "إسناد إلى هذه النسخة"
   }
 }

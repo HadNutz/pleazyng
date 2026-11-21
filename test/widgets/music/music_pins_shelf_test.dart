@@ -7,6 +7,7 @@ import 'package:plezy/database/app_database.dart';
 import 'package:plezy/i18n/strings.g.dart';
 import 'package:plezy/media/media_item.dart';
 import 'package:plezy/services/music/music_experience.dart';
+import 'package:plezy/services/music/music_home_pins.dart';
 import 'package:plezy/services/music/music_library_store.dart';
 import 'package:plezy/services/music/music_playback_service.dart';
 import 'package:plezy/services/playback_launch_observer.dart';
@@ -108,6 +109,37 @@ void main() {
     expect(find.text('a'), findsNothing);
     await tester.pumpWidget(const SizedBox());
   });
+
+  for (final editing in [false, true]) {
+    testWidgets('later pins remain reachable in ${editing ? "editor" : "shelf"}', (tester) async {
+      await tester.runAsync(() async {
+        final first = await experience.pins.save(musicTrack('0'));
+        await database.transaction(() async {
+          for (var n = 1; n <= 50; n++) {
+            final item = musicTrack('$n');
+            final pin = MusicHomePin(
+              id: MusicHomePin.key(first.account, item),
+              account: first.account,
+              item: item,
+              order: n,
+            );
+            await experience.store.saveDocument('homePin', pin.id, pin.toJson());
+          }
+        });
+      });
+      await pump(tester, editing: editing);
+      expect(find.text('50'), findsNothing);
+      final more = find.text(t.fileSources.loadMore);
+      await tester.ensureVisible(more);
+      await tester.tap(more);
+      await tester.pumpAndSettle();
+      expect(more, findsNothing);
+      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -200));
+      await tester.pumpAndSettle();
+      expect(find.text('50'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
 
   testWidgets('editor persists drag ordering and removes the selected pin', (tester) async {
     await tester.runAsync(() => experience.pins.save(musicTrack('a')));

@@ -3239,7 +3239,7 @@
     "enterImageUrl": "หมายเลข URL",
     "imageUrl": "ภาพ URL",
     "metadataUpdated": "ข้อมูลอัปเดต",
-    "metadataConflict": "ผู้แก้ไขรายอื่นเปลี่ยนช่องเดียวกันนี้ เปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก",
+    "metadataConflict": "มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก",
     "metadataUpdateFailed": "ไม่สามารถปรับปรุงข้อมูล metadata",
     "artworkUpdated": "อัพเดทศิลปะ",
     "artworkUpdateFailed": "ไม่สามารถปรับปรุงงานศิลปะได้",
@@ -4870,6 +4870,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5685,7 +5686,7 @@
     "relayInvalid": "ป้อนที่อยู่รีเลย์ HTTPS"
   },
   "bookmarkMigration": {
-    "unassigned": "บุ๊กมาร์กจากเวอร์ชันที่ไม่ทราบ",
-    "assignToVersion": "กำหนดให้เวอร์ชันนี้"
+    "unassigned": "บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้",
+    "assignToVersion": "เชื่อมโยงกับเวอร์ชันนี้"
   }
 }

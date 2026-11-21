@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$de extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Bild-URL eingeben';
 	@override String get imageUrl => 'Bild-URL';
 	@override String get metadataUpdated => 'Metadaten aktualisiert';
-	@override String get metadataConflict => 'Das gleiche Feld wurde zwischenzeitlich geändert. Öffne den Editor erneut und prüfe vor dem Speichern die aktuellen Werte.';
+	@override String get metadataConflict => 'Jemand anderes hat dasselbe Feld geändert. Öffne den Editor erneut, um die aktuellen Werte vor dem Speichern zu prüfen.';
 	@override String get metadataUpdateFailed => 'Metadaten konnten nicht aktualisiert werden';
 	@override String get artworkUpdated => 'Grafiken aktualisiert';
 	@override String get artworkUpdateFailed => 'Grafiken konnten nicht aktualisiert werden';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$de extends Translations$podcasts$en {
 	final TranslationsDe _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importierte Abonnements: ${imported}. Duplikate: ${duplicates}. Übersprungen: ${skipped}.';
 	@override String get autoDownloadLatest => 'Neueste Folgen automatisch herunterladen';
 	@override String get removeFinishedAfter => 'Fertig gehörte Downloads entfernen nach';
 }
@@ -8304,7 +8305,7 @@ extension on TranslationsDe {
 			'metadataEdit.enterImageUrl' => 'Bild-URL eingeben',
 			'metadataEdit.imageUrl' => 'Bild-URL',
 			'metadataEdit.metadataUpdated' => 'Metadaten aktualisiert',
-			'metadataEdit.metadataConflict' => 'Das gleiche Feld wurde zwischenzeitlich geändert. Öffne den Editor erneut und prüfe vor dem Speichern die aktuellen Werte.',
+			'metadataEdit.metadataConflict' => 'Jemand anderes hat dasselbe Feld geändert. Öffne den Editor erneut, um die aktuellen Werte vor dem Speichern zu prüfen.',
 			'metadataEdit.metadataUpdateFailed' => 'Metadaten konnten nicht aktualisiert werden',
 			'metadataEdit.artworkUpdated' => 'Grafiken aktualisiert',
 			'metadataEdit.artworkUpdateFailed' => 'Grafiken konnten nicht aktualisiert werden',
@@ -9476,6 +9477,7 @@ extension on TranslationsDe {
 			'issueReport.privacy' => 'Der Entwurf enthält App-Version, Plattform und Verbindungszahlen. Serveradressen, Konto- und Profilnamen, Medientitel und Dateipfade bleiben außen vor.',
 			'issueReport.logPrivacy' => 'Protokolle sind optional. Prüfe sie vor dem Hochladen. Ihre ID wird dem Entwurf hinzugefügt, der öffentlich sein kann.',
 			'issueReport.openDraft' => 'GitHub-Entwurf öffnen',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importierte Abonnements: ${imported}. Duplikate: ${duplicates}. Übersprungen: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Neueste Folgen automatisch herunterladen',
 			'podcasts.removeFinishedAfter' => 'Fertig gehörte Downloads entfernen nach',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Untertitelkodierung anzeigen',
@@ -9763,9 +9765,9 @@ extension on TranslationsDe {
 			'musicTools.promptHint' => 'Beschreibe die gewünschte Musik',
 			'musicTools.noHistory' => 'Noch keine Musik verfügbar',
 			'musicTools.historyHint' => 'Wiedergabeverlauf für dieses Profil',
-			'musicTools.days' => 'Tage',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Tage',
 			'musicTools.albumBlocks' => 'Vollständige Alben zusammenhalten',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Zuletzt gespielt',

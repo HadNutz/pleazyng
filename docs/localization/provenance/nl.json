@@ -1,7 +1,7 @@
 {
   "locale": "nl",
   "inherits": null,
-  "catalogSha256": "2849cc2658d9997a2911fc3b9a882d3e6e6367561d95ca9bbd2505064e106efa",
+  "catalogSha256": "f1ba18e8d8dcbb1e3c88620b4d1bbcc933906216d4fe704511a2066f83d123cd",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3685,9 +3685,10 @@
     "settings.showFinishTime": "assistant-generated-draft",
     "settings.showFinishTimeDescription": "assistant-generated-draft",
     "common.mediaKind.photoAlbum": "assistant-generated-draft",
-    "metadataEdit.metadataConflict": "assistant-generated-draft",
+    "metadataEdit.metadataConflict": "fork-authored",
     "bookmarkMigration.unassigned": "assistant-generated-draft",
-    "bookmarkMigration.assignToVersion": "assistant-generated-draft"
+    "bookmarkMigration.assignToVersion": "fork-authored",
+    "podcasts.importSummary": "fork-authored"
   },
   "beforeIndependentQaCorrection": {
     "accessibility.reduceMotionHint": "m2m100-draft",

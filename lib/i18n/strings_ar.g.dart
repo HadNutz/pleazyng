@@ -2804,7 +2804,7 @@ class _Translations$metadataEdit$ar extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'إدخال صورة URL';
 	@override String get imageUrl => 'صورة URL';
 	@override String get metadataUpdated => 'متاجدات تحديثات';
-	@override String get metadataConflict => 'غيّر محرر آخر الحقل نفسه. أعد فتح المحرر لمراجعة أحدث القيم قبل الحفظ.';
+	@override String get metadataConflict => 'عدّل محرر آخر الحقل نفسه. افتح المحرر من جديد لمراجعة أحدث القيم قبل الحفظ.';
 	@override String get metadataUpdateFailed => 'فشل في تحديث البيانات الميتا';
 	@override String get artworkUpdated => 'الفنون المحدثة';
 	@override String get artworkUpdateFailed => 'فشل في تحديث أعمال الفن';
@@ -4205,6 +4205,7 @@ class _Translations$podcasts$ar extends Translations$podcasts$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'الاشتراكات المستوردة: ${imported}. المكررة: ${duplicates}. التي تم تخطيها: ${skipped}.';
 	@override String get autoDownloadLatest => 'تنزيل أحدث الحلقات تلقائيًا';
 	@override String get removeFinishedAfter => 'إزالة التنزيلات المنتهية بعد';
 }
@@ -4626,8 +4627,8 @@ class _Translations$bookmarkMigration$ar extends Translations$bookmarkMigration$
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get unassigned => 'إشارات مرجعية من إصدار غير معروف';
-	@override String get assignToVersion => 'إسناد إلى هذا الإصدار';
+	@override String get unassigned => 'إشارات مرجعية من نسخة غير معروفة';
+	@override String get assignToVersion => 'إسناد إلى هذه النسخة';
 }
 
 // Path: appIcon.names
@@ -8404,7 +8405,7 @@ extension on TranslationsAr {
 			'metadataEdit.enterImageUrl' => 'إدخال صورة URL',
 			'metadataEdit.imageUrl' => 'صورة URL',
 			'metadataEdit.metadataUpdated' => 'متاجدات تحديثات',
-			'metadataEdit.metadataConflict' => 'غيّر محرر آخر الحقل نفسه. أعد فتح المحرر لمراجعة أحدث القيم قبل الحفظ.',
+			'metadataEdit.metadataConflict' => 'عدّل محرر آخر الحقل نفسه. افتح المحرر من جديد لمراجعة أحدث القيم قبل الحفظ.',
 			'metadataEdit.metadataUpdateFailed' => 'فشل في تحديث البيانات الميتا',
 			'metadataEdit.artworkUpdated' => 'الفنون المحدثة',
 			'metadataEdit.artworkUpdateFailed' => 'فشل في تحديث أعمال الفن',
@@ -9576,6 +9577,7 @@ extension on TranslationsAr {
 			'issueReport.privacy' => 'تتضمن المسودة إصدار التطبيق والمنصة وأعداد الاتصالات. لا تتضمن عناوين الخوادم أو أسماء الحسابات والملفات الشخصية أو عناوين الوسائط أو مسارات الملفات.',
 			'issueReport.logPrivacy' => 'السجلات اختيارية. راجعها قبل رفعها. يُضاف معرّف السجل إلى المسودة، وقد تكون المشكلة عامة.',
 			'issueReport.openDraft' => 'فتح مسودة GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'الاشتراكات المستوردة: ${imported}. المكررة: ${duplicates}. التي تم تخطيها: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'تنزيل أحدث الحلقات تلقائيًا',
 			'podcasts.removeFinishedAfter' => 'إزالة التنزيلات المنتهية بعد',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'معاينة ترميز الترجمة',
@@ -9863,9 +9865,9 @@ extension on TranslationsAr {
 			'musicTools.promptHint' => 'صف الموسيقى التي تريدها',
 			'musicTools.noHistory' => 'لا توجد موسيقى لعرضها بعد',
 			'musicTools.historyHint' => 'سجل التشغيل لهذا الملف الشخصي',
-			'musicTools.days' => 'أيام',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'أيام',
 			'musicTools.albumBlocks' => 'إبقاء الألبومات كاملة معًا',
 			'musicTools.home' => 'الموسيقى',
 			'musicTools.recent' => 'تم تشغيلها مؤخرًا',
@@ -9927,8 +9929,8 @@ extension on TranslationsAr {
 			'musicDevices.relay' => 'عنوان مرحّل الموسيقى',
 			'musicDevices.relayHint' => 'فعّل هذا على جهاز الاستقبال، ثم أقرن الجهازين مرة واحدة على الشبكة نفسها. أبقِ Pleazyng مفتوحًا. ينقل المرحّل أوامر الموسيقى المشفّرة ويرى عناوين الشبكة. يبث كل مشغّل من خادم الوسائط الخاص به.',
 			'musicDevices.relayInvalid' => 'أدخل عنوان مرحّل يستخدم HTTPS.',
-			'bookmarkMigration.unassigned' => 'إشارات مرجعية من إصدار غير معروف',
-			'bookmarkMigration.assignToVersion' => 'إسناد إلى هذا الإصدار',
+			'bookmarkMigration.unassigned' => 'إشارات مرجعية من نسخة غير معروفة',
+			'bookmarkMigration.assignToVersion' => 'إسناد إلى هذه النسخة',
 			_ => null,
 		};
 	}

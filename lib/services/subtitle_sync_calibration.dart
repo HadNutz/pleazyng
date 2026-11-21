@@ -242,7 +242,7 @@ final class SubtitlePiecewiseClockMap {
   final List<int> segmentStarts;
 
   bool crossesSegmentBoundary(int startMs, int endMs) =>
-      segmentStarts.skip(1).any((boundary) => startMs < boundary && endMs >= boundary);
+      segmentStarts.skip(1).any((boundary) => startMs < boundary && boundary < endMs);
 
   factory SubtitlePiecewiseClockMap.fromObservations(List<SubtitleSyncObservation> input) {
     if (input.length < 2 || input.length > maximumAnchors) {
@@ -321,12 +321,18 @@ final class SubtitlePiecewiseClockMap {
     );
   }
 
-  int map(int sourceMs) {
+  int map(int sourceMs) => _map(sourceMs, exclusiveEnd: false);
+
+  /// A cue ending at a cut belongs to the segment immediately before that cut.
+  int mapEnd(int sourceMs) => _map(sourceMs, exclusiveEnd: true);
+
+  int _map(int sourceMs, {required bool exclusiveEnd}) {
     if (sourceMs < 0 || sourceMs > SubtitleSyncCalibration.maximumTimeMs) {
       throw RangeError.range(sourceMs, 0, SubtitleSyncCalibration.maximumTimeMs, 'sourceMs');
     }
     var segment = 0;
-    while (segment < segmentStarts.length - 1 && sourceMs >= segmentStarts[segment + 1]) {
+    final segmentTime = exclusiveEnd ? sourceMs - 1 : sourceMs;
+    while (segment < segmentStarts.length - 1 && segmentTime >= segmentStarts[segment + 1]) {
       segment++;
     }
     final mapped = (sourceMs * rate + segmentOffsets[segment]).round();

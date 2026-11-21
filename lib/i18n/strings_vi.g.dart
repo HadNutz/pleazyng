@@ -2709,7 +2709,7 @@ class _Translations$metadataEdit$vi extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Nhập hình ảnh URL';
 	@override String get imageUrl => 'Ảnh URL';
 	@override String get metadataUpdated => 'Metadata cập nhật';
-	@override String get metadataConflict => 'Một người khác đã sửa cùng trường này. Hãy mở lại trình chỉnh sửa và kiểm tra các giá trị mới nhất trước khi lưu.';
+	@override String get metadataConflict => 'Người khác đã thay đổi cùng trường này. Hãy mở lại trình chỉnh sửa để kiểm tra các giá trị mới nhất trước khi lưu.';
 	@override String get metadataUpdateFailed => 'Không cập nhật metadata';
 	@override String get artworkUpdated => 'Artwork cập nhật';
 	@override String get artworkUpdateFailed => 'Không cập nhật tác phẩm nghệ thuật';
@@ -4090,6 +4090,7 @@ class _Translations$podcasts$vi extends Translations$podcasts$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Số lượt đăng ký đã nhập: ${imported}. Trùng lặp: ${duplicates}. Đã bỏ qua: ${skipped}.';
 	@override String get autoDownloadLatest => 'Tự động tải các tập mới nhất';
 	@override String get removeFinishedAfter => 'Xóa bản tải xuống đã nghe xong sau';
 }
@@ -8279,7 +8280,7 @@ extension on TranslationsVi {
 			'metadataEdit.enterImageUrl' => 'Nhập hình ảnh URL',
 			'metadataEdit.imageUrl' => 'Ảnh URL',
 			'metadataEdit.metadataUpdated' => 'Metadata cập nhật',
-			'metadataEdit.metadataConflict' => 'Một người khác đã sửa cùng trường này. Hãy mở lại trình chỉnh sửa và kiểm tra các giá trị mới nhất trước khi lưu.',
+			'metadataEdit.metadataConflict' => 'Người khác đã thay đổi cùng trường này. Hãy mở lại trình chỉnh sửa để kiểm tra các giá trị mới nhất trước khi lưu.',
 			'metadataEdit.metadataUpdateFailed' => 'Không cập nhật metadata',
 			'metadataEdit.artworkUpdated' => 'Artwork cập nhật',
 			'metadataEdit.artworkUpdateFailed' => 'Không cập nhật tác phẩm nghệ thuật',
@@ -9451,6 +9452,7 @@ extension on TranslationsVi {
 			'issueReport.privacy' => 'Bản nháp gồm phiên bản ứng dụng, nền tảng và số lượng kết nối. Bản nháp không có địa chỉ máy chủ, tên tài khoản hoặc hồ sơ, tiêu đề nội dung hay đường dẫn tệp.',
 			'issueReport.logPrivacy' => 'Nhật ký là tùy chọn. Hãy xem lại trước khi tải lên. ID nhật ký được thêm vào bản nháp, có thể hiển thị công khai.',
 			'issueReport.openDraft' => 'Mở bản nháp GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Số lượt đăng ký đã nhập: ${imported}. Trùng lặp: ${duplicates}. Đã bỏ qua: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Tự động tải các tập mới nhất',
 			'podcasts.removeFinishedAfter' => 'Xóa bản tải xuống đã nghe xong sau',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Xem trước bảng mã phụ đề',
@@ -9738,9 +9740,9 @@ extension on TranslationsVi {
 			'musicTools.promptHint' => 'Mô tả âm nhạc bạn muốn',
 			'musicTools.noHistory' => 'Chưa có nhạc để hiển thị',
 			'musicTools.historyHint' => 'Lịch sử phát của hồ sơ này',
-			'musicTools.days' => 'Ngày',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Ngày',
 			'musicTools.albumBlocks' => 'Giữ nguyên album',
 			'musicTools.home' => 'Nhạc',
 			'musicTools.recent' => 'Đã phát gần đây',

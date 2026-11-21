@@ -2709,7 +2709,7 @@ class _Translations$metadataEdit$th extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'หมายเลข URL';
 	@override String get imageUrl => 'ภาพ URL';
 	@override String get metadataUpdated => 'ข้อมูลอัปเดต';
-	@override String get metadataConflict => 'ผู้แก้ไขรายอื่นเปลี่ยนช่องเดียวกันนี้ เปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก';
+	@override String get metadataConflict => 'มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก';
 	@override String get metadataUpdateFailed => 'ไม่สามารถปรับปรุงข้อมูล metadata';
 	@override String get artworkUpdated => 'อัพเดทศิลปะ';
 	@override String get artworkUpdateFailed => 'ไม่สามารถปรับปรุงงานศิลปะได้';
@@ -4090,6 +4090,7 @@ class _Translations$podcasts$th extends Translations$podcasts$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ';
 	@override String get autoDownloadLatest => 'ดาวน์โหลดตอนล่าสุดโดยอัตโนมัติ';
 	@override String get removeFinishedAfter => 'ลบไฟล์ดาวน์โหลดที่ฟังจบแล้วหลังจาก';
 }
@@ -4511,8 +4512,8 @@ class _Translations$bookmarkMigration$th extends Translations$bookmarkMigration$
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
-	@override String get unassigned => 'บุ๊กมาร์กจากเวอร์ชันที่ไม่ทราบ';
-	@override String get assignToVersion => 'กำหนดให้เวอร์ชันนี้';
+	@override String get unassigned => 'บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้';
+	@override String get assignToVersion => 'เชื่อมโยงกับเวอร์ชันนี้';
 }
 
 // Path: appIcon.names
@@ -8279,7 +8280,7 @@ extension on TranslationsTh {
 			'metadataEdit.enterImageUrl' => 'หมายเลข URL',
 			'metadataEdit.imageUrl' => 'ภาพ URL',
 			'metadataEdit.metadataUpdated' => 'ข้อมูลอัปเดต',
-			'metadataEdit.metadataConflict' => 'ผู้แก้ไขรายอื่นเปลี่ยนช่องเดียวกันนี้ เปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก',
+			'metadataEdit.metadataConflict' => 'มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก',
 			'metadataEdit.metadataUpdateFailed' => 'ไม่สามารถปรับปรุงข้อมูล metadata',
 			'metadataEdit.artworkUpdated' => 'อัพเดทศิลปะ',
 			'metadataEdit.artworkUpdateFailed' => 'ไม่สามารถปรับปรุงงานศิลปะได้',
@@ -9451,6 +9452,7 @@ extension on TranslationsTh {
 			'issueReport.privacy' => 'ฉบับร่างมีเวอร์ชันแอป แพลตฟอร์ม และจำนวนการเชื่อมต่อ โดยไม่รวมที่อยู่เซิร์ฟเวอร์ ชื่อบัญชีหรือโปรไฟล์ ชื่อสื่อ หรือเส้นทางไฟล์',
 			'issueReport.logPrivacy' => 'บันทึกเป็นทางเลือก โปรดตรวจสอบก่อนอัปโหลด ID ของบันทึกจะเพิ่มลงในฉบับร่าง ซึ่งอาจเปิดเผยต่อสาธารณะ',
 			'issueReport.openDraft' => 'เปิดฉบับร่าง GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ',
 			'podcasts.autoDownloadLatest' => 'ดาวน์โหลดตอนล่าสุดโดยอัตโนมัติ',
 			'podcasts.removeFinishedAfter' => 'ลบไฟล์ดาวน์โหลดที่ฟังจบแล้วหลังจาก',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'ตัวอย่างการเข้ารหัสคำบรรยาย',
@@ -9738,9 +9740,9 @@ extension on TranslationsTh {
 			'musicTools.promptHint' => 'อธิบายเพลงที่ต้องการ',
 			'musicTools.noHistory' => 'ยังไม่มีเพลงให้แสดง',
 			'musicTools.historyHint' => 'ประวัติการเล่นของโปรไฟล์นี้',
-			'musicTools.days' => 'วัน',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'วัน',
 			'musicTools.albumBlocks' => 'เก็บอัลบั้มทั้งชุดไว้ด้วยกัน',
 			'musicTools.home' => 'เพลง',
 			'musicTools.recent' => 'เล่นล่าสุด',
@@ -9802,8 +9804,8 @@ extension on TranslationsTh {
 			'musicDevices.relay' => 'URL รีเลย์เพลง',
 			'musicDevices.relayHint' => 'เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง',
 			'musicDevices.relayInvalid' => 'ป้อนที่อยู่รีเลย์ HTTPS',
-			'bookmarkMigration.unassigned' => 'บุ๊กมาร์กจากเวอร์ชันที่ไม่ทราบ',
-			'bookmarkMigration.assignToVersion' => 'กำหนดให้เวอร์ชันนี้',
+			'bookmarkMigration.unassigned' => 'บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้',
+			'bookmarkMigration.assignToVersion' => 'เชื่อมโยงกับเวอร์ชันนี้',
 			_ => null,
 		};
 	}

@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$fa extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'URL تصویر را وارد کنید';
 	@override String get imageUrl => 'تصویر URL';
 	@override String get metadataUpdated => 'Metadata به روز شده';
-	@override String get metadataConflict => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید و آخرین مقادیر را بررسی کنید.';
+	@override String get metadataConflict => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید تا آخرین مقادیر را بررسی کنید.';
 	@override String get metadataUpdateFailed => 'عدم به روز رسانی متا';
 	@override String get artworkUpdated => 'هنر به روز شده';
 	@override String get artworkUpdateFailed => 'به روز رسانی هنرهای هنری';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$fa extends Translations$podcasts$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'اشتراک‌های واردشده: ${imported}، تکراری: ${duplicates}، ردشده: ${skipped}.';
 	@override String get autoDownloadLatest => 'بارگیری خودکار تازه‌ترین قسمت‌ها';
 	@override String get removeFinishedAfter => 'حذف بارگیری‌های تمام‌شده پس از';
 }
@@ -8304,7 +8305,7 @@ extension on TranslationsFa {
 			'metadataEdit.enterImageUrl' => 'URL تصویر را وارد کنید',
 			'metadataEdit.imageUrl' => 'تصویر URL',
 			'metadataEdit.metadataUpdated' => 'Metadata به روز شده',
-			'metadataEdit.metadataConflict' => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید و آخرین مقادیر را بررسی کنید.',
+			'metadataEdit.metadataConflict' => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید تا آخرین مقادیر را بررسی کنید.',
 			'metadataEdit.metadataUpdateFailed' => 'عدم به روز رسانی متا',
 			'metadataEdit.artworkUpdated' => 'هنر به روز شده',
 			'metadataEdit.artworkUpdateFailed' => 'به روز رسانی هنرهای هنری',
@@ -9476,6 +9477,7 @@ extension on TranslationsFa {
 			'issueReport.privacy' => 'پیش‌نویس نسخه برنامه، پلتفرم و تعداد اتصال‌ها را دارد. نشانی سرورها، نام حساب‌ها و پروفایل‌ها، عنوان رسانه‌ها و مسیر فایل‌ها در آن نیست.',
 			'issueReport.logPrivacy' => 'گزارش‌ها اختیاری‌اند. پیش از بارگذاری آن‌ها را بررسی کنید. شناسه گزارش به پیش‌نویس اضافه می‌شود و ممکن است عمومی باشد.',
 			'issueReport.openDraft' => 'باز کردن پیش‌نویس GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'اشتراک‌های واردشده: ${imported}، تکراری: ${duplicates}، ردشده: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'بارگیری خودکار تازه‌ترین قسمت‌ها',
 			'podcasts.removeFinishedAfter' => 'حذف بارگیری‌های تمام‌شده پس از',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'پیش‌نمایش کدگذاری زیرنویس',
@@ -9763,9 +9765,9 @@ extension on TranslationsFa {
 			'musicTools.promptHint' => 'موسیقی دلخواهتان را توصیف کنید',
 			'musicTools.noHistory' => 'هنوز موسیقی‌ای برای نمایش نیست',
 			'musicTools.historyHint' => 'سابقهٔ پخش این نمایه',
-			'musicTools.days' => 'روزها',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'روزها',
 			'musicTools.albumBlocks' => 'آلبوم‌ها را کامل نگه دار',
 			'musicTools.home' => 'موسیقی‌ها',
 			'musicTools.recent' => 'اخیراً پخش‌شده',

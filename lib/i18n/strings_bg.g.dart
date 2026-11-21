@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$bg extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Въведете URL на изображение';
 	@override String get imageUrl => 'URL на изображение';
 	@override String get metadataUpdated => 'Метаданните са обновени';
-	@override String get metadataConflict => 'Друг редактор промени същото поле. Отворете редактора отново, за да прегледате последните стойности преди запис.';
+	@override String get metadataConflict => 'Друг редактор промени същото поле. Отворете отново редактора, за да прегледате последните стойности, преди да запазите промените.';
 	@override String get metadataUpdateFailed => 'Неуспешно обновяване на метаданни';
 	@override String get artworkUpdated => 'Обложката е обновена';
 	@override String get artworkUpdateFailed => 'Неуспешно обновяване на обложката';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$bg extends Translations$podcasts$en {
 	final TranslationsBg _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Импортирани абонаменти: ${imported}. Дубликати: ${duplicates}. Пропуснати: ${skipped}.';
 	@override String get autoDownloadLatest => 'Автоматично изтегляне на последните епизоди';
 	@override String get removeFinishedAfter => 'Премахване на завършените изтегляния след';
 }
@@ -8304,7 +8305,7 @@ extension on TranslationsBg {
 			'metadataEdit.enterImageUrl' => 'Въведете URL на изображение',
 			'metadataEdit.imageUrl' => 'URL на изображение',
 			'metadataEdit.metadataUpdated' => 'Метаданните са обновени',
-			'metadataEdit.metadataConflict' => 'Друг редактор промени същото поле. Отворете редактора отново, за да прегледате последните стойности преди запис.',
+			'metadataEdit.metadataConflict' => 'Друг редактор промени същото поле. Отворете отново редактора, за да прегледате последните стойности, преди да запазите промените.',
 			'metadataEdit.metadataUpdateFailed' => 'Неуспешно обновяване на метаданни',
 			'metadataEdit.artworkUpdated' => 'Обложката е обновена',
 			'metadataEdit.artworkUpdateFailed' => 'Неуспешно обновяване на обложката',
@@ -9476,6 +9477,7 @@ extension on TranslationsBg {
 			'issueReport.privacy' => 'Черновата включва версията на приложението, платформата и броя на връзките. Не включва адреси на сървъри, имена на профили, заглавия или пътища до файлове.',
 			'issueReport.logPrivacy' => 'Регистрационните файлове са по избор. Прегледайте ги преди качване. Идентификаторът им се добавя към чернова, която може да е публична.',
 			'issueReport.openDraft' => 'Отваряне на чернова в GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Импортирани абонаменти: ${imported}. Дубликати: ${duplicates}. Пропуснати: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Автоматично изтегляне на последните епизоди',
 			'podcasts.removeFinishedAfter' => 'Премахване на завършените изтегляния след',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Преглед на кодирането на субтитрите',
@@ -9763,9 +9765,9 @@ extension on TranslationsBg {
 			'musicTools.promptHint' => 'Опишете желаната музика',
 			'musicTools.noHistory' => 'Все още няма музика за показване',
 			'musicTools.historyHint' => 'История на възпроизвеждане за този профил',
-			'musicTools.days' => 'Дни',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Дни',
 			'musicTools.albumBlocks' => 'Запазване на целите албуми заедно',
 			'musicTools.home' => 'Музика',
 			'musicTools.recent' => 'Наскоро слушани',

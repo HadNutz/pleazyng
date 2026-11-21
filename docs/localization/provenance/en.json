@@ -1,7 +1,7 @@
 {
   "locale": "en",
   "inherits": null,
-  "catalogSha256": "a619eea20b3c6aeba758b9d986159f7fc3cd6b2569fa7380a374f1cc488a665f",
+  "catalogSha256": "b4f8e7e0536fa3d23dd2caa76ad63e4e3aeaafbb60a58e7a90280bb77ab5cbf2",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "source-english",
@@ -3688,7 +3688,8 @@
     "seerr.withdrawRequest": "fork-authored",
     "settings.showFinishTime": "fork-authored",
     "settings.showFinishTimeDescription": "fork-authored",
-    "common.mediaKind.photoAlbum": "fork-authored"
+    "common.mediaKind.photoAlbum": "fork-authored",
+    "podcasts.importSummary": "fork-authored"
   },
   "beforeIndependentQaCorrection": {
     "mediaMenu.deleteEpisodeCountWarning": "source-english"

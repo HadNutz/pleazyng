@@ -163,6 +163,7 @@ abstract final class SubtitleRetimer {
   static const double minimumRate = 0.8;
   static const double maximumRate = 1.25;
 
+  static final RegExp _vttWordTime = RegExp(r'<(\d{2,}:[0-5]\d(?::[0-5]\d)?\.\d{3})>');
   static final RegExp _timingLine = RegExp(r'^([ \t]*)(\S+)([ \t]+-->[ \t]+)(\S+)(.*)$');
   static final RegExp _assDialogueLine = RegExp(r'^\s*Dialogue\s*:', caseSensitive: false);
   static final RegExp _assTimeExpression = RegExp(r'^(\d{1,6}):([0-5]\d):([0-5]\d)\.(\d{2})$');
@@ -273,93 +274,8 @@ abstract final class SubtitleRetimer {
       return _retimeAss(sourceBytes: sourceBytes, delayMs: delayMs, rate: rate, format: format);
     }
 
-    final decoded = _decodeText(sourceBytes);
-    final source = decoded.text;
-    if (source.contains('\u0000')) throw const FormatException('Subtitle contains a NUL byte.');
-    final newline = source.contains('\r\n')
-        ? '\r\n'
-        : source.contains('\r')
-        ? '\r'
-        : '\n';
-    final lines = source.replaceAll('\r\n', '\n').replaceAll('\r', '\n').split('\n');
-    final output = <String>[];
-    final block = <String>[];
-    var retimedCueCount = 0;
-    var clippedCueCount = 0;
-    final isVtt = format == '.vtt';
-
-    void flushBlock() {
-      if (block.isEmpty) return;
-      final firstLine = block.first.trimLeft().toUpperCase();
-      final isNoteBlock = firstLine == 'NOTE' || firstLine.startsWith('NOTE ');
-      final noteHasCueTiming = block.length > 1 && _timingLine.firstMatch(block[1]) != null;
-      if (isVtt &&
-          (firstLine == 'WEBVTT' ||
-              (isNoteBlock && !noteHasCueTiming) ||
-              firstLine == 'STYLE' ||
-              firstLine == 'REGION')) {
-        output.addAll(block);
-        block.clear();
-        return;
-      }
-
-      for (var index = 0; index < block.length; index++) {
-        final match = _timingLine.firstMatch(block[index]);
-        if (match == null) continue;
-        final start = _parseTime(match.group(2)!, isVtt: isVtt);
-        final end = _parseTime(match.group(4)!, isVtt: isVtt);
-        if (start == null || end == null) {
-          throw const FormatException('Subtitle cue contains an invalid timestamp.');
-        }
-        if (end <= start) throw const FormatException('Subtitle cue end must be after its start.');
-
-        retimedCueCount++;
-        final transformedStart = (start * rate).round() + delayMs;
-        final transformedEnd = (end * rate).round() + delayMs;
-        if (transformedEnd <= 0) {
-          clippedCueCount++;
-          block.clear();
-          return;
-        }
-        if (transformedStart > maximumTimeMs || transformedEnd > maximumTimeMs) {
-          throw const FormatException('Retimed subtitle cue is outside the supported range.');
-        }
-
-        final outputStart = transformedStart < 0 ? 0 : transformedStart;
-        final outputEnd = transformedEnd;
-        if (outputEnd <= outputStart) throw const FormatException('Retimed subtitle cue has no visible duration.');
-        final startSeparator = isVtt || match.group(2)!.contains('.') ? '.' : ',';
-        final endSeparator = isVtt || match.group(4)!.contains('.') ? '.' : ',';
-        block[index] =
-            '${match.group(1)}${_formatTime(outputStart, separator: startSeparator, keepHours: match.group(2)!.split(':').length == 3)}'
-            '${match.group(3)}${_formatTime(outputEnd, separator: endSeparator, keepHours: match.group(4)!.split(':').length == 3)}'
-            '${match.group(5)}';
-        break;
-      }
-      output.addAll(block);
-      block.clear();
-    }
-
-    for (final line in lines) {
-      if (line.trim().isEmpty) {
-        flushBlock();
-        output.add(line);
-      } else {
-        block.add(line);
-      }
-    }
-    flushBlock();
-    if (retimedCueCount == 0) {
-      throw const FormatException('No valid SRT/WebVTT cue timing lines were found.');
-    }
-
-    final result = output.join(newline);
-    return SubtitleRetimingResult(
-      bytes: _encodeText(result, decoded.encoding),
-      retimedCueCount: retimedCueCount,
-      clippedCueCount: clippedCueCount,
-      format: isVtt ? 'WebVTT' : 'SRT',
-    );
+    int map(int timeMs) => (timeMs * rate).round() + delayMs;
+    return _retimeText(sourceBytes, format, map: map, mapEnd: map);
   }
 
   /// Applies a piecewise cue-clock mapping while preserving SRT/WebVTT text,
@@ -378,6 +294,22 @@ abstract final class SubtitleRetimer {
     if (sourceBytes.isEmpty || sourceBytes.length > maximumInputBytes) {
       throw const FormatException('Subtitle input is empty or larger than the 5 MiB processing bound.');
     }
+    return _retimeText(
+      sourceBytes,
+      format,
+      map: mapping.map,
+      mapEnd: mapping.mapEnd,
+      crossesCut: mapping.crossesSegmentBoundary,
+    );
+  }
+
+  static SubtitleRetimingResult _retimeText(
+    List<int> sourceBytes,
+    String format, {
+    required int Function(int) map,
+    required int Function(int) mapEnd,
+    bool Function(int, int)? crossesCut,
+  }) {
     final decoded = _decodeText(sourceBytes);
     final source = decoded.text;
     if (source.contains('\u0000')) throw const FormatException('Subtitle contains a NUL byte.');
@@ -415,12 +347,12 @@ abstract final class SubtitleRetimer {
         if (start == null || end == null || end <= start) {
           throw const FormatException('Subtitle cue contains invalid timing.');
         }
-        if (mapping.crossesSegmentBoundary(start, end)) {
+        if (crossesCut?.call(start, end) == true) {
           throw const FormatException('A subtitle cue crosses a marked cut boundary and cannot be retimed safely.');
         }
         retimedCueCount++;
-        final mappedStart = mapping.map(start);
-        final mappedEnd = mapping.map(end);
+        final mappedStart = map(start);
+        final mappedEnd = mapEnd(end);
         if (mappedEnd <= 0) {
           clippedCueCount++;
           block.clear();
@@ -439,6 +371,28 @@ abstract final class SubtitleRetimer {
             '${match.group(1)}${_formatTime(visibleStart, separator: startSeparator, keepHours: match.group(2)!.split(':').length == 3)}'
             '${match.group(3)}${_formatTime(mappedEnd, separator: endSeparator, keepHours: match.group(4)!.split(':').length == 3)}'
             '${match.group(5)}';
+        if (isVtt) {
+          var previousSource = start;
+          var previousOutput = visibleStart;
+          for (var i = index + 1; i < block.length; i++) {
+            block[i] = block[i].replaceAllMapped(_vttWordTime, (tag) {
+              final stamp = tag[1]!;
+              final sourceTime = _parseTime(stamp, isVtt: true)!;
+              if (sourceTime <= previousSource || sourceTime >= end) {
+                throw const FormatException('WebVTT word timestamps must increase within the cue.');
+              }
+              previousSource = sourceTime;
+              final wordTime = map(sourceTime);
+              // Words reached before a clipped cue becomes visible are already active.
+              if (mappedStart < 0 && wordTime <= 0) return '';
+              if (wordTime <= previousOutput || wordTime >= mappedEnd) {
+                throw const FormatException('Retimed WebVTT word timestamps cannot fit inside the cue.');
+              }
+              previousOutput = wordTime;
+              return '<${_formatTime(wordTime, separator: '.', keepHours: stamp.split(':').length == 3)}>';
+            });
+          }
+        }
         break;
       }
       output.addAll(block);

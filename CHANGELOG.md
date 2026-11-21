@@ -4,7 +4,15 @@
 
 - Preserve the saved per-show audio and subtitle choices when their stored data is unreadable. Playback continues and reports the unsuccessful preference write.
 
-- Provision the matching Samsung SDK for x64 emulator tester builds.
+- Provision the matching Samsung SDK for x64 emulator tester builds and link host build tools with the host compiler.
+- Restore an interrupted mobile movie or episode from OS-saved state, including its position, edition and pause intent, after checking access for the active profile. A normal Back or replacement discards the old playback task.
+
+- Keep Watch Together invitations in the initiating profile, honor Stop during a pending selection, and close the guest player when reconnecting to a room the host cleared.
+- Preserve completed plays and explicit watch choices across reconnects. Keep RomM checkpoints and automatic cloud resume on the newest save when older conflicts or uploads are retried.
+- Respect library and server visibility in saved Home collections, assign Jellyfin collections to their members’ libraries, and show music pins from every eligible account.
+- Honor Pause during phone interruptions, show playable downloads on Android Auto, and clear stale Linux track artwork and metadata. Restore cached cloud folders, open videos in large Premiumize folders and honor ComicInfo page order and deletion flags.
+- Keep WebVTT word timestamps and adjacent cues aligned through subtitle corrections. Apply LRC offsets throughout the song and let users approve individual HTTP podcast subscriptions during OPML restore.
+- Cancel settings imports when their initiating profile changes, relocate Linux image loaders with a portable installation, and show skipped releases when checking for updates manually.
 
 - Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
 
@@ -18,6 +26,7 @@
 - Preserve non-ASCII settings in WebDAV restores, overlapping TV subtitles and delayed Samsung captions. Discard cancelled virtual-keyboard edits and retain selected lyrics when importing MIDI karaoke.
 - Enable motion processing during eligible playback on Android and Fire OS, desktop MPV, and LG and Samsung TV MPV. Change TV mixer strength while watching. On LG, the original hardware plane keeps playing while the filtered texture prepares.
 
+- Include FFmpeg motion-compensated interpolation in the bundled Linux, Android and Apple playback engines for eligible motion presets.
 - Apply MPV smoothing toggles and Motion clarity preset changes during eligible Linux and Windows playback, including titles started with smoothing off.
 - Adapt video, music, Steam streaming, browsing and reading to separating folds and physical hinges. Keep the active player and detail view during live window resizing. Add compact cover controls and a Samsung Flex Window music widget.
 - Build iPhone releases with the Duo SDK and validate the SDK inside the IPA. A second iOS app window can browse the active audio catalog and send playback to the existing session.

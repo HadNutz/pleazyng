@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$hu extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Add meg a kép URL-címét';
 	@override String get imageUrl => 'Kép URL-címe';
 	@override String get metadataUpdated => 'Metaadatok frissítve';
-	@override String get metadataConflict => 'Valaki más is módosította ezt a mezőt. Mentés előtt nyissa meg újra a szerkesztőt, és ellenőrizze az aktuális értékeket.';
+	@override String get metadataConflict => 'Valaki más módosította ugyanezt a mezőt. Mentés előtt nyisd meg újra a szerkesztőt, és ellenőrizd a legfrissebb értékeket.';
 	@override String get metadataUpdateFailed => 'Nem sikerült a metaadatok frissítése';
 	@override String get artworkUpdated => 'Képek frissítve';
 	@override String get artworkUpdateFailed => 'Nem sikerült a képek frissítése';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$hu extends Translations$podcasts$en {
 	final TranslationsHu _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importált feliratkozások: ${imported}. Ismétlődések: ${duplicates}. Kihagyva: ${skipped}.';
 	@override String get autoDownloadLatest => 'Legújabb epizódok automatikus letöltése';
 	@override String get removeFinishedAfter => 'Befejezett letöltések eltávolítása ennyi idő után';
 }
@@ -8304,7 +8305,7 @@ extension on TranslationsHu {
 			'metadataEdit.enterImageUrl' => 'Add meg a kép URL-címét',
 			'metadataEdit.imageUrl' => 'Kép URL-címe',
 			'metadataEdit.metadataUpdated' => 'Metaadatok frissítve',
-			'metadataEdit.metadataConflict' => 'Valaki más is módosította ezt a mezőt. Mentés előtt nyissa meg újra a szerkesztőt, és ellenőrizze az aktuális értékeket.',
+			'metadataEdit.metadataConflict' => 'Valaki más módosította ugyanezt a mezőt. Mentés előtt nyisd meg újra a szerkesztőt, és ellenőrizd a legfrissebb értékeket.',
 			'metadataEdit.metadataUpdateFailed' => 'Nem sikerült a metaadatok frissítése',
 			'metadataEdit.artworkUpdated' => 'Képek frissítve',
 			'metadataEdit.artworkUpdateFailed' => 'Nem sikerült a képek frissítése',
@@ -9476,6 +9477,7 @@ extension on TranslationsHu {
 			'issueReport.privacy' => 'A vázlat az alkalmazás verzióját, a platformot és a kapcsolatok számát tartalmazza. Nem tartalmaz szervercímeket, fiók- vagy profilneveket, médiacímeket és fájlútvonalakat.',
 			'issueReport.logPrivacy' => 'A naplók megadása nem kötelező. Feltöltés előtt nézd át őket. Az azonosítójuk bekerülhet a nyilvános vázlatba.',
 			'issueReport.openDraft' => 'GitHub-vázlat megnyitása',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importált feliratkozások: ${imported}. Ismétlődések: ${duplicates}. Kihagyva: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Legújabb epizódok automatikus letöltése',
 			'podcasts.removeFinishedAfter' => 'Befejezett letöltések eltávolítása ennyi idő után',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Feliratkódolás előnézete',
@@ -9763,9 +9765,9 @@ extension on TranslationsHu {
 			'musicTools.promptHint' => 'Írd le a kívánt zenét',
 			'musicTools.noHistory' => 'Még nincs megjeleníthető zene',
 			'musicTools.historyHint' => 'A profil lejátszási előzményei',
-			'musicTools.days' => 'Napok',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Napok',
 			'musicTools.albumBlocks' => 'Teljes albumok együtt tartása',
 			'musicTools.home' => 'Zene',
 			'musicTools.recent' => 'Legutóbb lejátszott',

@@ -4113,6 +4113,7 @@ class _Translations$podcasts$da extends Translations$podcasts$en {
 	final TranslationsDa _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importerede abonnementer: ${imported}. Dubletter: ${duplicates}. Sprunget over: ${skipped}.';
 	@override String get autoDownloadLatest => 'Download automatisk de nyeste episoder';
 	@override String get removeFinishedAfter => 'Fjern færdigafspillede downloads efter';
 }
@@ -9476,6 +9477,7 @@ extension on TranslationsDa {
 			'issueReport.privacy' => 'Udkastet indeholder appversion, platform og antal forbindelser. Det indeholder ikke serveradresser, konto- eller profilnavne, medietitler eller filstier.',
 			'issueReport.logPrivacy' => 'Logfiler er valgfri. Gennemgå dem før upload. Deres ID føjes til udkastet, som kan være offentligt.',
 			'issueReport.openDraft' => 'Åbn GitHub-udkast',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importerede abonnementer: ${imported}. Dubletter: ${duplicates}. Sprunget over: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Download automatisk de nyeste episoder',
 			'podcasts.removeFinishedAfter' => 'Fjern færdigafspillede downloads efter',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Forhåndsvisning af undertekstkoding',
@@ -9763,9 +9765,9 @@ extension on TranslationsDa {
 			'musicTools.promptHint' => 'Beskriv den ønskede musik',
 			'musicTools.noHistory' => 'Ingen musik at vise endnu',
 			'musicTools.historyHint' => 'Afspilningshistorik for denne profil',
-			'musicTools.days' => 'Dage',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Dage',
 			'musicTools.albumBlocks' => 'Hold hele album samlet',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senest afspillet',

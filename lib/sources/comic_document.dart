@@ -12,6 +12,7 @@ import 'source_transport.dart';
 class ComicPage {
   const ComicPage(
     this.name, {
+    this.archiveIndex,
     this.width,
     this.height,
     this.doublePage = false,
@@ -19,12 +20,16 @@ class ComicPage {
     this.frames = const [],
   });
   final String name;
+
+  /// Original position in the filename-sorted archive, used by saved locators.
+  final int? archiveIndex;
   final int? width, height;
   final bool doublePage;
   final String bookmark;
   final List<List<int>> frames;
   Map<String, dynamic> toJson() => {
     'name': name,
+    if (archiveIndex != null) 'archiveIndex': archiveIndex,
     'width': width,
     'height': height,
     'doublePage': doublePage,
@@ -116,11 +121,15 @@ class ComicDocument {
       return value != null && value > 0 && value <= 100000 ? value : null;
     }
 
-    return ComicDocument(
-      [
-        for (var i = 0; i < names.length; i++)
+    // ComicRack orders declared pages by their XML sequence. Undeclared
+    // images retain their natural order after the declared ones.
+    final order = <int>{...hints.keys, for (var i = 0; i < names.length; i++) i};
+    final pages = [
+      for (final i in order)
+        if (!(hints[i]?.getAttribute('Type') ?? '').toLowerCase().split(RegExp(r'[,\s]+')).contains('delete'))
           ComicPage(
             names[i],
+            archiveIndex: i,
             width: dimension(hints[i], 'ImageWidth'),
             height: dimension(hints[i], 'ImageHeight'),
             doublePage: hints[i]?.getAttribute('DoublePage')?.toLowerCase() == 'true',
@@ -129,7 +138,10 @@ class ComicDocument {
               (hints[i]?.getAttribute('Bookmark') ?? '').length.clamp(0, 500),
             ),
           ),
-      ],
+    ];
+    if (pages.isEmpty) throw const SourceException(SourceFailure.invalidData);
+    return ComicDocument(
+      pages,
       metadata: metadata,
       direction: metadata['Manga'] == 'YesAndRightToLeft' ? 'rtl' : 'ltr',
     );

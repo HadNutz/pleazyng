@@ -627,6 +627,7 @@ jobs:
             music_dual_core_test \
             mpv_property_result_contract_test \
             webos_media_slots_test \
+            mpris_metadata_test \
             system_tone_map_test \
             hdr_metadata_test \
             plane_geometry_test \

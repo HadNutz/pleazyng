@@ -3296,7 +3296,7 @@
     "enterImageUrl": "Vložte obrázek URL",
     "imageUrl": "obrázek URL",
     "metadataUpdated": "Aktualizované metadata",
-    "metadataConflict": "Jiný editor změnil stejné pole. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.",
+    "metadataConflict": "Stejné pole upravil někdo jiný. Před uložením znovu otevřete editor a zkontrolujte aktuální hodnoty.",
     "metadataUpdateFailed": "Nedokázal aktualizovat metadata",
     "artworkUpdated": "Umělecká aktualizace",
     "artworkUpdateFailed": "Nedokázal aktualizovat umělecké dílo",
@@ -4945,6 +4945,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Importovaná předplatná: ${imported}. Duplicitní: ${duplicates}. Přeskočená: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5760,7 +5761,7 @@
     "relayInvalid": "Zadejte HTTPS adresu relé."
   },
   "bookmarkMigration": {
-    "unassigned": "Záložky z neznámé verze",
+    "unassigned": "Záložky z neurčené verze",
     "assignToVersion": "Přiřadit k této verzi"
   }
 }

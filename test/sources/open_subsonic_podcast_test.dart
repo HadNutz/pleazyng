@@ -267,4 +267,19 @@ void main() {
       throwsA(isA<SourceException>()),
     );
   });
+  test('OPML preview preserves HTTP for review and accounts for duplicates and invalid URLs', () {
+    final local = PodcastSubscription(title: 'Local', url: Uri.parse('http://192.168.1.25/feed'));
+    final secure = PodcastSubscription(title: 'Private', url: Uri.parse('https://example.org/feed?token=secret'));
+    final opml = PodcastOpml.write([
+      local,
+      secure,
+      local,
+    ]).replaceFirst('</body>', '<outline xmlUrl="file:///invalid" /></body>');
+    final preview = PodcastOpml.preview(opml);
+    expect(preview.feeds.map((f) => f.url), [local.url, secure.url]);
+    expect(preview.duplicates, 1);
+    expect(preview.invalid, 1);
+    expect(PodcastOpml.preview(PodcastOpml.write([local])).feeds.single.url, local.url);
+    expect(PodcastOpml.parse(opml).single.url, secure.url);
+  });
 }

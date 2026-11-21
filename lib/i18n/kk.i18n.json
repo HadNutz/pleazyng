@@ -4897,6 +4897,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Импортталған жазылымдар: ${imported}. Қайталанатындары: ${duplicates}. Өткізіп жіберілгендері: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5712,7 +5713,7 @@
     "relayInvalid": "Реленің HTTPS мекенжайын енгізіңіз."
   },
   "bookmarkMigration": {
-    "unassigned": "Анықталмаған нұсқадағы бетбелгілер",
-    "assignToVersion": "Осы нұсқаға тағайындау"
+    "unassigned": "Белгісіз нұсқадағы бетбелгілер",
+    "assignToVersion": "Осы нұсқаға байланыстыру"
   }
 }

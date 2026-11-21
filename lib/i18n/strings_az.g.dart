@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$az extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Şəkil URL-i daxil edin';
 	@override String get imageUrl => 'Şəkil URL-i';
 	@override String get metadataUpdated => 'Meta-məlumatlar yeniləndi';
-	@override String get metadataConflict => 'Başqa redaktor eyni sahəni dəyişib. Yadda saxlamazdan əvvəl son dəyərlərə baxmaq üçün redaktoru yenidən açın.';
+	@override String get metadataConflict => 'Başqa bir redaktor eyni sahəni dəyişib. Yadda saxlamazdan əvvəl son dəyərləri nəzərdən keçirmək üçün redaktoru yenidən açın.';
 	@override String get metadataUpdateFailed => 'Meta-məlumatlar yenilənə bilmədi';
 	@override String get artworkUpdated => 'Şəkillər yeniləndi';
 	@override String get artworkUpdateFailed => 'Şəkillər yenilənə bilmədi';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$az extends Translations$podcasts$en {
 	final TranslationsAz _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'İdxal edilən abunəliklər: ${imported}. Təkrarlar: ${duplicates}. Ötürülənlər: ${skipped}.';
 	@override String get autoDownloadLatest => 'Ən son epizodları avtomatik endir';
 	@override String get removeFinishedAfter => 'Bitmiş endirmələri bu müddətdən sonra sil';
 }
@@ -8304,7 +8305,7 @@ extension on TranslationsAz {
 			'metadataEdit.enterImageUrl' => 'Şəkil URL-i daxil edin',
 			'metadataEdit.imageUrl' => 'Şəkil URL-i',
 			'metadataEdit.metadataUpdated' => 'Meta-məlumatlar yeniləndi',
-			'metadataEdit.metadataConflict' => 'Başqa redaktor eyni sahəni dəyişib. Yadda saxlamazdan əvvəl son dəyərlərə baxmaq üçün redaktoru yenidən açın.',
+			'metadataEdit.metadataConflict' => 'Başqa bir redaktor eyni sahəni dəyişib. Yadda saxlamazdan əvvəl son dəyərləri nəzərdən keçirmək üçün redaktoru yenidən açın.',
 			'metadataEdit.metadataUpdateFailed' => 'Meta-məlumatlar yenilənə bilmədi',
 			'metadataEdit.artworkUpdated' => 'Şəkillər yeniləndi',
 			'metadataEdit.artworkUpdateFailed' => 'Şəkillər yenilənə bilmədi',
@@ -9476,6 +9477,7 @@ extension on TranslationsAz {
 			'issueReport.privacy' => 'Qaralamaya tətbiqin versiyası, platforma və bağlantı sayı daxildir. Server ünvanları, hesab və profil adları, media başlıqları və fayl yolları daxil edilmir.',
 			'issueReport.logPrivacy' => 'Jurnallar istəyə bağlıdır. Yükləməzdən əvvəl nəzərdən keçirin. Jurnal ID-si ictimai ola bilən qaralamaya əlavə olunur.',
 			'issueReport.openDraft' => 'GitHub qaralamasını açın',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'İdxal edilən abunəliklər: ${imported}. Təkrarlar: ${duplicates}. Ötürülənlər: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Ən son epizodları avtomatik endir',
 			'podcasts.removeFinishedAfter' => 'Bitmiş endirmələri bu müddətdən sonra sil',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Altyazı kodlamasına baxış',
@@ -9763,9 +9765,9 @@ extension on TranslationsAz {
 			'musicTools.promptHint' => 'İstədiyiniz musiqini təsvir edin',
 			'musicTools.noHistory' => 'Hələ göstəriləcək musiqi yoxdur',
 			'musicTools.historyHint' => 'Bu profilin dinləmə tarixçəsi',
-			'musicTools.days' => 'Günlər',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Günlər',
 			'musicTools.albumBlocks' => 'Albomları bütöv saxla',
 			'musicTools.home' => 'Musiqi',
 			'musicTools.recent' => 'Son dinlənilənlər',

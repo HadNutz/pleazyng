@@ -4090,6 +4090,7 @@ class _Translations$podcasts$ms extends Translations$podcasts$en {
 	final TranslationsMs _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Langganan diimport: ${imported}. Pendua: ${duplicates}. Dilangkau: ${skipped}.';
 	@override String get autoDownloadLatest => 'Muat turun episod terkini secara automatik';
 	@override String get removeFinishedAfter => 'Alih keluar muat turun yang selesai selepas';
 }
@@ -4512,7 +4513,7 @@ class _Translations$bookmarkMigration$ms extends Translations$bookmarkMigration$
 
 	// Translations
 	@override String get unassigned => 'Penanda buku daripada versi yang tidak dikenal pasti';
-	@override String get assignToVersion => 'Tetapkan kepada versi ini';
+	@override String get assignToVersion => 'Kaitkan dengan versi ini';
 }
 
 // Path: appIcon.names
@@ -9451,6 +9452,7 @@ extension on TranslationsMs {
 			'issueReport.privacy' => 'Draf mengandungi versi aplikasi, platform dan bilangan sambungan. Alamat pelayan, nama akaun dan profil, tajuk media serta laluan fail tidak disertakan.',
 			'issueReport.logPrivacy' => 'Log adalah pilihan. Semak sebelum memuat naik. ID log ditambahkan pada draf yang mungkin terbuka kepada umum.',
 			'issueReport.openDraft' => 'Buka draf GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Langganan diimport: ${imported}. Pendua: ${duplicates}. Dilangkau: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Muat turun episod terkini secara automatik',
 			'podcasts.removeFinishedAfter' => 'Alih keluar muat turun yang selesai selepas',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pratonton pengekodan sari kata',
@@ -9738,9 +9740,9 @@ extension on TranslationsMs {
 			'musicTools.promptHint' => 'Terangkan muzik yang anda inginkan',
 			'musicTools.noHistory' => 'Belum ada muzik untuk dipaparkan',
 			'musicTools.historyHint' => 'Sejarah main balik profil ini',
-			'musicTools.days' => 'Hari',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Hari',
 			'musicTools.albumBlocks' => 'Kekalkan album penuh bersama',
 			'musicTools.home' => 'Muzik',
 			'musicTools.recent' => 'Baru dimainkan',
@@ -9803,7 +9805,7 @@ extension on TranslationsMs {
 			'musicDevices.relayHint' => 'Aktifkan pada peranti penerima, kemudian pasangkan sekali pada rangkaian yang sama. Biarkan Pleazyng terbuka. Geganti menghantar kawalan muzik yang disulitkan dan melihat alamat rangkaian. Setiap pemain menstrim daripada pelayan medianya sendiri.',
 			'musicDevices.relayInvalid' => 'Masukkan alamat geganti HTTPS.',
 			'bookmarkMigration.unassigned' => 'Penanda buku daripada versi yang tidak dikenal pasti',
-			'bookmarkMigration.assignToVersion' => 'Tetapkan kepada versi ini',
+			'bookmarkMigration.assignToVersion' => 'Kaitkan dengan versi ini',
 			_ => null,
 		};
 	}

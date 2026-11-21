@@ -4113,6 +4113,7 @@ class _Translations$podcasts$kk extends Translations$podcasts$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Импортталған жазылымдар: ${imported}. Қайталанатындары: ${duplicates}. Өткізіп жіберілгендері: ${skipped}.';
 	@override String get autoDownloadLatest => 'Соңғы эпизодтарды автоматты түрде жүктеп алу';
 	@override String get removeFinishedAfter => 'Аяқталған жүктеулерді кейін жою';
 }
@@ -4534,8 +4535,8 @@ class _Translations$bookmarkMigration$kk extends Translations$bookmarkMigration$
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
-	@override String get unassigned => 'Анықталмаған нұсқадағы бетбелгілер';
-	@override String get assignToVersion => 'Осы нұсқаға тағайындау';
+	@override String get unassigned => 'Белгісіз нұсқадағы бетбелгілер';
+	@override String get assignToVersion => 'Осы нұсқаға байланыстыру';
 }
 
 // Path: appIcon.names
@@ -9476,6 +9477,7 @@ extension on TranslationsKk {
 			'issueReport.privacy' => 'Жобада қолданба нұсқасы, платформа және байланыстар саны болады. Сервер мекенжайлары, тіркелгі мен профиль атаулары, медиа атаулары және файл жолдары қосылмайды.',
 			'issueReport.logPrivacy' => 'Журналдар міндетті емес. Жүктемес бұрын тексеріңіз. Олардың ID-і ашық болуы мүмкін жобаға қосылады.',
 			'issueReport.openDraft' => 'GitHub жобасын ашу',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Импортталған жазылымдар: ${imported}. Қайталанатындары: ${duplicates}. Өткізіп жіберілгендері: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Соңғы эпизодтарды автоматты түрде жүктеп алу',
 			'podcasts.removeFinishedAfter' => 'Аяқталған жүктеулерді кейін жою',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Субтитр кодтамасын алдын ала қарау',
@@ -9763,9 +9765,9 @@ extension on TranslationsKk {
 			'musicTools.promptHint' => 'Қалаған музыкаңызды сипаттаңыз',
 			'musicTools.noHistory' => 'Әзірге көрсетілетін музыка жоқ',
 			'musicTools.historyHint' => 'Осы профильдің тыңдау тарихы',
-			'musicTools.days' => 'Күндер',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Күндер',
 			'musicTools.albumBlocks' => 'Альбомдарды тұтас сақтау',
 			'musicTools.home' => 'Музыка',
 			'musicTools.recent' => 'Жақында тыңдалған',
@@ -9827,8 +9829,8 @@ extension on TranslationsKk {
 			'musicDevices.relay' => 'Музыка релесінің URL мекенжайы',
 			'musicDevices.relayHint' => 'Қабылдаушы құрылғыда қосып, бір желіде бір рет жұптастырыңыз. Pleazyng ашық тұрсын. Реле шифрланған музыка пәрмендерін тасымалдайды және желі мекенжайларын көреді. Әр ойнатқыш өз медиа серверінен ағын алады.',
 			'musicDevices.relayInvalid' => 'Реленің HTTPS мекенжайын енгізіңіз.',
-			'bookmarkMigration.unassigned' => 'Анықталмаған нұсқадағы бетбелгілер',
-			'bookmarkMigration.assignToVersion' => 'Осы нұсқаға тағайындау',
+			'bookmarkMigration.unassigned' => 'Белгісіз нұсқадағы бетбелгілер',
+			'bookmarkMigration.assignToVersion' => 'Осы нұсқаға байланыстыру',
 			_ => null,
 		};
 	}

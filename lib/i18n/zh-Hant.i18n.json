@@ -3256,7 +3256,7 @@
     "enterImageUrl": "輸入圖片 URL",
     "imageUrl": "圖片 URL",
     "metadataUpdated": "中繼資料已更新",
-    "metadataConflict": "其他編輯者已變更同一個欄位。請重新開啟編輯器，檢查最新值後再儲存。",
+    "metadataConflict": "其他人已修改了同一欄位。請重新開啟編輯器，確認最新的值後再儲存。",
     "metadataUpdateFailed": "中繼資料更新失敗",
     "artworkUpdated": "封面圖片已更新",
     "artworkUpdateFailed": "封面圖片更新失敗",
@@ -4892,6 +4892,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "已匯入訂閱：${imported}。重複：${duplicates}。已略過：${skipped}。",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5707,7 +5708,7 @@
     "relayInvalid": "請輸入 HTTPS 中繼位址。"
   },
   "bookmarkMigration": {
-    "unassigned": "來自未知版本的書籤",
+    "unassigned": "來自不明版本的書籤",
     "assignToVersion": "指派給此版本"
   }
 }

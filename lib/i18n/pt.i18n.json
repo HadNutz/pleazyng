@@ -3263,7 +3263,7 @@
     "enterImageUrl": "Insira a URL da imagem",
     "imageUrl": "URL da Imagem",
     "metadataUpdated": "Metadados atualizados",
-    "metadataConflict": "Outra pessoa alterou o mesmo campo. Abra novamente o editor e verifique os valores atuais antes de guardar.",
+    "metadataConflict": "Outra pessoa alterou o mesmo campo. Reabra o editor para verificar os valores atuais antes de guardar as alterações.",
     "metadataUpdateFailed": "Falha ao atualizar metadados",
     "artworkUpdated": "Arte atualizada",
     "artworkUpdateFailed": "Falha ao atualizar arte",
@@ -4906,6 +4906,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Assinaturas importadas: ${imported}. Duplicadas: ${duplicates}. Ignoradas: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5722,6 +5723,6 @@
   },
   "bookmarkMigration": {
     "unassigned": "Marcadores de uma versão não identificada",
-    "assignToVersion": "Atribuir a esta versão"
+    "assignToVersion": "Associar a esta versão"
   }
 }

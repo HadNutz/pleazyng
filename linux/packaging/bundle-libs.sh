@@ -99,14 +99,14 @@ bundle_module_dir() {
 }
 
 # gdk-pixbuf loaders
-PIXBUF_MODULE_DIR="$(pkg-config --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0 2>/dev/null || true)"
+PIXBUF_MODULE_DIR="$(pkg-config --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0)"
 PIXBUF_DEST="$LIB_DIR/gdk-pixbuf-2.0/2.10.0/loaders"
-if [[ -n "$PIXBUF_MODULE_DIR" && -d "$PIXBUF_MODULE_DIR" ]]; then
-    bundle_module_dir "$PIXBUF_MODULE_DIR" "$PIXBUF_DEST"
-    # Regenerate loaders.cache with relative paths
-    GDK_PIXBUF_MODULEDIR="$PIXBUF_DEST" \
-        gdk-pixbuf-query-loaders "$PIXBUF_DEST"/*.so > "$LIB_DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache" 2>/dev/null || true
+if [[ ! -d "$PIXBUF_MODULE_DIR" ]]; then
+    echo "Missing native GdkPixbuf loader directory: $PIXBUF_MODULE_DIR" >&2
+    exit 1
 fi
+bundle_module_dir "$PIXBUF_MODULE_DIR" "$PIXBUF_DEST"
+python3 "$(dirname "${BASH_SOURCE[0]}")/rebuild-pixbuf-cache.py" "$BUNDLE_DIR" --runtime-prefix /opt/pleazyng
 
 # GIO modules
 GIO_MODULE_DIR="$(pkg-config --variable=giomoduledir gio-2.0 2>/dev/null || true)"

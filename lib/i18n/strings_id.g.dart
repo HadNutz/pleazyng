@@ -2709,7 +2709,7 @@ class _Translations$metadataEdit$id extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Masukkan URL gambar';
 	@override String get imageUrl => 'Gambar URL';
 	@override String get metadataUpdated => 'Metadata yang diperbarui';
-	@override String get metadataConflict => 'Editor lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.';
+	@override String get metadataConflict => 'Orang lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.';
 	@override String get metadataUpdateFailed => 'Tidak dapat mengemas kini metadata';
 	@override String get artworkUpdated => 'Artwork dikemas kini';
 	@override String get artworkUpdateFailed => 'gagal memperbarui karya seni';
@@ -4090,6 +4090,7 @@ class _Translations$podcasts$id extends Translations$podcasts$en {
 	final TranslationsId _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Langganan yang diimpor: ${imported}. Duplikat: ${duplicates}. Dilewati: ${skipped}.';
 	@override String get autoDownloadLatest => 'Unduh episode terbaru secara otomatis';
 	@override String get removeFinishedAfter => 'Hapus unduhan yang selesai setelah';
 }
@@ -4511,8 +4512,8 @@ class _Translations$bookmarkMigration$id extends Translations$bookmarkMigration$
 	final TranslationsId _root; // ignore: unused_field
 
 	// Translations
-	@override String get unassigned => 'Markah dari versi yang tidak dikenal';
-	@override String get assignToVersion => 'Tetapkan ke versi ini';
+	@override String get unassigned => 'Markah dari versi yang belum teridentifikasi';
+	@override String get assignToVersion => 'Kaitkan dengan versi ini';
 }
 
 // Path: appIcon.names
@@ -8279,7 +8280,7 @@ extension on TranslationsId {
 			'metadataEdit.enterImageUrl' => 'Masukkan URL gambar',
 			'metadataEdit.imageUrl' => 'Gambar URL',
 			'metadataEdit.metadataUpdated' => 'Metadata yang diperbarui',
-			'metadataEdit.metadataConflict' => 'Editor lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.',
+			'metadataEdit.metadataConflict' => 'Orang lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.',
 			'metadataEdit.metadataUpdateFailed' => 'Tidak dapat mengemas kini metadata',
 			'metadataEdit.artworkUpdated' => 'Artwork dikemas kini',
 			'metadataEdit.artworkUpdateFailed' => 'gagal memperbarui karya seni',
@@ -9451,6 +9452,7 @@ extension on TranslationsId {
 			'issueReport.privacy' => 'Draf memuat versi aplikasi, platform, dan jumlah koneksi. Alamat server, nama akun dan profil, judul media, serta lokasi berkas tidak disertakan.',
 			'issueReport.logPrivacy' => 'Log bersifat opsional. Tinjau sebelum mengunggah. ID log ditambahkan ke draf, yang mungkin bersifat publik.',
 			'issueReport.openDraft' => 'Buka draf GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Langganan yang diimpor: ${imported}. Duplikat: ${duplicates}. Dilewati: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Unduh episode terbaru secara otomatis',
 			'podcasts.removeFinishedAfter' => 'Hapus unduhan yang selesai setelah',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pratinjau enkode subtitle',
@@ -9738,9 +9740,9 @@ extension on TranslationsId {
 			'musicTools.promptHint' => 'Jelaskan musik yang diinginkan',
 			'musicTools.noHistory' => 'Belum ada musik untuk ditampilkan',
 			'musicTools.historyHint' => 'Riwayat pemutaran profil ini',
-			'musicTools.days' => 'Hari',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Hari',
 			'musicTools.albumBlocks' => 'Satukan album utuh',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Baru diputar',
@@ -9802,8 +9804,8 @@ extension on TranslationsId {
 			'musicDevices.relay' => 'URL relai musik',
 			'musicDevices.relayHint' => 'Aktifkan di perangkat penerima, lalu pasangkan sekali di jaringan yang sama. Biarkan Pleazyng terbuka. Relai meneruskan kontrol musik terenkripsi dan melihat alamat jaringan. Setiap pemutar melakukan streaming dari server medianya sendiri.',
 			'musicDevices.relayInvalid' => 'Masukkan alamat relai HTTPS.',
-			'bookmarkMigration.unassigned' => 'Markah dari versi yang tidak dikenal',
-			'bookmarkMigration.assignToVersion' => 'Tetapkan ke versi ini',
+			'bookmarkMigration.unassigned' => 'Markah dari versi yang belum teridentifikasi',
+			'bookmarkMigration.assignToVersion' => 'Kaitkan dengan versi ini',
 			_ => null,
 		};
 	}

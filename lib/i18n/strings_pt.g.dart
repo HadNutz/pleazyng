@@ -2731,7 +2731,7 @@ class Translations$metadataEdit$pt extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Insira a URL da imagem';
 	@override String get imageUrl => 'URL da Imagem';
 	@override String get metadataUpdated => 'Metadados atualizados';
-	@override String get metadataConflict => 'Outra pessoa alterou o mesmo campo. Abra novamente o editor e verifique os valores atuais antes de guardar.';
+	@override String get metadataConflict => 'Outra pessoa alterou o mesmo campo. Reabra o editor para verificar os valores atuais antes de guardar as alterações.';
 	@override String get metadataUpdateFailed => 'Falha ao atualizar metadados';
 	@override String get artworkUpdated => 'Arte atualizada';
 	@override String get artworkUpdateFailed => 'Falha ao atualizar arte';
@@ -4120,6 +4120,7 @@ class Translations$podcasts$pt extends Translations$podcasts$en {
 	final TranslationsPt _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Assinaturas importadas: ${imported}. Duplicadas: ${duplicates}. Ignoradas: ${skipped}.';
 	@override String get autoDownloadLatest => 'Transferir automaticamente os episódios mais recentes';
 	@override String get removeFinishedAfter => 'Remover transferências concluídas após';
 }
@@ -4542,7 +4543,7 @@ class Translations$bookmarkMigration$pt extends Translations$bookmarkMigration$e
 
 	// Translations
 	@override String get unassigned => 'Marcadores de uma versão não identificada';
-	@override String get assignToVersion => 'Atribuir a esta versão';
+	@override String get assignToVersion => 'Associar a esta versão';
 }
 
 // Path: appIcon.names
@@ -8311,7 +8312,7 @@ extension on TranslationsPt {
 			'metadataEdit.enterImageUrl' => 'Insira a URL da imagem',
 			'metadataEdit.imageUrl' => 'URL da Imagem',
 			'metadataEdit.metadataUpdated' => 'Metadados atualizados',
-			'metadataEdit.metadataConflict' => 'Outra pessoa alterou o mesmo campo. Abra novamente o editor e verifique os valores atuais antes de guardar.',
+			'metadataEdit.metadataConflict' => 'Outra pessoa alterou o mesmo campo. Reabra o editor para verificar os valores atuais antes de guardar as alterações.',
 			'metadataEdit.metadataUpdateFailed' => 'Falha ao atualizar metadados',
 			'metadataEdit.artworkUpdated' => 'Arte atualizada',
 			'metadataEdit.artworkUpdateFailed' => 'Falha ao atualizar arte',
@@ -9483,6 +9484,7 @@ extension on TranslationsPt {
 			'issueReport.privacy' => 'O rascunho inclui a versão da aplicação, a plataforma e o número de ligações. Exclui endereços de servidores, nomes de contas e perfis, títulos e caminhos de ficheiros.',
 			'issueReport.logPrivacy' => 'Os registos são opcionais. Reveja-os antes de os carregar. O respetivo ID é adicionado ao rascunho, que pode ser público.',
 			'issueReport.openDraft' => 'Abrir rascunho do GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Assinaturas importadas: ${imported}. Duplicadas: ${duplicates}. Ignoradas: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Transferir automaticamente os episódios mais recentes',
 			'podcasts.removeFinishedAfter' => 'Remover transferências concluídas após',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pré-visualização da codificação das legendas',
@@ -9770,9 +9772,9 @@ extension on TranslationsPt {
 			'musicTools.promptHint' => 'Descreva a música que deseja',
 			'musicTools.noHistory' => 'Ainda não há música para mostrar',
 			'musicTools.historyHint' => 'Histórico de reprodução deste perfil',
-			'musicTools.days' => 'Dias',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Dias',
 			'musicTools.albumBlocks' => 'Manter álbuns completos juntos',
 			'musicTools.home' => 'Música',
 			'musicTools.recent' => 'Reproduzidas recentemente',
@@ -9835,7 +9837,7 @@ extension on TranslationsPt {
 			'musicDevices.relayHint' => 'Ative no dispositivo recetor e emparelhe uma vez na mesma rede. Mantenha o Pleazyng aberto. O relay transmite comandos de música encriptados e vê os endereços de rede. Cada leitor transmite do seu próprio servidor multimédia.',
 			'musicDevices.relayInvalid' => 'Introduza um endereço HTTPS do relay.',
 			'bookmarkMigration.unassigned' => 'Marcadores de uma versão não identificada',
-			'bookmarkMigration.assignToVersion' => 'Atribuir a esta versão',
+			'bookmarkMigration.assignToVersion' => 'Associar a esta versão',
 			_ => null,
 		};
 	}

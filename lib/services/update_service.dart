@@ -117,11 +117,11 @@ class UpdateService {
   }
 
   /// Internal method that performs the actual update check
-  /// [respectCooldown] - if true, checks cooldown and records the attempt before the request
+  /// Startup checks honor the cooldown and the stored skipped release.
   /// [throwOnFailure] - if true, a failed check (network, non-200, bad payload)
   /// is rethrown instead of reading as "no update"
   static Future<Map<String, dynamic>?> _performUpdateCheck({
-    required bool respectCooldown,
+    required bool onStartup,
     MediaServerHttpClient? client,
     bool forceEnabled = false,
     bool throwOnFailure = false,
@@ -131,7 +131,7 @@ class UpdateService {
     }
 
     // Check cooldown if requested
-    if (respectCooldown && !await shouldCheckForUpdates()) {
+    if (onStartup && !await shouldCheckForUpdates()) {
       return null;
     }
 
@@ -140,7 +140,7 @@ class UpdateService {
       final currentVersion = (await AppVersion.current()).version;
       if (currentVersion == null) throw StateError('App version unknown');
 
-      if (respectCooldown) {
+      if (onStartup) {
         await _updateLastCheckTime();
       }
 
@@ -161,9 +161,7 @@ class UpdateService {
       final hasUpdate = _isNewerVersion(cleanVersion, currentVersion);
 
       if (hasUpdate) {
-        // Check if this version was skipped
-        final skippedVersion = await getSkippedVersion();
-        if (skippedVersion == cleanVersion) {
+        if (onStartup && await getSkippedVersion() == cleanVersion) {
           return null;
         }
 
@@ -192,25 +190,23 @@ class UpdateService {
     bool throwOnFailure = false,
   }) {
     return _performUpdateCheck(
-      respectCooldown: respectCooldown,
+      onStartup: respectCooldown,
       client: client,
       forceEnabled: true,
       throwOnFailure: throwOnFailure,
     );
   }
 
-  /// Check for updates on GitHub (manual check, ignores cooldown)
-  /// Returns a map with update info, or null when there is no update (or the
-  /// release is skipped). Throws when the check itself fails, so the caller
-  /// can say so instead of reporting the latest version.
+  /// Manual checks offer any newer GitHub release, including one skipped at startup.
+  /// Throws when the check fails so Settings can distinguish failure from no update.
   static Future<Map<String, dynamic>?> checkForUpdates() {
-    return _performUpdateCheck(respectCooldown: false, throwOnFailure: true);
+    return _performUpdateCheck(onStartup: false, throwOnFailure: true);
   }
 
   /// Check for updates on startup (respects cooldown and skipped versions)
   /// Returns update info if available, null otherwise
   static Future<Map<String, dynamic>?> checkForUpdatesOnStartup() {
-    return _performUpdateCheck(respectCooldown: true);
+    return _performUpdateCheck(onStartup: true);
   }
 
   /// Parse version string into list of integers

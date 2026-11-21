@@ -3260,7 +3260,7 @@
     "enterImageUrl": "Voer de afbeeldings-URL in",
     "imageUrl": "Afbeeldings-URL",
     "metadataUpdated": "Metadata bijgewerkt",
-    "metadataConflict": "Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw en controleer de nieuwste waarden voordat je opslaat.",
+    "metadataConflict": "Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.",
     "metadataUpdateFailed": "Metadata bijwerken mislukt",
     "artworkUpdated": "Illustraties bijgewerkt",
     "artworkUpdateFailed": "Illustraties bijwerken mislukt",
@@ -4897,6 +4897,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5713,6 +5714,6 @@
   },
   "bookmarkMigration": {
     "unassigned": "Bladwijzers uit een onbekende versie",
-    "assignToVersion": "Aan deze versie toewijzen"
+    "assignToVersion": "Aan deze versie koppelen"
   }
 }

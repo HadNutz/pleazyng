@@ -996,6 +996,62 @@ void main() {
       expect(prefs.getBool('enable_hdr'), isTrue);
     });
 
+    for (final switchBack in [false, true]) {
+      test('a profile switch while picking cancels the file import (switch back: $switchBack)', () async {
+        // Plex Home profiles on separate connections may share the same user UUID.
+        const uuid = '0123456789abcdef';
+        const initialId = 'plex-home-first-$uuid';
+        final prefs = await BaseSharedPreferencesService.sharedCache();
+        await prefs.setString('active_app_profile_id', initialId);
+        await prefs.setBool('enable_hdr', true);
+        var generation = 0;
+        picker.beforePickResult = () async {
+          await prefs.setString('active_app_profile_id', 'plex-home-second-$uuid');
+          generation++;
+          if (switchBack) await prefs.setString('active_app_profile_id', initialId);
+        };
+        picker.pickResult = FilePickerResult([PlatformFile(name: 'settings.json', size: 1, bytes: importBytes())]);
+
+        await expectLater(
+          SettingsExportService.importFromFile(isCurrentSession: switchBack ? (id) => generation == 0 : null),
+          throwsA(isA<SettingsExportException>()),
+        );
+        expect(prefs.getBool('enable_hdr'), isTrue);
+        expect(picker.pickCalls, 1);
+      });
+    }
+
+    test('switching during a local import rolls back only its own remaining writes', () async {
+      await seedActiveProfile();
+      final prefs = await BaseSharedPreferencesService.sharedCache();
+      final bytes = Uint8List.fromList(
+        utf8.encode(
+          jsonEncode({
+            'formatVersion': SettingsExportService.formatVersion,
+            'prefs': {
+              'enable_hdr': {'type': 'bool', 'value': false},
+              'volume': {'type': 'double', 'value': 35.0},
+              'hidden_libraries': {'type': 'string', 'value': '["movies"]'},
+            },
+          }),
+        ),
+      );
+      picker.pickResult = FilePickerResult([PlatformFile(name: 'settings.json', size: bytes.length, bytes: bytes)]);
+      SettingsExportService.debugBeforeImportWrite = (key) async {
+        if (key != 'user_profile-a_hidden_libraries') return;
+        expect(prefs.getBool('enable_hdr'), isFalse);
+        await prefs.setString('active_app_profile_id', 'profile-b');
+        await prefs.setDouble('volume', 15);
+        await prefs.setString('user_profile-b_hidden_libraries', '["music"]');
+      };
+
+      await expectLater(SettingsExportService.importFromFile(), throwsA(isA<SettingsExportException>()));
+      expect(prefs.getBool('enable_hdr'), isTrue);
+      expect(prefs.getDouble('volume'), 15);
+      expect(prefs.getString('user_profile-a_hidden_libraries'), isNull);
+      expect(prefs.getString('user_profile-b_hidden_libraries'), '["music"]');
+    });
+
     test('picker cancellation, malformed input, and unreadable path release the guard', () async {
       await seedActiveProfile();
       picker.pickResult = null;
@@ -1031,6 +1087,7 @@ class _FakeFilePicker implements FilePickerDelegate {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 
   FilePickerResult? pickResult;
+  Future<void> Function()? beforePickResult;
   String? saveResult;
   Object? pickError;
   Object? saveError;
@@ -1056,6 +1113,7 @@ class _FakeFilePicker implements FilePickerDelegate {
     bool readSequential = false,
   }) async {
     pickCalls++;
+    await beforePickResult?.call();
     final error = pickError;
     if (error != null) {
       throw error;

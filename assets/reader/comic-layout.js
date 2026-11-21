@@ -35,6 +35,22 @@ export function parseComicLocator(value, fallback = 0) {
     return {index: legacy ? Math.max(0, Math.floor(Number(legacy[1]) / 2) - 1) : fallback, offset: 0};
 }
 
+// ComicInfo may change display order or hide scans. Both legacy CFIs and
+// plezy-comic locators identify the image in the natural archive sequence.
+export function comicReadingPosition(pages, cfi, pageNumber) {
+    const saved = parseComicLocator(cfi, (pageNumber ?? 0) - 1);
+    if (saved.index < 0) return {index:0, offset:0};
+    let next, previous;
+    for (const [index, page] of pages.entries()) {
+        const physical = page.archiveIndex ?? index;
+        if (physical === saved.index) return {...saved, index};
+        if (physical > saved.index && (!next || physical < next.physical)) next = {index, physical};
+        if (physical < saved.index && (!previous || physical > previous.physical)) previous = {index, physical};
+    }
+    // A bookmark on a now-hidden image advances to the next surviving scan.
+    return {index:next?.index ?? previous?.index ?? 0, offset:0};
+}
+
 // Reject empty/out-of-image frames, while retaining their original sequence.
 // Bounds only describe a zoom viewport; the page image is never rewritten.
 export function comicPanelBounds(page, panel) {

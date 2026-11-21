@@ -344,7 +344,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
         final page = await controller.repository.entriesPage(
           profile,
           source: widget.source?.id,
-          parent: widget.folder?.id,
+          parent: widget.folder?.id ?? widget.source?.indexedRootParent,
           filterParent: widget.source != null,
           shelf: widget.shelf,
           query: _query,
@@ -368,7 +368,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
           final page = await controller.repository.entriesPage(
             profile,
             source: widget.source!.id,
-            parent: widget.folder?.id,
+            parent: widget.folder?.id ?? widget.source?.indexedRootParent,
             filterParent: true,
             shelf: widget.shelf,
             query: _query,

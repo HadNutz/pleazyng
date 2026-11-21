@@ -12749,6 +12749,9 @@ class Translations$podcasts$en {
 	/// en: 'Subscriptions imported.'
 	String get imported => 'Subscriptions imported.';
 
+	/// en: 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.'
+	String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.';
+
 	/// en: 'The export contains feed URLs, including private membership links. Keep it private.'
 	String get exportHelp => 'The export contains feed URLs, including private membership links. Keep it private.';
 
@@ -22916,6 +22919,7 @@ extension on Translations {
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
@@ -23423,9 +23427,9 @@ extension on Translations {
 			'karaokeUi.phonePitchAndPrivateRecording' => 'Phone pitch and private recording',
 			'karaokeUi.phoneMicrophoneInputHelp' => 'Use headphones. This input provides pitch feedback and an optional private dry recording on the host. It does not amplify your voice through the stage speakers.',
 			'karaokeUi.sendRawVocalAudioForPrivateTake' => 'Send raw vocal audio to save a private take on the host',
-			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',

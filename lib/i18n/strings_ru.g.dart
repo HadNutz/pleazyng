@@ -2766,7 +2766,7 @@ class _Translations$metadataEdit$ru extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Введите URL изображения';
 	@override String get imageUrl => 'URL изображения';
 	@override String get metadataUpdated => 'Метаданные обновлены';
-	@override String get metadataConflict => 'Другой редактор изменил то же поле. Перед сохранением снова откройте редактор и проверьте актуальные значения.';
+	@override String get metadataConflict => 'Кто-то ещё изменил это же поле. Перед сохранением откройте редактор заново и проверьте актуальные значения.';
 	@override String get metadataUpdateFailed => 'Не удалось обновить метаданные';
 	@override String get artworkUpdated => 'Обложка обновлена';
 	@override String get artworkUpdateFailed => 'Не удалось обновить обложку';
@@ -4159,6 +4159,7 @@ class _Translations$podcasts$ru extends Translations$podcasts$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Импортировано подписок: ${imported}. Дубликатов: ${duplicates}. Пропущено: ${skipped}.';
 	@override String get autoDownloadLatest => 'Автоматически скачивать последние выпуски';
 	@override String get removeFinishedAfter => 'Удалять завершённые загрузки через';
 }
@@ -4580,7 +4581,7 @@ class _Translations$bookmarkMigration$ru extends Translations$bookmarkMigration$
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String get unassigned => 'Закладки из неопознанной версии';
+	@override String get unassigned => 'Закладки из неопределённой версии';
 	@override String get assignToVersion => 'Привязать к этой версии';
 }
 
@@ -8354,7 +8355,7 @@ extension on TranslationsRu {
 			'metadataEdit.enterImageUrl' => 'Введите URL изображения',
 			'metadataEdit.imageUrl' => 'URL изображения',
 			'metadataEdit.metadataUpdated' => 'Метаданные обновлены',
-			'metadataEdit.metadataConflict' => 'Другой редактор изменил то же поле. Перед сохранением снова откройте редактор и проверьте актуальные значения.',
+			'metadataEdit.metadataConflict' => 'Кто-то ещё изменил это же поле. Перед сохранением откройте редактор заново и проверьте актуальные значения.',
 			'metadataEdit.metadataUpdateFailed' => 'Не удалось обновить метаданные',
 			'metadataEdit.artworkUpdated' => 'Обложка обновлена',
 			'metadataEdit.artworkUpdateFailed' => 'Не удалось обновить обложку',
@@ -9526,6 +9527,7 @@ extension on TranslationsRu {
 			'issueReport.privacy' => 'Черновик включает версию приложения, платформу и число подключений. Адреса серверов, имена аккаунтов и профилей, названия медиа и пути к файлам не добавляются.',
 			'issueReport.logPrivacy' => 'Журналы необязательны. Проверьте их перед загрузкой. Их ID добавляется в черновик, который может быть общедоступным.',
 			'issueReport.openDraft' => 'Открыть черновик GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Импортировано подписок: ${imported}. Дубликатов: ${duplicates}. Пропущено: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Автоматически скачивать последние выпуски',
 			'podcasts.removeFinishedAfter' => 'Удалять завершённые загрузки через',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Предпросмотр кодировки субтитров',
@@ -9813,9 +9815,9 @@ extension on TranslationsRu {
 			'musicTools.promptHint' => 'Опишите желаемую музыку',
 			'musicTools.noHistory' => 'Пока нет музыки для отображения',
 			'musicTools.historyHint' => 'История прослушиваний этого профиля',
-			'musicTools.days' => 'Дни',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Дни',
 			'musicTools.albumBlocks' => 'Сохранять альбомы целиком',
 			'musicTools.home' => 'Музыка',
 			'musicTools.recent' => 'Недавно прослушанные',
@@ -9877,7 +9879,7 @@ extension on TranslationsRu {
 			'musicDevices.relay' => 'URL музыкального ретранслятора',
 			'musicDevices.relayHint' => 'Включите на принимающем устройстве и один раз выполните сопряжение в одной сети. Оставьте Pleazyng открытым. Ретранслятор передаёт зашифрованные команды и видит сетевые адреса. Каждый плеер использует свой медиасервер.',
 			'musicDevices.relayInvalid' => 'Введите HTTPS-адрес ретранслятора.',
-			'bookmarkMigration.unassigned' => 'Закладки из неопознанной версии',
+			'bookmarkMigration.unassigned' => 'Закладки из неопределённой версии',
 			'bookmarkMigration.assignToVersion' => 'Привязать к этой версии',
 			_ => null,
 		};

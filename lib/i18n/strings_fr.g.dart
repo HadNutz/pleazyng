@@ -2745,7 +2745,7 @@ class Translations$metadataEdit$fr extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Entrer l\'URL de l\'image';
 	@override String get imageUrl => 'URL de l\'image';
 	@override String get metadataUpdated => 'Métadonnées mises à jour';
-	@override String get metadataConflict => 'Le même champ a été modifié ailleurs. Rouvrez l’éditeur et vérifiez les dernières valeurs avant d’enregistrer.';
+	@override String get metadataConflict => 'Une autre personne a modifié le même champ. Rouvrez l’éditeur pour vérifier les valeurs actuelles avant d’enregistrer.';
 	@override String get metadataUpdateFailed => 'Échec de la mise à jour des métadonnées';
 	@override String get artworkUpdated => 'Illustrations mises à jour';
 	@override String get artworkUpdateFailed => 'Échec de la mise à jour des illustrations';
@@ -4145,6 +4145,7 @@ class Translations$podcasts$fr extends Translations$podcasts$en {
 	final TranslationsFr _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Abonnements importés : ${imported}. Doublons : ${duplicates}. Ignorés : ${skipped}.';
 	@override String get syncPrivacy => 'Ce serveur reçoit les URL des abonnements et des épisodes, qui peuvent contenir des jetons d’abonnement privés, ainsi que les positions d’écoute. Les identifiants de connexion et les points de reprise de synchronisation sont chiffrés sur cet appareil. La suppression d’un abonnement est synchronisée ; les téléchargements et l’historique existants sont conservés.';
 	@override String get syncConsent => 'Partager les URL des podcasts et la progression d’écoute avec ce serveur';
 	@override String get autoDownloadLatest => 'Télécharger automatiquement les derniers épisodes';
@@ -4576,7 +4577,7 @@ class Translations$bookmarkMigration$fr extends Translations$bookmarkMigration$e
 
 	// Translations
 	@override String get unassigned => 'Signets d’une version non identifiée';
-	@override String get assignToVersion => 'Attribuer à cette version';
+	@override String get assignToVersion => 'Associer à cette version';
 }
 
 // Path: appIcon.names
@@ -8355,7 +8356,7 @@ extension on TranslationsFr {
 			'metadataEdit.enterImageUrl' => 'Entrer l\'URL de l\'image',
 			'metadataEdit.imageUrl' => 'URL de l\'image',
 			'metadataEdit.metadataUpdated' => 'Métadonnées mises à jour',
-			'metadataEdit.metadataConflict' => 'Le même champ a été modifié ailleurs. Rouvrez l’éditeur et vérifiez les dernières valeurs avant d’enregistrer.',
+			'metadataEdit.metadataConflict' => 'Une autre personne a modifié le même champ. Rouvrez l’éditeur pour vérifier les valeurs actuelles avant d’enregistrer.',
 			'metadataEdit.metadataUpdateFailed' => 'Échec de la mise à jour des métadonnées',
 			'metadataEdit.artworkUpdated' => 'Illustrations mises à jour',
 			'metadataEdit.artworkUpdateFailed' => 'Échec de la mise à jour des illustrations',
@@ -9538,6 +9539,7 @@ extension on TranslationsFr {
 			'issueReport.privacy' => 'Le brouillon contient la version de l’application, la plateforme et le nombre de connexions. Il exclut les adresses des serveurs, les noms de comptes et de profils, les titres et les chemins de fichiers.',
 			'issueReport.logPrivacy' => 'Les journaux sont facultatifs. Relisez-les avant de les envoyer. Leur identifiant est ajouté au brouillon, qui peut être public.',
 			'issueReport.openDraft' => 'Ouvrir le brouillon GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Abonnements importés : ${imported}. Doublons : ${duplicates}. Ignorés : ${skipped}.',
 			'podcasts.syncPrivacy' => 'Ce serveur reçoit les URL des abonnements et des épisodes, qui peuvent contenir des jetons d’abonnement privés, ainsi que les positions d’écoute. Les identifiants de connexion et les points de reprise de synchronisation sont chiffrés sur cet appareil. La suppression d’un abonnement est synchronisée ; les téléchargements et l’historique existants sont conservés.',
 			'podcasts.syncConsent' => 'Partager les URL des podcasts et la progression d’écoute avec ce serveur',
 			'podcasts.autoDownloadLatest' => 'Télécharger automatiquement les derniers épisodes',
@@ -9807,9 +9809,9 @@ extension on TranslationsFr {
 			'musicExperience.play' => 'Lire la sélection',
 			'musicExperience.next' => 'Lire ensuite',
 			'musicExperience.error' => 'La demande musicale a échoué',
-			'musicExperience.on' => 'sur',
 			_ => null,
 		} ?? switch (path) {
+			'musicExperience.on' => 'sur',
 			'musicExperience.off' => 'Désactivé',
 			'musicExperience.unknown' => 'Inconnu',
 			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
@@ -9899,7 +9901,7 @@ extension on TranslationsFr {
 			'musicDevices.relayHint' => 'Activez sur l’appareil récepteur, puis associez une fois sur le même réseau. Gardez Pleazyng ouvert. Le relais transmet les commandes musicales chiffrées et voit les adresses réseau. Chaque lecteur utilise son propre serveur multimédia.',
 			'musicDevices.relayInvalid' => 'Saisissez une adresse HTTPS pour le relais.',
 			'bookmarkMigration.unassigned' => 'Signets d’une version non identifiée',
-			'bookmarkMigration.assignToVersion' => 'Attribuer à cette version',
+			'bookmarkMigration.assignToVersion' => 'Associer à cette version',
 			_ => null,
 		};
 	}

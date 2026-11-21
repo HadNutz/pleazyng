@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$nl extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Voer de afbeeldings-URL in';
 	@override String get imageUrl => 'Afbeeldings-URL';
 	@override String get metadataUpdated => 'Metadata bijgewerkt';
-	@override String get metadataConflict => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw en controleer de nieuwste waarden voordat je opslaat.';
+	@override String get metadataConflict => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.';
 	@override String get metadataUpdateFailed => 'Metadata bijwerken mislukt';
 	@override String get artworkUpdated => 'Illustraties bijgewerkt';
 	@override String get artworkUpdateFailed => 'Illustraties bijwerken mislukt';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$nl extends Translations$podcasts$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.';
 	@override String get autoDownloadLatest => 'Nieuwste afleveringen automatisch downloaden';
 	@override String get removeFinishedAfter => 'Voltooide downloads verwijderen na';
 }
@@ -4535,7 +4536,7 @@ class _Translations$bookmarkMigration$nl extends Translations$bookmarkMigration$
 
 	// Translations
 	@override String get unassigned => 'Bladwijzers uit een onbekende versie';
-	@override String get assignToVersion => 'Aan deze versie toewijzen';
+	@override String get assignToVersion => 'Aan deze versie koppelen';
 }
 
 // Path: appIcon.names
@@ -8304,7 +8305,7 @@ extension on TranslationsNl {
 			'metadataEdit.enterImageUrl' => 'Voer de afbeeldings-URL in',
 			'metadataEdit.imageUrl' => 'Afbeeldings-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata bijgewerkt',
-			'metadataEdit.metadataConflict' => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw en controleer de nieuwste waarden voordat je opslaat.',
+			'metadataEdit.metadataConflict' => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.',
 			'metadataEdit.metadataUpdateFailed' => 'Metadata bijwerken mislukt',
 			'metadataEdit.artworkUpdated' => 'Illustraties bijgewerkt',
 			'metadataEdit.artworkUpdateFailed' => 'Illustraties bijwerken mislukt',
@@ -9476,6 +9477,7 @@ extension on TranslationsNl {
 			'issueReport.privacy' => 'Het concept bevat de appversie, het platform en het aantal verbindingen. Serveradressen, account- en profielnamen, mediatitels en bestandspaden worden weggelaten.',
 			'issueReport.logPrivacy' => 'Logboeken zijn optioneel. Controleer ze voordat je ze uploadt. Hun ID wordt toegevoegd aan het concept, dat openbaar kan zijn.',
 			'issueReport.openDraft' => 'GitHub-concept openen',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Nieuwste afleveringen automatisch downloaden',
 			'podcasts.removeFinishedAfter' => 'Voltooide downloads verwijderen na',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Voorbeeld van ondertitelcodering',
@@ -9763,9 +9765,9 @@ extension on TranslationsNl {
 			'musicTools.promptHint' => 'Beschrijf de gewenste muziek',
 			'musicTools.noHistory' => 'Nog geen muziek om te tonen',
 			'musicTools.historyHint' => 'Afspeelgeschiedenis voor dit profiel',
-			'musicTools.days' => 'Dagen',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Dagen',
 			'musicTools.albumBlocks' => 'Volledige albums bij elkaar houden',
 			'musicTools.home' => 'Muziek',
 			'musicTools.recent' => 'Onlangs afgespeeld',
@@ -9828,7 +9830,7 @@ extension on TranslationsNl {
 			'musicDevices.relayHint' => 'Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.',
 			'musicDevices.relayInvalid' => 'Voer een HTTPS-adres voor het relais in.',
 			'bookmarkMigration.unassigned' => 'Bladwijzers uit een onbekende versie',
-			'bookmarkMigration.assignToVersion' => 'Aan deze versie toewijzen',
+			'bookmarkMigration.assignToVersion' => 'Aan deze versie koppelen',
 			_ => null,
 		};
 	}

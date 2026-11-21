@@ -4870,6 +4870,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Langganan diimport: ${imported}. Pendua: ${duplicates}. Dilangkau: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5686,6 +5687,6 @@
   },
   "bookmarkMigration": {
     "unassigned": "Penanda buku daripada versi yang tidak dikenal pasti",
-    "assignToVersion": "Tetapkan kepada versi ini"
+    "assignToVersion": "Kaitkan dengan versi ini"
   }
 }

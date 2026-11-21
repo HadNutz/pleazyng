@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$uz extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Rasm URL-manzilini kiriting';
 	@override String get imageUrl => 'Rasm URL-manzili';
 	@override String get metadataUpdated => 'Metamaʼlumotlar yangilandi';
-	@override String get metadataConflict => 'Boshqa muharrir ayni maydonni o‘zgartirdi. Saqlashdan oldin oxirgi qiymatlarni tekshirish uchun muharrirni qayta oching.';
+	@override String get metadataConflict => 'Boshqa muharrir shu maydonni o‘zgartirdi. Saqlashdan oldin so‘nggi qiymatlarni tekshirish uchun muharrirni qayta oching.';
 	@override String get metadataUpdateFailed => 'Metamaʼlumotlarni yangilab boʻlmadi';
 	@override String get artworkUpdated => 'Rasmlar yangilandi';
 	@override String get artworkUpdateFailed => 'Rasmlarni yangilab boʻlmadi';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$uz extends Translations$podcasts$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Import qilingan obunalar: ${imported}. Takroriylari: ${duplicates}. O‘tkazib yuborilganlari: ${skipped}.';
 	@override String get autoDownloadLatest => 'Soʻnggi qismlarni avtomatik yuklab olish';
 	@override String get removeFinishedAfter => 'Tugallangan yuklamalarni quyidagi muddatdan soʻng oʻchirish';
 }
@@ -4534,7 +4535,7 @@ class _Translations$bookmarkMigration$uz extends Translations$bookmarkMigration$
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
-	@override String get unassigned => 'Noma’lum versiyadagi xatcho‘plar';
+	@override String get unassigned => 'Qaysi versiyaga tegishli ekani noma’lum xatcho‘plar';
 	@override String get assignToVersion => 'Shu versiyaga biriktirish';
 }
 
@@ -8304,7 +8305,7 @@ extension on TranslationsUz {
 			'metadataEdit.enterImageUrl' => 'Rasm URL-manzilini kiriting',
 			'metadataEdit.imageUrl' => 'Rasm URL-manzili',
 			'metadataEdit.metadataUpdated' => 'Metamaʼlumotlar yangilandi',
-			'metadataEdit.metadataConflict' => 'Boshqa muharrir ayni maydonni o‘zgartirdi. Saqlashdan oldin oxirgi qiymatlarni tekshirish uchun muharrirni qayta oching.',
+			'metadataEdit.metadataConflict' => 'Boshqa muharrir shu maydonni o‘zgartirdi. Saqlashdan oldin so‘nggi qiymatlarni tekshirish uchun muharrirni qayta oching.',
 			'metadataEdit.metadataUpdateFailed' => 'Metamaʼlumotlarni yangilab boʻlmadi',
 			'metadataEdit.artworkUpdated' => 'Rasmlar yangilandi',
 			'metadataEdit.artworkUpdateFailed' => 'Rasmlarni yangilab boʻlmadi',
@@ -9476,6 +9477,7 @@ extension on TranslationsUz {
 			'issueReport.privacy' => 'Qoralamada ilova versiyasi, platforma va ulanishlar soni bo‘ladi. Server manzillari, hisob va profil nomlari, media sarlavhalari hamda fayl yo‘llari kiritilmaydi.',
 			'issueReport.logPrivacy' => 'Jurnallar ixtiyoriy. Yuklashdan oldin ko‘rib chiqing. Ularning ID raqami ommaviy bo‘lishi mumkin bo‘lgan qoralamaga qo‘shiladi.',
 			'issueReport.openDraft' => 'GitHub qoralamasini ochish',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Import qilingan obunalar: ${imported}. Takroriylari: ${duplicates}. O‘tkazib yuborilganlari: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Soʻnggi qismlarni avtomatik yuklab olish',
 			'podcasts.removeFinishedAfter' => 'Tugallangan yuklamalarni quyidagi muddatdan soʻng oʻchirish',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Subtitr kodlashini oldindan ko‘rish',
@@ -9763,9 +9765,9 @@ extension on TranslationsUz {
 			'musicTools.promptHint' => 'Kerakli musiqani tasvirlang',
 			'musicTools.noHistory' => 'Hozircha ko‘rsatiladigan musiqa yo‘q',
 			'musicTools.historyHint' => 'Ushbu profilning tinglash tarixi',
-			'musicTools.days' => 'Kunlar',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Kunlar',
 			'musicTools.albumBlocks' => 'Albomlarni butun saqlash',
 			'musicTools.home' => 'Musiqa',
 			'musicTools.recent' => 'Yaqinda ijro etilgan',
@@ -9827,7 +9829,7 @@ extension on TranslationsUz {
 			'musicDevices.relay' => 'Musiqa relesi URL manzili',
 			'musicDevices.relayHint' => 'Qabul qiluvchi qurilmada yoqing, so‘ng bir tarmoqda bir marta juftlang. Pleazyng ochiq tursin. Rele shifrlangan musiqa buyruqlarini uzatadi va tarmoq manzillarini ko‘radi. Har bir pleyer o‘z media serveridan uzatadi.',
 			'musicDevices.relayInvalid' => 'HTTPS rele manzilini kiriting.',
-			'bookmarkMigration.unassigned' => 'Noma’lum versiyadagi xatcho‘plar',
+			'bookmarkMigration.unassigned' => 'Qaysi versiyaga tegishli ekani noma’lum xatcho‘plar',
 			'bookmarkMigration.assignToVersion' => 'Shu versiyaga biriktirish',
 			_ => null,
 		};

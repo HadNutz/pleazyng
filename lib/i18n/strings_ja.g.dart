@@ -2724,7 +2724,7 @@ class _Translations$metadataEdit$ja extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => '画像URLを入力';
 	@override String get imageUrl => '画像URL';
 	@override String get metadataUpdated => 'メタデータを更新しました';
-	@override String get metadataConflict => '同じ項目が別の編集者によって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。';
+	@override String get metadataConflict => '同じ項目が他のユーザーによって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。';
 	@override String get metadataUpdateFailed => 'メタデータの更新に失敗しました';
 	@override String get artworkUpdated => 'アートワークを更新しました';
 	@override String get artworkUpdateFailed => 'アートワークの更新に失敗しました';
@@ -4108,6 +4108,7 @@ class _Translations$podcasts$ja extends Translations$podcasts$en {
 	final TranslationsJa _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => '読み込んだ購読件数：${imported}、重複：${duplicates}、スキップ：${skipped}。';
 	@override String get autoDownloadLatest => '最新のエピソードを自動ダウンロード';
 	@override String get removeFinishedAfter => '再生済みのダウンロードを削除するまでの期間';
 }
@@ -8299,7 +8300,7 @@ extension on TranslationsJa {
 			'metadataEdit.enterImageUrl' => '画像URLを入力',
 			'metadataEdit.imageUrl' => '画像URL',
 			'metadataEdit.metadataUpdated' => 'メタデータを更新しました',
-			'metadataEdit.metadataConflict' => '同じ項目が別の編集者によって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。',
+			'metadataEdit.metadataConflict' => '同じ項目が他のユーザーによって変更されました。保存する前に編集画面を開き直し、最新の値を確認してください。',
 			'metadataEdit.metadataUpdateFailed' => 'メタデータの更新に失敗しました',
 			'metadataEdit.artworkUpdated' => 'アートワークを更新しました',
 			'metadataEdit.artworkUpdateFailed' => 'アートワークの更新に失敗しました',
@@ -9471,6 +9472,7 @@ extension on TranslationsJa {
 			'issueReport.privacy' => '下書きに含まれるのはアプリのバージョン、プラットフォーム、接続数が含まれます。サーバーアドレス、アカウント名やプロフィール名、メディア名、ファイルパスは含まれません。',
 			'issueReport.logPrivacy' => 'ログは任意です。アップロード前に確認してください。ログIDは公開される可能性のある下書きに追加されます。',
 			'issueReport.openDraft' => 'GitHubの下書きを開く',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => '読み込んだ購読件数：${imported}、重複：${duplicates}、スキップ：${skipped}。',
 			'podcasts.autoDownloadLatest' => '最新のエピソードを自動ダウンロード',
 			'podcasts.removeFinishedAfter' => '再生済みのダウンロードを削除するまでの期間',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => '字幕エンコーディングのプレビュー',
@@ -9758,9 +9760,9 @@ extension on TranslationsJa {
 			'musicTools.promptHint' => '聴きたい音楽を説明してください',
 			'musicTools.noHistory' => '表示する音楽はまだありません',
 			'musicTools.historyHint' => 'このプロフィールの再生履歴',
-			'musicTools.days' => '日',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => '日',
 			'musicTools.albumBlocks' => 'アルバム全体をまとめる',
 			'musicTools.home' => '音楽',
 			'musicTools.recent' => '最近再生した曲',

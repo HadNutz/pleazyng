@@ -2164,7 +2164,12 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   }
 
   DateTime _lastPositionPersist = DateTime.fromMillisecondsSinceEpoch(0);
-  bool _resumeAfterInterruption = false;
+  bool _audioInterrupted = false;
+  bool _privateRouteDisconnected = false;
+  // A system pause may resume only the same track, after both the call and
+  // private-route loss have cleared. User Pause withdraws this intent.
+  int? _audioResumeGeneration;
+  Future<void>? _audioSessionPause;
   bool _disposed = false;
   bool _observesLifecycle = false;
   bool _observesCarRestrictions = false;
@@ -3945,24 +3950,49 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     if (_musicDeviceOutput != null) return;
 
     if (event is AudioInterruptionBeganEvent || event is AudioRouteOldDeviceUnavailableEvent) {
-      // Remember whether we were playing so interruption-end/route-return
-      // can resume. Unlike video, music resumes even while backgrounded —
-      // background audio is the product.
-      _resumeAfterInterruption = _player?.state.isActive ?? false;
-      unawaited(pause());
-    } else if (event is AudioInterruptionEndedEvent) {
-      if (event.shouldResume && _resumeAfterInterruption) {
-        _resumeAfterInterruption = false;
-        unawaited(play());
+      final alreadyBlocked = _audioInterrupted || _privateRouteDisconnected;
+      if (event is AudioInterruptionBeganEvent) {
+        _audioInterrupted = true;
       } else {
-        _resumeAfterInterruption = false;
+        _privateRouteDisconnected = true;
       }
-    } else if (event is AudioRouteNewDeviceAvailableEvent) {
-      if (_resumeAfterInterruption) {
-        _resumeAfterInterruption = false;
-        unawaited(play());
-      }
+      if (alreadyBlocked) return;
+      if (_player?.state.isActive == true) _audioResumeGeneration = _generation;
+      _audioSessionPause = _pauseForAudioSession();
+      return;
     }
+    if (event is AudioInterruptionEndedEvent && _audioInterrupted) {
+      _audioInterrupted = false;
+      if (!event.shouldResume) _audioResumeGeneration = null;
+    } else if (event is AudioRouteNewDeviceAvailableEvent && _privateRouteDisconnected) {
+      _privateRouteDisconnected = false;
+    } else {
+      return;
+    }
+    unawaited(_resumeWhenAudioAvailable());
+  }
+
+  Future<void> _pauseForAudioSession() async {
+    try {
+      await _pauseLocalOutput();
+    } catch (error, stack) {
+      appLogger.w('Failed to pause for an audio session event', error: error, stackTrace: stack);
+    }
+  }
+
+  Future<void> _resumeWhenAudioAvailable() async {
+    final pause = _audioSessionPause;
+    await pause;
+    if (_disposed ||
+        !identical(_audioSessionPause, pause) ||
+        _audioInterrupted ||
+        _privateRouteDisconnected ||
+        _audioResumeGeneration != _generation ||
+        _musicDeviceOutput != null) {
+      return;
+    }
+    _audioResumeGeneration = null;
+    await play();
   }
 
   static const _defaultSkipInterval = Duration(seconds: 15);
@@ -3999,6 +4029,13 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
   @override
   Future<void> play() async {
     if (_musicDeviceOutput != null) return _controlMusicDevice('play');
+    if (_audioInterrupted) {
+      _audioResumeGeneration = _generation;
+      return;
+    }
+    // A deliberate Play may choose to continue on speakers after unplugging.
+    _privateRouteDisconnected = false;
+    _audioResumeGeneration = null;
     final native = _calderaSink;
     if (native?.active == true) {
       if (automotiveMusicPlaybackAllowedNow()) await native!.control('play');
@@ -4063,7 +4100,12 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
 
   @override
   Future<void> pause() async {
+    _audioResumeGeneration = null;
     if (_musicDeviceOutput != null) return _controlMusicDevice('pause');
+    await _pauseLocalOutput();
+  }
+
+  Future<void> _pauseLocalOutput() async {
     _pausedByCarRestriction = false;
     final native = _calderaSink;
     if (native?.active == true) return native!.control('pause');
@@ -4826,7 +4868,10 @@ class MusicPlaybackServiceImpl extends MusicPlaybackService
     // A user-visible session end (stop, swipe-dismiss, video claim, error
     // stop): nothing should come back on the next launch.
     _clearPersistedSession();
-    _resumeAfterInterruption = false;
+    _audioInterrupted = false;
+    _privateRouteDisconnected = false;
+    _audioResumeGeneration = null;
+    _audioSessionPause = null;
     // The vehicle's claim dies with the session: whatever plays next is a fresh
     // decision, and parking must not resume a queue the user never started.
     _pausedByCarRestriction = false;

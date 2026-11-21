@@ -24,11 +24,6 @@ if [[ -d "$INSTALL_DIR/lib/gstreamer-1.0" ]]; then
     export GST_PLUGIN_SCANNER_1_0="$INSTALL_DIR/lib/gstreamer-tools/gst-plugin-scanner"
 fi
 
-# gdk-pixbuf loaders
-if [[ -f "$INSTALL_DIR/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache" ]]; then
-    export GDK_PIXBUF_MODULE_FILE="$INSTALL_DIR/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
-fi
-
 # GIO modules
 if [[ -d "$INSTALL_DIR/lib/gio/modules" ]]; then
     export GIO_MODULE_DIR="$INSTALL_DIR/lib/gio/modules"
@@ -42,42 +37,61 @@ if [[ -x "$INSTALL_DIR/lib/glib-2.0/gio-launch-desktop" ]]; then
     export GIO_LAUNCH_DESKTOP="$INSTALL_DIR/lib/glib-2.0/gio-launch-desktop"
 fi
 
-# Use the shipped input modules. Portable bundles can move after generation;
-# keep their relocated cache in the user's cache directory, not the bundle.
-im_cache="$INSTALL_DIR/lib/gtk-3.0/3.0.0/immodules.cache"
-if [[ -f "$im_cache" ]]; then
-    im_relocate=false
-    while IFS= read -r line; do
-        if [[ "$line" =~ ^\"([^\"]+\.so)\" ]]; then
-            [[ "${BASH_REMATCH[1]}" == "$INSTALL_DIR/lib/gtk-3.0/3.0.0/immodules/"* ]] || im_relocate=true
-            break
-        fi
-    done < "$im_cache"
-    if $im_relocate; then
-        im_directory="${XDG_CACHE_HOME:-$HOME/.cache}/pleazyng/gtk-im"
-        im_key=$(printf '%s' "$INSTALL_DIR" | sha256sum)
-        im_destination="$im_directory/${im_key%% *}.cache"
-        mkdir -p "$im_directory" || exit 1
-        im_temporary=$(mktemp "$im_directory/.cache.XXXXXX") || exit 1
-        while IFS= read -r line || [[ -n "$line" ]]; do
-            if [[ "$line" =~ ^\"([^\"]+\.so)\" ]]; then
-                im_module="$INSTALL_DIR/lib/gtk-3.0/3.0.0/immodules/${BASH_REMATCH[1]##*/}"
-                if [[ ! -f "$im_module" ]]; then
-                    rm -f -- "$im_temporary"
-                    echo "Missing bundled GTK input module: $im_module" >&2
-                    exit 1
-                fi
-                im_module="${im_module//\\/\\\\}"
-                im_module="${im_module//\"/\\\"}"
-                printf '"%s"\n' "$im_module"
-            else
-                printf '%s\n' "$line"
+# GTK and GdkPixbuf open the module paths recorded in their caches. Relocate
+# those records to the actual bundle without writing inside a read-only AppImage.
+module_cache() (
+    local cache="$1" modules="$2" name="$3"
+    local record='^"(.*\/)?([^"/]+\.so)"[[:space:]]*$'
+    local line module escaped quoted found=false relocate=false
+    local -a lines=()
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        if [[ "$line" =~ $record ]]; then
+            found=true
+            module="$modules/${BASH_REMATCH[2]}"
+            if [[ ! -f "$module" ]]; then
+                echo "Missing bundled module: $module" >&2
+                return 1
             fi
-        done < "$im_cache" > "$im_temporary"
-        mv -f -- "$im_temporary" "$im_destination" || exit 1
-        im_cache="$im_destination"
+            escaped="${module//\\/\\\\}"
+            escaped="${escaped//\"/\\\"}"
+            escaped="${escaped//$'\n'/\\n}"
+            escaped="${escaped//$'\r'/\\r}"
+            escaped="${escaped//$'\t'/\\t}"
+            quoted="\"$escaped\""
+            [[ "$line" == "$quoted"* ]] || relocate=true
+            line="$quoted"
+        fi
+        lines+=("$line")
+    done < "$cache"
+    if ! $found; then
+        echo "Missing module records in bundled cache: $cache" >&2
+        return 1
     fi
-    export GTK_IM_MODULE_FILE="$im_cache"
+    if ! $relocate; then
+        printf '%s\n' "$cache"
+        return
+    fi
+    local directory="${XDG_CACHE_HOME:-$HOME/.cache}/pleazyng/$name" key destination temporary
+    key=$(printf '%s' "$INSTALL_DIR" | sha256sum) || return 1
+    destination="$directory/${key%% *}.cache"
+    mkdir -p -- "$directory" || return 1
+    temporary=$(mktemp "$directory/.cache.XXXXXX") || return 1
+    trap 'rm -f -- "$temporary"' EXIT
+    printf '%s\n' "${lines[@]}" > "$temporary" || return 1
+    mv -f -- "$temporary" "$destination" || return 1
+    printf '%s\n' "$destination"
+)
+
+pixbuf="$INSTALL_DIR/lib/gdk-pixbuf-2.0/2.10.0"
+if [[ -f "$pixbuf/loaders.cache" ]]; then
+    GDK_PIXBUF_MODULE_FILE=$(module_cache "$pixbuf/loaders.cache" "$pixbuf/loaders" pixbuf) || exit 1
+    export GDK_PIXBUF_MODULE_FILE
+fi
+
+gtk="$INSTALL_DIR/lib/gtk-3.0/3.0.0"
+if [[ -f "$gtk/immodules.cache" ]]; then
+    GTK_IM_MODULE_FILE=$(module_cache "$gtk/immodules.cache" "$gtk/immodules" gtk-im) || exit 1
+    export GTK_IM_MODULE_FILE
 fi
 
 # GTK module path (print backends, etc.)

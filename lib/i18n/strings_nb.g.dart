@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$nb extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Skriv inn bilde-URL';
 	@override String get imageUrl => 'Bilde-URL';
 	@override String get metadataUpdated => 'Metadata oppdatert';
-	@override String get metadataConflict => 'En annen har endret det samme feltet. Åpne redigeringsvinduet på nytt og kontroller de nyeste verdiene før du lagrer.';
+	@override String get metadataConflict => 'Noen andre har endret det samme feltet. Åpne redigeringsvinduet på nytt og se over de nyeste verdiene før du lagrer.';
 	@override String get metadataUpdateFailed => 'Kunne ikke oppdatere metadata';
 	@override String get artworkUpdated => 'Grafikk oppdatert';
 	@override String get artworkUpdateFailed => 'Kunne ikke oppdatere grafikken';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$nb extends Translations$podcasts$en {
 	final TranslationsNb _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importerte abonnementer: ${imported}. Duplikater: ${duplicates}. Hoppet over: ${skipped}.';
 	@override String get autoDownloadLatest => 'Last ned de nyeste episodene automatisk';
 	@override String get removeFinishedAfter => 'Fjern ferdigspilte nedlastinger etter';
 }
@@ -8304,7 +8305,7 @@ extension on TranslationsNb {
 			'metadataEdit.enterImageUrl' => 'Skriv inn bilde-URL',
 			'metadataEdit.imageUrl' => 'Bilde-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata oppdatert',
-			'metadataEdit.metadataConflict' => 'En annen har endret det samme feltet. Åpne redigeringsvinduet på nytt og kontroller de nyeste verdiene før du lagrer.',
+			'metadataEdit.metadataConflict' => 'Noen andre har endret det samme feltet. Åpne redigeringsvinduet på nytt og se over de nyeste verdiene før du lagrer.',
 			'metadataEdit.metadataUpdateFailed' => 'Kunne ikke oppdatere metadata',
 			'metadataEdit.artworkUpdated' => 'Grafikk oppdatert',
 			'metadataEdit.artworkUpdateFailed' => 'Kunne ikke oppdatere grafikken',
@@ -9476,6 +9477,7 @@ extension on TranslationsNb {
 			'issueReport.privacy' => 'Utkastet inneholder appversjon, plattform og antall tilkoblinger. Serveradresser, konto- og profilnavn, medietitler og filstier utelates.',
 			'issueReport.logPrivacy' => 'Logger er valgfrie. Se gjennom dem før opplasting. Logg-ID-en legges til i utkastet, som kan være offentlig.',
 			'issueReport.openDraft' => 'Åpne GitHub-utkast',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importerte abonnementer: ${imported}. Duplikater: ${duplicates}. Hoppet over: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Last ned de nyeste episodene automatisk',
 			'podcasts.removeFinishedAfter' => 'Fjern ferdigspilte nedlastinger etter',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Forhåndsvisning av undertekstkoding',
@@ -9763,9 +9765,9 @@ extension on TranslationsNb {
 			'musicTools.promptHint' => 'Beskriv musikken du ønsker',
 			'musicTools.noHistory' => 'Ingen musikk å vise ennå',
 			'musicTools.historyHint' => 'Avspillingshistorikk for denne profilen',
-			'musicTools.days' => 'Dager',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Dager',
 			'musicTools.albumBlocks' => 'Hold hele album samlet',
 			'musicTools.home' => 'Musikk',
 			'musicTools.recent' => 'Nylig spilt',

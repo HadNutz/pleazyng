@@ -104,6 +104,7 @@ class WatchTogetherProvider extends ChangeNotifier {
   /// The player that has a file open, whether or not the room follows it.
   ({PlezyPlayerAdapter adapter, bool shareable})? _player;
   bool _attached = false;
+  PlezyPlayerAdapter? _followingAtDisconnect;
 
   /// Why the user is away from the player (the app in the background, a car
   /// that forbids video, the profile picker over it): the room stops waiting
@@ -115,6 +116,7 @@ class WatchTogetherProvider extends ChangeNotifier {
   bool _disposed = false;
   bool _notifyScheduled = false;
   String? _openedKey;
+  int _roomGeneration = 0;
   int _shareGeneration = 0;
 
   /// Bumped by every [choose]: the SDK drops an earlier choice's pending probe
@@ -213,8 +215,7 @@ class WatchTogetherProvider extends ChangeNotifier {
   // ---------------------------------------------------------------------------
   // Rooms
 
-  owp.Relays _currentRelays() {
-    final base = _customRelayBaseUrl();
+  owp.Relays _currentRelays(String? base) {
     final cached = _relays;
     if (cached != null && cached.base == base) return cached.relays;
     final relays = relaysFor(base);
@@ -231,10 +232,40 @@ class WatchTogetherProvider extends ChangeNotifier {
   /// The profile whose recent rooms this provider remembers.
   String? get profileId => _profileId();
 
-  Future<owp.WatchParty<WatchCopy>> _newParty() async {
-    await _closeParty();
+  /// Creates a room and joins it as host; returns its code. Throws
+  /// [owp.PartyException] with the SDK's code when it fails.
+  Future<String> createRoom() => _logFailure('create', () => _enterRoom());
+
+  /// Joins the room with [code] as typed or pasted. With [create], a code
+  /// that names no room gets a new room with that code, and this user hosts
+  /// it as after [createRoom]. Throws [owp.PartyException] with the SDK's
+  /// code when it fails.
+  Future<void> joinRoom(String code, {bool create = false}) async {
+    final normalized = normalizeRoomCode(code);
+    if (normalized == null) throw const owp.PartyException(owp.ErrorCode.invalidCode, 'not a room code');
+    await _logFailure(create ? 'join or create' : 'join', () => _enterRoom(code: normalized, create: create));
+  }
+
+  Future<String> _enterRoom({String? code, bool create = false}) async {
+    final generation = ++_roomGeneration;
+    final shareGeneration = _shareGeneration;
+    final owner = _profileId();
+    final base = _customRelayBaseUrl();
     final name = _sanitizedName(_displayName());
-    final party = _partyFactory(relays: _currentRelays(), client: await _clientName(), name: name, resolver: _resolver);
+    void checkCurrent() {
+      if (!_disposed && generation == _roomGeneration) {
+        if (_profileId() == owner) return;
+        // The profile changed before its provider was unmounted.
+        unawaited(_closeParty());
+      }
+      throw const owp.PartyException(owp.ErrorCode.cancelled, 'room request cancelled');
+    }
+
+    await _closeParty();
+    checkCurrent();
+    final client = await _clientName();
+    checkCurrent();
+    final party = _partyFactory(relays: _currentRelays(base), client: client, name: name, resolver: _resolver);
     _party = party;
     _openedKey = null;
     _playBlocked = false;
@@ -245,32 +276,23 @@ class WatchTogetherProvider extends ChangeNotifier {
       party.attachPlayer(player.adapter, player.adapter.copy);
       _attached = true;
     }
-    return party;
-  }
-
-  /// Creates a room and joins it as host; returns its code. Throws
-  /// [owp.PartyException] with the SDK's code when it fails.
-  Future<String> createRoom() async {
-    final code = await _logFailure('create', () async => (await _newParty()).create());
-    await _rememberRoom(code);
-    _shareOpenPlayer();
-    return code;
-  }
-
-  /// Joins the room with [code] as typed or pasted. With [create], a code
-  /// that names no room gets a new room with that code, and this user hosts
-  /// it as after [createRoom]. Throws [owp.PartyException] with the SDK's
-  /// code when it fails.
-  Future<void> joinRoom(String code, {bool create = false}) async {
-    final normalized = normalizeRoomCode(code);
-    if (normalized == null) throw const owp.PartyException(owp.ErrorCode.invalidCode, 'not a room code');
-    final party = await _logFailure(create ? 'join or create' : 'join', () async {
-      final party = await _newParty();
-      await party.join(normalized, create: create);
-      return party;
-    });
-    await _rememberRoom(normalized);
-    if (create && party.state.isHost && party.state.media == null) _shareOpenPlayer();
+    final String roomCode;
+    if (code == null) {
+      roomCode = await party.create();
+    } else {
+      roomCode = code;
+      await party.join(roomCode, create: create);
+    }
+    checkCurrent();
+    if (owner != null) await _rememberRoom(roomCode, owner, relayScopeOf(base));
+    checkCurrent();
+    if ((code == null || create) &&
+        shareGeneration == _shareGeneration &&
+        party.state.isHost &&
+        party.state.media == null) {
+      _shareOpenPlayer();
+    }
+    return roomCode;
   }
 
   /// Logs why a create or join failed, from setting up the party to the
@@ -294,9 +316,7 @@ class WatchTogetherProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _rememberRoom(String code) async {
-    final profileId = _profileId();
-    if (profileId == null) return;
+  Future<void> _rememberRoom(String code, String profileId, String relayScope) async {
     try {
       await RecentRoomsService.addOrUpdateRoom(code, profileId: profileId, relayScope: relayScope);
     } catch (error, stackTrace) {
@@ -305,7 +325,10 @@ class WatchTogetherProvider extends ChangeNotifier {
   }
 
   /// Leaves the room, or cancels a create or join under way.
-  void leave() => _party?.leave();
+  void leave() {
+    _roomGeneration++;
+    _party?.leave();
+  }
 
   /// Host: ends the room for everyone.
   void endRoom() => _guard(() => _party?.end());
@@ -316,7 +339,13 @@ class WatchTogetherProvider extends ChangeNotifier {
   void setLocked(bool locked) => _guard(() => _party?.lock(locked));
 
   /// Host: stops the media for everyone.
-  void stopMedia() => _guard(() => _party?.clearMedia());
+  void stopMedia() {
+    _shareGeneration++;
+    final party = _party;
+    // Before the relay admits the user, only the pending local share exists.
+    if (party == null || party.state.connection == owp.Connection.connecting) return;
+    _guard(party.clearMedia);
+  }
 
   void _guard(void Function() command) {
     try {
@@ -587,10 +616,16 @@ class WatchTogetherProvider extends ChangeNotifier {
   Future<bool> shareCopy(PlezyPlayerAdapter adapter, {int positionMs = 0}) async {
     final party = _party;
     final copy = adapter.copy;
-    if (party == null || !isHost || copy.item == null) return false;
+    // The SDK completes the join before its state stream necessarily reaches
+    // the provider. Its current membership governs the share command.
+    if (party == null || !party.state.isHost || copy.item == null) return false;
     final generation = ++_shareGeneration;
     bool current() =>
-        !_disposed && identical(_party, party) && generation == _shareGeneration && isHost && !adapter.isReleased;
+        !_disposed &&
+        identical(_party, party) &&
+        generation == _shareGeneration &&
+        party.state.isHost &&
+        !adapter.isReleased;
     final client = _clientFor(copy.serverId);
     if (client == null) return _shareFailed(party, current);
     var result = await describeCopy(copy, client: client, playerDurationMs: adapter.durationMs);
@@ -638,6 +673,12 @@ class WatchTogetherProvider extends ChangeNotifier {
   void _onState(owp.PartyState<WatchCopy> next) {
     final previous = _state;
     final wasFollowing = isFollowing;
+    if (previous.connection == owp.Connection.connected && next.connection == owp.Connection.reconnecting) {
+      _followingAtDisconnect = wasFollowing ? _player?.adapter : null;
+    }
+    final resumedFollower =
+        _followingAtDisconnect != null && _attached && identical(_followingAtDisconnect, _player?.adapter);
+    if (next.connection != owp.Connection.reconnecting) _followingAtDisconnect = null;
     _state = next;
     if (next.connection != previous.connection) {
       final reason = next.connection == owp.Connection.ended ? ' (${next.endReason?.name})' : '';
@@ -645,7 +686,7 @@ class WatchTogetherProvider extends ChangeNotifier {
     }
     if (next.connection == owp.Connection.ended || next.room?.phase != owp.Phase.playing) _playBlocked = false;
     // The room stopped the media this guest was watching with it.
-    if (wasFollowing &&
+    if ((wasFollowing || resumedFollower) &&
         previous.media != null &&
         next.media == null &&
         next.connection == owp.Connection.connected &&
@@ -743,6 +784,7 @@ class WatchTogetherProvider extends ChangeNotifier {
     final party = _party;
     if (party == null) return;
     _party = null;
+    _followingAtDisconnect = null;
     _attached = false;
     // Cancelling stops the callbacks at once; the party closes now rather than
     // after the cancels' futures, which may only complete on a later turn.
@@ -750,9 +792,11 @@ class WatchTogetherProvider extends ChangeNotifier {
     unawaited(_eventSubscription?.cancel());
     _stateSubscription = null;
     _eventSubscription = null;
-    // The last state stays readable (the end reason) until the next party.
+    // close() leaves synchronously. Keep the resulting end reason while
+    // queued player commands finish, even if no new room takes its place.
+    final closed = party.close();
     _state = party.state;
-    await party.close();
+    await closed;
     notifyListeners();
   }
 

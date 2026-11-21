@@ -2762,7 +2762,7 @@ class _Translations$metadataEdit$uk extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Введіть URL';
 	@override String get imageUrl => 'Зображення URL';
 	@override String get metadataUpdated => 'Актуальні метастази';
-	@override String get metadataConflict => 'Інший редактор змінив те саме поле. Перед збереженням знову відкрийте редактор і перевірте актуальні значення.';
+	@override String get metadataConflict => 'Хтось інший змінив те саме поле. Перед збереженням знову відкрийте редактор і перевірте актуальні значення.';
 	@override String get metadataUpdateFailed => 'Не вдалося оновити метаданни';
 	@override String get artworkUpdated => 'Актуальна художня робота';
 	@override String get artworkUpdateFailed => 'Не вдалося оновити художню роботу';
@@ -4155,6 +4155,7 @@ class _Translations$podcasts$uk extends Translations$podcasts$en {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Імпортовано підписок: ${imported}. Дублікатів: ${duplicates}. Пропущено: ${skipped}.';
 	@override String get autoDownloadLatest => 'Автоматично завантажувати останні випуски';
 	@override String get removeFinishedAfter => 'Видаляти завершені завантаження через';
 }
@@ -8348,7 +8349,7 @@ extension on TranslationsUk {
 			'metadataEdit.enterImageUrl' => 'Введіть URL',
 			'metadataEdit.imageUrl' => 'Зображення URL',
 			'metadataEdit.metadataUpdated' => 'Актуальні метастази',
-			'metadataEdit.metadataConflict' => 'Інший редактор змінив те саме поле. Перед збереженням знову відкрийте редактор і перевірте актуальні значення.',
+			'metadataEdit.metadataConflict' => 'Хтось інший змінив те саме поле. Перед збереженням знову відкрийте редактор і перевірте актуальні значення.',
 			'metadataEdit.metadataUpdateFailed' => 'Не вдалося оновити метаданни',
 			'metadataEdit.artworkUpdated' => 'Актуальна художня робота',
 			'metadataEdit.artworkUpdateFailed' => 'Не вдалося оновити художню роботу',
@@ -9520,6 +9521,7 @@ extension on TranslationsUk {
 			'issueReport.privacy' => 'Чернетка містить версію застосунку, платформу та кількість з’єднань. Адреси серверів, імена облікових записів і профілів, назви медіа й шляхи до файлів не додаються.',
 			'issueReport.logPrivacy' => 'Журнали необов’язкові. Перегляньте їх перед завантаженням. Їхній ID додається до чернетки, яка може бути публічною.',
 			'issueReport.openDraft' => 'Відкрити чернетку GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Імпортовано підписок: ${imported}. Дублікатів: ${duplicates}. Пропущено: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Автоматично завантажувати останні випуски',
 			'podcasts.removeFinishedAfter' => 'Видаляти завершені завантаження через',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Попередній перегляд кодування субтитрів',
@@ -9807,9 +9809,9 @@ extension on TranslationsUk {
 			'musicTools.promptHint' => 'Опишіть бажану музику',
 			'musicTools.noHistory' => 'Поки немає музики для показу',
 			'musicTools.historyHint' => 'Історія прослуховувань цього профілю',
-			'musicTools.days' => 'Дні',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Дні',
 			'musicTools.albumBlocks' => 'Зберігати альбоми цілими',
 			'musicTools.home' => 'Музика',
 			'musicTools.recent' => 'Нещодавно прослухані',

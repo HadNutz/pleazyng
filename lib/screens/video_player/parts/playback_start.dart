@@ -330,7 +330,7 @@ extension _VideoPlayerPlaybackStartMethods on VideoPlayerScreenState {
         // In a Watch Together room the room owns the start: open paused and
         // let the room start everyone together.
         watchTogetherOwnsStart: _watchTogetherOwnsPlaybackStart,
-        resolveShouldAutoStart: (wtOwnsStart) => !wtOwnsStart,
+        resolveShouldAutoStart: (wtOwnsStart) => !wtOwnsStart && _playbackIntentShouldPlay,
         resumePosition: () => resumePosition,
         mediaClient: () => mediaClientForTracks,
         getProfileSettings: () => context.read<AccountPreferencesController>().activePreferences,

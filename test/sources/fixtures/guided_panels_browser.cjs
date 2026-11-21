@@ -15,7 +15,7 @@ const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000">
     response.setHeader('Content-Type','text/html');
     response.end('<style>html,body{margin:0;width:100%;height:100%;background:#111}</style><script type="module">'+
       'import {ComicReader} from "/assets/reader/comic-reader.js";window.events=[];window.reader=new ComicReader();document.body.append(reader);'+
-      'window.reopen=async cfi=>reader.open({direction:"rtl",metadata:{},pages:[{name:"fixture",width:1600,height:1000,frames:[[800,0,1600,1000],[900,50,1100,300],[0,0,800,1000]]},{name:"splash",width:1600,height:1000}]},'+
+      'window.reopen=async cfi=>reader.open({direction:"rtl",metadata:{},pages:[{name:"fixture",archiveIndex:2,width:1600,height:1000,frames:[[800,0,1600,1000],[900,50,1100,300],[0,0,800,1000]]},{name:"splash",archiveIndex:0,width:1600,height:1000}]},'+
       '{title:"Guided fixture",interfaceLocale:"en",cfi,settings:{comicMode:"panels",direction:"auto",zoom:"fit-page"}},(type,data)=>events.push({type,...data}),()=>"/fixture.svg");await reopen();</script>');
   });
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -30,7 +30,7 @@ const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000">
     await page.evaluate(()=>reader.next());
     assert.equal(await page.evaluate(()=>reader.panel),1);
     const saved=await page.evaluate(()=>events.filter(e=>e.type==='location').at(-1).cfi);
-    assert.match(saved,/:p1$/);
+    assert.match(saved,/^plezy-comic:2:-1:0:p1$/);
     // The inset rectangle is magnified into a bounded, centered viewport.
     const bounds=await page.evaluate(()=>{const r=reader.shadowRoot.querySelector('figure').getBoundingClientRect();return {w:r.width,h:r.height};});
     assert.ok(bounds.w<=400.1 && bounds.h<=850.1 && bounds.w>300);
@@ -44,6 +44,11 @@ const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000">
     await page.evaluate(()=>{reader.next();reader.next();});
     assert.equal(await page.evaluate(()=>reader.index),1);
     assert.equal(await page.evaluate(()=>reader.panel),undefined);
+    await page.evaluate(()=>reader.goTo('splash'));
+    assert.match(await page.evaluate(()=>events.filter(e=>e.type==='location').at(-1).cfi),/^plezy-comic:0:/);
+    await page.evaluate(cfi=>reader.goTo(cfi),saved);
+    assert.equal(await page.evaluate(()=>reader.index),0);
+    assert.equal(await page.evaluate(()=>reader.panel),1);
     assert.deepEqual(errors,[]);
     if(process.env.PLEZY_PANEL_SCREENSHOT){await page.evaluate(cfi=>reopen(cfi),saved);await page.screenshot({path:process.env.PLEZY_PANEL_SCREENSHOT});}
     console.log('Guided panels: actual crop, authored RTL order, overview, rotation, resume and splash fallback passed');

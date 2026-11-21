@@ -2728,7 +2728,7 @@ class _Translations$metadataEdit$tr extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Görsel URL\'si girin';
 	@override String get imageUrl => 'Görsel URL\'si';
 	@override String get metadataUpdated => 'Meta veriler güncellendi';
-	@override String get metadataConflict => 'Başka bir düzenleyici aynı alanı değiştirdi. Kaydetmeden önce güncel değerleri kontrol etmek için düzenleyiciyi yeniden açın.';
+	@override String get metadataConflict => 'Aynı alanı başka biri değiştirdi. Kaydetmeden önce güncel değerleri gözden geçirmek için düzenleyiciyi yeniden açın.';
 	@override String get metadataUpdateFailed => 'Meta veriler güncellenemedi';
 	@override String get artworkUpdated => 'Görseller güncellendi';
 	@override String get artworkUpdateFailed => 'Görseller güncellenemedi';
@@ -4113,6 +4113,7 @@ class _Translations$podcasts$tr extends Translations$podcasts$en {
 	final TranslationsTr _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'İçe aktarılan abonelikler: ${imported}. Yinelenenler: ${duplicates}. Atlananlar: ${skipped}.';
 	@override String get autoDownloadLatest => 'En yeni bölümleri otomatik indir';
 	@override String get removeFinishedAfter => 'Bitirilen indirmeleri şu süreden sonra kaldır';
 }
@@ -8304,7 +8305,7 @@ extension on TranslationsTr {
 			'metadataEdit.enterImageUrl' => 'Görsel URL\'si girin',
 			'metadataEdit.imageUrl' => 'Görsel URL\'si',
 			'metadataEdit.metadataUpdated' => 'Meta veriler güncellendi',
-			'metadataEdit.metadataConflict' => 'Başka bir düzenleyici aynı alanı değiştirdi. Kaydetmeden önce güncel değerleri kontrol etmek için düzenleyiciyi yeniden açın.',
+			'metadataEdit.metadataConflict' => 'Aynı alanı başka biri değiştirdi. Kaydetmeden önce güncel değerleri gözden geçirmek için düzenleyiciyi yeniden açın.',
 			'metadataEdit.metadataUpdateFailed' => 'Meta veriler güncellenemedi',
 			'metadataEdit.artworkUpdated' => 'Görseller güncellendi',
 			'metadataEdit.artworkUpdateFailed' => 'Görseller güncellenemedi',
@@ -9476,6 +9477,7 @@ extension on TranslationsTr {
 			'issueReport.privacy' => 'Taslakta uygulama sürümü, platform ve bağlantı sayısı bulunur. Sunucu adresleri, hesap ve profil adları, medya başlıkları ve dosya yolları eklenmez.',
 			'issueReport.logPrivacy' => 'Günlükler isteğe bağlıdır. Yüklemeden önce inceleyin. Günlük kimliği herkese açık olabilecek taslağa eklenir.',
 			'issueReport.openDraft' => 'GitHub taslağını aç',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'İçe aktarılan abonelikler: ${imported}. Yinelenenler: ${duplicates}. Atlananlar: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'En yeni bölümleri otomatik indir',
 			'podcasts.removeFinishedAfter' => 'Bitirilen indirmeleri şu süreden sonra kaldır',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Altyazı kodlaması önizlemesi',
@@ -9763,9 +9765,9 @@ extension on TranslationsTr {
 			'musicTools.promptHint' => 'İstediğiniz müziği açıklayın',
 			'musicTools.noHistory' => 'Henüz gösterilecek müzik yok',
 			'musicTools.historyHint' => 'Bu profilin dinleme geçmişi',
-			'musicTools.days' => 'Günler',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Günler',
 			'musicTools.albumBlocks' => 'Albümleri bütün olarak tut',
 			'musicTools.home' => 'Müzik',
 			'musicTools.recent' => 'Son çalınanlar',

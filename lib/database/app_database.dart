@@ -1731,7 +1731,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<OfflineWatchProgressItem>> getPendingWatchActions({String? profileId}) {
-    final query = select(offlineWatchProgress)..orderBy([(t) => OrderingTerm.asc(t.createdAt)]);
+    final query = select(offlineWatchProgress)
+      ..orderBy([(t) => OrderingTerm.asc(t.updatedAt), (t) => OrderingTerm.asc(t.id)]);
     if (profileId != null) {
       query.where((t) => t.profileId.equals(profileId));
     }
@@ -1870,6 +1871,16 @@ class AppDatabase extends _$AppDatabase {
     return accountScope != null && accountScope == clientScopeId ? exact | column.isNull() : exact;
   }
 
+  Future<int> _nextWatchRevision(String key) async {
+    final latest = offlineWatchProgress.updatedAt.max();
+    final query = selectOnly(offlineWatchProgress)
+      ..addColumns([latest])
+      ..where(offlineWatchProgress.globalKey.equals(key));
+    final previous = (await query.getSingle()).read(latest) ?? 0;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    return now > previous ? now : previous + 1;
+  }
+
   /// Insert or update a progress action (merges with existing).
   Future<({int rowId, int revision})> upsertProgressAction({
     String? profileId,
@@ -1880,31 +1891,33 @@ class AppDatabase extends _$AppDatabase {
     required int viewOffset,
     required int? duration,
     required bool shouldMarkWatched,
+    int? sessionRowId,
+    bool startSession = false,
   }) async {
     return _runPendingMutation(() async {
       final globalKey = buildGlobalKey(ServerId(serverId), ratingKey);
-      final now = DateTime.now().millisecondsSinceEpoch;
 
       return transaction(() async {
-        final existing =
-            await (select(offlineWatchProgress)
-                  ..where(
-                    (t) =>
-                        t.globalKey.equals(globalKey) &
-                        _nullableTextPredicate(t.profileId, profileId) &
-                        _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
-                        _nullableTextPredicate(t.clientScopeId, clientScopeId) &
-                        t.actionType.equals(OfflineActionType.progress.id),
-                  )
-                  ..orderBy([(t) => OrderingTerm.asc(t.id)]))
-                .get();
-
-        final keep = existing.isEmpty ? null : existing.first;
+        final revision = await _nextWatchRevision(globalKey);
+        final existing = startSession
+            ? null
+            : await (select(offlineWatchProgress)
+                    ..where(
+                      (t) =>
+                          t.globalKey.equals(globalKey) &
+                          _nullableTextPredicate(t.profileId, profileId) &
+                          _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
+                          _nullableTextPredicate(t.clientScopeId, clientScopeId) &
+                          t.actionType.equals(OfflineActionType.progress.id) &
+                          (sessionRowId == null ? const Constant(true) : t.id.equals(sessionRowId)),
+                    )
+                    ..orderBy([(t) => OrderingTerm.desc(t.id)])
+                    ..limit(1))
+                  .getSingleOrNull();
+        // A play that reached completion is a history event. Subsequent
+        // resumable playback must never replace it, including legacy rows.
+        final keep = existing != null && (!existing.shouldMarkWatched || shouldMarkWatched) ? existing : null;
         if (keep != null) {
-          // The row id survives a merge, so its timestamp must advance even
-          // when multiple playback updates land in one clock millisecond.
-          final nextRevision = keep.updatedAt + 1;
-          final revision = now > nextRevision ? now : nextRevision;
           // A merge is a new logical action; retry history belongs only to
           // the revision whose server write failed.
           await (update(offlineWatchProgress)..where((t) => t.id.equals(keep.id))).write(
@@ -1920,10 +1933,6 @@ class AppDatabase extends _$AppDatabase {
               lastError: const Value<String?>(null),
             ),
           );
-          final duplicateIds = existing.skip(1).map((row) => row.id).toList(growable: false);
-          if (duplicateIds.isNotEmpty) {
-            await (delete(offlineWatchProgress)..where((t) => t.id.isIn(duplicateIds))).go();
-          }
           return (rowId: keep.id, revision: revision);
         }
 
@@ -1939,11 +1948,11 @@ class AppDatabase extends _$AppDatabase {
             viewOffset: Value(viewOffset),
             duration: Value(duration),
             shouldMarkWatched: Value(shouldMarkWatched),
-            createdAt: now,
-            updatedAt: now,
+            createdAt: revision,
+            updatedAt: revision,
           ),
         );
-        return (rowId: rowId, revision: now);
+        return (rowId: rowId, revision: revision);
       });
     });
   }
@@ -1960,9 +1969,9 @@ class AppDatabase extends _$AppDatabase {
   }) async {
     return _runPendingMutation(() async {
       final globalKey = buildGlobalKey(ServerId(serverId), ratingKey);
-      final now = DateTime.now().millisecondsSinceEpoch;
 
       return transaction(() async {
+        final now = await _nextWatchRevision(globalKey);
         // Remove conflicting actions (opposite action type and progress).
         await (delete(offlineWatchProgress)..where(
               (t) =>
@@ -2021,11 +2030,18 @@ class AppDatabase extends _$AppDatabase {
                 _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
                 _nullableTextPredicate(t.clientScopeId, clientScopeId) &
                 t.actionType.equals(OfflineActionType.progress.id) &
+                t.shouldMarkWatched.equals(false) &
                 (beforeRevision == null ? const Constant(true) : t.updatedAt.isSmallerThanValue(beforeRevision)),
           ))
           .go();
     });
   }
+
+  Future<bool> watchActionIsCurrent(int id, int revision) async =>
+      await (select(
+        offlineWatchProgress,
+      )..where((t) => t.id.equals(id) & t.updatedAt.equals(revision))).getSingleOrNull() !=
+      null;
 
   /// Delete a watch action only if it is still the snapshotted revision.
   Future<bool> deleteWatchActionIfUnchanged(int id, int revision) {

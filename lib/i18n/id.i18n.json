@@ -3239,7 +3239,7 @@
     "enterImageUrl": "Masukkan URL gambar",
     "imageUrl": "Gambar URL",
     "metadataUpdated": "Metadata yang diperbarui",
-    "metadataConflict": "Editor lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.",
+    "metadataConflict": "Orang lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.",
     "metadataUpdateFailed": "Tidak dapat mengemas kini metadata",
     "artworkUpdated": "Artwork dikemas kini",
     "artworkUpdateFailed": "gagal memperbarui karya seni",
@@ -4870,6 +4870,7 @@
     "importOpml": "",
     "exportOpml": "",
     "imported": "",
+    "importSummary": "Langganan yang diimpor: ${imported}. Duplikat: ${duplicates}. Dilewati: ${skipped}.",
     "exportHelp": "",
     "serverHelp": "",
     "viewAll": "",
@@ -5685,7 +5686,7 @@
     "relayInvalid": "Masukkan alamat relai HTTPS."
   },
   "bookmarkMigration": {
-    "unassigned": "Markah dari versi yang tidak dikenal",
-    "assignToVersion": "Tetapkan ke versi ini"
+    "unassigned": "Markah dari versi yang belum teridentifikasi",
+    "assignToVersion": "Kaitkan dengan versi ini"
   }
 }

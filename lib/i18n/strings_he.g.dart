@@ -2732,7 +2732,7 @@ class _Translations$metadataEdit$he extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'כניסת תמונה URL';
 	@override String get imageUrl => 'תמונה URL';
 	@override String get metadataUpdated => 'נתונים מתעדכנים';
-	@override String get metadataConflict => 'עורך אחר שינה את אותו שדה. יש לפתוח שוב את העורך ולבדוק את הערכים העדכניים לפני השמירה.';
+	@override String get metadataConflict => 'אותו שדה שונה בעריכה אחרת. יש לפתוח מחדש את העורך ולבדוק את הערכים העדכניים לפני השמירה.';
 	@override String get metadataUpdateFailed => 'לא הצלחתי לעדכן את הנתונים';
 	@override String get artworkUpdated => 'ארכיון עדכונים';
 	@override String get artworkUpdateFailed => 'לא הצלחתי לעדכן את האמנות';
@@ -4121,6 +4121,7 @@ class _Translations$podcasts$he extends Translations$podcasts$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'מינויים שיובאו: ${imported}. כפילויות: ${duplicates}. רשומות שדולגו: ${skipped}.';
 	@override String get autoDownloadLatest => 'הורדה אוטומטית של הפרקים האחרונים';
 	@override String get removeFinishedAfter => 'הסרת הורדות שהושלמו לאחר';
 }
@@ -8312,7 +8313,7 @@ extension on TranslationsHe {
 			'metadataEdit.enterImageUrl' => 'כניסת תמונה URL',
 			'metadataEdit.imageUrl' => 'תמונה URL',
 			'metadataEdit.metadataUpdated' => 'נתונים מתעדכנים',
-			'metadataEdit.metadataConflict' => 'עורך אחר שינה את אותו שדה. יש לפתוח שוב את העורך ולבדוק את הערכים העדכניים לפני השמירה.',
+			'metadataEdit.metadataConflict' => 'אותו שדה שונה בעריכה אחרת. יש לפתוח מחדש את העורך ולבדוק את הערכים העדכניים לפני השמירה.',
 			'metadataEdit.metadataUpdateFailed' => 'לא הצלחתי לעדכן את הנתונים',
 			'metadataEdit.artworkUpdated' => 'ארכיון עדכונים',
 			'metadataEdit.artworkUpdateFailed' => 'לא הצלחתי לעדכן את האמנות',
@@ -9484,6 +9485,7 @@ extension on TranslationsHe {
 			'issueReport.privacy' => 'הטיוטה כוללת את גרסת האפליקציה, הפלטפורמה ומספר החיבורים. היא אינה כוללת כתובות שרתים, שמות חשבונות ופרופילים, שמות מדיה או נתיבי קבצים.',
 			'issueReport.logPrivacy' => 'יומנים הם אפשרות בלבד. בדקו אותם לפני ההעלאה. המזהה שלהם נוסף לטיוטה, שעשויה להיות ציבורית.',
 			'issueReport.openDraft' => 'פתיחת טיוטה ב-GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'מינויים שיובאו: ${imported}. כפילויות: ${duplicates}. רשומות שדולגו: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'הורדה אוטומטית של הפרקים האחרונים',
 			'podcasts.removeFinishedAfter' => 'הסרת הורדות שהושלמו לאחר',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'תצוגה מקדימה של קידוד הכתוביות',
@@ -9771,9 +9773,9 @@ extension on TranslationsHe {
 			'musicTools.promptHint' => 'תיאור המוזיקה הרצויה',
 			'musicTools.noHistory' => 'עדיין אין מוזיקה להצגה',
 			'musicTools.historyHint' => 'היסטוריית ההשמעה של הפרופיל הזה',
-			'musicTools.days' => 'ימים',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'ימים',
 			'musicTools.albumBlocks' => 'שמירה על אלבומים שלמים ביחד',
 			'musicTools.home' => 'מוסיקה',
 			'musicTools.recent' => 'הושמעו לאחרונה',

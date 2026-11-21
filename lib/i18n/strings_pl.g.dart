@@ -2766,7 +2766,7 @@ class _Translations$metadataEdit$pl extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Wprowadź URL obrazu';
 	@override String get imageUrl => 'URL obrazu';
 	@override String get metadataUpdated => 'Metadane zaktualizowane';
-	@override String get metadataConflict => 'Ktoś zmienił to samo pole. Otwórz edytor ponownie i sprawdź aktualne wartości przed zapisaniem.';
+	@override String get metadataConflict => 'Ktoś inny zmienił to samo pole. Przed zapisaniem ponownie otwórz edytor i sprawdź aktualne wartości.';
 	@override String get metadataUpdateFailed => 'Nie udało się zaktualizować metadanych';
 	@override String get artworkUpdated => 'Grafika zaktualizowana';
 	@override String get artworkUpdateFailed => 'Nie udało się zaktualizować grafiki';
@@ -4159,6 +4159,7 @@ class _Translations$podcasts$pl extends Translations$podcasts$en {
 	final TranslationsPl _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Zaimportowane subskrypcje: ${imported}. Duplikaty: ${duplicates}. Pominięte: ${skipped}.';
 	@override String get autoDownloadLatest => 'Automatycznie pobieraj najnowsze odcinki';
 	@override String get removeFinishedAfter => 'Usuwaj ukończone pobrania po';
 }
@@ -8354,7 +8355,7 @@ extension on TranslationsPl {
 			'metadataEdit.enterImageUrl' => 'Wprowadź URL obrazu',
 			'metadataEdit.imageUrl' => 'URL obrazu',
 			'metadataEdit.metadataUpdated' => 'Metadane zaktualizowane',
-			'metadataEdit.metadataConflict' => 'Ktoś zmienił to samo pole. Otwórz edytor ponownie i sprawdź aktualne wartości przed zapisaniem.',
+			'metadataEdit.metadataConflict' => 'Ktoś inny zmienił to samo pole. Przed zapisaniem ponownie otwórz edytor i sprawdź aktualne wartości.',
 			'metadataEdit.metadataUpdateFailed' => 'Nie udało się zaktualizować metadanych',
 			'metadataEdit.artworkUpdated' => 'Grafika zaktualizowana',
 			'metadataEdit.artworkUpdateFailed' => 'Nie udało się zaktualizować grafiki',
@@ -9526,6 +9527,7 @@ extension on TranslationsPl {
 			'issueReport.privacy' => 'Szkic zawiera wersję aplikacji, platformę i liczbę połączeń. Nie zawiera adresów serwerów, nazw kont i profili, tytułów multimediów ani ścieżek plików.',
 			'issueReport.logPrivacy' => 'Logi są opcjonalne. Przejrzyj je przed przesłaniem. Ich identyfikator zostanie dodany do szkicu, który może być publiczny.',
 			'issueReport.openDraft' => 'Otwórz szkic GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Zaimportowane subskrypcje: ${imported}. Duplikaty: ${duplicates}. Pominięte: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Automatycznie pobieraj najnowsze odcinki',
 			'podcasts.removeFinishedAfter' => 'Usuwaj ukończone pobrania po',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Podgląd kodowania napisów',
@@ -9813,9 +9815,9 @@ extension on TranslationsPl {
 			'musicTools.promptHint' => 'Opisz muzykę, której szukasz',
 			'musicTools.noHistory' => 'Brak muzyki do wyświetlenia',
 			'musicTools.historyHint' => 'Historia odtwarzania tego profilu',
-			'musicTools.days' => 'Dni',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.days' => 'Dni',
 			'musicTools.albumBlocks' => 'Zachowuj całe albumy',
 			'musicTools.home' => 'Muzyka',
 			'musicTools.recent' => 'Ostatnio odtwarzane',

@@ -3723,6 +3723,57 @@ void main() {
     expect(h.player.playCalls, 1);
   });
 
+  test('headphones attaching during an interruption wait for the system resume verdict', () async {
+    await h.playTracks([t1]);
+    h.controls.eventsCtrl.add(const AudioInterruptionBeganEvent());
+    await pumpEventQueue();
+    h.controls.eventsCtrl.add(const AudioRouteNewDeviceAvailableEvent());
+    await pumpEventQueue();
+    expect(h.service.status, MusicPlaybackStatus.paused);
+    h.controls.eventsCtrl.add(const AudioInterruptionEndedEvent(shouldResume: false));
+    await pumpEventQueue();
+    expect(h.player.playCalls, 0);
+    expect(h.service.status, MusicPlaybackStatus.paused);
+  });
+
+  test('an explicit Pause retires automatic resume after a call', () async {
+    await h.playTracks([t1]);
+    h.controls.eventsCtrl.add(const AudioInterruptionBeganEvent());
+    await pumpEventQueue();
+    h.controls.eventsCtrl.add(const PauseEvent());
+    await pumpEventQueue();
+    h.controls.eventsCtrl.add(const AudioInterruptionEndedEvent(shouldResume: true));
+    await pumpEventQueue();
+    expect(h.player.playCalls, 0);
+    expect(h.service.status, MusicPlaybackStatus.paused);
+  });
+
+  for (final reconnectFirst in [false, true]) {
+    test(
+      'overlapping call and private-route pauses resume only after both clear (reconnect first: $reconnectFirst)',
+      () async {
+        await h.playTracks([t1]);
+        final gate = Completer<void>();
+        h.player.pauseGate = gate;
+        h.controls.eventsCtrl.add(const AudioRouteOldDeviceUnavailableEvent());
+        h.controls.eventsCtrl.add(const AudioInterruptionBeganEvent());
+        await pumpEventQueue();
+        const route = AudioRouteNewDeviceAvailableEvent();
+        const call = AudioInterruptionEndedEvent(shouldResume: true);
+        h.controls.eventsCtrl.add(reconnectFirst ? route : call);
+        await pumpEventQueue();
+        expect(h.player.playCalls, 0);
+        h.controls.eventsCtrl.add(reconnectFirst ? call : route);
+        await pumpEventQueue();
+        expect(h.player.playCalls, 0);
+        gate.complete();
+        await pumpEventQueue();
+        expect(h.player.playCalls, 1);
+        expect(h.service.status, MusicPlaybackStatus.playing);
+      },
+    );
+  }
+
   test('OS stop command stops the session', () async {
     await h.playTracks([t1, t2]);
     final player = h.player;
