@@ -961,6 +961,7 @@ class _LibrariesScreenState extends State<LibrariesScreen>
                         LibraryServerLabel(
                           library: selectedLibrary,
                           badgeSize: 10,
+                          constrainText: true,
                           style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                           ),

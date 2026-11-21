@@ -97,6 +97,26 @@ void main() {
 
   tearDown(() => TvDetectionService.debugSetAppleTVOverride(null));
 
+  testWidgets('compact picker bounds the server subtitle and preserves the full selection label', (tester) async {
+    const library = MediaLibrary(
+      id: 'long',
+      backend: MediaBackend.plex,
+      title: 'Family movies',
+      kind: MediaKind.movie,
+      serverId: 'second-server',
+      serverName: 'The family server with a name far too long to fit in the compact picker',
+    );
+    final harness = await _Harness.create(
+      _GatedPreferences({'selected_library_key': library.globalKey}),
+      libraryOrder: [library, _libraryA],
+    );
+    addTearDown(harness.dispose);
+    await harness.pump(tester, size: const Size(360, 640), platform: TargetPlatform.android);
+    expect(find.text(library.serverName!), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    expect(find.byTooltip(t.libraries.selectLibrary).hitTestable(), findsOneWidget);
+  });
+
   testWidgets('phone library picker remains usable with all feature actions', (tester) async {
     final harness = await _Harness.create(_GatedPreferences({'selected_library_key': _libraryA.globalKey}));
     addTearDown(harness.dispose);

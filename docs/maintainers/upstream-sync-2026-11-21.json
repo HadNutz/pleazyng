@@ -408,8 +408,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(libraries): ellipsize long library names in the phone library picker",
-      "disposition": "pending",
-      "evidence": "The library title is already inside Flexible with ellipsis. The multi-server subtitle still constructs LibraryServerLabel without constrainText. Its nested Row leaves the text child unconstrained by default. Pass the existing constraint flag and cover a long server name on a narrow phone. [libraries_screen.dart L949](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/libraries/libraries_screen.dart#L949) · [library_server_label.dart L57](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/libraries/library_server_label.dart#L57)",
+      "disposition": "adapted",
+      "evidence": "Constrain long multi-server subtitles inside the compact library picker while preserving full library choices.",
       "files": [
         "lib/screens/libraries/libraries_screen.dart",
         "test/screens/libraries/libraries_screen_test.dart"
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "adapted": 19,
+    "adapted": 20,
     "deferred": 1,
     "retained": 2,
-    "pending": 7
+    "pending": 6
   }
 }
