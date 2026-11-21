@@ -363,7 +363,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
                       Align(
                         alignment: AlignmentDirectional.centerStart,
                         child: TextButton.icon(
-                          icon: const Icon(Icons.live_tv),
+                          icon: const AppIcon(Symbols.live_tv_rounded),
                           label: Text('${t.common.preview} · IPTV-org (US)'),
                           onPressed: _busy
                               ? null

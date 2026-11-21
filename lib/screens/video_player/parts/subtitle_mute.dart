@@ -1,12 +1,7 @@
 part of '../../video_player_screen.dart';
 
 extension _VideoSubtitleMuteMethods on VideoPlayerScreenState {
-  /// Announce an accepted user volume command with the top pill, whatever the
-  /// chrome state. The visible chrome does render volume, but as a 100 px
-  /// slider that moves 3 % per wheel notch: a viewer on a handheld scrolled
-  /// themselves to silence without noticing (#2357). Every input reaches
-  /// here — wheel, shortcut keys, the OSD slider, companion remote — while
-  /// volume the player reports on its own never does.
+  /// Select temporary subtitles on mute and restore the previous track when sound returns.
   void _handleSubtitleMuteVolume(double volume) {
     if (!volume.isFinite) {
       return;
@@ -185,15 +180,6 @@ extension _VideoSubtitleMuteMethods on VideoPlayerScreenState {
     });
   }
 
-  void _detachSubtitleMuteTrackCatalogListener([Player? expectedPlayer]) {
-    if (expectedPlayer != null && !identical(_subtitleMuteTrackCatalogPlayer, expectedPlayer)) {
-      return;
-    }
-    _subtitleMuteTrackCatalogPlayer = null;
-    unawaited(_subtitleMuteTrackCatalogSubscription?.cancel());
-    _subtitleMuteTrackCatalogSubscription = null;
-  }
-
   void _detachSubtitleMuteVolumeListener(VideoVolumeController controller) {
     final listener = _subtitleMuteVolumeListener;
     if (listener == null) {
@@ -212,4 +198,18 @@ extension _VideoSubtitleMuteMethods on VideoPlayerScreenState {
       unawaited(_queueSubtitleMuteTrack(targetPlayer, track, generation));
     }
   }
+}
+
+final class _SubtitleMuteRestore {
+  const _SubtitleMuteRestore({
+    required this.player,
+    required this.mediaIdentity,
+    required this.previousTrack,
+    required this.temporaryTrackId,
+  });
+
+  final Player player;
+  final String mediaIdentity;
+  final SubtitleTrack previousTrack;
+  final String temporaryTrackId;
 }

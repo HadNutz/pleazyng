@@ -611,7 +611,7 @@ class RecordingsTabState extends State<RecordingsTab> with WidgetsBindingObserve
                   subtitle: Text(rule.channelName),
                   trailing: IconButton(
                     tooltip: t.common.delete,
-                    icon: const Icon(Icons.delete_outline),
+                    icon: const AppIcon(Symbols.delete_outline_rounded),
                     focusNode: rule.id == _localSeries.first.id ? _firstSeriesFocusNode : null,
                     onPressed: () => _removeSeries(rule),
                   ),

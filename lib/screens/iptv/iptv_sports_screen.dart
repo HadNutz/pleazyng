@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
@@ -7,6 +8,7 @@ import '../../iptv/iptv_source_repository.dart';
 import '../../profiles/active_profile_provider.dart';
 import '../../profiles/profile.dart';
 import '../../services/base_shared_preferences_service.dart';
+import '../../widgets/app_icon.dart';
 
 class IptvSportsScreen extends StatefulWidget {
   const IptvSportsScreen({super.key, required this.profileId});
@@ -72,13 +74,13 @@ class _IptvSportsScreenState extends State<IptvSportsScreen> {
           IconButton(
             tooltip: t.liveTv.favorites,
             isSelected: _favoritesOnly,
-            selectedIcon: const Icon(Icons.star),
-            icon: const Icon(Icons.star_border),
+            selectedIcon: const AppIcon(Symbols.star_rounded, fill: 1),
+            icon: const AppIcon(Symbols.star_border_rounded),
             onPressed: () => setState(() => _favoritesOnly = !_favoritesOnly),
           ),
           IconButton(
             tooltip: t.iptv.refresh,
-            icon: const Icon(Icons.refresh),
+            icon: const AppIcon(Symbols.refresh_rounded),
             onPressed: () => setState(() => _fixtures = _load()),
           ),
         ],
@@ -130,7 +132,7 @@ class _IptvSportsScreenState extends State<IptvSportsScreen> {
                       children: [
                         for (final feed in fixture.feeds)
                           ListTile(
-                            leading: const Icon(Icons.live_tv),
+                            leading: const AppIcon(Symbols.live_tv_rounded),
                             title: Text(feed.channel.displayName),
                             subtitle: Text(feed.channel.liveTvSourceTitle ?? ''),
                             onTap: () => Navigator.of(context).pop(feed),

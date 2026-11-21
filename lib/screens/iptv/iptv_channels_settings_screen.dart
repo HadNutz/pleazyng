@@ -508,7 +508,7 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
                     ],
                     child: Chip(
                       label: Text(_currentGroup?.name ?? _providerGroup ?? t.iptv.channelGroup),
-                      avatar: const Icon(Icons.filter_list),
+                      avatar: const AppIcon(Symbols.filter_list_rounded),
                     ),
                   ),
                   if (_channels.any((c) => c.groupTitle?.trim().toUpperCase() == 'LOW BANDWIDTH'))

@@ -3249,6 +3249,15 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
     ]).then<void>((_) {});
   }
 
+  void _detachSubtitleMuteTrackCatalogListener([Player? expectedPlayer]) {
+    if (expectedPlayer != null && !identical(_subtitleMuteTrackCatalogPlayer, expectedPlayer)) {
+      return;
+    }
+    _subtitleMuteTrackCatalogPlayer = null;
+    unawaited(_subtitleMuteTrackCatalogSubscription?.cancel());
+    _subtitleMuteTrackCatalogSubscription = null;
+  }
+
   @override
   void dispose() {
     _recoveryWorkspace?.unwatchRecovery(this);
@@ -4088,18 +4097,4 @@ String _getHwdecValue(bool enabled) {
   } else {
     return 'auto'; // Windows, Linux
   }
-}
-
-final class _SubtitleMuteRestore {
-  const _SubtitleMuteRestore({
-    required this.player,
-    required this.mediaIdentity,
-    required this.previousTrack,
-    required this.temporaryTrackId,
-  });
-
-  final Player player;
-  final String mediaIdentity;
-  final SubtitleTrack previousTrack;
-  final String temporaryTrackId;
 }
