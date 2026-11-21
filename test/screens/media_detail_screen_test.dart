@@ -3654,6 +3654,9 @@ Map<String, dynamic> _previewItem(
 }
 
 class _FakeMediaServerClient implements MediaServerClient {
+  @override
+  final Object authenticationSessionId = Object();
+
   MediaItem show;
   final Map<String, List<MediaItem>> childrenByParent;
   final Map<String, Future<List<MediaItem>>> childrenPageFutures;
