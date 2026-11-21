@@ -470,8 +470,9 @@ class PlayLinkResolver {
       return const PlayLinkFailure(PlayLinkFailureReason.serverUnavailable);
     }
     if (!current()) return const PlayLinkFailure(PlayLinkFailureReason.serverUnavailable);
-    if (playlist == null || playlist.id != target.itemId || playlist.serverId != target.serverId)
+    if (playlist == null || playlist.id != target.itemId || playlist.serverId != target.serverId) {
       return const PlayLinkFailure(PlayLinkFailureReason.notFound);
+    }
     if (playlist.playlistType != 'video') return const PlayLinkFailure(PlayLinkFailureReason.unsupportedItem);
     return PlayLinkPlaylist(playlist, shuffle: mode == PlayMode.shuffle);
   }

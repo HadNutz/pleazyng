@@ -43,8 +43,7 @@ final class AppVersion {
   /// `fakeAsync` test may already have left.
   static Future<AppVersion> current() async => _current ??= await read();
 
-  /// Reads the version from [load], uncached, logging when it is unknown.
-  @visibleForTesting
+  /// Reads the version from a supplied package-info loader without populating the process cache.
   static Future<AppVersion> read([Future<PackageInfo> Function() load = PackageInfo.fromPlatform]) async {
     PackageInfo? info;
     Object? failure;

@@ -907,8 +907,9 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
           !_canUseDetail ||
           !mounted ||
           !identical(client.authenticationSessionId, session) ||
-          !identical(context.tryGetMediaClientForServer(ServerId(serverId)), client))
+          !identical(context.tryGetMediaClientForServer(ServerId(serverId)), client)) {
         return;
+      }
       setStateIfMounted(() {
         _patchItemEverywhere(source.globalKey, refreshed);
       });

@@ -285,11 +285,12 @@ class _RequestDetailState extends State<_RequestDetail> {
       if (mounted && _current) Navigator.pop(context);
     } catch (error) {
       appLogger.w('Could not withdraw pending request', error: error);
-      if (mounted && _current)
+      if (mounted && _current) {
         setState(() {
           _busy = false;
           _error = t.seerr.requestsLoadFailed;
         });
+      }
     }
   }
 
