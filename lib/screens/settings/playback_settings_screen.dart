@@ -196,6 +196,19 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
                 if (mpvActive) _deinterlaceTile(),
                 SettingSelectionTile<MotionClarityPreset>(
                   pref: SettingsService.motionClarityPreset,
+                  onAfterWrite: (preset) async {
+                    if (!PlatformDetector.usesNativeTvMedia()) return;
+                    await svc.write(SettingsService.neuralInterpolationPreset, preset.tvMixerPreset);
+                    final current = svc.read(SettingsService.motionProcessingMode);
+                    await svc.write(
+                      SettingsService.motionProcessingMode,
+                      !preset.interpolationEnabled
+                          ? MotionProcessingMode.off
+                          : current == MotionProcessingMode.off
+                          ? MotionProcessingMode.mpv
+                          : current,
+                    );
+                  },
                   icon: Symbols.blur_on_rounded,
                   title: t.videoSettings.motionClarity,
                   description: t.videoSettings.motionClarityDescription,

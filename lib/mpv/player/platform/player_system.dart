@@ -11,6 +11,7 @@ import '../../../utils/platform_detector.dart';
 import 'package:video_player_win/video_player_win.dart' as win;
 
 import '../../../models/audio_channel_limit.dart';
+import '../../../models/motion_processing_mode.dart';
 import '../../../utils/serial_future_queue.dart';
 import '../../models.dart';
 import '../player_base.dart';
@@ -37,13 +38,71 @@ class PlayerSystem extends PlayerBase
   bool get tvMotionRequested => _tvMotionRequested;
   String? _motionProvider;
 
-  void prepareTvMotion(bool eligible) => _nextTvMotion = eligible;
+  bool _nextTvEligible = false;
+  bool _tvEligible = false;
+  NeuralInterpolationPreset _nextTvPreset = NeuralInterpolationPreset.balanced;
+  NeuralInterpolationPreset? _activeTvMotionPreset;
+  NeuralInterpolationPreset? get activeTvMotionPreset => _activeTvMotionPreset;
+  bool get canChangeTvMotion => _tvEligible && _ready && !_live && !_ended && !_closing;
 
-  Future<void> disableTvMotion() async {
-    _nextTvMotion = false;
-    _tvMotionRequested = false;
-    await _control('disableMotion');
-    _motionProvider = null;
+  void prepareTvMotion(
+    bool requested, {
+    bool eligible = true,
+    NeuralInterpolationPreset preset = NeuralInterpolationPreset.balanced,
+  }) {
+    _nextTvEligible = eligible;
+    _nextTvMotion = requested && eligible;
+    _nextTvPreset = preset;
+  }
+
+  Future<void> disableTvMotion() => setTvMotion(false);
+
+  Future<void> setTvMotion(bool enable, {NeuralInterpolationPreset preset = NeuralInterpolationPreset.balanced}) {
+    final generation = _generation;
+    return _sources.run(() async {
+      if (!_current(generation) || !_ready || _id == null) throw StateError('TV playback changed');
+      if (enable && !canChangeTvMotion) throw UnsupportedError('Motion processing is unavailable for this source');
+      if (enable && _texture == -2) {
+        await _switchPlaneToMotionTexture(generation, _id!, preset);
+      } else {
+        await _control(enable ? 'enableMotion' : 'disableMotion', preset.name);
+      }
+      if (!_current(generation)) throw StateError('TV playback changed');
+      _activeTvMotionPreset = enable ? preset : null;
+      _tvMotionRequested = enable;
+      _motionProvider = null;
+    });
+  }
+
+  Future<void> _switchPlaneToMotionTexture(int generation, int id, NeuralInterpolationPreset preset) async {
+    final candidate = ++_nextId;
+    final args = {'id': id, 'candidate': candidate, 'value': preset.name};
+    final texture = await methodChannel.invokeMethod<int>('prepareMotionTexture', args);
+    try {
+      if (texture == null || texture < 0) throw StateError('Motion texture unavailable');
+      final wait = Stopwatch()..start();
+      while (_current(generation) && !_ended) {
+        final snapshot = await _snapshot(candidate);
+        if (!_current(generation) || _ended) break;
+        if (snapshot['failed'] == true) throw StateError('Motion texture failed');
+        if (snapshot['ready'] == true && snapshot['frame'] == true) {
+          await methodChannel.invokeMethod<void>('commitMotionTexture', args);
+          if (!_current(generation)) break;
+          _texture = texture;
+          _overlayTexture = null;
+          _updateSurfaceGeometry(snapshot);
+          surfaceRevision.value++;
+          await _closeWindow();
+          return;
+        }
+        if (wait.elapsed >= const Duration(seconds: 10)) throw TimeoutException('Motion texture preroll');
+        await Future<void>.delayed(const Duration(milliseconds: 80));
+      }
+      throw StateError('TV playback changed');
+    } finally {
+      // After the atomic swap the candidate ID owns the outgoing plane.
+      await methodChannel.invokeMethod<void>('dispose', {'id': candidate});
+    }
   }
 
   String? _window;
@@ -190,7 +249,9 @@ class PlayerSystem extends PlayerBase
                     window: _window!,
                     source: _size,
                     crop: frame.source,
-                    onError: () => _fail(id),
+                    onError: () {
+                      if (_id == id && _texture == -2) _fail(id);
+                    },
                   ),
                 )
               else
@@ -229,6 +290,9 @@ class PlayerSystem extends PlayerBase
   }) {
     final generation = _newGeneration();
     final motion = _nextTvMotion && !isLive;
+    final eligible = _nextTvEligible && !isLive;
+    final preset = _nextTvPreset;
+    _nextTvEligible = false;
     _nextTvMotion = false;
     return _sources.run(() async {
       if (!_current(generation)) return;
@@ -238,6 +302,8 @@ class PlayerSystem extends PlayerBase
       _id = id;
       _media = media;
       _tvMotionRequested = motion;
+      _tvEligible = eligible;
+      _activeTvMotionPreset = null;
       _sidecars = externalSubtitles?.where((t) => t.uri != null).toList() ?? const [];
       _cues = null;
       _caption.value = '';
@@ -298,11 +364,13 @@ class PlayerSystem extends PlayerBase
               /* An unavailable plane can still use a texture. */
             }
           }
-          await _create(id, uri, motion: motion);
+          if (!motion) await _create(id, uri);
         }
         if (!_current(generation)) return;
         try {
+          if (motion) await _create(id, uri, motion: true, preset: preset);
           await _prepare(generation, id, canRetry: motion || _texture == -2);
+          if (motion) _activeTvMotionPreset = preset;
         } catch (_) {
           if (!_current(generation) || (!motion && _texture != -2 && _texture != -3)) rethrow;
           // A failed hardware plane or motion filter gets one clean, unfiltered texture open.
@@ -335,11 +403,17 @@ class PlayerSystem extends PlayerBase
     });
   }
 
-  Future<void> _create(int id, Uri uri, {bool nativeSurface = true, bool motion = false}) async {
+  Future<void> _create(
+    int id,
+    Uri uri, {
+    bool nativeSurface = true,
+    bool motion = false,
+    NeuralInterpolationPreset preset = NeuralInterpolationPreset.balanced,
+  }) async {
     final fonts = playerType == 'tvmpv' ? await SubtitleFontLoader.loadSubtitleFont() : null;
     _texture = await methodChannel.invokeMethod<int>('create', {
       'id': id,
-      if (motion) 'motion': true,
+      if (motion) ...{'motion': true, 'motionPreset': preset.name},
       'nativeSurface': nativeSurface,
       'uri': uri.toString(),
       'hardwareDecoding': hardwareDecoding,
@@ -684,6 +758,8 @@ class PlayerSystem extends PlayerBase
     final id = _id;
     _id = null;
     _ready = false;
+    _tvEligible = false;
+    _activeTvMotionPreset = null;
     _desktopPlane = false;
     _texture = null;
     _overlayTexture = null;

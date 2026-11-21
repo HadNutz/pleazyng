@@ -8,6 +8,7 @@
 - Keep the previous TV guide after an unusable refresh, honor schedule corrections and recording windows, and check recording duration before accepting a timer.
 - Route mixes, radio and sleep timers to the selected music receiver, count listening once, and keep a paused queue paused when removing its current song. Restore Jellyfin audio playlist removal and collection pagination on capped servers.
 - Preserve non-ASCII settings in WebDAV restores, overlapping TV subtitles and delayed Samsung captions. Discard cancelled virtual-keyboard edits and retain selected lyrics when importing MIDI karaoke.
+- Enable motion processing during eligible playback on Android and Fire OS, desktop MPV, and LG and Samsung TV MPV. Change TV mixer strength while watching. On LG, the original hardware plane keeps playing while the filtered texture prepares.
 
 - Apply MPV smoothing toggles and Motion clarity preset changes during eligible Linux and Windows playback, including titles started with smoothing off.
 - Adapt video, music, Steam streaming, browsing and reading to separating folds and physical hinges. Keep the active player and detail view during live window resizing. Add compact cover controls and a Samsung Flex Window music widget.

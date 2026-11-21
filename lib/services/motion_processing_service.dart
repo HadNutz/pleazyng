@@ -28,7 +28,8 @@ abstract final class MotionProcessingService {
   static final Expando<_OriginalAppleMotionOptions> _appleOriginals = Expando('motion-processing-apple-originals');
   static final Expando<StreamSubscription<void>> _appleLoadSubscriptions = Expando('apple-motion-file-loads');
   static final Expando<bool> _appleFileLoaded = Expando('apple-motion-file-loaded');
-  static final Expando<String> _appleGpuOriginalHwdec = Expando('apple-motion-hwdec');
+  static final Expando<String> _appleMixerOriginalHwdec = Expando('apple-motion-hwdec');
+  static final Expando<String> _appleMixer = Expando('apple-frame-mixer');
   static final Expando<bool> _appleNeuralEligible = Expando('motion-processing-apple-neural-eligible');
   static final Expando<NeuralInterpolationPreset> _appleNeuralPreset = Expando('motion-processing-apple-neural-preset');
   static final Expando<_OriginalAndroidMotionOptions> _androidOriginals = Expando(
@@ -153,7 +154,9 @@ abstract final class MotionProcessingService {
     return resolveMotionProcessing(
       requested: requested,
       mpvRendererAvailable:
-          (rendererAvailable || (appleOutput && nativeInterpolationStatus == 'libplacebo GPU')) && streamSupported,
+          (rendererAvailable ||
+              (appleOutput && const {'libplacebo GPU', 'FFmpeg CPU'}.contains(nativeInterpolationStatus))) &&
+          streamSupported,
       neuralProviderAvailable: nativeProviderReady && streamSupported && desktopCadenceConfirmed,
       neuralStreamSupported: neuralStreamFallback == null,
       neuralStreamFallback: neuralStreamFallback ?? MotionProcessingFallback.unsupportedStream,
@@ -295,8 +298,8 @@ abstract final class MotionProcessingService {
         if (interlaced != true && !(selectionChanged && interlaced == null)) return;
         if (_interlacedTrackSuppressed[player] == true) return;
         if (!_hasActiveMotionProcessing(player)) {
-          // A desktop title started in Off can still enable interpolation later.
-          if (_isDesktopPmePlatform) _interlacedTrackSuppressed[player] = true;
+          // A title started in Off can still enable interpolation later.
+          _interlacedTrackSuppressed[player] = true;
           return;
         }
         await _suspendMotionForUnsupportedTrack(player);
@@ -314,7 +317,7 @@ abstract final class MotionProcessingService {
       _desktopPmeActive[player] == true ||
       _androidAnvilActive[player] == true ||
       _androidMpvOutputActive[player] == true ||
-      _appleGpuOriginalHwdec[player] != null ||
+      _appleMixerOriginalHwdec[player] != null ||
       _appleNeuralPreset[player] != null ||
       (_originals[player] != null && _interpolationBufferReady[player] == true);
 
@@ -334,7 +337,7 @@ abstract final class MotionProcessingService {
         _androidAnvilPreset[player] = null;
       }
     }
-    if (_appleGpuOriginalHwdec[player] != null) await _setAppleGpuInterpolation(player, false);
+    if (_appleMixerOriginalHwdec[player] != null) await _setAppleMixer(player, false);
     if (_appleNeuralPreset[player] != null) {
       await player.setProperty('avfoundation-motion-interpolation', 'no');
       _appleNeuralPreset[player] = null;
@@ -407,46 +410,22 @@ abstract final class MotionProcessingService {
   static bool canChangeLive(Player player, {required MotionProcessingMode mode, bool isLive = false}) {
     if (isLive || !supportsPlayer(player)) return false;
     if (mode != MotionProcessingMode.off && _interlacedTrackSuppressed[player] == true) return false;
-    if (mode.usesMpvInterpolation && player.playerType == 'mpv' && _isDesktopPmePlatform) {
-      final version = _sessionSelectedVersion[player];
-      return (_interpolationBufferReady[player] == true ||
-              MotionClarityService.forPlayer(player).desktopFramePoolPrepared) &&
-          _sessionIsLive[player] == false &&
-          _sessionIsTranscoding[player] == false &&
-          version != null &&
-          _supportsMotionSource(version, allowDynamicRange: true);
+    if (player is PlayerSystem) return player.canChangeTvMotion;
+    final version = _sessionSelectedVersion[player];
+    if (_sessionIsLive[player] != false || _sessionIsTranscoding[player] != false || version == null) return false;
+    if (_isApplePlatform) return _appleNeuralEligible[player] == true;
+    if (Platform.isAndroid) return _supportsMotionSource(version);
+    if (_isDesktopPmePlatform && _supportsMotionSource(version, allowDynamicRange: true)) {
+      return mode.usesNeuralInterpolation ||
+          _interpolationBufferReady[player] == true ||
+          MotionClarityService.forPlayer(player).desktopFramePoolPrepared;
     }
-    if (_interpolationBufferReady[player] != true) return false;
-    if (mode.usesNeuralInterpolation && _isDesktopPmePlatform) {
-      return _desktopPmeActive[player] == true &&
-          _desktopPmePreset[player] != null &&
-          _sessionSelectedVersion[player] != null &&
-          _sessionIsLive[player] != true &&
-          _sessionIsTranscoding[player] != true;
-    }
-    if (mode.usesNeuralInterpolation && Platform.isAndroid) {
-      return _androidAnvilActive[player] == true &&
-          _androidAnvilPreset[player] != null &&
-          _sessionSelectedVersion[player] != null &&
-          _sessionIsLive[player] != true &&
-          _sessionIsTranscoding[player] != true;
-    }
-    if (_isApplePlatform && mode.usesNeuralInterpolation && _appleNeuralEligible[player] != true) {
-      return false;
-    }
-    // Moving Android away from the direct MediaCodec surface must happen
-    // before the next file opens so the renderer can size its frame queue.
-    if (Platform.isAndroid &&
-        mode.usesMpvInterpolation &&
-        (_androidMpvOutputActive[player] != true || _androidAnvilActive[player] == true)) {
-      return false;
-    }
-    return true;
+    return false;
   }
 
-  /// The neural preset currently attached to the active player session.
-  /// Returns null when the session is using only MPV smoothing or normal video.
-  static NeuralInterpolationPreset? activeNeuralPresetForPlayer(Player player) {
+  /// Preset of the active TV mixer or neural processor.
+  static NeuralInterpolationPreset? activeMotionPresetForPlayer(Player player) {
+    if (player is PlayerSystem && player.playerType == 'tvmpv') return player.activeTvMotionPreset;
     if (_isApplePlatform && _appleNeuralEligible[player] == true) return _appleNeuralPreset[player];
     if (_isDesktopPmePlatform && _desktopPmeActive[player] == true) return _desktopPmePreset[player];
     if (Platform.isAndroid && _androidAnvilActive[player] == true) return _androidAnvilPreset[player];
@@ -489,9 +468,22 @@ abstract final class MotionProcessingService {
     if (!supportsPlayer(player)) return;
     if (player is PlayerSystem && player.playerType == 'tvmpv') {
       player.prepareTvMotion(
-        mode != MotionProcessingMode.off && !isLive && !isTranscoding && supportsTvMotionSource(selectedVersion),
+        mode != MotionProcessingMode.off,
+        eligible: !isLive && !isTranscoding && supportsTvMotionSource(selectedVersion),
+        preset: neuralPreset,
       );
       return;
+    }
+    _sessionSelectedVersion[player] = selectedVersion;
+    _sessionIsLive[player] = isLive;
+    _sessionIsTranscoding[player] = isTranscoding;
+    _motionSessionGeneration[player] = (_motionSessionGeneration[player] ?? 0) + 1;
+    _interlacedTrackSuppressed[player] = false;
+    _lastVideoTrackSelection[player] = null;
+    _watchVideoTrackChanges(player);
+    if (_isApplePlatform) {
+      _appleFileLoaded[player] = false;
+      _appleLoadSubscriptions[player] ??= player.streams.fileLoaded.listen((_) => _appleFileLoaded[player] = true);
     }
     _powerSuspendedForSession[player] = false;
     final powerLimited = await _preparePowerPolicy(player, mode);
@@ -516,6 +508,9 @@ abstract final class MotionProcessingService {
     if (mode.usesNeuralInterpolation && !powerLimited && !thermalLimited) {
       final androidNeuralActive = Platform.isAndroid && _androidAnvilActive[player] == true;
       final appleNeuralEligible = _isApplePlatform && _appleNeuralEligible[player] == true;
+      if (androidNeuralActive && player is PlayerNative && selectedVersion != null) {
+        _watchAndroidAnvilProvider(player, selectedVersion: selectedVersion, neuralPreset: neuralPreset);
+      }
       if (androidNeuralActive || appleNeuralEligible) _watchPlatformThermalStatus(player);
     }
   }
@@ -530,20 +525,15 @@ abstract final class MotionProcessingService {
   }) async {
     if (!supportsPlayer(player)) return;
     _configuredNeuralModelId[player] = null;
-    _sessionSelectedVersion[player] = selectedVersion;
-    _sessionIsLive[player] = isLive;
-    _sessionIsTranscoding[player] = isTranscoding;
-    _motionSessionGeneration[player] = (_motionSessionGeneration[player] ?? 0) + 1;
-    _interlacedTrackSuppressed[player] = false;
-    _lastVideoTrackSelection[player] = null;
-    _watchVideoTrackChanges(player);
     if (_isApplePlatform) {
-      _appleFileLoaded[player] = false;
-      _appleLoadSubscriptions[player] ??= player.streams.fileLoaded.listen((_) => _appleFileLoaded[player] = true);
       final output = await _videoOutputForConfiguration(player);
       final avfoundationOutput = output == null || output == 'avfoundation';
       final sourceEligible =
-          avfoundationOutput && !isLive && selectedVersion != null && _supportsMotionSource(selectedVersion);
+          avfoundationOutput &&
+          !isLive &&
+          !isTranscoding &&
+          selectedVersion != null &&
+          _supportsMotionSource(selectedVersion);
       _appleNeuralEligible[player] = sourceEligible;
       await _configureAppleMotion(player, sourceEligible ? mode : MotionProcessingMode.off, neuralPreset);
       _interpolationBufferReady[player] = avfoundationOutput;
@@ -600,9 +590,6 @@ abstract final class MotionProcessingService {
           // scheduler paces those frames against the active refresh rate.
           await _applyMpvInterpolation(player);
           _interpolationBufferReady[player] = true;
-          if (player is PlayerNative && selectedVersion != null) {
-            _watchAndroidAnvilProvider(player, selectedVersion: selectedVersion, neuralPreset: neuralPreset);
-          }
           return;
         } catch (_) {
           await _restoreAndroidMotionPath(player);
@@ -751,27 +738,22 @@ abstract final class MotionProcessingService {
   }) async {
     if (!supportsPlayer(player)) throw UnsupportedError('MPV motion interpolation is unavailable on this player.');
     if (player is PlayerSystem && player.playerType == 'tvmpv') {
-      if (mode == MotionProcessingMode.off) await player.disableTvMotion();
+      await player.setTvMotion(mode != MotionProcessingMode.off, preset: neuralPreset);
       return;
     }
-    if (mode != MotionProcessingMode.off && _interlacedTrackSuppressed[player] == true) {
-      appLogger.i(
-        'MotionProcessingService: motion processing remains disabled for this video track until the next media open.',
-      );
-      return;
+    if (mode != MotionProcessingMode.off && !canChangeLive(player, mode: mode)) {
+      throw UnsupportedError('Motion processing is unavailable for the current video track.');
     }
 
     if (mode.usesNeuralInterpolation) {
-      if (await _preparePowerPolicy(player, mode)) {
-        if (!await _suspendNeuralForPower(player)) _powerLimited[player] = false;
-        return;
-      }
-      if (await _prepareThermalPolicy(player, mode)) {
-        if (_isApplePlatform) {
-          await player.setProperty('avfoundation-motion-interpolation', 'no');
-        } else if (_androidAnvilActive[player] == true) {
-          await _suspendNeuralForThermal(player, _thermalStatus[player] ?? 'moderate');
-        }
+      final powerLimited = await _preparePowerPolicy(player, mode);
+      final thermalLimited = await _prepareThermalPolicy(player, mode);
+      if (powerLimited || thermalLimited) {
+        await _configureForPlaybackImpl(
+          player,
+          _isApplePlatform ? MotionProcessingMode.off : MotionProcessingMode.mpv,
+          selectedVersion: _sessionSelectedVersion[player],
+        );
         return;
       }
     } else {
@@ -793,6 +775,7 @@ abstract final class MotionProcessingService {
         neuralPreset,
       );
       _interpolationBufferReady[player] = avfoundationOutput;
+      if (avfoundationOutput && mode.usesNeuralInterpolation) _watchPlatformThermalStatus(player);
       return;
     }
 
@@ -805,39 +788,32 @@ abstract final class MotionProcessingService {
       throw UnsupportedError('The active video output does not support MPV interpolation.');
     }
 
-    if (_isDesktopPmePlatform) {
-      if (mode.usesNeuralInterpolation) {
-        if (_desktopPmeActive[player] == true) {
-          await _changeDesktopPmePreset(player, neuralPreset);
-        } else {
-          appLogger.i('MotionProcessingService: desktop Neural mode takes effect on the next media open.');
-        }
-        return;
-      }
-      await _restoreDesktopPme(player);
+    if (mode.usesNeuralInterpolation && _desktopPmeActive[player] == true) {
+      await _changeDesktopPmePreset(player, neuralPreset);
+      return;
     }
-
-    if (Platform.isAndroid) {
-      if (mode.usesNeuralInterpolation) {
-        if (_androidAnvilActive[player] == true) {
-          await _changeAndroidAnvilPreset(player, neuralPreset);
-        } else {
-          appLogger.i('MotionProcessingService: Android Neural mode takes effect on the next media open.');
-        }
-        return;
-      }
-      if (mode.usesMpvInterpolation) {
-        if (_androidMpvOutputActive[player] != true || _androidAnvilActive[player] == true) {
-          appLogger.i('MotionProcessingService: Android MPV smoothing will take effect on the next media open.');
-          return;
-        }
-        await _applyMpvInterpolation(player);
-        _interpolationBufferReady[player] = true;
-        return;
-      }
-      await _restoreAndroidMotionPath(player);
+    if (mode.usesNeuralInterpolation && _androidAnvilActive[player] == true) {
+      await _changeAndroidAnvilPreset(player, neuralPreset);
+      return;
     }
-
+    // The same MPV core owns the demuxer and the audio clock across these
+    // changes. Android's surface arbiter acknowledges the new output before
+    // the provider is attached. MPV rebuilds video decode for vd-lavc-o/hwdec.
+    if (mode.usesNeuralInterpolation || (Platform.isAndroid && mode.usesMpvInterpolation)) {
+      await _configureForPlaybackImpl(
+        player,
+        mode,
+        selectedVersion: _sessionSelectedVersion[player],
+        neuralPreset: neuralPreset,
+      );
+      if (_interpolationBufferReady[player] != true) {
+        throw UnsupportedError('No motion processor accepted this video.');
+      }
+      if (_androidAnvilActive[player] == true) _watchPlatformThermalStatus(player);
+      return;
+    }
+    if (_isDesktopPmePlatform) await _restoreDesktopPme(player);
+    if (Platform.isAndroid) await _restoreAndroidMotionPath(player);
     final resolution = resolveForPlayer(player, mode, currentVideoOutput: currentVideoOutput);
     if (!resolution.usesMpvInterpolation) {
       final original = _originals[player];
@@ -862,47 +838,54 @@ abstract final class MotionProcessingService {
   ) async {
     final neural = mode.usesNeuralInterpolation && await player.getProperty('pleazyng-vt-motion-supported') != 'no';
     final useGpu = mode != MotionProcessingMode.off && !neural;
-    if (!useGpu) await _setAppleGpuInterpolation(player, false);
+    if (!useGpu) await _setAppleMixer(player, false);
     await _applyAppleInterpolation(player, neural, preset);
-    if (useGpu) await _setAppleGpuInterpolation(player, true);
+    if (useGpu) await _setAppleMixer(player, true);
   }
 
   /// The AVFoundation VO can present CPU-readable YUV from libplacebo. The
   /// filter uploads to Vulkan (MoltenVK on Apple) and mixes at output cadence.
-  static Future<void> _setAppleGpuInterpolation(Player player, bool enable) async {
-    final original = _appleGpuOriginalHwdec[player];
+  static Future<void> _setAppleMixer(Player player, bool enable) async {
+    final original = _appleMixerOriginalHwdec[player];
     if (enable == (original != null)) return;
     if (!enable) {
       try {
         await player.command(['vf', 'remove', '@plezy-apple-motion']);
       } finally {
         await player.setProperty('hwdec', original!);
-        _appleGpuOriginalHwdec[player] = null;
+        _appleMixerOriginalHwdec[player] = null;
+        _appleMixer[player] = null;
       }
       return;
     }
     final hwdec = await player.getProperty('hwdec') ?? 'auto';
     try {
       if (hwdec != 'no') await player.setProperty('hwdec', 'videotoolbox-copy');
-      await player.command([
-        'vf',
-        'add',
-        '@plezy-apple-motion:lavfi=[libplacebo=fps=60:frame_mixer=oversample:format=yuv420p]',
-      ]);
-      _appleGpuOriginalHwdec[player] = hwdec;
-    } catch (error) {
+      try {
+        await player.command([
+          'vf',
+          'add',
+          '@plezy-apple-motion:lavfi=[libplacebo=fps=60:frame_mixer=oversample:format=yuv420p]',
+        ]);
+        _appleMixer[player] = 'libplacebo GPU';
+      } catch (error) {
+        appLogger.i('Apple GPU mixer rejected this source, trying FFmpeg blending', error: error);
+        await player.command(['vf', 'add', '@plezy-apple-motion:lavfi=[minterpolate=fps=60:mi_mode=blend]']);
+        _appleMixer[player] = 'FFmpeg CPU';
+      }
+      _appleMixerOriginalHwdec[player] = hwdec;
+    } catch (_) {
       await player.setProperty('hwdec', hwdec);
-      appLogger.w('MotionProcessingService: Apple GPU frame mixing unavailable', error: error);
+      rethrow;
     }
   }
 
-  static bool appleGpuOutputObserved(Player player, double? inputFps, double? outputFps) =>
-      _appleGpuOriginalHwdec[player] != null &&
-      inputFps != null &&
-      inputFps > 0 &&
-      inputFps <= 30.1 &&
-      outputFps != null &&
-      (outputFps - 60).abs() <= 1;
+  static String? observedAppleMixer(Player player, double? inputFps, double? outputFps) {
+    if (inputFps == null || inputFps <= 0 || inputFps > 30.1 || outputFps == null || (outputFps - 60).abs() > 1) {
+      return null;
+    }
+    return _appleMixer[player];
+  }
 
   static Future<void> _applyAppleInterpolation(Player player, bool enabled, NeuralInterpolationPreset preset) async {
     var original = _appleOriginals[player];
@@ -1073,7 +1056,7 @@ abstract final class MotionProcessingService {
             final transfer = await player.getProperty('video-params/gamma');
             if (!const {'bt.1886', 'srgb', 'gamma2.2', 'gamma2.4'}.contains(transfer)) return;
             await _applyAppleInterpolation(player, false, NeuralInterpolationPreset.performance);
-            await _setAppleGpuInterpolation(player, true);
+            await _setAppleMixer(player, true);
           });
         }
         if (Platform.isAndroid && _androidAnvilActive[player] != true) {
@@ -1128,7 +1111,7 @@ abstract final class MotionProcessingService {
     try {
       var fallbackReady = true;
       if (_isApplePlatform) {
-        await _setAppleGpuInterpolation(player, false);
+        await _setAppleMixer(player, false);
         await player.setProperty('avfoundation-motion-interpolation', 'no');
       } else {
         if (_androidAnvilActive[player] == true) {
@@ -1222,7 +1205,7 @@ abstract final class MotionProcessingService {
     _powerSuspendedForSession[player] = true;
     try {
       if (_isApplePlatform) {
-        await _setAppleGpuInterpolation(player, false);
+        await _setAppleMixer(player, false);
         await player.setProperty('avfoundation-motion-interpolation', 'no');
       } else if (_isDesktopPmePlatform && _desktopPmeActive[player] == true) {
         if (!await _removeDesktopPmeFilter(player)) return false;
@@ -1286,36 +1269,6 @@ abstract final class MotionProcessingService {
     await _stopPowerMonitoring(player);
     await _stopThermalMonitoring(player);
     _thermalStatus[player] = null;
-  }
-
-  /// Apply a changed power preference to the currently open session. Turning
-  /// the guard off does not hot-start a model that was already suspended; that
-  /// route is prepared at the next item boundary.
-  static Future<void> refreshPowerPolicyForPlayer(Player player) async {
-    await _serializePlayerOperation(player, () => _refreshPowerPolicyForPlayer(player));
-  }
-
-  static Future<void> _refreshPowerPolicyForPlayer(Player player) async {
-    if (_neuralRequested[player] != true) return;
-    final settings = SettingsService.instanceOrNull;
-    final enabled = settings?.read(SettingsService.neuralOnlyWhenPluggedIn) ?? true;
-    if (!enabled) {
-      _powerLimited[player] = false;
-      _powerSuspendedForSession[player] = false;
-      await _stopPowerMonitoring(player);
-      return;
-    }
-
-    final externalPower = await PowerSourceService.isConnected();
-    if (externalPower == false) {
-      _powerLimited[player] = true;
-      _powerSuspendedForSession[player] = true;
-      _watchPowerSource(player);
-      if (!await _suspendNeuralForPower(player)) _powerLimited[player] = false;
-    } else if (externalPower == true && _powerSuspendedForSession[player] != true) {
-      _powerLimited[player] = false;
-      _watchPowerSource(player);
-    }
   }
 
   static Future<bool> _configureDesktopPme(

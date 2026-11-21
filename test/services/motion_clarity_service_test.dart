@@ -43,6 +43,7 @@ void main() {
     await MotionProcessingService.configureForPlayback(player, MotionProcessingMode.off, selectedVersion: version);
     addTearDown(() => MotionProcessingService.stopPowerSourceMonitoring(player));
     service.markSourceOpened();
+    expect(MotionProcessingService.canChangeLive(player, mode: MotionProcessingMode.neural), isTrue);
     for (var i = 0; i < 2; i++) {
       expect(MotionProcessingService.canChangeLive(player, mode: MotionProcessingMode.mpv), isTrue);
       await MotionProcessingService.apply(player, MotionProcessingMode.mpv);

@@ -28,6 +28,7 @@ import '../../../media/media_server_client.dart';
 import '../../../media/playback_rate.dart';
 import '../../../mpv/mpv.dart';
 import '../../../mpv/player/player_native.dart';
+import '../../../mpv/player/platform/player_system.dart';
 import '../../../profiles/active_profile_provider.dart';
 import '../../../providers/shader_provider.dart';
 import '../../../screens/settings/settings_utils.dart' show DialogOption;
@@ -452,6 +453,13 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     _hdrToneMapping = SettingsService.instance.read(SettingsService.hdrToneMapping);
     _audioChannelLimit = SettingsService.instance.read(SettingsService.audioChannelLimit);
     _motionProcessingMode = SettingsService.instance.read(SettingsService.motionProcessingMode);
+    final player = widget.player;
+    if (player is PlayerSystem &&
+        player.playerType == 'tvmpv' &&
+        player.tvMotionRequested &&
+        _motionProcessingMode == MotionProcessingMode.off) {
+      _motionProcessingMode = MotionProcessingMode.mpv;
+    }
     _audioEqualizerGains = SettingsService.audioEqualizerBandPrefs
         .map((pref) => SettingsService.instance.read(pref))
         .toList(growable: false);
@@ -1262,8 +1270,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
             onTap: () => _navigateTo(_SettingsView.shader),
           ),
 
-        // Motion & clarity uses mpv's display-synchronous temporal filter.
-        if (widget.player.playerType == 'mpv')
+        if (widget.player.playerType == 'mpv' || widget.player.playerType == 'tvmpv')
           _SettingsMenuItem(
             icon: Symbols.blur_on_rounded,
             title: t.videoSettings.motionClarity,
@@ -1639,6 +1646,31 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     final token = _prefWrites.begin('motion_clarity_preset');
     try {
       await _prefWrites.commitIfLatest('motion_clarity_preset', token, () async {
+        if (widget.player case final PlayerSystem player when player.playerType == 'tvmpv') {
+          final mode = preset.interpolationEnabled
+              ? (_motionProcessingMode == MotionProcessingMode.neural
+                    ? MotionProcessingMode.neural
+                    : MotionProcessingMode.mpv)
+              : MotionProcessingMode.off;
+          final previousMode = _motionProcessingMode;
+          final previousPreset = player.activeTvMotionPreset ?? _activeMotionPreset(player);
+          await MotionProcessingService.apply(player, mode, neuralPreset: preset.tvMixerPreset);
+          try {
+            await ScopedPlayerPrefs.write(ScopedPlayerPrefs.motionClarityPreset, _state.metadata, preset);
+            await SettingsService.instance.write(SettingsService.neuralInterpolationPreset, preset.tvMixerPreset);
+            await SettingsService.instance.write(SettingsService.motionProcessingMode, mode);
+          } catch (_) {
+            await MotionProcessingService.apply(player, previousMode, neuralPreset: previousPreset);
+            rethrow;
+          }
+          if (mounted) {
+            setState(() {
+              _motionPreset = preset;
+              _motionProcessingMode = mode;
+            });
+          }
+          return;
+        }
         final manualKernel = ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.motionClarityKernel, _state.metadata);
         final manualThreshold = ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.motionClarityThreshold, _state.metadata);
         final kernel = preset == MotionClarityPreset.custom ? manualKernel : preset.defaultKernel;
@@ -1800,6 +1832,21 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
   }
 
   Widget _buildMotionClarityView() {
+    if (widget.player.playerType == 'tvmpv') {
+      return ListView(
+        children: [
+          for (final preset in MotionClarityPreset.values.where((value) => value != MotionClarityPreset.custom))
+            FocusableListTile(
+              title: Text(_motionPresetTitle(preset)),
+              subtitle: preset.interpolationEnabled
+                  ? Text(_neuralInterpolationPresetLabel(preset.tvMixerPreset))
+                  : null,
+              trailing: _motionPreset == preset ? AppIcon(Symbols.check_rounded, fill: 1) : null,
+              onTap: () => _selectMotionClarityPreset(preset),
+            ),
+        ],
+      );
+    }
     final primary = Theme.of(context).colorScheme.primary;
     final status = _motionStatus;
     final statusText = status == null
@@ -2525,6 +2572,16 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     NeuralInterpolationPreset.quality => t.settings.neuralInterpolationPresetQuality,
   };
 
+  NeuralInterpolationPreset _activeMotionPreset(Player player) {
+    final settings = SettingsService.instance;
+    if (player is PlayerSystem &&
+        player.playerType == 'tvmpv' &&
+        !settings.prefs.containsKey(SettingsService.neuralInterpolationPreset.key)) {
+      return ScopedPlayerPrefs.resolve(ScopedPlayerPrefs.motionClarityPreset, _state.metadata).tvMixerPreset;
+    }
+    return settings.read(SettingsService.neuralInterpolationPreset);
+  }
+
   void _setMotionProcessingMode(MotionProcessingMode mode) {
     final targetPlayer = widget.player;
     final pref = SettingsService.motionProcessingMode;
@@ -2536,14 +2593,12 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
         rendererAvailable &&
         (mode == MotionProcessingMode.off ||
             MotionProcessingService.canChangeLive(targetPlayer, mode: mode, isLive: _state.isLive));
-    final deferUntilNextPlayback = rendererAvailable && mode != MotionProcessingMode.off && !canApplyNow;
-    final apply = canApplyNow
-        ? (MotionProcessingMode value) => MotionProcessingService.apply(
-            targetPlayer,
-            value,
-            neuralPreset: SettingsService.instance.read(SettingsService.neuralInterpolationPreset),
-          )
-        : null;
+    if (!canApplyNow) {
+      showAppSnackBar(context, t.settings.motionSmoothingUnavailableDescription);
+      return;
+    }
+    Future<void> apply(MotionProcessingMode value) =>
+        MotionProcessingService.apply(targetPlayer, value, neuralPreset: _activeMotionPreset(targetPlayer));
     final writeToken = _prefWrites.begin(pref.key);
     unawaited(() async {
       try {
@@ -2556,7 +2611,6 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
         setState(() {
           _motionProcessingMode = mode;
         });
-        if (deferUntilNextPlayback) showAppSnackBar(context, t.settings.motionSmoothingNextPlayback);
         OverlaySheetController.of(context).close();
       } catch (error, stackTrace) {
         appLogger.w('Failed to update motion processing', error: error, stackTrace: stackTrace);
@@ -2583,50 +2637,58 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
               : null,
           onTap: () => _setMotionProcessingMode(mode),
         ),
-      if (_motionProcessingMode == MotionProcessingMode.neural) ...[
+      if (_motionProcessingMode == MotionProcessingMode.neural ||
+          (widget.player.playerType == 'tvmpv' && _motionProcessingMode == MotionProcessingMode.mpv)) ...[
         SettingSelectionTile<NeuralInterpolationPreset>(
           pref: SettingsService.neuralInterpolationPreset,
           icon: Symbols.tune_rounded,
-          title: t.settings.neuralInterpolationPresets,
+          title: widget.player.playerType == 'tvmpv'
+              ? t.videoSettings.motionClarity
+              : t.settings.neuralInterpolationPresets,
+          defaultValue: _activeMotionPreset(widget.player),
           subtitleBuilder: _neuralInterpolationPresetLabel,
           onAfterWrite: (preset) async {
             if (MotionProcessingService.canChangeLive(
                   widget.player,
-                  mode: MotionProcessingMode.neural,
+                  mode: _motionProcessingMode,
                   isLive: _state.isLive,
                 ) &&
-                _motionProcessingMode == MotionProcessingMode.neural) {
-              final previousPreset = MotionProcessingService.activeNeuralPresetForPlayer(widget.player);
+                _motionProcessingMode != MotionProcessingMode.off) {
+              final previousPreset = MotionProcessingService.activeMotionPresetForPlayer(widget.player);
               try {
-                await MotionProcessingService.apply(widget.player, MotionProcessingMode.neural, neuralPreset: preset);
+                await MotionProcessingService.apply(widget.player, _motionProcessingMode, neuralPreset: preset);
               } catch (error, stackTrace) {
                 appLogger.w('Failed to change the active Neural preset', error: error, stackTrace: stackTrace);
               }
-              if (MotionProcessingService.activeNeuralPresetForPlayer(widget.player) != preset) {
+              if (MotionProcessingService.activeMotionPresetForPlayer(widget.player) != preset) {
                 if (previousPreset != null) {
                   await SettingsService.instance.write(SettingsService.neuralInterpolationPreset, previousPreset);
                 }
                 if (mounted) showErrorSnackBar(context, t.settings.motionSmoothingApplyFailed);
               }
             } else if (MotionProcessingService.supportsPlayer(widget.player) &&
-                _motionProcessingMode == MotionProcessingMode.neural) {
-              showAppSnackBar(context, t.settings.motionSmoothingNextPlayback);
+                _motionProcessingMode != MotionProcessingMode.off) {
+              showAppSnackBar(context, t.settings.motionSmoothingUnavailableDescription);
             }
           },
           options: NeuralInterpolationPreset.values
               .map((preset) => DialogOption(value: preset, title: _neuralInterpolationPresetLabel(preset)))
               .toList(growable: false),
         ),
-        SettingSwitchTile(
-          pref: SettingsService.neuralOnlyWhenPluggedIn,
-          icon: Symbols.power_settings_new_rounded,
-          title: t.settings.neuralOnlyWhenPluggedIn,
-          subtitle: t.settings.neuralOnlyWhenPluggedInDescription,
-          onAfterWrite: (_) async {
-            await MotionProcessingService.refreshPowerPolicyForPlayer(widget.player);
-            if (mounted) showAppSnackBar(context, t.settings.motionSmoothingNextPlayback);
-          },
-        ),
+        if (widget.player.playerType != 'tvmpv')
+          SettingSwitchTile(
+            pref: SettingsService.neuralOnlyWhenPluggedIn,
+            icon: Symbols.power_settings_new_rounded,
+            title: t.settings.neuralOnlyWhenPluggedIn,
+            subtitle: t.settings.neuralOnlyWhenPluggedInDescription,
+            onAfterWrite: (_) async {
+              await MotionProcessingService.apply(
+                widget.player,
+                _motionProcessingMode,
+                neuralPreset: _activeMotionPreset(widget.player),
+              );
+            },
+          ),
       ],
     ],
   );

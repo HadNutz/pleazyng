@@ -1,5 +1,11 @@
 # Motion processing and neural playback
 
+## Live controls
+
+During eligible progressive on-demand playback, use the in-player motion controls to switch Off, MPV or Neural. Desktop MPV can attach its neural filter after playback starts. Android and Android-based Fire OS switch MPV video outputs on the existing player. On the Apple AVFoundation output, the player can switch its VideoToolbox processor or temporal mixer during playback. The Performance overlay reports the mixer when its filtered output reaches the expected cadence.
+
+LG and Samsung TV MPV accept live strength changes. Performance narrows the blend interval, Balanced uses FFmpeg’s defaults and Quality blends across the full frame interval. When LG uses its hardware video plane, the player prepares a paused filtered texture alongside it. It transfers the playhead, track selections, volume, speed and delays once the texture has a frame. A failed preroll keeps the existing plane playing. A TV mixer request can resolve to OpenCL or software. Confirm the executing provider in the overlay. These controls require an eligible source and player.
+
 ## Hardware paths tested on November 21, 2026
 
 | Player | Motion route and evidence |
