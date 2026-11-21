@@ -59,8 +59,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "perf(player): give downloads in app storage a demuxer read-ahead hysteresis (#3033)",
-      "disposition": "pending",
-      "evidence": "Add 0.5 s demuxer refill hysteresis only for eligible uncached app-owned downloads. Respect explicit mpv settings, avoid SAF/network/cloud streams, and reset the option when reusing a player. Keep the fork’s existing stream-ring and buffer budgets. [playback_open.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/video_player/parts/playback_open.dart) · [stream_buffer_sizing.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/utils/stream_buffer_sizing.dart)",
+      "disposition": "adapted",
+      "evidence": "Batch demuxer refills only for uncached app-owned downloads, respecting custom mpv options and resetting the property on subsequent opens.",
       "files": [
         "lib/screens/video_player/parts/playback_open.dart",
         "lib/screens/video_player_screen.dart",
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "pending": 11,
+    "pending": 10,
     "deferred": 1,
-    "adapted": 15,
+    "adapted": 16,
     "retained": 2
   }
 }

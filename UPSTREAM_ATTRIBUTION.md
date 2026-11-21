@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Batch demuxer refills only for uncached app-owned downloads, respecting custom mpv options and resetting the property on subsequent opens. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/3bf8c2752739a83cb5038fef9287bd6aac7d1e19) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Prefer precise 50/59.94/60 Hz modes for matching 25/29.97/30 fps video while preserving the existing frame-rate setting and motion-generated output path. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/e883c3ca5e170c2d5810c98d68803c586a97a270) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Register the video-only external display scene on supported iOS 27 SDKs and preserve the older scene-delegate path. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/23778fade45fc046cdd77d274d501dd0a0643e07) to upstream Plezy. Pleazyng integrated the behavior for this fork.
