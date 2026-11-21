@@ -769,7 +769,8 @@
       "author": "denizt",
       "state": "open",
       "title": "feat(metadata): add refresh metadata context menu item",
-      "decision": "Worth considering. A permission-aware per-item metadata refresh is distinct from metadata editing and library-wide refresh."
+      "decision": "Adapted in Pleazyng. Allow authorized Plex owners to refresh one item. Cache invalidation and detail updates check the selected server, session and settled item ID.",
+      "upstream_head": "8d2167d296e03218582d61174fc53ae96f10d297"
     },
     {
       "number": 3119,

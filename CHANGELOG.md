@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Allow authorized Plex owners to refresh one item. Cache invalidation and detail updates check the selected server, session and settled item ID. [denizt](https://github.com/denizt) proposed [Plezy PR #3118](https://github.com/edde746/plezy/pull/3118).
+
 - Apple TV users can choose static Top Shelf artwork for every profile. The extension and publisher honor the device setting alongside existing PIN and profile restrictions. [veresvit](https://github.com/veresvit) proposed [Plezy PR #3092](https://github.com/edde746/plezy/pull/3092).
 
 - Show a profile-scoped reconnect notice for permanently invalidated tracker sessions. Keep the encrypted vault and ordered credential writes, and clear the warning on sign-in or intentional disconnect. [NoahBK](https://github.com/NoahBK) proposed [Plezy PR #3058](https://github.com/edde746/plezy/pull/3058).
