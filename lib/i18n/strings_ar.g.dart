@@ -66,6 +66,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$ar dialog = _Translations$dialog$ar._(_root);
 	@override late final _Translations$profiles$ar profiles = _Translations$profiles$ar._(_root);
 	@override late final _Translations$connections$ar connections = _Translations$connections$ar._(_root);
+	@override late final _Translations$iptv$ar iptv = _Translations$iptv$ar._(_root);
 	@override late final _Translations$accountPreferences$ar accountPreferences = _Translations$accountPreferences$ar._(_root);
 	@override late final _Translations$discover$ar discover = _Translations$discover$ar._(_root);
 	@override late final _Translations$errors$ar errors = _Translations$errors$ar._(_root);
@@ -1675,6 +1676,30 @@ class _Translations$connections$ar extends Translations$connections$en {
 	@override String get signInAgain => 'اكتب مرة أخرى';
 	@override String editMediaBrowserTitle({required Object product}) => 'تحرير ${product} الاتصال';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير.';
+}
+
+// Path: iptv
+class _Translations$iptv$ar extends Translations$iptv$en {
+	_Translations$iptv$ar._(TranslationsAr root) : this._root = root, super.internal(root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'ترتيب القنوات';
+	@override String get orderChanged => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.';
+	@override String get localPlaylist => 'ملف M3U';
+	@override String get pastePlaylist => 'لصق نص قائمة التشغيل';
+	@override String get playlistBase => 'عنوان أساسي للروابط النسبية (اختياري)';
+	@override String get localPlaylistHelp => 'استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.';
+	@override String get showMatches => 'إظهار القنوات المطابقة';
+	@override String get hideMatches => 'إخفاء القنوات المطابقة';
+	@override String get pickerCredit => 'مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين';
+	@override String get exportPrivate => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.';
+	@override String get dynamicStreamExport => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.';
+	@override String get moveUp => 'تحرك إلى الأعلى';
+	@override String get moveDown => 'تحرك إلى أسفل';
+	@override String get choosePlaylist => 'اختيار ملف Playlist';
+	@override String affectedChannels({required Object count}) => 'القنوات · ${count}';
 }
 
 // Path: accountPreferences
@@ -7131,6 +7156,21 @@ extension on TranslationsAr {
 			'connections.signInAgain' => 'اكتب مرة أخرى',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'تحرير ${product} الاتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير.',
+			'iptv.lineupOrder' => 'ترتيب القنوات',
+			'iptv.orderChanged' => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.',
+			'iptv.localPlaylist' => 'ملف M3U',
+			'iptv.pastePlaylist' => 'لصق نص قائمة التشغيل',
+			'iptv.playlistBase' => 'عنوان أساسي للروابط النسبية (اختياري)',
+			'iptv.localPlaylistHelp' => 'استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.',
+			'iptv.showMatches' => 'إظهار القنوات المطابقة',
+			'iptv.hideMatches' => 'إخفاء القنوات المطابقة',
+			'iptv.pickerCredit' => 'مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين',
+			'iptv.exportPrivate' => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.',
+			'iptv.dynamicStreamExport' => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.',
+			'iptv.moveUp' => 'تحرك إلى الأعلى',
+			'iptv.moveDown' => 'تحرك إلى أسفل',
+			'iptv.choosePlaylist' => 'اختيار ملف Playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'القنوات · ${count}',
 			'accountPreferences.sectionTitle' => 'تفضيلات الحساب',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'تم حفظ خيارات الصوت والعنوان والمكتبة على ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'تم حفظ خيارات الصوت والعنوان والمكتبة على حسابات ${count}',
@@ -7280,6 +7320,8 @@ extension on TranslationsAr {
 			'discover.findNext.savedFeedback' => 'أُضيف إلى الاختيارات المحفوظة',
 			'discover.findNext.skippedFeedback' => 'تم التخطي حاليًا',
 			'discover.findNext.releaseToConfirm' => 'أفلت للتأكيد',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => 'عندما يكون التركيز على الغلاف: ← / → للاختيار · زر التحديد للتفاصيل · ↑ / ↓ لنقل التركيز',
 			'discover.studio' => 'الاستوديو',
 			'discover.rating' => 'تصنيف',
@@ -7295,8 +7337,6 @@ extension on TranslationsAr {
 			'discover.person.birthplace' => 'مكان الميلاد',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (العمر ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (العمر ${age})',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => 'البحث فشل: ${error}',
 			'errors.searchUnavailable' => 'لم تتمكن البحث من الوصول إلى أي خادم وسائل الإعلام.',
 			'errors.connectionTimeout' => ({required Object context}) => 'اتصال الوقت أثناء التحميل ${context}',
@@ -7794,6 +7834,8 @@ extension on TranslationsAr {
 			'collections.enterCollectionName' => 'إدخال اسم مجموعة',
 			'collections.addedToCollection' => 'إضافة إلى مجموعة',
 			'collections.errorAddingToCollection' => 'فشل في إضافة إلى المجموعة',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => 'مجموعة تم إنشاءها',
 			'collections.removeFromCollection' => 'إزالة من المجموعة',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'هل تريد إزالة «${title}» من هذه المجموعة؟',
@@ -7809,8 +7851,6 @@ extension on TranslationsAr {
 			'playlists.enterPlaylistName' => 'إدخال اسم playlist',
 			'playlists.delete' => 'حذف قائمة التشغيل',
 			'playlists.removeItem' => 'إزالة من قائمة التشغيل',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => 'لعبة ذكية',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(count, zero: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصر', one: 'عنصر واحد', two: 'عنصران', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عناصر', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصرًا', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصر', ), 
 			'playlists.emptyPlaylist' => 'هذه القائمة فارغة',
@@ -8308,6 +8348,8 @@ extension on TranslationsAr {
 			'performanceOverlay.tunneling' => 'النفقات',
 			'performanceOverlay.passthrough' => 'كسارة',
 			'performanceOverlay.aspect' => 'وجهة نظر',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => 'الدوران',
 			'performanceOverlay.dvSource' => 'مصدر DV',
 			'performanceOverlay.dvPath' => 'الطريق DV',
@@ -8323,8 +8365,6 @@ extension on TranslationsAr {
 			'performanceOverlay.sampleRate' => 'معدل العينة',
 			'performanceOverlay.pixelFormat' => 'بيكسل Fmt',
 			'performanceOverlay.hwFormat' => 'تنسيق العتاد',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => 'ماتريكس',
 			'performanceOverlay.primaries' => 'الأوائل',
 			'performanceOverlay.transfer' => 'نقل',
@@ -8822,6 +8862,8 @@ extension on TranslationsAr {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} صفوف: نقل، بطاقة بارزة، تنقّل تلقائي، إزالة',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'تنظيم صفوف ${library}',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'متابعة المشاهدة و${n} صفوف: نقل، مكتبة، رئيسية، بطاقة بارزة، تنقّل تلقائي',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => 'عرض كبطاقة بارزة',
 			'homeLayout.heroOnlySingleCollection' => 'متاح فقط عندما يعرض هذا الصف عناوين مجموعة واحدة مباشرةً',
 			'homeLayout.hero' => 'بطاقة بارزة',
@@ -8837,8 +8879,6 @@ extension on TranslationsAr {
 			'homeLayout.continueWatching' => 'متابعة المشاهدة',
 			'homeLayout.continueWatchingLibraryDescription' => 'صف استئناف المشاهدة الخاص بهذه المكتبة',
 			'homeLayout.continueWatchingHomeDescription' => 'صف استئناف المشاهدة المعروض في الصفحة الرئيسية',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => 'صف الحلقة التالية غير المشاهدة، ويظهر بشكل منفصل في الصفحة الرئيسية',
 			'homeLayout.library' => 'المكتبة',
 			'homeLayout.showInRecommended' => 'إظهار ضمن توصيات المكتبة',
@@ -9336,6 +9376,8 @@ extension on TranslationsAr {
 			'audiobook.apply' => 'تطبيق',
 			'audiobook.customSleep' => 'ساعات النوم المخصصة',
 			'audiobook.sleepMinutes' => 'الدقائق (1 – 1440)',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepChapters' => ({required Object count}) => 'توقف بعد ${count} الفصول',
 			'audiobook.extendSleep' => 'إضافة 5 دقائق',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'موعد النوم: ${time}',
@@ -9351,8 +9393,6 @@ extension on TranslationsAr {
 			'audiobook.statusNew' => 'لم يبدأ',
 			'audiobook.statusProgress' => 'في التقدم',
 			'audiobook.statusFinished' => 'الانتهاء',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => 'اذهب إلى الزمن',
 			'audiobook.timeHelp' => 'ساعات: دقائق: ثواني، أو دقائق: ثواني',
 			'audiobook.recoveryHelp' => 'تصدير نسخة مشفرة مؤخرا قبل نقل أو إصلاح بيانات المزامنة.يتم دمج الواردات مع الحالة الحالية؛ أنها لا تحل محل تاريخ المزامن المحلي.',
@@ -9850,6 +9890,8 @@ extension on TranslationsAr {
 			'musicTools.loudnessRequested' => 'تم إرسال طلب التحليل',
 			'musicTools.loudnessUnsupported' => 'إصدار الخادم لا يدعم طلب التحليل',
 			'musicTools.serverHistory' => 'سجل التشغيل على الخادم',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.nfcWrite' => 'كتابة علامة NFC',
 			'musicTools.nfcRead' => 'مسح علامة NFC',
 			'musicTools.nfcPrompt' => 'قرّب علامة NFC قابلة للكتابة من هاتفك.',
@@ -9865,8 +9907,6 @@ extension on TranslationsAr {
 			'musicTools.promptHint' => 'صف الموسيقى التي تريدها',
 			'musicTools.noHistory' => 'لا توجد موسيقى لعرضها بعد',
 			'musicTools.historyHint' => 'سجل التشغيل لهذا الملف الشخصي',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.days' => 'أيام',
 			'musicTools.albumBlocks' => 'إبقاء الألبومات كاملة معًا',
 			'musicTools.home' => 'الموسيقى',

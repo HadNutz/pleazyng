@@ -131,7 +131,7 @@ void main() {
     });
 
     test('transfer namespace maps cached metadata back to the public server identity', () async {
-      final transferScope = buildPlexTransferScopeId(ServerId('srv'));
+      final transferScope = PlexTransferScopeId(ServerId('srv'));
       await cache.put(
         transferScope.cacheServerId,
         '/library/metadata/1',

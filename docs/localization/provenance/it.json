@@ -1,7 +1,7 @@
 {
   "locale": "it",
   "inherits": null,
-  "catalogSha256": "f76b844ab9d4433329ad30502c1fa92b65f95e015096e1fa3a702779bf611334",
+  "catalogSha256": "fe25566936adaa9f0457c7ca7b1a704d0ed0f1d68e2abac334903fec791f5017",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3688,7 +3688,22 @@
     "metadataEdit.metadataConflict": "fork-authored",
     "bookmarkMigration.unassigned": "assistant-generated-draft",
     "bookmarkMigration.assignToVersion": "assistant-generated-draft",
-    "podcasts.importSummary": "fork-authored"
+    "podcasts.importSummary": "fork-authored",
+    "iptv.affectedChannels": "fork-authored",
+    "iptv.choosePlaylist": "fork-authored",
+    "iptv.dynamicStreamExport": "fork-authored",
+    "iptv.exportPrivate": "fork-authored",
+    "iptv.hideMatches": "fork-authored",
+    "iptv.lineupOrder": "fork-authored",
+    "iptv.localPlaylist": "fork-authored",
+    "iptv.localPlaylistHelp": "fork-authored",
+    "iptv.moveDown": "fork-authored",
+    "iptv.moveUp": "fork-authored",
+    "iptv.orderChanged": "fork-authored",
+    "iptv.pastePlaylist": "fork-authored",
+    "iptv.pickerCredit": "fork-authored",
+    "iptv.playlistBase": "fork-authored",
+    "iptv.showMatches": "fork-authored"
   },
   "beforeIndependentQaCorrection": {
     "accessibility.reduceMotionHint": "m2m100-draft",

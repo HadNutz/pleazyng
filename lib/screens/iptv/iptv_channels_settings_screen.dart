@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
+import '../../services/file_picker_service.dart';
 import '../../iptv/iptv_models.dart';
 import '../../iptv/iptv_source_repository.dart';
 import '../../profiles/active_profile_provider.dart';
@@ -14,6 +17,7 @@ import '../../utils/snackbar_helper.dart';
 import '../../widgets/app_icon.dart';
 import '../../widgets/focused_scroll_scaffold.dart';
 import '../../widgets/optimized_media_image.dart';
+import 'iptv_lineup_order_screen.dart';
 
 class IptvChannelsSettingsScreen extends StatefulWidget {
   const IptvChannelsSettingsScreen({super.key, required this.profileId, required this.sourceId});
@@ -84,6 +88,82 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
         ))
           channel,
     ];
+  }
+
+  Future<void> _lineupAction(String action) async {
+    final profileId = widget.profileId;
+    if (profileId == null || _loading || _savingChannelId != null) return;
+    final repository = context.read<IptvSourceRepository>();
+    setState(() => _savingChannelId = '');
+    try {
+      if (action == 'm3u' || action == 'xml') {
+        final guide = action == 'xml';
+        final ids = {for (final channel in _filteredChannels) channel.id};
+        if (!guide) {
+          final accepted = await showDialog<bool>(
+            context: context,
+            builder: (dialog) => AlertDialog(
+              title: Text('${t.subtitleAiUi.export} M3U'),
+              content: Text(t.iptv.exportPrivate),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(t.common.cancel)),
+                FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(t.subtitleAiUi.export)),
+              ],
+            ),
+          );
+          if (accepted != true || !mounted) return;
+        }
+        final contents = await repository.exportLineup(profileId, widget.sourceId, ids, guide: guide);
+        if (!mounted) return;
+        await FilePickerService.instance.saveFile(
+          fileName: guide ? 'pleazyng-guide.xml' : 'pleazyng-channels.m3u',
+          bytes: utf8.encode(contents),
+        );
+        return;
+      }
+      if (action == 'order') {
+        final original = [for (final channel in _channels) channel.id];
+        final order = await Navigator.of(
+          context,
+        ).push<List<String>>(MaterialPageRoute(builder: (_) => IptvLineupOrderScreen(channels: _channels)));
+        if (order == null || !mounted) return;
+        await repository.saveLineupOrder(profileId, widget.sourceId, original, order);
+      } else {
+        final hidden = action == 'hide';
+        final ids = [
+          for (final channel in _filteredChannels)
+            if (channel.hidden != hidden) channel.id,
+        ];
+        if (ids.isEmpty) return;
+        final accepted = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(hidden ? t.iptv.hideMatches : t.iptv.showMatches),
+            content: Text(t.iptv.affectedChannels(count: ids.length)),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: Text(t.common.cancel)),
+              FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(t.common.save)),
+            ],
+          ),
+        );
+        if (accepted != true || !mounted) return;
+        await repository.setChannelsHidden(profileId, widget.sourceId, ids, hidden);
+      }
+      await _load();
+    } on IptvImportException catch (error) {
+      if (mounted) {
+        showErrorSnackBar(context, switch (error.code) {
+          'source_changed' => t.iptv.orderChanged,
+          'dynamic_stream' => t.iptv.dynamicStreamExport,
+          _ => t.iptv.sourceInvalid,
+        });
+      }
+      await _load();
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, t.iptv.providerUnavailable);
+    } finally {
+      if (mounted) setState(() => _savingChannelId = null);
+    }
   }
 
   Future<void> _save(
@@ -267,9 +347,20 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
     return FocusedScrollScaffold(
       title: Text(t.iptv.manageChannels),
       actions: [
+        PopupMenuButton<String>(
+          enabled: !_loading && _savingChannelId == null && _channels.isNotEmpty,
+          onSelected: _lineupAction,
+          itemBuilder: (_) => [
+            PopupMenuItem(value: 'order', child: Text(t.iptv.lineupOrder)),
+            PopupMenuItem(value: 'show', child: Text(t.iptv.showMatches)),
+            PopupMenuItem(value: 'hide', child: Text(t.iptv.hideMatches)),
+            PopupMenuItem(value: 'm3u', child: Text('${t.subtitleAiUi.export} M3U')),
+            PopupMenuItem(value: 'xml', child: Text('${t.subtitleAiUi.export} XMLTV')),
+          ],
+        ),
         IconButton(
           tooltip: t.iptv.refresh,
-          onPressed: _loading ? null : _load,
+          onPressed: _loading || _savingChannelId != null ? null : _load,
           icon: const AppIcon(Symbols.refresh_rounded, fill: 1),
         ),
       ],
@@ -295,6 +386,12 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
                       ),
               ),
             ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(t.iptv.pickerCredit, style: Theme.of(context).textTheme.bodySmall),
           ),
         ),
         if (_loading)

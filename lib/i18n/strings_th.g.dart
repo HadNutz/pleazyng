@@ -66,6 +66,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$th dialog = _Translations$dialog$th._(_root);
 	@override late final _Translations$profiles$th profiles = _Translations$profiles$th._(_root);
 	@override late final _Translations$connections$th connections = _Translations$connections$th._(_root);
+	@override late final _Translations$iptv$th iptv = _Translations$iptv$th._(_root);
 	@override late final _Translations$accountPreferences$th accountPreferences = _Translations$accountPreferences$th._(_root);
 	@override late final _Translations$discover$th discover = _Translations$discover$th._(_root);
 	@override late final _Translations$errors$th errors = _Translations$errors$th._(_root);
@@ -1640,6 +1641,30 @@ class _Translations$connections$th extends Translations$connections$en {
 	@override String get signInAgain => 'ลงทะเบียนอีกครั้ง';
 	@override String editMediaBrowserTitle({required Object product}) => 'Edit ${product} การเชื่อมต่อ';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด';
+}
+
+// Path: iptv
+class _Translations$iptv$th extends Translations$iptv$en {
+	_Translations$iptv$th._(TranslationsTh root) : this._root = root, super.internal(root);
+
+	final TranslationsTh _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'ลำดับช่อง';
+	@override String get orderChanged => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง';
+	@override String get localPlaylist => 'ไฟล์ M3U';
+	@override String get pastePlaylist => 'วางข้อความเพลย์ลิสต์';
+	@override String get playlistBase => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)';
+	@override String get localPlaylistHelp => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้';
+	@override String get showMatches => 'แสดงช่องที่ตรงกัน';
+	@override String get hideMatches => 'ซ่อนช่องที่ตรงกัน';
+	@override String get pickerCredit => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา';
+	@override String get exportPrivate => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว';
+	@override String get dynamicStreamExport => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้';
+	@override String get moveUp => 'ขึ้นไป';
+	@override String get moveDown => 'การเคลื่อนไหวลง';
+	@override String get choosePlaylist => 'เลือกไฟล์ Playlist';
+	@override String affectedChannels({required Object count}) => 'ช่อง · ${count}';
 }
 
 // Path: accountPreferences
@@ -7006,6 +7031,21 @@ extension on TranslationsTh {
 			'connections.signInAgain' => 'ลงทะเบียนอีกครั้ง',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} การเชื่อมต่อ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด',
+			'iptv.lineupOrder' => 'ลำดับช่อง',
+			'iptv.orderChanged' => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง',
+			'iptv.localPlaylist' => 'ไฟล์ M3U',
+			'iptv.pastePlaylist' => 'วางข้อความเพลย์ลิสต์',
+			'iptv.playlistBase' => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)',
+			'iptv.localPlaylistHelp' => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้',
+			'iptv.showMatches' => 'แสดงช่องที่ตรงกัน',
+			'iptv.hideMatches' => 'ซ่อนช่องที่ตรงกัน',
+			'iptv.pickerCredit' => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา',
+			'iptv.exportPrivate' => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว',
+			'iptv.dynamicStreamExport' => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้',
+			'iptv.moveUp' => 'ขึ้นไป',
+			'iptv.moveDown' => 'การเคลื่อนไหวลง',
+			'iptv.choosePlaylist' => 'เลือกไฟล์ Playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'ช่อง · ${count}',
 			'accountPreferences.sectionTitle' => 'การตั้งค่าบัญชี',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'ออฟต์แวร์เสียงและตัวเลือกห้องสมุดที่บันทึกไว้บน ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'ออฟต์แวร์อัตโนมัติและตัวเลือกห้องสมุดที่บันทึกไว้ในบัญชี ${count}',
@@ -7155,6 +7195,8 @@ extension on TranslationsTh {
 			'discover.findNext.savedFeedback' => 'เพิ่มในรายการที่บันทึกแล้ว',
 			'discover.findNext.skippedFeedback' => 'ข้ามไปก่อนแล้ว',
 			'discover.findNext.releaseToConfirm' => 'ปล่อยเพื่อยืนยัน',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => 'เมื่อโฟกัสภาพปก: ← / → เลือก · ปุ่มเลือก: รายละเอียด · ↑ / ↓ ย้ายโฟกัส',
 			'discover.studio' => 'สตูดิโอ',
 			'discover.rating' => 'คะแนน',
@@ -7170,8 +7212,6 @@ extension on TranslationsTh {
 			'discover.person.birthplace' => 'สถานที่เกิด',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (อายุ ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (อายุ ${age})',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => 'ค้นหาล้มเหลว: ${error}',
 			'errors.searchUnavailable' => 'ค้นหาไม่สามารถเข้าถึงเซิร์ฟเวอร์สื่อใด ๆ',
 			'errors.connectionTimeout' => ({required Object context}) => 'เวลาการเชื่อมต่อเมื่อโหลด ${context}',
@@ -7669,6 +7709,8 @@ extension on TranslationsTh {
 			'collections.enterCollectionName' => 'ระบุชื่อการเก็บรวบรวม',
 			'collections.addedToCollection' => 'เพิ่มเข้าสู่การเก็บเกี่ยว',
 			'collections.errorAddingToCollection' => 'ไม่สามารถเพิ่มเข้าสู่การเก็บเกี่ยว',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => 'การเก็บรวบรวม',
 			'collections.removeFromCollection' => 'การกําจัดจากการเก็บรวบรวม',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'นำ “${title}” ออกจากคอลเลกชันนี้หรือไม่',
@@ -7684,8 +7726,6 @@ extension on TranslationsTh {
 			'playlists.enterPlaylistName' => 'ชื่อ Playlist',
 			'playlists.delete' => 'ลบ Playlist',
 			'playlists.removeItem' => 'ลบออกจากเพลย์ลิสต์',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => 'การเล่นสมาร์ท',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('th'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} รายการ', ), 
 			'playlists.emptyPlaylist' => 'รายการเล่นนี้ว่างเปล่า',
@@ -8183,6 +8223,8 @@ extension on TranslationsTh {
 			'performanceOverlay.tunneling' => 'ทนเลอร์',
 			'performanceOverlay.passthrough' => 'โพสต์',
 			'performanceOverlay.aspect' => 'ความเห็น',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => 'การหมุน',
 			'performanceOverlay.dvSource' => 'หลักฐาน',
 			'performanceOverlay.dvPath' => 'สองเส้นทาง',
@@ -8198,8 +8240,6 @@ extension on TranslationsTh {
 			'performanceOverlay.sampleRate' => 'ตัวอย่างอัตรา',
 			'performanceOverlay.pixelFormat' => 'พิกเซล Fmt',
 			'performanceOverlay.hwFormat' => 'มณฑลสหรัฐอเมริกา',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => 'มะตริก',
 			'performanceOverlay.primaries' => 'หลัก',
 			'performanceOverlay.transfer' => 'การถ่ายโอน',
@@ -8697,6 +8737,8 @@ extension on TranslationsTh {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} เถว: การเคลื่อนไหว, สัตว์ประหลาด, การลบอัตโนมัติ, ลบ',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'จัดการ ${library} เถว',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} เกรด: การเคลื่อนไหว, ห้องสมุด, บ้าน, พระมหากษัตริย์, Auto-slide',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => 'Render ในฐานะที่เป็นการ์ดฮีโร่',
 			'homeLayout.heroOnlySingleCollection' => 'เท่านั้นสามารถใช้ได้เมื่อแถวนี้ได้รับการแก้ไขกับชื่อจริงของชุดเดียว',
 			'homeLayout.hero' => 'สัตว์เลี้ยง',
@@ -8712,8 +8754,6 @@ extension on TranslationsTh {
 			'homeLayout.continueWatching' => 'ดูต่อ',
 			'homeLayout.continueWatchingLibraryDescription' => 'เถื่อนขั้นสูงของห้องสมุดนี้เอง',
 			'homeLayout.continueWatchingHomeDescription' => 'เถื่อนขั้นตอนที่แสดงไว้ในบ้าน',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => 'ต่อไปไม่ได้รับการสังเกต episod sequence แสดงแยกต่างหากใน Home',
 			'homeLayout.library' => 'คลังสื่อ',
 			'homeLayout.showInRecommended' => 'แสดงในห้องสมุดแนะนํา',
@@ -9211,6 +9251,8 @@ extension on TranslationsTh {
 			'audiobook.apply' => 'ใบสมัคร',
 			'audiobook.customSleep' => 'ช่วงเวลาการนอนหลับ',
 			'audiobook.sleepMinutes' => 'นาที (1 - 1440)',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepChapters' => ({required Object count}) => 'หยุดหลังจาก ${count} ประเภท',
 			'audiobook.extendSleep' => 'เพิ่ม 5 นาที',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'เวลานอน: ${time}',
@@ -9226,8 +9268,6 @@ extension on TranslationsTh {
 			'audiobook.statusNew' => 'ไม่เริ่มต้น',
 			'audiobook.statusProgress' => 'ในขั้นตอน',
 			'audiobook.statusFinished' => 'เสร็จ',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => 'ไปยัง เวลา',
 			'audiobook.timeHelp' => 'ชั่วโมง:นาที:วินาทีหรือนาที:วินาที',
 			'audiobook.recoveryHelp' => 'Export a recent encrypted copy before moving or repairing sync data. นําเข้ามาพร้อมกับสถานะปัจจุบัน พวกเขาไม่เคยแทนที่ประวัติการซิงค์ในท้องถิ่น ให้รหัสซิงโครแยกกัน',
@@ -9725,6 +9765,8 @@ extension on TranslationsTh {
 			'musicTools.loudnessRequested' => 'ส่งคำขอวิเคราะห์แล้ว',
 			'musicTools.loudnessUnsupported' => 'เซิร์ฟเวอร์เวอร์ชันนี้ไม่รองรับคำขอวิเคราะห์',
 			'musicTools.serverHistory' => 'ประวัติการเล่นบนเซิร์ฟเวอร์',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.nfcWrite' => 'เขียนแท็ก NFC',
 			'musicTools.nfcRead' => 'สแกนแท็ก NFC',
 			'musicTools.nfcPrompt' => 'นำแท็ก NFC ที่เขียนได้มาไว้ใกล้โทรศัพท์',
@@ -9740,8 +9782,6 @@ extension on TranslationsTh {
 			'musicTools.promptHint' => 'อธิบายเพลงที่ต้องการ',
 			'musicTools.noHistory' => 'ยังไม่มีเพลงให้แสดง',
 			'musicTools.historyHint' => 'ประวัติการเล่นของโปรไฟล์นี้',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.days' => 'วัน',
 			'musicTools.albumBlocks' => 'เก็บอัลบั้มทั้งชุดไว้ด้วยกัน',
 			'musicTools.home' => 'เพลง',

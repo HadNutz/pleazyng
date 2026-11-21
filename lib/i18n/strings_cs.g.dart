@@ -66,6 +66,7 @@ class TranslationsCs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$cs dialog = _Translations$dialog$cs._(_root);
 	@override late final _Translations$profiles$cs profiles = _Translations$profiles$cs._(_root);
 	@override late final _Translations$connections$cs connections = _Translations$connections$cs._(_root);
+	@override late final _Translations$iptv$cs iptv = _Translations$iptv$cs._(_root);
 	@override late final _Translations$accountPreferences$cs accountPreferences = _Translations$accountPreferences$cs._(_root);
 	@override late final _Translations$discover$cs discover = _Translations$discover$cs._(_root);
 	@override late final _Translations$errors$cs errors = _Translations$errors$cs._(_root);
@@ -1659,6 +1660,30 @@ class _Translations$connections$cs extends Translations$connections$en {
 	@override String get signInAgain => 'Podepisujte se znovu';
 	@override String editMediaBrowserTitle({required Object product}) => 'Edit ${product} připojení';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Přidat nebo odstranit URL pro ${serverName}. Pleazyng bude používat přístupné URL s nejnižší latencí.';
+}
+
+// Path: iptv
+class _Translations$iptv$cs extends Translations$iptv$en {
+	_Translations$iptv$cs._(TranslationsCs root) : this._root = root, super.internal(root);
+
+	final TranslationsCs _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Pořadí kanálů';
+	@override String get orderChanged => 'Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.';
+	@override String get localPlaylist => 'Soubor M3U';
+	@override String get pastePlaylist => 'Vložit text playlistu';
+	@override String get playlistBase => 'Základní URL pro relativní odkazy (volitelné)';
+	@override String get localPlaylistHelp => 'Importujte soukromou kopii seznamu kanálů M3U nebo M3U8. Můžete ji nahradit jiným souborem.';
+	@override String get showMatches => 'Zobrazit odpovídající kanály';
+	@override String get hideMatches => 'Skrýt odpovídající kanály';
+	@override String get pickerCredit => 'Inspirováno projektem · M3U Web Picker · Zachary Schmook (@zschmook) a přispěvatelé';
+	@override String get exportPrivate => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.';
+	@override String get dynamicStreamExport => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.';
+	@override String get moveUp => 'Přemístěte se';
+	@override String get moveDown => 'Přemístěte se dolů';
+	@override String get choosePlaylist => 'Vyberte soubor playlist';
+	@override String affectedChannels({required Object count}) => 'Kanály · ${count}';
 }
 
 // Path: accountPreferences
@@ -7075,6 +7100,21 @@ extension on TranslationsCs {
 			'connections.signInAgain' => 'Podepisujte se znovu',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} připojení',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Přidat nebo odstranit URL pro ${serverName}. Pleazyng bude používat přístupné URL s nejnižší latencí.',
+			'iptv.lineupOrder' => 'Pořadí kanálů',
+			'iptv.orderChanged' => 'Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.',
+			'iptv.localPlaylist' => 'Soubor M3U',
+			'iptv.pastePlaylist' => 'Vložit text playlistu',
+			'iptv.playlistBase' => 'Základní URL pro relativní odkazy (volitelné)',
+			'iptv.localPlaylistHelp' => 'Importujte soukromou kopii seznamu kanálů M3U nebo M3U8. Můžete ji nahradit jiným souborem.',
+			'iptv.showMatches' => 'Zobrazit odpovídající kanály',
+			'iptv.hideMatches' => 'Skrýt odpovídající kanály',
+			'iptv.pickerCredit' => 'Inspirováno projektem · M3U Web Picker · Zachary Schmook (@zschmook) a přispěvatelé',
+			'iptv.exportPrivate' => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.',
+			'iptv.dynamicStreamExport' => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.',
+			'iptv.moveUp' => 'Přemístěte se',
+			'iptv.moveDown' => 'Přemístěte se dolů',
+			'iptv.choosePlaylist' => 'Vyberte soubor playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanály · ${count}',
 			'accountPreferences.sectionTitle' => 'účetní preference',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Možnosti audio, podtitulů a knihovny uložené na ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Možnosti audio, podtitulů a knihovny uložené na účtech ${count}',
@@ -7224,6 +7264,8 @@ extension on TranslationsCs {
 			'discover.findNext.savedFeedback' => 'Přidáno mezi uložené tipy',
 			'discover.findNext.skippedFeedback' => 'Zatím přeskočeno',
 			'discover.findNext.releaseToConfirm' => 'Uvolněním potvrďte',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => 'Vybraný obal: ← / → volba · Vybrat: podrobnosti · ↑ / ↓ přesun výběru',
 			'discover.studio' => 'Studio',
 			'discover.rating' => 'Hodnocení',
@@ -7239,8 +7281,6 @@ extension on TranslationsCs {
 			'discover.person.birthplace' => 'Místo narození',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (ve věku ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (stár ${age})',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => 'Vyhledávání selhalo: ${error}',
 			'errors.searchUnavailable' => 'Vyhledávání se nedá dostat na žádný mediální server.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Připojení do času při nabíjení ${context}',
@@ -7738,6 +7778,8 @@ extension on TranslationsCs {
 			'collections.enterCollectionName' => 'Vložte název kolekce',
 			'collections.addedToCollection' => 'Přidáno do sbírky',
 			'collections.errorAddingToCollection' => 'Nedokázal přidat do sbírky',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => 'Sbírka vytvořená',
 			'collections.removeFromCollection' => 'Odebrat z kolekce',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Odebrat „${title}“ z této kolekce?',
@@ -7753,8 +7795,6 @@ extension on TranslationsCs {
 			'playlists.enterPlaylistName' => 'Vložte název playlist',
 			'playlists.delete' => 'Odstranit seznam skladeb',
 			'playlists.removeItem' => 'Odebrat ze seznam skladeb',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => 'Inteligentní playlist',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('cs'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} položka', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} položky', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} položky', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} položek', ), 
 			'playlists.emptyPlaylist' => 'Tento playlist je prázdný',
@@ -8252,6 +8292,8 @@ extension on TranslationsCs {
 			'performanceOverlay.tunneling' => 'tunelů',
 			'performanceOverlay.passthrough' => 'Pastrátová',
 			'performanceOverlay.aspect' => 'Pohled',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => 'Rotace',
 			'performanceOverlay.dvSource' => 'Zdroj DV',
 			'performanceOverlay.dvPath' => 'Dva cesty',
@@ -8267,8 +8309,6 @@ extension on TranslationsCs {
 			'performanceOverlay.sampleRate' => 'Vzorkovací frekvence',
 			'performanceOverlay.pixelFormat' => 'Formát pixelu',
 			'performanceOverlay.hwFormat' => 'HMFF',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => 'Matrixová',
 			'performanceOverlay.primaries' => 'Primární',
 			'performanceOverlay.transfer' => 'Převod',
@@ -8766,6 +8806,8 @@ extension on TranslationsCs {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} řádky: pohyb, Hero, Auto-slide, odstranění',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Složení ${library} řádků',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Pokračovat v sledování + ${n} řádky: pohyb, knihovna, Domů, Hero, Auto-slide',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => 'Vstup jako hrdinská karta',
 			'homeLayout.heroOnlySingleCollection' => 'Dostupné pouze tehdy, když se tato řada vyřeší na skutečné tituly jedné kolekce',
 			'homeLayout.hero' => 'Hrdina',
@@ -8781,8 +8823,6 @@ extension on TranslationsCs {
 			'homeLayout.continueWatching' => 'Pokračovat ve sledování',
 			'homeLayout.continueWatchingLibraryDescription' => 'Tato knihovna má vlastní pokračovací řadu',
 			'homeLayout.continueWatchingHomeDescription' => 'Zpětná řada pokroku zobrazená na Home',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => 'Následující nedohlédnutý epizodový řádek zobrazen samostatně na Domů',
 			'homeLayout.library' => 'Knihovna',
 			'homeLayout.showInRecommended' => 'Představení v knihovně doporučeno',
@@ -9280,6 +9320,8 @@ extension on TranslationsCs {
 			'audiobook.apply' => 'aplikovat',
 			'audiobook.customSleep' => 'Přizpůsobený čas spánku',
 			'audiobook.sleepMinutes' => 'minuty (1 – 1440)',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepChapters' => ({required Object count}) => 'Zastavte se po ${count} kapitolách',
 			'audiobook.extendSleep' => 'Přidejte 5 minut',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Časovač spánku: ${time}',
@@ -9295,8 +9337,6 @@ extension on TranslationsCs {
 			'audiobook.statusNew' => 'Nezačíná',
 			'audiobook.statusProgress' => 'V pokroku',
 			'audiobook.statusFinished' => 'Dokončené',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => 'Jděte do času',
 			'audiobook.timeHelp' => 'Hodiny: minuty: sekundy nebo minuty: sekundy',
 			'audiobook.recoveryHelp' => 'Exportujte nedávnou šifrovanou kopii před přenesením nebo opravou synchronizačních dat. Importy se spojí s aktuálním stavem; nikdy nenahrazují místní historii synchromu.',
@@ -9794,6 +9834,8 @@ extension on TranslationsCs {
 			'musicTools.loudnessRequested' => 'Požadavek na analýzu byl odeslán',
 			'musicTools.loudnessUnsupported' => 'Tato verze serveru nepodporuje požadavky na analýzu',
 			'musicTools.serverHistory' => 'Historie přehrávání na serveru',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.nfcWrite' => 'Zapsat NFC štítek',
 			'musicTools.nfcRead' => 'Naskenovat značku NFC',
 			'musicTools.nfcPrompt' => 'Přiložte zapisovatelný NFC štítek k telefonu.',
@@ -9809,8 +9851,6 @@ extension on TranslationsCs {
 			'musicTools.promptHint' => 'Popište požadovanou hudbu',
 			'musicTools.noHistory' => 'Zatím není co zobrazit',
 			'musicTools.historyHint' => 'Historie přehrávání tohoto profilu',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.days' => 'Dny',
 			'musicTools.albumBlocks' => 'Ponechat celá alba pohromadě',
 			'musicTools.home' => 'Hudba',

@@ -67,6 +67,7 @@ class TranslationsZhHant extends TranslationsZh with BaseTranslations<AppLocale,
 	@override late final _Translations$dialog$zh_Hant dialog = _Translations$dialog$zh_Hant._(_root);
 	@override late final _Translations$profiles$zh_Hant profiles = _Translations$profiles$zh_Hant._(_root);
 	@override late final _Translations$connections$zh_Hant connections = _Translations$connections$zh_Hant._(_root);
+	@override late final _Translations$iptv$zh_Hant iptv = _Translations$iptv$zh_Hant._(_root);
 	@override late final _Translations$accountPreferences$zh_Hant accountPreferences = _Translations$accountPreferences$zh_Hant._(_root);
 	@override late final _Translations$discover$zh_Hant discover = _Translations$discover$zh_Hant._(_root);
 	@override late final _Translations$errors$zh_Hant errors = _Translations$errors$zh_Hant._(_root);
@@ -1646,6 +1647,30 @@ class _Translations$connections$zh_Hant extends Translations$connections$zh {
 	@override String get signInAgain => '重新登入';
 	@override String editMediaBrowserTitle({required Object product}) => '編輯 ${product} 連線';
 	@override String editMediaBrowserIntro({required Object serverName}) => '為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。';
+}
+
+// Path: iptv
+class _Translations$iptv$zh_Hant extends Translations$iptv$zh {
+	_Translations$iptv$zh_Hant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => '頻道順序';
+	@override String get orderChanged => '頻道順序已變更。請檢查後再試一次。';
+	@override String get localPlaylist => 'M3U 檔案';
+	@override String get pastePlaylist => '貼上播放清單文字';
+	@override String get playlistBase => '相對連結的基底 URL（選填）';
+	@override String get localPlaylistHelp => '匯入 M3U 或 M3U8 頻道清單的私人副本。可以選擇其他檔案取代。';
+	@override String get showMatches => '顯示相符的頻道';
+	@override String get hideMatches => '隱藏相符的頻道';
+	@override String get pickerCredit => '靈感來源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他貢獻者';
+	@override String get exportPrivate => '串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。';
+	@override String get dynamicStreamExport => '此入口每次播放都會產生新連結。您可以匯出節目指南。';
+	@override String get moveUp => '移動上';
+	@override String get moveDown => '移動下';
+	@override String get choosePlaylist => '選擇 Playlist 檔案';
+	@override String affectedChannels({required Object count}) => '頻道 · ${count}';
 }
 
 // Path: accountPreferences
@@ -7027,6 +7052,21 @@ extension on TranslationsZhHant {
 			'connections.signInAgain' => '重新登入',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '編輯 ${product} 連線',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。',
+			'iptv.lineupOrder' => '頻道順序',
+			'iptv.orderChanged' => '頻道順序已變更。請檢查後再試一次。',
+			'iptv.localPlaylist' => 'M3U 檔案',
+			'iptv.pastePlaylist' => '貼上播放清單文字',
+			'iptv.playlistBase' => '相對連結的基底 URL（選填）',
+			'iptv.localPlaylistHelp' => '匯入 M3U 或 M3U8 頻道清單的私人副本。可以選擇其他檔案取代。',
+			'iptv.showMatches' => '顯示相符的頻道',
+			'iptv.hideMatches' => '隱藏相符的頻道',
+			'iptv.pickerCredit' => '靈感來源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他貢獻者',
+			'iptv.exportPrivate' => '串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。',
+			'iptv.dynamicStreamExport' => '此入口每次播放都會產生新連結。您可以匯出節目指南。',
+			'iptv.moveUp' => '移動上',
+			'iptv.moveDown' => '移動下',
+			'iptv.choosePlaylist' => '選擇 Playlist 檔案',
+			'iptv.affectedChannels' => ({required Object count}) => '頻道 · ${count}',
 			'accountPreferences.sectionTitle' => '帳戶偏好設定',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '已在 ${account} 上儲存音訊、字幕與媒體庫選項',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '已在 ${count} 個帳戶上儲存音訊、字幕與媒體庫選項',
@@ -7176,6 +7216,8 @@ extension on TranslationsZhHant {
 			'discover.findNext.savedFeedback' => '已加入儲存的推薦',
 			'discover.findNext.skippedFeedback' => '已暫時略過',
 			'discover.findNext.releaseToConfirm' => '放開以確認',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => '封面取得焦點時：← / → 選擇 · 選取鍵查看詳細資訊 · ↑ / ↓ 移動焦點',
 			'discover.studio' => '製作商',
 			'discover.rating' => '分級',
@@ -7191,8 +7233,6 @@ extension on TranslationsZhHant {
 			'discover.person.birthplace' => '出生地',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date}（${age} 歲）',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date}（享年 ${age} 歲）',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => '搜尋失敗：${error}',
 			'errors.searchUnavailable' => '搜尋無法連線至任何媒體伺服器。',
 			'errors.connectionTimeout' => ({required Object context}) => '載入 ${context} 時連線逾時',
@@ -7690,6 +7730,8 @@ extension on TranslationsZhHant {
 			'collections.enterCollectionName' => '輸入收藏集名稱',
 			'collections.addedToCollection' => '已新增至收藏集',
 			'collections.errorAddingToCollection' => '新增至收藏集失敗',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => '已建立收藏集',
 			'collections.removeFromCollection' => '從收藏集移除',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '將「${title}」從此收藏集移除？',
@@ -7705,8 +7747,6 @@ extension on TranslationsZhHant {
 			'playlists.enterPlaylistName' => '輸入播放清單名稱',
 			'playlists.delete' => '刪除播放清單',
 			'playlists.removeItem' => '從播放清單中移除',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => '智慧播放清單',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}個項目', ), 
 			'playlists.emptyPlaylist' => '此播放清單為空',
@@ -8204,6 +8244,8 @@ extension on TranslationsZhHant {
 			'performanceOverlay.tunneling' => '通道模式',
 			'performanceOverlay.passthrough' => '直通',
 			'performanceOverlay.aspect' => '寬高比',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => '旋轉角度',
 			'performanceOverlay.dvSource' => 'DV 來源',
 			'performanceOverlay.dvPath' => 'DV 路徑',
@@ -8219,8 +8261,6 @@ extension on TranslationsZhHant {
 			'performanceOverlay.sampleRate' => '取樣率',
 			'performanceOverlay.pixelFormat' => '像素格式',
 			'performanceOverlay.hwFormat' => '硬體格式',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => '矩陣',
 			'performanceOverlay.primaries' => '基色',
 			'performanceOverlay.transfer' => '傳輸特性',
@@ -8718,6 +8758,8 @@ extension on TranslationsZhHant {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移動, 英雄, 自動滑動, 移除',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} 行',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '繼續觀看 + ${n} 行: 移動, 圖書館, 家, 英雄, 自動滑板',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => '顯示為焦點橫幅',
 			'homeLayout.heroOnlySingleCollection' => '只有當此行解決到單一集合的實際標題時才可用',
 			'homeLayout.hero' => '焦點橫幅',
@@ -8733,8 +8775,6 @@ extension on TranslationsZhHant {
 			'homeLayout.continueWatching' => '繼續觀看',
 			'homeLayout.continueWatchingLibraryDescription' => '圖書館的本質重建進展順序',
 			'homeLayout.continueWatchingHomeDescription' => '重新進展序列顯示在家',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => '下一篇 未觀看的集合序列在主頁上單獨顯示',
 			'homeLayout.library' => '媒體庫',
 			'homeLayout.showInRecommended' => '圖書館推薦',
@@ -9232,6 +9272,8 @@ extension on TranslationsZhHant {
 			'audiobook.apply' => '應用',
 			'audiobook.customSleep' => '定製睡眠時間',
 			'audiobook.sleepMinutes' => '時間(1 - 1440)',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepChapters' => ({required Object count}) => '播放完${count}章後停止',
 			'audiobook.extendSleep' => '新增5分鐘',
 			'audiobook.sleepRemaining' => ({required Object time}) => '睡眠時間: ${time}',
@@ -9247,8 +9289,6 @@ extension on TranslationsZhHant {
 			'audiobook.statusNew' => '沒有開始',
 			'audiobook.statusProgress' => '進展',
 			'audiobook.statusFinished' => '結束',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => '走到時間',
 			'audiobook.timeHelp' => '時間: 分鐘: 秒或 分鐘: 秒',
 			'audiobook.recoveryHelp' => '移動或修復同步資料前，請先匯出近期的加密備份。匯入資料會與目前狀態合併，不會取代本機同步記錄。請另外保存同步代碼。',
@@ -9746,6 +9786,8 @@ extension on TranslationsZhHant {
 			'musicTools.loudnessRequested' => '已送出分析要求',
 			'musicTools.loudnessUnsupported' => '此伺服器版本不支援分析要求',
 			'musicTools.serverHistory' => '伺服器播放記錄',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.nfcWrite' => '寫入 NFC 標籤',
 			'musicTools.nfcRead' => '掃描 NFC 標籤',
 			'musicTools.nfcPrompt' => '請將可寫入的 NFC 標籤靠近手機。',
@@ -9761,8 +9803,6 @@ extension on TranslationsZhHant {
 			'musicTools.promptHint' => '描述想聽的音樂',
 			'musicTools.noHistory' => '尚無可顯示的音樂',
 			'musicTools.historyHint' => '此個人檔案的播放記錄',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.days' => '天',
 			'musicTools.albumBlocks' => '保持專輯完整',
 			'musicTools.home' => '音樂',

@@ -12,6 +12,7 @@ import 'package:plezy/screens/settings/home_layout_settings_screen.dart';
 import 'package:plezy/services/data_aggregation_service.dart';
 import 'package:plezy/services/multi_server_manager.dart';
 import 'package:plezy/services/settings_service.dart';
+import 'package:plezy/theme/mono_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../../test_helpers/media_items.dart';
@@ -73,7 +74,9 @@ void main() {
           ChangeNotifierProvider<HiddenLibrariesProvider>.value(value: hidden),
           ChangeNotifierProvider<MultiServerProvider>.value(value: servers),
         ],
-        child: TranslationProvider(child: const MaterialApp(home: HomeLayoutSettingsScreen())),
+        child: TranslationProvider(
+          child: MaterialApp(theme: monoTheme(MonoPalette.dark), home: const HomeLayoutSettingsScreen()),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -82,6 +85,9 @@ void main() {
     await tester.tap(edit);
     await tester.pumpAndSettle();
     final box = find.text('Shared box');
+    final options = find.descendant(of: find.byType(AlertDialog), matching: find.byType(ListView));
+    await tester.drag(options, const Offset(0, -600));
+    await tester.pumpAndSettle();
     expect(box, findsOneWidget);
     await hidden.hideLibrary('s:a');
     await tester.pumpAndSettle();
@@ -92,6 +98,9 @@ void main() {
     expect(find.text('Movies b'), findsNothing);
     expect(box, findsNothing);
     servers.setVisibleServerIds({'s'});
+    await tester.pumpAndSettle();
+    expect(servers.onlineServerIds, contains('s'));
+    await tester.drag(options, const Offset(0, -600));
     await tester.pumpAndSettle();
     expect(box, findsOneWidget);
     await tester.pumpWidget(const SizedBox());

@@ -41,6 +41,7 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	TranslationsPtPt $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPtPt(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$iptv$pt_PT iptv = Translations$iptv$pt_PT.internal(_root);
 	@override late final Translations$appIcon$pt_PT appIcon = Translations$appIcon$pt_PT.internal(_root);
 	@override late final Translations$auth$pt_PT auth = Translations$auth$pt_PT.internal(_root);
 	@override late final Translations$common$pt_PT common = Translations$common$pt_PT.internal(_root);
@@ -106,6 +107,30 @@ class TranslationsPtPt extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$trakt$pt_PT trakt = Translations$trakt$pt_PT.internal(_root);
 	@override late final Translations$deepLinks$pt_PT deepLinks = Translations$deepLinks$pt_PT.internal(_root);
 	@override late final Translations$bookmarkMigration$pt_PT bookmarkMigration = Translations$bookmarkMigration$pt_PT.internal(_root);
+}
+
+// Path: iptv
+class Translations$iptv$pt_PT extends Translations$iptv$pt {
+	Translations$iptv$pt_PT.internal(TranslationsPtPt root) : this._root = root, super.internal(root);
+
+	final TranslationsPtPt _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Ordem dos canais';
+	@override String get orderChanged => 'A ordem dos canais mudou. Verifique e tente novamente.';
+	@override String get localPlaylist => 'Ficheiro M3U';
+	@override String get pastePlaylist => 'Colar o texto da lista de reprodução';
+	@override String get playlistBase => 'URL base para ligações relativas (opcional)';
+	@override String get localPlaylistHelp => 'Importe uma cópia privada de uma lista de canais M3U ou M3U8. Pode substituí-la por outro ficheiro.';
+	@override String get showMatches => 'Mostrar canais correspondentes';
+	@override String get hideMatches => 'Ocultar canais correspondentes';
+	@override String get pickerCredit => 'Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores';
+	@override String get exportPrivate => 'Os endereços das transmissões podem incluir credenciais do fornecedor. Guarde a lista num local privado.';
+	@override String get dynamicStreamExport => 'O portal cria uma nova ligação em cada reprodução. Pode exportar o guia.';
+	@override String get moveUp => 'Move em cima';
+	@override String get moveDown => 'Move abaixo';
+	@override String get choosePlaylist => 'Escolha o arquivo de playlist';
+	@override String affectedChannels({required Object count}) => 'Canais · ${count}';
 }
 
 // Path: appIcon
@@ -3722,6 +3747,21 @@ class Translations$services$pendingAuth$pt_PT extends Translations$services$pend
 extension on TranslationsPtPt {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.lineupOrder' => 'Ordem dos canais',
+			'iptv.orderChanged' => 'A ordem dos canais mudou. Verifique e tente novamente.',
+			'iptv.localPlaylist' => 'Ficheiro M3U',
+			'iptv.pastePlaylist' => 'Colar o texto da lista de reprodução',
+			'iptv.playlistBase' => 'URL base para ligações relativas (opcional)',
+			'iptv.localPlaylistHelp' => 'Importe uma cópia privada de uma lista de canais M3U ou M3U8. Pode substituí-la por outro ficheiro.',
+			'iptv.showMatches' => 'Mostrar canais correspondentes',
+			'iptv.hideMatches' => 'Ocultar canais correspondentes',
+			'iptv.pickerCredit' => 'Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores',
+			'iptv.exportPrivate' => 'Os endereços das transmissões podem incluir credenciais do fornecedor. Guarde a lista num local privado.',
+			'iptv.dynamicStreamExport' => 'O portal cria uma nova ligação em cada reprodução. Pode exportar o guia.',
+			'iptv.moveUp' => 'Move em cima',
+			'iptv.moveDown' => 'Move abaixo',
+			'iptv.choosePlaylist' => 'Escolha o arquivo de playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canais · ${count}',
 			'appIcon.defaultIcon' => 'Predefinição',
 			'appIcon.title' => 'Ícone da aplicação',
 			'appIcon.current' => 'Ícone atual',
@@ -4219,6 +4259,8 @@ extension on TranslationsPtPt {
 			'themeEditor.previewMutedText' => 'O texto secundário fica assim',
 			'search.people' => 'Pessoas',
 			'search.hint' => 'Pesquisar filmes, séries, músicas...',
+			_ => null,
+		} ?? switch (path) {
 			'search.tryDifferentTerm' => 'Tente um termo de pesquisa diferente',
 			'search.searchYourMedia' => 'Pesquisar o seu conteúdo multimédia',
 			'search.enterTitleActorOrKeyword' => 'Introduza um título, ator ou palavra-chave',
@@ -4234,8 +4276,6 @@ extension on TranslationsPtPt {
 			'hotkeys.actions.muteToggle' => 'Alternar silêncio',
 			'hotkeys.actions.subtitleToggle' => 'Alternar legendas',
 			'hotkeys.actions.audioTrackNext' => 'Próxima faixa de áudio',
-			_ => null,
-		} ?? switch (path) {
 			'hotkeys.actions.subtitleTrackNext' => 'Próxima faixa de legenda',
 			'hotkeys.actions.episodePrevious' => 'Episódio anterior',
 			'hotkeys.actions.speedIncrease' => 'Aumentar velocidade',
@@ -4733,6 +4773,8 @@ extension on TranslationsPtPt {
 			'accountPreferences.subtitleModes.onlyForcedDescription' => 'Carregar apenas as faixas marcadas como forçadas.',
 			'accountPreferences.subtitleModes.smart' => 'Mostrar com áudio estrangeiro',
 			'accountPreferences.subtitleModes.smartDescription' => 'Ativar legendas apenas quando o áudio estiver noutro idioma.',
+			_ => null,
+		} ?? switch (path) {
 			'accountPreferences.subtitleAccessibility' => 'Legendas SDH',
 			'accountPreferences.subtitleAccessibilityOptions.preferNonSdh' => 'Preferir legendas não SDH',
 			'accountPreferences.subtitleAccessibilityOptions.preferSdh' => 'Preferir legendas SDH',
@@ -4748,8 +4790,6 @@ extension on TranslationsPtPt {
 			'accountPreferences.hidePlayedInLatest' => 'Ocultar itens vistos em Recentes',
 			'accountPreferences.hidePlayedInLatestDescription' => 'Manter fora das linhas Recentes do servidor os itens que já viu.',
 			'accountPreferences.displayCollectionsView' => 'Mostrar a vista de Coleções',
-			_ => null,
-		} ?? switch (path) {
 			'accountPreferences.displayCollectionsViewDescription' => 'Oferecer a vista de Coleções do servidor juntamente com as suas bibliotecas.',
 			'accountPreferences.rewatchingInNextUp' => 'Manter em A seguir as séries que está a rever',
 			'accountPreferences.rewatchingInNextUpDescription' => 'Ao terminar uma série, comece a vê-la de novo e A seguir acompanha a nova visualização em vez de remover a série.',
@@ -5247,6 +5287,8 @@ extension on TranslationsPtPt {
 			'watchTogether.relayCustom' => ({required Object url}) => 'As salas usam o seu servidor de retransmissão em ${url}.',
 			'watchTogether.recentRooms' => 'Salas recentes',
 			'watchTogether.roomActions' => 'Ações da sala',
+			_ => null,
+		} ?? switch (path) {
 			'watchTogether.renameRoom' => 'Renomear sala',
 			'watchTogether.enterRoomCode' => 'Introduza o código de 6 caracteres do anfitrião.',
 			'watchTogether.roomCode' => 'Código da sala',
@@ -5262,8 +5304,6 @@ extension on TranslationsPtPt {
 			'watchTogether.connected' => 'Ligado',
 			'watchTogether.disconnected' => 'Desligado',
 			'watchTogether.youAreHost' => 'É o anfitrião',
-			_ => null,
-		} ?? switch (path) {
 			'watchTogether.hostedBy' => ({required Object name}) => 'Anfitrião: ${name}',
 			'watchTogether.hostControlsPlayback' => 'O anfitrião controla a reprodução',
 			'watchTogether.anyoneCanControl' => 'Qualquer pessoa pode controlar a reprodução',
@@ -5761,6 +5801,8 @@ extension on TranslationsPtPt {
 			'seerr.serverUrl' => 'URL do servidor',
 			'seerr.serverUrlHelper' => 'O endereço da sua instância do Seerr',
 			'seerr.checkServer' => 'Continuar',
+			_ => null,
+		} ?? switch (path) {
 			'seerr.signInWithJellyfin' => 'Iniciar sessão com o Jellyfin',
 			'seerr.signInWithEmby' => 'Iniciar sessão com o Emby',
 			'seerr.signInWithLocal' => 'Usar uma conta local',
@@ -5776,8 +5818,6 @@ extension on TranslationsPtPt {
 			'seerr.languageProfile' => 'Perfil de idioma',
 			'seerr.noTags' => 'Sem etiquetas',
 			'seerr.defaultOption' => ({required Object name}) => '${name} (predefinido)',
-			_ => null,
-		} ?? switch (path) {
 			'seerr.animeNote' => 'Esta série é um anime.',
 			'seerr.requestSubmitted' => 'Pedido enviado',
 			'seerr.requestFailed' => ({required Object error}) => 'Falha no pedido: ${error}',

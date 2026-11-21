@@ -62,6 +62,7 @@ class _IptvSourcesSettingsScreenState extends State<IptvSourcesSettingsScreen> {
   }
 
   String _kindName(IptvInputKind kind) => switch (kind) {
+    IptvInputKind.m3uFile => t.iptv.localPlaylist,
     IptvInputKind.m3u => t.iptv.m3u,
     IptvInputKind.xtream => t.iptv.xtream,
     IptvInputKind.tunerr => t.iptv.tunerr,

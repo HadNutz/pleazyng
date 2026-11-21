@@ -1659,6 +1659,21 @@ class Translations$iptv$fr extends Translations$iptv$en {
 	final TranslationsFr _root; // ignore: unused_field
 
 	// Translations
+	@override String get lineupOrder => 'Ordre des chaînes';
+	@override String get orderChanged => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.';
+	@override String get localPlaylist => 'Fichier M3U';
+	@override String get pastePlaylist => 'Coller le texte de la liste';
+	@override String get playlistBase => 'URL de base pour les liens relatifs (facultatif)';
+	@override String get localPlaylistHelp => 'Importez une copie privée d’une liste de chaînes M3U ou M3U8. Vous pouvez la remplacer par un autre fichier.';
+	@override String get showMatches => 'Afficher les chaînes correspondantes';
+	@override String get hideMatches => 'Masquer les chaînes correspondantes';
+	@override String get pickerCredit => 'Inspiré de · M3U Web Picker · Zachary Schmook (@zschmook) et des contributeurs';
+	@override String get exportPrivate => 'Les adresses des flux peuvent contenir vos identifiants. Enregistrez la liste dans un emplacement privé.';
+	@override String get dynamicStreamExport => 'Le portail crée un nouveau lien à chaque lecture. Vous pouvez exporter le guide.';
+	@override String get moveUp => 'Mouvement en haut';
+	@override String get moveDown => 'Mouvez-vous en bas';
+	@override String get choosePlaylist => 'Choisissez le fichier playlist';
+	@override String affectedChannels({required Object count}) => 'Chaînes · ${count}';
 	@override String get parentalPinRequired => 'Le verrouillage des chaînes nécessite un profil local protégé par un code PIN. Ajoutez un code PIN dans Profils pour utiliser le contrôle parental.';
 	@override String get allowHttp => 'Autoriser le HTTP non chiffré';
 	@override String get allowHttpDescription => 'À utiliser uniquement sur un réseau local de confiance. Préférez HTTPS lorsqu’il est disponible.';
@@ -7075,6 +7090,21 @@ extension on TranslationsFr {
 			'connections.signInAgain' => 'Se reconnecter',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Modifier la connexion ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Ajoutez ou retirez des URL pour ${serverName}. Pleazyng utilisera l\'URL joignable avec la latence la plus faible.',
+			'iptv.lineupOrder' => 'Ordre des chaînes',
+			'iptv.orderChanged' => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.',
+			'iptv.localPlaylist' => 'Fichier M3U',
+			'iptv.pastePlaylist' => 'Coller le texte de la liste',
+			'iptv.playlistBase' => 'URL de base pour les liens relatifs (facultatif)',
+			'iptv.localPlaylistHelp' => 'Importez une copie privée d’une liste de chaînes M3U ou M3U8. Vous pouvez la remplacer par un autre fichier.',
+			'iptv.showMatches' => 'Afficher les chaînes correspondantes',
+			'iptv.hideMatches' => 'Masquer les chaînes correspondantes',
+			'iptv.pickerCredit' => 'Inspiré de · M3U Web Picker · Zachary Schmook (@zschmook) et des contributeurs',
+			'iptv.exportPrivate' => 'Les adresses des flux peuvent contenir vos identifiants. Enregistrez la liste dans un emplacement privé.',
+			'iptv.dynamicStreamExport' => 'Le portail crée un nouveau lien à chaque lecture. Vous pouvez exporter le guide.',
+			'iptv.moveUp' => 'Mouvement en haut',
+			'iptv.moveDown' => 'Mouvez-vous en bas',
+			'iptv.choosePlaylist' => 'Choisissez le fichier playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Chaînes · ${count}',
 			'iptv.parentalPinRequired' => 'Le verrouillage des chaînes nécessite un profil local protégé par un code PIN. Ajoutez un code PIN dans Profils pour utiliser le contrôle parental.',
 			'iptv.allowHttp' => 'Autoriser le HTTP non chiffré',
 			'iptv.allowHttpDescription' => 'À utiliser uniquement sur un réseau local de confiance. Préférez HTTPS lorsqu’il est disponible.',
@@ -7224,6 +7254,8 @@ extension on TranslationsFr {
 			'discover.findNext.howItWorks' => 'Comment ça marche',
 			'discover.findNext.notNowHelp' => 'Passez ce titre pour le moment. Il reste dans votre bibliothèque.',
 			'discover.findNext.saveHelp' => 'Gardez-le dans les sélections enregistrées de ce profil sur cet appareil. Cela ne le télécharge pas.',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.openHelp' => 'Sélectionnez la couverture pour afficher les détails. Utilisez l’action principale pour lancer, lire ou ouvrir le titre.',
 			'discover.findNext.controlsHelp' => 'Clavier ou télécommande : sélectionnez un bouton, puis appuyez sur Entrée ou Sélectionner. Annuler rétablit votre dernier choix.',
 			'discover.findNext.artworkLoading' => 'Chargement de l’illustration…',
@@ -7239,8 +7271,6 @@ extension on TranslationsFr {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'Série TV',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min restantes',
-			_ => null,
-		} ?? switch (path) {
 			'discover.moreLikeThis' => 'Plus de contenus similaires',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titre', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titres', ), 
 			'discover.person.born' => 'Naissance',
@@ -7738,6 +7768,8 @@ extension on TranslationsFr {
 			'collections.deleteCollection' => 'Supprimer la collection',
 			'collections.deleteConfirm' => ({required Object title}) => 'Supprimer "${title}" ? Action irréversible.',
 			'collections.deleted' => 'Collection supprimée',
+			_ => null,
+		} ?? switch (path) {
 			'collections.deleteFailed' => 'Échec de la suppression de la collection',
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Échec de la suppression de la collection : ${error}',
 			'collections.selectCollection' => 'Sélectionner une collection',
@@ -7753,8 +7785,6 @@ extension on TranslationsFr {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Erreur lors du retrait de la collection : ${error}',
 			'collections.searchCollections' => 'Rechercher des collections...',
 			'playlists.title' => 'Playlists',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.playlist' => 'Playlist',
 			'playlists.noPlaylists' => 'Aucune playlist trouvée',
 			'playlists.create' => 'Créer une playlist',
@@ -8252,6 +8282,8 @@ extension on TranslationsFr {
 			'videoSettings.audioNormalizationDisablesPassthrough' => 'Décode l’audio en PCM ; la transmission directe est désactivée tant que cette option est active',
 			'performanceOverlay.color' => 'Couleur',
 			'performanceOverlay.performance' => 'Performances',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.buffer' => 'Tampon',
 			'performanceOverlay.app' => 'Application',
 			'performanceOverlay.decoder' => 'Décodeur',
@@ -8267,8 +8299,6 @@ extension on TranslationsFr {
 			'performanceOverlay.dvRouteBaseLayer' => 'Couche de base',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Couche de base HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Couche de base HLG',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Couche de base SDR',
 			'performanceOverlay.dvRouteReshaped' => 'Remodelage RPU (gpu-next)',
 			'performanceOverlay.dvRouteFelGraphActive' => 'Graphique expérimental P7 FEL (non qualifié)',
@@ -8766,6 +8796,8 @@ extension on TranslationsFr {
 			'homeLayout.syncAccountOn' => 'Sur : ce dispositif partage la commande de la ligne, les lignes, le héros et l\'automatisation avec vos autres appareils.',
 			'homeLayout.syncAccountOff' => 'Off : ce dispositif maintient son propre layout.',
 			'homeLayout.syncNow' => 'Synchronisation maintenant',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.plexHomeManager' => 'Plex Gestion de la maison',
 			'homeLayout.managePlexRows' => 'Gérer Plex rangs dans Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Ouvert pour organiser les lignes sélectionnées à domicile',
@@ -8781,8 +8813,6 @@ extension on TranslationsFr {
 			'homeLayout.autoSlideEditDescription' => 'Il se décline : il ne se déplace que lorsque vous cliquez sur une armoire (PC) ou pressez la gauche/droite sur la télévision (TV).',
 			'homeLayout.enableHeroFirst' => 'Un héros en premier',
 			'homeLayout.showOnHome' => 'Afficher sur l\'écran de maison',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.home' => 'Accueil',
 			'homeLayout.removeFromHome' => 'Retirez de chez vous',
 			'homeLayout.selectRowsFirst' => 'Sélectionnez les lignes de maison ci-dessous d\'abord.',
@@ -9280,6 +9310,8 @@ extension on TranslationsFr {
 			'audiobook.readingPosition' => ({required Object percent}) => 'Lire · ${percent}%',
 			'audiobook.chapterTimeline' => 'Chapitre Progrès',
 			'audiobook.bookTimeline' => 'L\'ensemble du livre progrès',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.bookRemaining' => ({required Object time}) => 'Le temps restant dans ce livre: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Le temps restant dans ce chapitre: ${time}',
 			'audiobook.unknownRemaining' => 'Temps total disponible lorsque les parties sont jouées',
@@ -9295,8 +9327,6 @@ extension on TranslationsFr {
 			'audiobook.useDefaults' => 'Utilisez ces contrôles d\'écoute pour de nouveaux livres',
 			'audiobook.librarySort' => 'Les livres sortants',
 			'audiobook.sortTitle' => 'Titre',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Auteur',
 			'audiobook.sortNarrator' => 'Narrateur',
 			'audiobook.sortSeries' => 'Commande série',
@@ -9794,6 +9824,8 @@ extension on TranslationsFr {
 			'musicExperience.signalPath' => 'Parcours du signal audio',
 			'musicExperience.source' => 'source',
 			'musicExperience.local' => 'Audio téléchargé',
+			_ => null,
+		} ?? switch (path) {
 			'musicExperience.network' => 'Audio du serveur',
 			'musicExperience.engine' => 'Moteur de lecture',
 			'musicExperience.codec' => 'Codec source',
@@ -9809,8 +9841,6 @@ extension on TranslationsFr {
 			'musicExperience.play' => 'Lire la sélection',
 			'musicExperience.next' => 'Lire ensuite',
 			'musicExperience.error' => 'La demande musicale a échoué',
-			_ => null,
-		} ?? switch (path) {
 			'musicExperience.on' => 'sur',
 			'musicExperience.off' => 'Désactivé',
 			'musicExperience.unknown' => 'Inconnu',

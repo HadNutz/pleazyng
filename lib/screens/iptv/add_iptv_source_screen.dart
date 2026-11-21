@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +11,7 @@ import '../../iptv/iptv_models.dart';
 import '../../iptv/iptv_source_repository.dart';
 import '../../profiles/active_profile_provider.dart';
 import '../../profiles/profile.dart';
+import '../../services/file_picker_service.dart';
 import '../../theme/mono_tokens.dart';
 import '../../widgets/app_icon.dart';
 import '../../widgets/focused_scroll_scaffold.dart';
@@ -36,6 +41,10 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
   final _dispatcharrApiEndpoint = TextEditingController();
   final _dispatcharrApiKey = TextEditingController();
   IptvInputKind _kind = IptvInputKind.m3u;
+  String? _playlistContents;
+  String? _playlistName;
+  bool _pastePlaylist = false;
+  bool _hasSavedFile = false;
   bool _allowHttp = false;
   bool _localTimeShiftEnabled = true;
   bool _busy = false;
@@ -70,6 +79,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
       setState(() {
         _name.text = config.displayName;
         _kind = config.kind;
+        _hasSavedFile = config.kind == IptvInputKind.m3uFile;
         _endpoint.text = config.endpoint;
         _guide.text = config.guideEndpoint;
         _additionalGuides.text = config.additionalGuideEndpoints.join('\n');
@@ -108,6 +118,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
 
   String get _typeHelp => switch (_kind) {
     IptvInputKind.m3u => t.iptv.m3uHelp,
+    IptvInputKind.m3uFile => t.iptv.localPlaylistHelp,
     IptvInputKind.xtream => t.iptv.xtreamHelp,
     IptvInputKind.tunerr => t.iptv.managedFeedHelp,
     IptvInputKind.dispatcharr => t.iptv.dispatcharrHelp,
@@ -130,12 +141,49 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
     };
   }
 
+  Future<void> _choosePlaylist() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      final result = await FilePickerService.instance.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['m3u', 'm3u8'],
+      );
+      if (result == null || !mounted) return;
+      final selected = result.files.single;
+      if (selected.size > IptvSourceRepository.maxPlaylistBytes) throw const FormatException();
+      final bytes = BytesBuilder(copy: false);
+      await for (final chunk in selected.xFile.openRead()) {
+        if (bytes.length + chunk.length > IptvSourceRepository.maxPlaylistBytes) throw const FormatException();
+        bytes.add(chunk);
+      }
+      final contents = utf8.decode(bytes.takeBytes());
+      if (mounted) {
+        setState(() {
+          _pastePlaylist = false;
+          _playlistContents = contents;
+          _playlistName = selected.name;
+          if (_name.text.trim().isEmpty) _name.text = selected.name;
+          _error = null;
+        });
+      }
+    } on Object {
+      if (mounted) setState(() => _error = t.iptv.invalidData);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _save() async {
     if (_saved) {
       Navigator.of(context).pop(true);
       return;
     }
     if (_busy || !(_formKey.currentState?.validate() ?? false)) return;
+    if (_kind == IptvInputKind.m3uFile && !_hasSavedFile && _playlistContents == null) {
+      setState(() => _error = t.iptv.choosePlaylist);
+      return;
+    }
     final profileId = _boundProfileId;
     if (profileId == null) {
       setState(() => _error = t.iptv.noActiveProfile);
@@ -155,6 +203,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
           displayName: _name.text,
           kind: _kind,
           endpoint: _endpoint.text,
+          playlistContents: _kind == IptvInputKind.m3uFile ? _playlistContents : null,
           guideEndpoint: _guide.text,
           additionalGuideEndpoints: _additionalGuides.text.split(RegExp(r'\r?\n')),
           username: _username.text,
@@ -187,6 +236,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
             localTimeShiftEnabled: _localTimeShiftEnabled,
             allowHttp: _allowHttp,
           ),
+          playlistContents: _kind == IptvInputKind.m3uFile ? _playlistContents : null,
         );
       }
       try {
@@ -263,6 +313,10 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
                       onChanged: _busy || _saved
                           ? null
                           : (value) => setState(() {
+                              if (_kind != value &&
+                                  (value == IptvInputKind.m3uFile || _kind == IptvInputKind.m3uFile)) {
+                                _endpoint.clear();
+                              }
                               _kind = value ?? _kind;
                               if (_kind != IptvInputKind.dispatcharr) {
                                 _dispatcharrApiEndpoint.clear();
@@ -288,16 +342,49 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
                       ),
                     ],
                     const SizedBox(height: 14),
+                    if (_kind == IptvInputKind.m3uFile) ...[
+                      OutlinedButton.icon(
+                        onPressed: _busy || _saved ? null : _choosePlaylist,
+                        icon: const AppIcon(Symbols.folder_open_rounded),
+                        label: Text(_playlistName ?? t.iptv.choosePlaylist),
+                      ),
+                      if (!_pastePlaylist)
+                        TextButton(
+                          onPressed: _busy || _saved
+                              ? null
+                              : () => setState(() {
+                                  _pastePlaylist = true;
+                                  _playlistName = null;
+                                  _playlistContents = null;
+                                }),
+                          child: Text(t.iptv.pastePlaylist),
+                        )
+                      else
+                        TextFormField(
+                          minLines: 3,
+                          maxLines: 6,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          enabled: !_busy && !_saved,
+                          decoration: InputDecoration(labelText: t.iptv.pastePlaylist, hintText: '#EXTM3U'),
+                          onChanged: (value) => _playlistContents = value.isEmpty ? null : value,
+                        ),
+                    ],
                     TextFormField(
                       controller: _endpoint,
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
-                        labelText: _kind == IptvInputKind.xtream ? t.iptv.xtreamEndpoint : t.iptv.endpoint,
+                        labelText: _kind == IptvInputKind.m3uFile
+                            ? t.iptv.playlistBase
+                            : _kind == IptvInputKind.xtream
+                            ? t.iptv.xtreamEndpoint
+                            : t.iptv.endpoint,
                         hintText: _kind == IptvInputKind.xtream ? 'https://provider.example' : 'https://…',
                         prefixIcon: const AppIcon(Symbols.link_rounded),
                       ),
-                      validator: (value) => (value?.trim().isEmpty ?? true) ? t.iptv.required : null,
+                      validator: (value) =>
+                          _kind != IptvInputKind.m3uFile && (value?.trim().isEmpty ?? true) ? t.iptv.required : null,
                     ),
                     if (_kind == IptvInputKind.xtream || _kind == IptvInputKind.dispatcharr) ...[
                       const SizedBox(height: 14),
@@ -409,6 +496,7 @@ class _AddIptvSourceScreenState extends State<AddIptvSourceScreen> {
 
   String _labelFor(IptvInputKind kind) => switch (kind) {
     IptvInputKind.m3u => t.iptv.m3u,
+    IptvInputKind.m3uFile => t.iptv.localPlaylist,
     IptvInputKind.xtream => t.iptv.xtream,
     IptvInputKind.tunerr => t.iptv.tunerr,
     IptvInputKind.dispatcharr => t.iptv.dispatcharr,

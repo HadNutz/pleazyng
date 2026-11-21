@@ -66,6 +66,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$vi dialog = _Translations$dialog$vi._(_root);
 	@override late final _Translations$profiles$vi profiles = _Translations$profiles$vi._(_root);
 	@override late final _Translations$connections$vi connections = _Translations$connections$vi._(_root);
+	@override late final _Translations$iptv$vi iptv = _Translations$iptv$vi._(_root);
 	@override late final _Translations$accountPreferences$vi accountPreferences = _Translations$accountPreferences$vi._(_root);
 	@override late final _Translations$discover$vi discover = _Translations$discover$vi._(_root);
 	@override late final _Translations$errors$vi errors = _Translations$errors$vi._(_root);
@@ -1640,6 +1641,30 @@ class _Translations$connections$vi extends Translations$connections$en {
 	@override String get signInAgain => 'Đăng ký lại';
 	@override String editMediaBrowserTitle({required Object product}) => 'Edit ${product} kết nối';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.';
+}
+
+// Path: iptv
+class _Translations$iptv$vi extends Translations$iptv$en {
+	_Translations$iptv$vi._(TranslationsVi root) : this._root = root, super.internal(root);
+
+	final TranslationsVi _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Thứ tự kênh';
+	@override String get orderChanged => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.';
+	@override String get localPlaylist => 'Tệp M3U';
+	@override String get pastePlaylist => 'Dán văn bản danh sách phát';
+	@override String get playlistBase => 'URL cơ sở cho liên kết tương đối (không bắt buộc)';
+	@override String get localPlaylistHelp => 'Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.';
+	@override String get showMatches => 'Hiện kênh phù hợp';
+	@override String get hideMatches => 'Ẩn kênh phù hợp';
+	@override String get pickerCredit => 'Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp';
+	@override String get exportPrivate => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.';
+	@override String get dynamicStreamExport => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.';
+	@override String get moveUp => 'chuyển lên';
+	@override String get moveDown => 'di chuyển xuống';
+	@override String get choosePlaylist => 'Chọn playlist file';
+	@override String affectedChannels({required Object count}) => 'Kênh · ${count}';
 }
 
 // Path: accountPreferences
@@ -7006,6 +7031,21 @@ extension on TranslationsVi {
 			'connections.signInAgain' => 'Đăng ký lại',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} kết nối',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.',
+			'iptv.lineupOrder' => 'Thứ tự kênh',
+			'iptv.orderChanged' => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.',
+			'iptv.localPlaylist' => 'Tệp M3U',
+			'iptv.pastePlaylist' => 'Dán văn bản danh sách phát',
+			'iptv.playlistBase' => 'URL cơ sở cho liên kết tương đối (không bắt buộc)',
+			'iptv.localPlaylistHelp' => 'Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.',
+			'iptv.showMatches' => 'Hiện kênh phù hợp',
+			'iptv.hideMatches' => 'Ẩn kênh phù hợp',
+			'iptv.pickerCredit' => 'Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp',
+			'iptv.exportPrivate' => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.',
+			'iptv.dynamicStreamExport' => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.',
+			'iptv.moveUp' => 'chuyển lên',
+			'iptv.moveDown' => 'di chuyển xuống',
+			'iptv.choosePlaylist' => 'Chọn playlist file',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kênh · ${count}',
 			'accountPreferences.sectionTitle' => 'Kế toán ưu tiên',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle và thư viện tùy chọn được lưu trên ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle và thư viện tùy chọn được lưu trên ${count} tài khoản',
@@ -7155,6 +7195,8 @@ extension on TranslationsVi {
 			'discover.findNext.savedFeedback' => 'Đã thêm vào các lựa chọn đã lưu',
 			'discover.findNext.skippedFeedback' => 'Đã tạm bỏ qua',
 			'discover.findNext.releaseToConfirm' => 'Thả để xác nhận',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => 'Khi chọn ảnh bìa: ← / → chọn · Nút Chọn: chi tiết · ↑ / ↓ chuyển tiêu điểm',
 			'discover.studio' => 'Hãng phim',
 			'discover.rating' => 'Đánh giá',
@@ -7170,8 +7212,6 @@ extension on TranslationsVi {
 			'discover.person.birthplace' => 'Địa điểm sinh',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} ( tuổi ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (trẻ ${age})',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => 'Tìm kiếm thất bại: ${error}',
 			'errors.searchUnavailable' => 'Tìm kiếm không thể truy cập bất kỳ máy chủ phương tiện nào.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Thời gian kết nối trong khi tải ${context}',
@@ -7669,6 +7709,8 @@ extension on TranslationsVi {
 			'collections.enterCollectionName' => 'Nhập tên bộ sưu tập',
 			'collections.addedToCollection' => 'Thêm vào Collection',
 			'collections.errorAddingToCollection' => 'Không thể thêm vào bộ sưu tập',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => 'Bộ sưu tập được tạo ra',
 			'collections.removeFromCollection' => 'Xóa khỏi bộ sưu tập',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Xóa “${title}” khỏi bộ sưu tập này?',
@@ -7684,8 +7726,6 @@ extension on TranslationsVi {
 			'playlists.enterPlaylistName' => 'Nhập tên playlist',
 			'playlists.delete' => 'Xóa Danh Sách Phát',
 			'playlists.removeItem' => 'Xóa khỏi danh sách phát',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => 'Đồ chơi thông minh',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} mục', ), 
 			'playlists.emptyPlaylist' => 'Danh sách game này trống',
@@ -8183,6 +8223,8 @@ extension on TranslationsVi {
 			'performanceOverlay.tunneling' => 'đường hầm',
 			'performanceOverlay.passthrough' => 'Truyền thẳng',
 			'performanceOverlay.aspect' => 'Khía cạnh',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => 'Xoay',
 			'performanceOverlay.dvSource' => 'Nguồn DV',
 			'performanceOverlay.dvPath' => 'Đường DV',
@@ -8198,8 +8240,6 @@ extension on TranslationsVi {
 			'performanceOverlay.sampleRate' => 'Tỷ lệ mẫu',
 			'performanceOverlay.pixelFormat' => 'Đánh giá Pixel Fmt',
 			'performanceOverlay.hwFormat' => 'Định dạng phần cứng',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => 'Ma trận',
 			'performanceOverlay.primaries' => 'nguyên nhân',
 			'performanceOverlay.transfer' => 'Chuyển đổi',
@@ -8697,6 +8737,8 @@ extension on TranslationsVi {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} hàng: di chuyển, Anh hùng, Auto-slide, loại bỏ',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Tổ chức ${library} hàng',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Tiếp tục xem + ${n} hàng: di chuyển, Thư viện, Nhà, Anh hùng, tự động-slide',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => 'Render như một thẻ anh hùng',
 			'homeLayout.heroOnlySingleCollection' => 'Chỉ có sẵn khi hàng này được giải quyết cho các tiêu đề thực tế của một bộ sưu tập duy nhất',
 			'homeLayout.hero' => 'Anh hùng',
@@ -8712,8 +8754,6 @@ extension on TranslationsVi {
 			'homeLayout.continueWatching' => 'Tiếp tục xem',
 			'homeLayout.continueWatchingLibraryDescription' => 'Thư viện bản thân của dòng tiến bộ',
 			'homeLayout.continueWatchingHomeDescription' => 'Lời bài hát: The Resume-Progress Trail Showed On Home',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => 'Next Unwatched episode series hiển thị riêng biệt trên Home',
 			'homeLayout.library' => 'Thư viện',
 			'homeLayout.showInRecommended' => 'Hiển thị trong Thư viện khuyến cáo',
@@ -9211,6 +9251,8 @@ extension on TranslationsVi {
 			'audiobook.apply' => 'Ứng dụng',
 			'audiobook.customSleep' => 'Thời gian giấc ngủ tùy chỉnh',
 			'audiobook.sleepMinutes' => 'Thời gian (1 – 1440)',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepChapters' => ({required Object count}) => 'Ngừng sau các chương ${count}',
 			'audiobook.extendSleep' => 'Thêm 5 phút',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Thời gian ngủ: ${time}',
@@ -9226,8 +9268,6 @@ extension on TranslationsVi {
 			'audiobook.statusNew' => 'Không bắt đầu',
 			'audiobook.statusProgress' => 'trong tiến bộ',
 			'audiobook.statusFinished' => 'Kết thúc',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => 'Đi đến thời gian',
 			'audiobook.timeHelp' => 'Thời gian: phút: giây, hoặc phút: giây',
 			'audiobook.recoveryHelp' => 'Xuất một bản sao được mã hóa gần đây trước khi di chuyển hoặc sửa chữa dữ liệu đồng bộ. nhập khẩu kết hợp với trạng thái hiện tại; họ không bao giờ thay thế lịch sử đồng bộ địa phương. Giữ mã đồng bộ riêng biệt.',
@@ -9725,6 +9765,8 @@ extension on TranslationsVi {
 			'musicTools.loudnessRequested' => 'Đã gửi yêu cầu phân tích',
 			'musicTools.loudnessUnsupported' => 'Phiên bản máy chủ này không hỗ trợ yêu cầu phân tích',
 			'musicTools.serverHistory' => 'Lịch sử phát trên máy chủ',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.nfcWrite' => 'Ghi thẻ NFC',
 			'musicTools.nfcRead' => 'Quét thẻ NFC',
 			'musicTools.nfcPrompt' => 'Đưa thẻ NFC có thể ghi lại gần điện thoại.',
@@ -9740,8 +9782,6 @@ extension on TranslationsVi {
 			'musicTools.promptHint' => 'Mô tả âm nhạc bạn muốn',
 			'musicTools.noHistory' => 'Chưa có nhạc để hiển thị',
 			'musicTools.historyHint' => 'Lịch sử phát của hồ sơ này',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.days' => 'Ngày',
 			'musicTools.albumBlocks' => 'Giữ nguyên album',
 			'musicTools.home' => 'Nhạc',

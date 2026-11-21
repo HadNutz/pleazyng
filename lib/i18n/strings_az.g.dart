@@ -66,6 +66,7 @@ class TranslationsAz extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$az dialog = _Translations$dialog$az._(_root);
 	@override late final _Translations$profiles$az profiles = _Translations$profiles$az._(_root);
 	@override late final _Translations$connections$az connections = _Translations$connections$az._(_root);
+	@override late final _Translations$iptv$az iptv = _Translations$iptv$az._(_root);
 	@override late final _Translations$accountPreferences$az accountPreferences = _Translations$accountPreferences$az._(_root);
 	@override late final _Translations$discover$az discover = _Translations$discover$az._(_root);
 	@override late final _Translations$errors$az errors = _Translations$errors$az._(_root);
@@ -1647,6 +1648,30 @@ class _Translations$connections$az extends Translations$connections$en {
 	@override String get signInAgain => 'Yenidən daxil ol';
 	@override String editMediaBrowserTitle({required Object product}) => '${product} qoşulmasını düzəliş et';
 	@override String editMediaBrowserIntro({required Object serverName}) => '${serverName} üçün URL-lər əlavə edin və ya silin. Pleazyng əlçatan olan ən aşağı gecikməli URL-i istifadə edəcək.';
+}
+
+// Path: iptv
+class _Translations$iptv$az extends Translations$iptv$en {
+	_Translations$iptv$az._(TranslationsAz root) : this._root = root, super.internal(root);
+
+	final TranslationsAz _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Kanalların sırası';
+	@override String get orderChanged => 'Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.';
+	@override String get localPlaylist => 'M3U faylı';
+	@override String get pastePlaylist => 'Pleylist mətnini yapışdır';
+	@override String get playlistBase => 'Nisbi keçidlər üçün əsas URL (istəyə bağlı)';
+	@override String get localPlaylistHelp => 'M3U və ya M3U8 kanal siyahısının şəxsi surətini idxal edin. Onu başqa faylla əvəz edə bilərsiniz.';
+	@override String get showMatches => 'Uyğun kanalları göstər';
+	@override String get hideMatches => 'Uyğun kanalları gizlət';
+	@override String get pickerCredit => 'İlham mənbəyi · M3U Web Picker · Zachary Schmook (@zschmook) və digər iştirakçılar';
+	@override String get exportPrivate => 'Yayım keçidlərində provayderin giriş məlumatları ola bilər. Siyahını şəxsi yerdə saxlayın.';
+	@override String get dynamicStreamExport => 'Portal hər oxutma üçün yeni keçid yaradır. Proqram bələdçisini ixrac edə bilərsiniz.';
+	@override String get moveUp => 'Yüksək';
+	@override String get moveDown => 'aşağı doğru hareket';
+	@override String get choosePlaylist => 'Playlist filləri seçin';
+	@override String affectedChannels({required Object count}) => 'Kanallar · ${count}';
 }
 
 // Path: accountPreferences
@@ -7031,6 +7056,21 @@ extension on TranslationsAz {
 			'connections.signInAgain' => 'Yenidən daxil ol',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} qoşulmasını düzəliş et',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} üçün URL-lər əlavə edin və ya silin. Pleazyng əlçatan olan ən aşağı gecikməli URL-i istifadə edəcək.',
+			'iptv.lineupOrder' => 'Kanalların sırası',
+			'iptv.orderChanged' => 'Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.',
+			'iptv.localPlaylist' => 'M3U faylı',
+			'iptv.pastePlaylist' => 'Pleylist mətnini yapışdır',
+			'iptv.playlistBase' => 'Nisbi keçidlər üçün əsas URL (istəyə bağlı)',
+			'iptv.localPlaylistHelp' => 'M3U və ya M3U8 kanal siyahısının şəxsi surətini idxal edin. Onu başqa faylla əvəz edə bilərsiniz.',
+			'iptv.showMatches' => 'Uyğun kanalları göstər',
+			'iptv.hideMatches' => 'Uyğun kanalları gizlət',
+			'iptv.pickerCredit' => 'İlham mənbəyi · M3U Web Picker · Zachary Schmook (@zschmook) və digər iştirakçılar',
+			'iptv.exportPrivate' => 'Yayım keçidlərində provayderin giriş məlumatları ola bilər. Siyahını şəxsi yerdə saxlayın.',
+			'iptv.dynamicStreamExport' => 'Portal hər oxutma üçün yeni keçid yaradır. Proqram bələdçisini ixrac edə bilərsiniz.',
+			'iptv.moveUp' => 'Yüksək',
+			'iptv.moveDown' => 'aşağı doğru hareket',
+			'iptv.choosePlaylist' => 'Playlist filləri seçin',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanallar · ${count}',
 			'accountPreferences.sectionTitle' => 'Hesab tərcihləri',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account} hesabında saxlanılan səs, altyazı və kitabxana seçimləri',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count} hesabda saxlanılan səs, altyazı və kitabxana seçimləri',
@@ -7180,6 +7220,8 @@ extension on TranslationsAz {
 			'discover.findNext.savedFeedback' => 'Saxlanmış seçimlərə əlavə edildi',
 			'discover.findNext.skippedFeedback' => 'Hələlik keçildi',
 			'discover.findNext.releaseToConfirm' => 'Təsdiqləmək üçün buraxın',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => 'Üz qabığı fokusda: ← / → seçin · Seçim düyməsi: təfərrüatlar · ↑ / ↓ fokusu dəyişin',
 			'discover.studio' => 'Studiya',
 			'discover.rating' => 'Reytinq',
@@ -7195,8 +7237,6 @@ extension on TranslationsAz {
 			'discover.person.birthplace' => 'Doğum yeri',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} yaş)',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} yaşında)',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => 'Axtarış uğursuz oldu: ${error}',
 			'errors.searchUnavailable' => 'Axtarış heç bir media serverinə çata bilmədi.',
 			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklənərkən vaxt bitdi',
@@ -7694,6 +7734,8 @@ extension on TranslationsAz {
 			'collections.enterCollectionName' => 'Kolleksiya adını daxil edin',
 			'collections.addedToCollection' => 'Kolleksiyaya əlavə edildi',
 			'collections.errorAddingToCollection' => 'Kolleksiyaya əlavə edilə bilmədi',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => 'Kolleksiya yaradıldı',
 			'collections.removeFromCollection' => 'Kolleksiyadan sil',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" bu kolleksiyadan silinsin?',
@@ -7709,8 +7751,6 @@ extension on TranslationsAz {
 			'playlists.enterPlaylistName' => 'Oynatma siyahısı adını daxil edin',
 			'playlists.delete' => 'Oynatma siyahısını sil',
 			'playlists.removeItem' => 'Oynatma siyahısından sil',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => 'Ağıllı oynatma siyahısı',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('az'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', ), 
 			'playlists.emptyPlaylist' => 'Bu oynatma siyahısı boşdur',
@@ -8208,6 +8248,8 @@ extension on TranslationsAz {
 			'performanceOverlay.tunneling' => 'Tünelləmə',
 			'performanceOverlay.passthrough' => 'Birbaşa ötürmə',
 			'performanceOverlay.aspect' => 'Nisbət',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => 'Dönmə',
 			'performanceOverlay.dvSource' => 'DV mənbəyi',
 			'performanceOverlay.dvPath' => 'DV yolu',
@@ -8223,8 +8265,6 @@ extension on TranslationsAz {
 			'performanceOverlay.sampleRate' => 'Diskretləşdirmə tezliyi',
 			'performanceOverlay.pixelFormat' => 'Piksel formatı',
 			'performanceOverlay.hwFormat' => 'HW formatı',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => 'Matrisa',
 			'performanceOverlay.primaries' => 'Əsas rənglər',
 			'performanceOverlay.transfer' => 'Ötürmə',
@@ -8722,6 +8762,8 @@ extension on TranslationsAz {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} sıra: Moving, Hero, Auto-slide, kaldırma',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} yolları organizə edin',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Qiyamış + ${n} sıra: Moving, Library, Home, Hero, Auto-slide',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => 'Bir kahramanın kartı kimi',
 			'homeLayout.heroOnlySingleCollection' => 'Bu sayı yalnız bir koleksiyonun gerçek başlıklarına çözüldüğünde mevcutdır.',
 			'homeLayout.hero' => 'Heroya',
@@ -8737,8 +8779,6 @@ extension on TranslationsAz {
 			'homeLayout.continueWatching' => 'İzləməyə davam et',
 			'homeLayout.continueWatchingLibraryDescription' => 'Bu kütüphaneye öz-düzgün-gelişmiş yol',
 			'homeLayout.continueWatchingHomeDescription' => 'Evdə göstərilmiş olan “Gözlük”',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => 'Sonraki İçerikDünyanın ən azı yerləri evdə',
 			'homeLayout.library' => 'Kitabxana',
 			'homeLayout.showInRecommended' => 'İnternet-kitabətdə danışılanlar',
@@ -9236,6 +9276,8 @@ extension on TranslationsAz {
 			'audiobook.apply' => 'İhtiyaç',
 			'audiobook.customSleep' => 'Qadın uyku saatləri',
 			'audiobook.sleepMinutes' => '1 min və 1440 min arası',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} qapıdan sonra durun',
 			'audiobook.extendSleep' => '5 dəqiqə',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Uyku vaxtı: ${time}',
@@ -9251,8 +9293,6 @@ extension on TranslationsAz {
 			'audiobook.statusNew' => 'Başlamadı',
 			'audiobook.statusProgress' => 'Gəlimdə',
 			'audiobook.statusFinished' => 'Hazırda',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => 'Zamanla gəlin',
 			'audiobook.timeHelp' => 'Saatlar:minutlar:saniyələr və ya minutlar:saniyələr',
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrə edilmiş bir kopyayı ithal etmədən əvvəl və ya sinqlər verilerini düzeltmək. İthalatlar mevcut durumla birleşir; yerel sinq tarihini asılmazlar. Sinq kodunu ayrı tutun.',
@@ -9750,6 +9790,8 @@ extension on TranslationsAz {
 			'musicTools.loudnessRequested' => 'Analiz sorğusu göndərildi',
 			'musicTools.loudnessUnsupported' => 'Bu server versiyası analiz sorğusunu dəstəkləmir',
 			'musicTools.serverHistory' => 'Serverdə oxutma tarixçəsi',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.nfcWrite' => 'NFC etiketinə yaz',
 			'musicTools.nfcRead' => 'NFC etiketini skan et',
 			'musicTools.nfcPrompt' => 'Yazıla bilən NFC etiketini telefonunuza yaxın tutun.',
@@ -9765,8 +9807,6 @@ extension on TranslationsAz {
 			'musicTools.promptHint' => 'İstədiyiniz musiqini təsvir edin',
 			'musicTools.noHistory' => 'Hələ göstəriləcək musiqi yoxdur',
 			'musicTools.historyHint' => 'Bu profilin dinləmə tarixçəsi',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.days' => 'Günlər',
 			'musicTools.albumBlocks' => 'Albomları bütöv saxla',
 			'musicTools.home' => 'Musiqi',

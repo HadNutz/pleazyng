@@ -4,9 +4,9 @@
   "reviewStatus": "AI-assisted drafts and retained source translations with per-message origins recorded. The 3.0.0 deep-link and playback screen-lock additions include 107 targeted AI corrections; universal media and VLC parity additions use M2M100 drafts, with explicit English fallbacks recorded per message. Traditional Chinese uses OpenCC s2twp. No native-speaker review is claimed. The live audio visualizer status is an assistant-generated short-label draft and has not received native-speaker review. The five Steam audio setting messages are explicit English fallbacks in non-English catalogs until reviewed translations are available; they have not received semantic or native-speaker review. The take/guide comparison label was translated as an assistant-generated draft in 32 base locales; it has not received independent or native-speaker review. The practice-loop count-in label is an assistant-generated draft in 32 base locales; it has not received independent or native-speaker review. K23 karaoke trim and skip controls use explicit English fallbacks until reviewed translations are available; this is not language qualification. The practice-metronome title and guidance are assistant-generated drafts in all 32 non-English base locales; no independent or native-speaker review is claimed.\n\nAI-assisted drafts and retained source translations with per-message origins recorded. The 3.0.0 deep-link and playback screen-lock additions include 107 targeted AI corrections; universal media and VLC parity additions use M2M100 drafts, with explicit English fallbacks recorded per message. Traditional Chinese uses OpenCC s2twp. No native-speaker review is claimed. The live audio visualizer status is an assistant-generated short-label draft and has not received native-speaker review. The five Steam audio setting messages are explicit English fallbacks in non-English catalogs until reviewed translations are available; they have not received semantic or native-speaker review. The take/guide comparison label was translated as an assistant-generated draft in 32 base locales; it has not received independent or native-speaker review. The practice-loop count-in label is an assistant-generated draft in 32 base locales; it has not received independent or native-speaker review. K23 karaoke trim and skip controls use explicit English fallbacks until reviewed translations are available; this is not language qualification. The first-run legacy desktop database import adds 21 assistant-generated drafts in 32 non-English base locales; regional catalogs inherit normally. These drafts have not received independent or native-speaker review. The subtitle encoding preview adds seven assistant-generated draft messages in all 32 non-English base locales; regional locales inherit. These drafts have no independent or native-speaker review. The three Apple Store trial messages (`appAccess.appleTrialDisclosure`, `appAccess.trialProductNotFound`, and `appAccess.trialProductInvalid`) use explicit English fallback in non-English catalogs until translation review; `${price}` remains an interpolation. No translation or native-speaker review is claimed for these messages. Fifteen subtitle playback-capture restore/checkpoint/recovery messages use explicit English fallback pending review; no language qualification is claimed.",
   "locales": {
     "ar": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "e66821b301ac4de4c6c810cc62140ffeaf56f61ad8203f2c8faf3cc0c7649737",
+      "catalogSha256": "05bac5abff90a2723187ae585b392dc612c3310a47b8e2006ac4e5288f5f58b2",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -263,14 +263,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 374,
         "unicode-cldr-generated": 4,
-        "fork-authored": 4
+        "fork-authored": 19
       },
       "detail": "provenance/ar.json"
     },
     "az": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "9239ded934a2aeda297bd7920bab4ea26b77612b057565e2759d579a74a00ab8",
+      "catalogSha256": "5ca66eca3dba6929469e449dadc8c15c69f354dd568f89ff2ea8883071d21e46",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -290,14 +290,14 @@
         "targeted-ai-review": 23,
         "translation-memory": 42,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/az.json"
     },
     "bg": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "9f461da868d9f1ebb7fd98d7b5da70543323e148418b5222e4da271ae6606eeb",
+      "catalogSha256": "ac2524af143214b20378cf41caae0130b13b5d0df39c53746698c5f3a44997a9",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -317,14 +317,14 @@
         "targeted-ai-review": 15,
         "translation-memory": 43,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/bg.json"
     },
     "bn": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "61fd7ca4b83711a175ea56499da2249674b2ddbc1dd70bed6fb6d11584236c31",
+      "catalogSha256": "41221d052e8b5c54a3edaf56e0d1c8e7a70ef2b1f93d6c25159138b3fc838504",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -412,14 +412,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 104,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/bn.json"
     },
     "cs": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "68cf205e367cf45e19da25dad442f328c51652fae017265a03f9ee6f0f6000b2",
+      "catalogSha256": "a383f466c319dbfe62169771e319c229e1dc2734667064eb46694cc3af8ed613",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -667,14 +667,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 96,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/cs.json"
     },
     "da": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "5f382547be4ead9c6465f86f220d90a94f727145a16593ce1f99dfff60a2c40f",
+      "catalogSha256": "9b0719a18260eb782ece0bfbff92917872b0341032a5161c4da782cf0b7cdbd3",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -694,14 +694,14 @@
         "targeted-ai-review": 24,
         "translation-memory": 38,
         "unicode-cldr-generated": 4,
-        "fork-authored": 1
+        "fork-authored": 16
       },
       "detail": "provenance/da.json"
     },
     "de": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "c909c4d8568685765a710d298b565e9718e06ad6bd7df46cc2456cc66c750fea",
+      "catalogSha256": "6ee3edf138cf11f54862308b0921b174d3acf41fda56cf42fbb971b5fd0193eb",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -721,25 +721,25 @@
         "targeted-ai-review": 28,
         "translation-memory": 38,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/de.json"
     },
     "en": {
-      "messagesInFile": 5559,
+      "messagesInFile": 5574,
       "inherits": null,
-      "catalogSha256": "b4f8e7e0536fa3d23dd2caa76ad63e4e3aeaafbb60a58e7a90280bb77ab5cbf2",
+      "catalogSha256": "c5613406ad4b6b4c3f30bc40e86ab10ee83c8d8fbf6b1a000dfd74ca74d2e3c3",
       "sourceCounts": {
         "source-ai-qa-correction": 1,
         "source-english": 3677,
-        "fork-authored": 8
+        "fork-authored": 23
       },
       "detail": "provenance/en.json"
     },
     "es": {
-      "messagesInFile": 5423,
+      "messagesInFile": 5438,
       "inherits": null,
-      "catalogSha256": "46fc8bb98d1dc45f9043cc2afea6538282c06b5f6c74990624e158d860164d79",
+      "catalogSha256": "dec03dbb05e951742b27bda6f18a9ae558577bf46548b21c5f6e777211ab0558",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -760,14 +760,14 @@
         "targeted-ai-review": 17,
         "translation-memory": 40,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/es.json"
     },
     "es-419": {
-      "messagesInFile": 810,
+      "messagesInFile": 825,
       "inherits": "es",
-      "catalogSha256": "4c373c00274c509154658e6301c990a2c1218755969553a4051e8ea1fd21e7f0",
+      "catalogSha256": "bbae23fdcb263d233b693f38510ce82542763886d5525d3867c9086b29fa4815",
       "sourceCounts": {
         "assistant-generated-draft": 11,
         "independent-ai-reviewed-main-swipe-hint": 1,
@@ -1007,14 +1007,15 @@
         "jellyfin-web:Yes": 2,
         "nonlinguistic": 1,
         "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe": 12,
-        "unicode-cldr-generated": 4
+        "unicode-cldr-generated": 4,
+        "fork-authored": 15
       },
       "detail": "provenance/es-419.json"
     },
     "fa": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "2195ccd26b08c9e6cb8bdbc6cb44403620755e94ee3b5d5ca1c9458bb8b95e8a",
+      "catalogSha256": "406ee04e1be71be679e21deda83ab492c3e298609cc9c0645dba7f217d05d2fc",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -1254,14 +1255,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 68,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/fa.json"
     },
     "fr": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "9dc376c654cad4b59be39885af5ab42704e8e14e36e544b997ed81b0f4204ff8",
+      "catalogSha256": "68a8621e66f2fc270c90b1286d78da1436f10f9f6dc86a66a53ab17e2a884d2e",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -1282,14 +1283,14 @@
         "targeted-ai-review": 23,
         "translation-memory": 38,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/fr.json"
     },
     "fr-CA": {
-      "messagesInFile": 791,
+      "messagesInFile": 806,
       "inherits": "fr",
-      "catalogSha256": "a5b3a65a192479ffa97fe463cf639d46b62c3e3f85f91cae01322c58af9647bb",
+      "catalogSha256": "5d1b0abd8f62dd7284278500115b85cd085f2a7a023e6e9e3bcf8ff3e071c794",
       "sourceCounts": {
         "assistant-generated-draft": 11,
         "independent-ai-reviewed-main-swipe-hint": 1,
@@ -1517,14 +1518,15 @@
         "jellyfin-web:Yes": 2,
         "nonlinguistic": 1,
         "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe": 12,
-        "unicode-cldr-generated": 4
+        "unicode-cldr-generated": 4,
+        "fork-authored": 15
       },
       "detail": "provenance/fr-CA.json"
     },
     "he": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "36141585cc1ba722a3dfc59d823d3bbb22c6ab76ad76f7225380c8c3fabd628d",
+      "catalogSha256": "3bda1257f31387099c5af22916c444005793a8f96877d95c384aa130edbe998b",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -1780,14 +1782,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 72,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/he.json"
     },
     "hi": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "ee974a8a8cccb7b2a9b2e582013c9a9362be56994e3c7f78451a07e89b890db8",
+      "catalogSha256": "9cf40b950de4c6016da09a456da77f527b797851da9d377b44a95dfb30c03874",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -1862,14 +1864,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 70,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/hi.json"
     },
     "hu": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "bce4e8f35f2512ef7a8cdfb9f4afe89ed73bde59b35c64f5782fa6c88f390547",
+      "catalogSha256": "0ecc88dd3524a238842a2e48803961363f0a33fcb739d0d0f2e170c3322a02be",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -1889,14 +1891,14 @@
         "targeted-ai-review": 20,
         "translation-memory": 43,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/hu.json"
     },
     "id": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "393b9a995b8e5a43fbe0c1d7ad2656c9b2c6ac4a932d08af30054e9f48debc90",
+      "catalogSha256": "19441dae26c8a87f7df606df027fb4fda3283ec985adc385a1f62b55f2e677e4",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2131,14 +2133,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 96,
         "unicode-cldr-generated": 4,
-        "fork-authored": 4
+        "fork-authored": 19
       },
       "detail": "provenance/id.json"
     },
     "it": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "f76b844ab9d4433329ad30502c1fa92b65f95e015096e1fa3a702779bf611334",
+      "catalogSha256": "fe25566936adaa9f0457c7ca7b1a704d0ed0f1d68e2abac334903fec791f5017",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2159,14 +2161,14 @@
         "targeted-ai-review": 18,
         "translation-memory": 37,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/it.json"
     },
     "ja": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "f2b6bf3f60b087d878d11162d794b1bfd196828c00216d1df8c4d0b5e3fe0148",
+      "catalogSha256": "cca4244c4f564f6645b7ec3e8cd4ed3ab6a66a279fadd9f88faeb01b8d3d8d27",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -2187,14 +2189,14 @@
         "targeted-ai-review": 21,
         "translation-memory": 43,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/ja.json"
     },
     "kk": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "d9314416e3eab1496384537aea347ceff618375d6b5d0d8f6fba05562d6eade6",
+      "catalogSha256": "e62593f6b93959ef4d66153dc35f9ba77d73ecff343b5511e603da0a0744b910",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2215,14 +2217,14 @@
         "targeted-ai-review": 73,
         "translation-memory": 43,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/kk.json"
     },
     "ko": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "e97089087f3610a89b75cec5f2e3cf4fc2f019db412b4042009d6fa7421ebe0c",
+      "catalogSha256": "c46a48c8cef8f5e61c0a02c4393d44888e86fef3f3588d579b622adca9ea082c",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -2242,14 +2244,14 @@
         "targeted-ai-review": 18,
         "translation-memory": 43,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/ko.json"
     },
     "ms": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "283250275332184460fa8bac8143fa9824c61827150dbdce156f3a3d431ab0ec",
+      "catalogSha256": "f9a123e3e61faa251543b5c978409d958d34261eb62f68ef2b6aee0fc712c664",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2339,14 +2341,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 78,
         "unicode-cldr-generated": 2,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/ms.json"
     },
     "nb": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "3751c09b744e00cb762d49a7a674c4a1972801e36c5cb8c702f1cfcdcd357e17",
+      "catalogSha256": "c09bc1f0adcecda5801e735da13ade673a2525f4179edecac3f50071ece171e6",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2366,14 +2368,14 @@
         "targeted-ai-review": 27,
         "translation-memory": 40,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/nb.json"
     },
     "nl": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "f1ba18e8d8dcbb1e3c88620b4d1bbcc933906216d4fe704511a2066f83d123cd",
+      "catalogSha256": "53b67dd8b33bc481484b95971091360f2566ea93a2a9b154d7dd537a827c9bc2",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2393,14 +2395,14 @@
         "targeted-ai-review": 31,
         "translation-memory": 38,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/nl.json"
     },
     "pl": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "477a0974e3894c254f4a5818d87d5f21de7ceb16e56228798f0a57548431883a",
+      "catalogSha256": "d8bb519932c3856394fa3835fd578e04ca85872b5757e0e168bc3cb5f3e8b7b7",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2420,14 +2422,14 @@
         "targeted-ai-review": 26,
         "translation-memory": 42,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/pl.json"
     },
     "pt": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "183b636a7d485b6509b8c694c6aeed1db46ef389c72cad225992f47b1b06a301",
+      "catalogSha256": "1fc5560ef388fe577509e7fd20c1622e71fe0f915893ca87ebd3c813296b93cc",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2447,14 +2449,14 @@
         "targeted-ai-review": 19,
         "translation-memory": 42,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/pt.json"
     },
     "pt-BR": {
-      "messagesInFile": 833,
+      "messagesInFile": 848,
       "inherits": "pt",
-      "catalogSha256": "75a6eebfd1c6eea1bf5d82d6381bee273c5b14d58f63ae3645c5dfc4959e9f52",
+      "catalogSha256": "b41ec4927d2bce39664378abcaec1253c0ac3850d756a405c22d38bed5c87636",
       "sourceCounts": {
         "assistant-generated-draft": 11,
         "independent-ai-reviewed-main-swipe-hint": 1,
@@ -2697,14 +2699,15 @@
         "jellyfin-web:Yes": 2,
         "nonlinguistic": 1,
         "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe": 12,
-        "unicode-cldr-generated": 4
+        "unicode-cldr-generated": 4,
+        "fork-authored": 15
       },
       "detail": "provenance/pt-BR.json"
     },
     "pt-PT": {
-      "messagesInFile": 2727,
+      "messagesInFile": 2742,
       "inherits": "pt",
-      "catalogSha256": "ef2771e9ed06eb2964c8686aef36026ab395e3e2dfd44d67012b086bbcb558b4",
+      "catalogSha256": "d9e4b99af81c146331b14f03ecc41d57e97d3de8a92dfb3db6bd2678ee0573c9",
       "sourceCounts": {
         "assistant-generated-draft": 11,
         "existing": 3,
@@ -2952,14 +2955,15 @@
         "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe": 12,
         "unicode-cldr-generated": 4,
         "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01": 1890,
-        "upstream-plezy:b5144834d19b695cb5e0334e3dfdfb820269b9cd": 10
+        "upstream-plezy:b5144834d19b695cb5e0334e3dfdfb820269b9cd": 10,
+        "fork-authored": 15
       },
       "detail": "provenance/pt-PT.json"
     },
     "ru": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "57ec3ae123babcbdc51e60c2756341b321e7c9d3bf4c7ab78e81e7497968242a",
+      "catalogSha256": "81bec3d362b3d39b475883043b5986dd07718b06adaa03342e8bca1a80eab432",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -2979,14 +2983,14 @@
         "targeted-ai-review": 19,
         "translation-memory": 43,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/ru.json"
     },
     "sv": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "c5998ff39740a82569fb2345631f44fbfa0a562c0b3fb9ae40beec265f77a630",
+      "catalogSha256": "59e771a8ba3bc386abf5e958c197a1aff1208d229d38590efa07449fb7e38274",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -3006,14 +3010,14 @@
         "targeted-ai-review": 19,
         "translation-memory": 40,
         "unicode-cldr-generated": 4,
-        "fork-authored": 1
+        "fork-authored": 16
       },
       "detail": "provenance/sv.json"
     },
     "th": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "0b40ae16ee41be613466cabe7bbf16d0405707b628184cb157965123f8bed93f",
+      "catalogSha256": "f8c986461114e7f2dbe101e52d8124431ce1f81c9f7f05304f0165b31544b656",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 5,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -3122,14 +3126,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 62,
         "unicode-cldr-generated": 4,
-        "fork-authored": 4
+        "fork-authored": 19
       },
       "detail": "provenance/th.json"
     },
     "tr": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "89cb7ba1385d672e534f0f23ddd3fd7171b754fe92a4e3e1cc6dbb4dcadc1035",
+      "catalogSha256": "6aaabf084357f0473b7e8bf1e1878f1f7cedd63fe1472900f653c98d5e41eae2",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -3149,14 +3153,14 @@
         "targeted-ai-review": 20,
         "translation-memory": 42,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/tr.json"
     },
     "uk": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "1403ceb35490f9479939b4f893aa263d276339dde0a87b835ca1da077246d397",
+      "catalogSha256": "5d26deef4825d4b36a92e13dbea9edd51f640e2c986c62f464f17f5cda546038",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -3415,14 +3419,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 70,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/uk.json"
     },
     "uz": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "cfc22f0fc6a5a6b96868c80e70c73b6c959af2c4d0cfa0d83571390f66e2e0fb",
+      "catalogSha256": "a2cff575dcf57688c4d73676301b74e2c111b625f3f7bd6fb3fbe1f250378f42",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -3443,14 +3447,14 @@
         "targeted-ai-review": 74,
         "translation-memory": 42,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/uz.json"
     },
     "vi": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "992e8475725ee56b316586c7c5d39357bf102353bb925a2ef3acfe69e824f253",
+      "catalogSha256": "24478c59891646a6d5938d9ebb04ac35bb2d9aae4dc5d0573bbf8bdb0413b426",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-self-reviewed-discovery-translation": 41,
@@ -3706,14 +3710,14 @@
         "retained-main:f1ad0869c2bf0d84bae7fa075a6d136cefe029d8": 67,
         "targeted-ai-review": 104,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/vi.json"
     },
     "zh": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "56c837e6bbcfb73160bfdd0fbf0c63b936ac990df61ca26123b4eee01baf4633",
+      "catalogSha256": "5c2154a4c61cca0be1e926938dec7bdadb14445631daa542f6ece12ab4daf9d3",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -3734,14 +3738,14 @@
         "targeted-ai-review": 39,
         "translation-memory": 43,
         "unicode-cldr-generated": 4,
-        "fork-authored": 2
+        "fork-authored": 17
       },
       "detail": "provenance/zh.json"
     },
     "zh-Hant": {
-      "messagesInFile": 5349,
+      "messagesInFile": 5364,
       "inherits": null,
-      "catalogSha256": "1a30305e124b86a46a07d4cda4eddabf5a78a182ba9a94cf76643a244a8ab071",
+      "catalogSha256": "4c45beecf5ccb5887430dd002a35d0d2c5ff1ad83bc99f4640335dc82ab85e8d",
       "sourceCounts": {
         "ai-authored-independently-reviewed-smb-translation": 6,
         "ai-authored-independently-reviewed-source-translation": 94,
@@ -3763,7 +3767,7 @@
         "targeted-ai-review": 39,
         "translation-memory": 43,
         "unicode-cldr-generated": 4,
-        "fork-authored": 3
+        "fork-authored": 18
       },
       "detail": "provenance/zh-Hant.json"
     }

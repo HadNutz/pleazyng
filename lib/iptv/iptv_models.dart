@@ -3,7 +3,7 @@ import '../models/livetv_program.dart';
 
 /// Profile-owned IPTV inputs. Tunerr and Dispatcharr can be used through
 /// standard feeds; Stalker/Ministra uses its optional MAG portal adapter.
-enum IptvInputKind { m3u, xtream, tunerr, dispatcharr, stalker }
+enum IptvInputKind { m3u, xtream, tunerr, dispatcharr, stalker, m3uFile }
 
 enum IptvVodKind { movie, series }
 
@@ -231,6 +231,7 @@ class IptvChannelSnapshot {
     this.tvgId,
     this.number,
     this.groupTitle,
+    this.lineupOrder,
     this.logoUrl,
     this.radio = false,
     this.hasCatchup = false,
@@ -244,6 +245,7 @@ class IptvChannelSnapshot {
   final String? tvgId;
   final String? number;
   final String? groupTitle;
+  final int? lineupOrder;
   final String? logoUrl;
   final bool radio;
   final bool hasCatchup;
@@ -265,6 +267,7 @@ class IptvChannelSnapshot {
     iptvSourceId: sourceId,
     iptvChannelId: id,
     iptvRadio: radio,
+    iptvLineupOrder: lineupOrder,
     iptvGroupTitle: groupTitle,
     iptvFavorite: favorite,
     iptvCatchupAvailable: hasCatchup,

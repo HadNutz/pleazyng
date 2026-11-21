@@ -62,6 +62,11 @@ The linked people made their reports, suggestions, discussions, or code contribu
 
 The PR list comes from explicit “Squash of upstream” commit records and the selected November follow-up. The commit list covers follow-up changes that were sourced from upstream commits rather than PR records.
 
+## M3U Web Picker
+
+[M3U Web Picker v49](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897), created by [Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors, inspired Pleazyng's native local playlist import, filtered lineup editing, independent channel order and priority-based XMLTV merging. Pleazyng implements these behaviors independently. Upstream's [provider operations](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/api/providers.py) and [guide merge](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/sports/guide.py) are the behavior references.
+
+
 ## Media-file workflows and format documentation
 
 - The retained live-buffer recording interaction draws on [TiVo’s viewer guide](https://www.tivo.com/assets/pdfs/accessibility/TiVo_VG_Complete.pdf).

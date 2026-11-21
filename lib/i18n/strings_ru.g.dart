@@ -66,6 +66,7 @@ class TranslationsRu extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$ru dialog = _Translations$dialog$ru._(_root);
 	@override late final _Translations$profiles$ru profiles = _Translations$profiles$ru._(_root);
 	@override late final _Translations$connections$ru connections = _Translations$connections$ru._(_root);
+	@override late final _Translations$iptv$ru iptv = _Translations$iptv$ru._(_root);
 	@override late final _Translations$accountPreferences$ru accountPreferences = _Translations$accountPreferences$ru._(_root);
 	@override late final _Translations$discover$ru discover = _Translations$discover$ru._(_root);
 	@override late final _Translations$errors$ru errors = _Translations$errors$ru._(_root);
@@ -1661,6 +1662,30 @@ class _Translations$connections$ru extends Translations$connections$en {
 	@override String get signInAgain => 'Войти снова';
 	@override String editMediaBrowserTitle({required Object product}) => 'Изменить подключение ${product}';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Добавьте или удалите URL-адреса для ${serverName}. Pleazyng будет использовать доступный URL с наименьшей задержкой.';
+}
+
+// Path: iptv
+class _Translations$iptv$ru extends Translations$iptv$en {
+	_Translations$iptv$ru._(TranslationsRu root) : this._root = root, super.internal(root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => 'Порядок каналов';
+	@override String get orderChanged => 'Порядок каналов изменился. Проверьте его и повторите попытку.';
+	@override String get localPlaylist => 'Файл M3U';
+	@override String get pastePlaylist => 'Вставить текст плейлиста';
+	@override String get playlistBase => 'Базовый URL для относительных ссылок (необязательно)';
+	@override String get localPlaylistHelp => 'Импортируйте личную копию списка каналов M3U или M3U8. Её можно заменить другим файлом.';
+	@override String get showMatches => 'Показать подходящие каналы';
+	@override String get hideMatches => 'Скрыть подходящие каналы';
+	@override String get pickerCredit => 'Источник вдохновения · M3U Web Picker · Zachary Schmook (@zschmook) и другие участники';
+	@override String get exportPrivate => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.';
+	@override String get dynamicStreamExport => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.';
+	@override String get moveUp => 'Перемещаться';
+	@override String get moveDown => 'Переместите вниз';
+	@override String get choosePlaylist => 'Выберите файл playlist';
+	@override String affectedChannels({required Object count}) => 'Каналы · ${count}';
 }
 
 // Path: accountPreferences
@@ -7081,6 +7106,21 @@ extension on TranslationsRu {
 			'connections.signInAgain' => 'Войти снова',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Изменить подключение ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Добавьте или удалите URL-адреса для ${serverName}. Pleazyng будет использовать доступный URL с наименьшей задержкой.',
+			'iptv.lineupOrder' => 'Порядок каналов',
+			'iptv.orderChanged' => 'Порядок каналов изменился. Проверьте его и повторите попытку.',
+			'iptv.localPlaylist' => 'Файл M3U',
+			'iptv.pastePlaylist' => 'Вставить текст плейлиста',
+			'iptv.playlistBase' => 'Базовый URL для относительных ссылок (необязательно)',
+			'iptv.localPlaylistHelp' => 'Импортируйте личную копию списка каналов M3U или M3U8. Её можно заменить другим файлом.',
+			'iptv.showMatches' => 'Показать подходящие каналы',
+			'iptv.hideMatches' => 'Скрыть подходящие каналы',
+			'iptv.pickerCredit' => 'Источник вдохновения · M3U Web Picker · Zachary Schmook (@zschmook) и другие участники',
+			'iptv.exportPrivate' => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.',
+			'iptv.dynamicStreamExport' => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.',
+			'iptv.moveUp' => 'Перемещаться',
+			'iptv.moveDown' => 'Переместите вниз',
+			'iptv.choosePlaylist' => 'Выберите файл playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Каналы · ${count}',
 			'accountPreferences.sectionTitle' => 'Настройки аккаунта',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Параметры аудио, субтитров и библиотеки сохранены на аккаунте ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Параметры аудио, субтитров и библиотеки сохранены на ${count} аккаунтах',
@@ -7230,6 +7270,8 @@ extension on TranslationsRu {
 			'discover.findNext.savedFeedback' => 'Добавлено в сохранённые подборки',
 			'discover.findNext.skippedFeedback' => 'Пока пропущено',
 			'discover.findNext.releaseToConfirm' => 'Отпустите для подтверждения',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => 'Фокус на обложке: ← / → выбор · Кнопка выбора: подробности · ↑ / ↓ перемещение фокуса',
 			'discover.studio' => 'Студия',
 			'discover.rating' => 'Рейтинг',
@@ -7245,8 +7287,6 @@ extension on TranslationsRu {
 			'discover.person.birthplace' => 'Место рождения',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (возраст: ${age})',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (в возрасте ${age})',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => 'Ошибка поиска: ${error}',
 			'errors.searchUnavailable' => 'Поиску не удалось связаться ни с одним медиасервером.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Таймаут подключения при загрузке ${context}',
@@ -7744,6 +7784,8 @@ extension on TranslationsRu {
 			'collections.enterCollectionName' => 'Введите название коллекции',
 			'collections.addedToCollection' => 'Добавлено в коллекцию',
 			'collections.errorAddingToCollection' => 'Не удалось добавить в коллекцию',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => 'Коллекция создана',
 			'collections.removeFromCollection' => 'Удалить из коллекции',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Удалить "${title}" из этой коллекции?',
@@ -7759,8 +7801,6 @@ extension on TranslationsRu {
 			'playlists.enterPlaylistName' => 'Введите название плейлиста',
 			'playlists.delete' => 'Удалить плейлист',
 			'playlists.removeItem' => 'Удалить из плейлиста',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => 'Умный плейлист',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемент', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемента', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элементов', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемента', ), 
 			'playlists.emptyPlaylist' => 'Этот плейлист пуст',
@@ -8258,6 +8298,8 @@ extension on TranslationsRu {
 			'performanceOverlay.tunneling' => 'Туннелирование',
 			'performanceOverlay.passthrough' => 'Сквозной вывод',
 			'performanceOverlay.aspect' => 'Соотношение',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => 'Поворот',
 			'performanceOverlay.dvSource' => 'Источник DV',
 			'performanceOverlay.dvPath' => 'Путь DV',
@@ -8273,8 +8315,6 @@ extension on TranslationsRu {
 			'performanceOverlay.sampleRate' => 'Частота дискр.',
 			'performanceOverlay.pixelFormat' => 'Формат пикселей',
 			'performanceOverlay.hwFormat' => 'Формат HW',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => 'Матрица',
 			'performanceOverlay.primaries' => 'Основные цвета',
 			'performanceOverlay.transfer' => 'Передача',
@@ -8772,6 +8812,8 @@ extension on TranslationsRu {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} строки: перемещение, Герой, Авто-слайд, удаление',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Организация ${library} рядов',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продолжайте смотреть + ${n} строки: движение, Библиотека, Дома, Герой, Авто-Слайд',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => 'Уход как герой карты',
 			'homeLayout.heroOnlySingleCollection' => 'Доступны только тогда, когда эта строка разрешается на реальные заголовки одной коллекции',
 			'homeLayout.hero' => 'Герой',
@@ -8787,8 +8829,6 @@ extension on TranslationsRu {
 			'homeLayout.continueWatching' => 'Продолжить просмотр',
 			'homeLayout.continueWatchingLibraryDescription' => 'В этой библиотеке есть собственная рецидивирующая линия',
 			'homeLayout.continueWatchingHomeDescription' => 'Резюме-прогресс-регион показаны на домашних',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => 'Следующая не наблюдаемая серия эпизодов показывается отдельно на Home',
 			'homeLayout.library' => 'Библиотека',
 			'homeLayout.showInRecommended' => 'Показать в библиотеке рекомендуется',
@@ -9286,6 +9326,8 @@ extension on TranslationsRu {
 			'audiobook.apply' => 'Применить',
 			'audiobook.customSleep' => 'Часовник спящего',
 			'audiobook.sleepMinutes' => 'Минуты (1–1440)',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepChapters' => ({required Object count}) => 'Остановиться после ${count} главы',
 			'audiobook.extendSleep' => 'Добавить 5 минут',
 			'audiobook.sleepRemaining' => ({required Object time}) => 'Время сна: ${time}',
@@ -9301,8 +9343,6 @@ extension on TranslationsRu {
 			'audiobook.statusNew' => 'Не начался',
 			'audiobook.statusProgress' => 'В прогрессе',
 			'audiobook.statusFinished' => 'Завершился',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => 'Идите в Время',
 			'audiobook.timeHelp' => 'Часы: минуты: секунды или минуты: секунды',
 			'audiobook.recoveryHelp' => 'Экспортируйте недавно зашифрованную копию перед перемещением или восстановлением данных синхронизации. Импорты сливаются с текущим состоянием; они никогда не замещают историю локальной синхронности.',
@@ -9800,6 +9840,8 @@ extension on TranslationsRu {
 			'musicTools.loudnessRequested' => 'Запрос на анализ отправлен',
 			'musicTools.loudnessUnsupported' => 'Эта версия сервера не поддерживает запросы на анализ',
 			'musicTools.serverHistory' => 'История воспроизведения на сервере',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.nfcWrite' => 'Записать NFC-метку',
 			'musicTools.nfcRead' => 'Сканировать NFC-метку',
 			'musicTools.nfcPrompt' => 'Поднесите доступную для записи NFC-метку к телефону.',
@@ -9815,8 +9857,6 @@ extension on TranslationsRu {
 			'musicTools.promptHint' => 'Опишите желаемую музыку',
 			'musicTools.noHistory' => 'Пока нет музыки для отображения',
 			'musicTools.historyHint' => 'История прослушиваний этого профиля',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.days' => 'Дни',
 			'musicTools.albumBlocks' => 'Сохранять альбомы целиком',
 			'musicTools.home' => 'Музыка',

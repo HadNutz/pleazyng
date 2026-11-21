@@ -66,6 +66,7 @@ class TranslationsZh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$dialog$zh dialog = Translations$dialog$zh.internal(_root);
 	@override late final Translations$profiles$zh profiles = Translations$profiles$zh.internal(_root);
 	@override late final Translations$connections$zh connections = Translations$connections$zh.internal(_root);
+	@override late final Translations$iptv$zh iptv = Translations$iptv$zh.internal(_root);
 	@override late final Translations$accountPreferences$zh accountPreferences = Translations$accountPreferences$zh.internal(_root);
 	@override late final Translations$discover$zh discover = Translations$discover$zh.internal(_root);
 	@override late final Translations$errors$zh errors = Translations$errors$zh.internal(_root);
@@ -1645,6 +1646,30 @@ class Translations$connections$zh extends Translations$connections$en {
 	@override String get signInAgain => '重新登录';
 	@override String editMediaBrowserTitle({required Object product}) => '编辑 ${product} 连接';
 	@override String editMediaBrowserIntro({required Object serverName}) => '为 ${serverName} 添加或移除 URL。Pleazyng 会使用延迟最低且可访问的 URL。';
+}
+
+// Path: iptv
+class Translations$iptv$zh extends Translations$iptv$en {
+	Translations$iptv$zh.internal(TranslationsZh root) : this._root = root, super.internal(root);
+
+	final TranslationsZh _root; // ignore: unused_field
+
+	// Translations
+	@override String get lineupOrder => '频道顺序';
+	@override String get orderChanged => '频道顺序已更改。请检查后重试。';
+	@override String get localPlaylist => 'M3U 文件';
+	@override String get pastePlaylist => '粘贴播放列表文本';
+	@override String get playlistBase => '相对链接的基础 URL（可选）';
+	@override String get localPlaylistHelp => '导入 M3U 或 M3U8 频道列表的私人副本。可以选择其他文件替换。';
+	@override String get showMatches => '显示匹配的频道';
+	@override String get hideMatches => '隐藏匹配的频道';
+	@override String get pickerCredit => '灵感来源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他贡献者';
+	@override String get exportPrivate => '直播地址可能包含服务商的登录凭据。请将列表保存到私密位置。';
+	@override String get dynamicStreamExport => '此门户每次播放都会生成新链接。您可以导出节目指南。';
+	@override String get moveUp => '移动上';
+	@override String get moveDown => '移动下';
+	@override String get choosePlaylist => '选择 Playlist 文件';
+	@override String affectedChannels({required Object count}) => '频道 · ${count}';
 }
 
 // Path: accountPreferences
@@ -7026,6 +7051,21 @@ extension on TranslationsZh {
 			'connections.signInAgain' => '重新登录',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '编辑 ${product} 连接',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '为 ${serverName} 添加或移除 URL。Pleazyng 会使用延迟最低且可访问的 URL。',
+			'iptv.lineupOrder' => '频道顺序',
+			'iptv.orderChanged' => '频道顺序已更改。请检查后重试。',
+			'iptv.localPlaylist' => 'M3U 文件',
+			'iptv.pastePlaylist' => '粘贴播放列表文本',
+			'iptv.playlistBase' => '相对链接的基础 URL（可选）',
+			'iptv.localPlaylistHelp' => '导入 M3U 或 M3U8 频道列表的私人副本。可以选择其他文件替换。',
+			'iptv.showMatches' => '显示匹配的频道',
+			'iptv.hideMatches' => '隐藏匹配的频道',
+			'iptv.pickerCredit' => '灵感来源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他贡献者',
+			'iptv.exportPrivate' => '直播地址可能包含服务商的登录凭据。请将列表保存到私密位置。',
+			'iptv.dynamicStreamExport' => '此门户每次播放都会生成新链接。您可以导出节目指南。',
+			'iptv.moveUp' => '移动上',
+			'iptv.moveDown' => '移动下',
+			'iptv.choosePlaylist' => '选择 Playlist 文件',
+			'iptv.affectedChannels' => ({required Object count}) => '频道 · ${count}',
 			'accountPreferences.sectionTitle' => '账户偏好',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '音频、字幕和媒体库选项已保存在 ${account} 上',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '音频、字幕和媒体库选项已保存在 ${count} 个账户上',
@@ -7175,6 +7215,8 @@ extension on TranslationsZh {
 			'discover.findNext.savedFeedback' => '已加入保存的推荐',
 			'discover.findNext.skippedFeedback' => '已暂时跳过',
 			'discover.findNext.releaseToConfirm' => '松开以确认',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.remoteHint' => '封面获得焦点时：← / → 选择 · 选择键查看详情 · ↑ / ↓ 移动焦点',
 			'discover.studio' => '制作公司',
 			'discover.rating' => '年龄分级',
@@ -7190,8 +7232,6 @@ extension on TranslationsZh {
 			'discover.person.birthplace' => '出生地',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date}（${age} 岁）',
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date}（享年 ${age} 岁）',
-			_ => null,
-		} ?? switch (path) {
 			'errors.searchFailed' => ({required Object error}) => '搜索失败：${error}',
 			'errors.searchUnavailable' => '搜索无法连接任何媒体服务器。',
 			'errors.connectionTimeout' => ({required Object context}) => '加载 ${context} 时连接超时',
@@ -7689,6 +7729,8 @@ extension on TranslationsZh {
 			'collections.enterCollectionName' => '输入合集名称',
 			'collections.addedToCollection' => '已添加到合集',
 			'collections.errorAddingToCollection' => '添加到合集失败',
+			_ => null,
+		} ?? switch (path) {
 			'collections.created' => '已创建合集',
 			'collections.removeFromCollection' => '从合集移除',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '将“${title}”从此合集移除？',
@@ -7704,8 +7746,6 @@ extension on TranslationsZh {
 			'playlists.enterPlaylistName' => '输入播放列表名称',
 			'playlists.delete' => '删除播放列表',
 			'playlists.removeItem' => '从播放列表中移除',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.smartPlaylist' => '智能播放列表',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}个项目', ), 
 			'playlists.emptyPlaylist' => '此播放列表为空',
@@ -8203,6 +8243,8 @@ extension on TranslationsZh {
 			'performanceOverlay.tunneling' => '隧道',
 			'performanceOverlay.passthrough' => '直通',
 			'performanceOverlay.aspect' => '宽高比',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.rotation' => '旋转',
 			'performanceOverlay.dvSource' => 'DV 来源',
 			'performanceOverlay.dvPath' => 'DV 路径',
@@ -8218,8 +8260,6 @@ extension on TranslationsZh {
 			'performanceOverlay.sampleRate' => '采样率',
 			'performanceOverlay.pixelFormat' => '像素格式',
 			'performanceOverlay.hwFormat' => '硬件格式',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.matrix' => '矩阵',
 			'performanceOverlay.primaries' => '基色',
 			'performanceOverlay.transfer' => '传递特性',
@@ -8717,6 +8757,8 @@ extension on TranslationsZh {
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移动, 英雄, 自动滑动, 移除',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '组织 ${library} 行',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '继续观看 + ${n} 行: 移动, 图书馆, 家, 英雄, 自动滑板',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.renderAsHero' => '显示为焦点横幅',
 			'homeLayout.heroOnlySingleCollection' => '只有当此行解决到单一集合的实际标题时才可用',
 			'homeLayout.hero' => '焦点横幅',
@@ -8732,8 +8774,6 @@ extension on TranslationsZh {
 			'homeLayout.continueWatching' => '继续观看',
 			'homeLayout.continueWatchingLibraryDescription' => '图书馆的本质重建进展顺序',
 			'homeLayout.continueWatchingHomeDescription' => '重新进展序列显示在家',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.nextUpHomeDescription' => '下一篇 未观看的集合序列在主页上单独显示',
 			'homeLayout.library' => '媒体库',
 			'homeLayout.showInRecommended' => '图书馆推荐',
@@ -9231,6 +9271,8 @@ extension on TranslationsZh {
 			'audiobook.apply' => '應用',
 			'audiobook.customSleep' => '定制睡眠时间',
 			'audiobook.sleepMinutes' => '时间(1 - 1440)',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sleepChapters' => ({required Object count}) => '播放完${count}章后停止',
 			'audiobook.extendSleep' => '添加5分钟',
 			'audiobook.sleepRemaining' => ({required Object time}) => '睡眠时间: ${time}',
@@ -9246,8 +9288,6 @@ extension on TranslationsZh {
 			'audiobook.statusNew' => '没有开始',
 			'audiobook.statusProgress' => '进展',
 			'audiobook.statusFinished' => '结束',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.goToTime' => '走到时间',
 			'audiobook.timeHelp' => '时间: 分钟: 秒或 分钟: 秒',
 			'audiobook.recoveryHelp' => '移动或修复同步数据前，请先导出近期的加密备份。导入内容会与当前状态合并，不会覆盖本地同步历史。请另行保存同步代码。',
@@ -9745,6 +9785,8 @@ extension on TranslationsZh {
 			'musicTools.loudnessRequested' => '已发送分析请求',
 			'musicTools.loudnessUnsupported' => '此服务器版本不支持分析请求',
 			'musicTools.serverHistory' => '服务器播放历史',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.nfcWrite' => '写入 NFC 标签',
 			'musicTools.nfcRead' => '扫描 NFC 标签',
 			'musicTools.nfcPrompt' => '请将可写入的 NFC 标签靠近手机。',
@@ -9760,8 +9802,6 @@ extension on TranslationsZh {
 			'musicTools.promptHint' => '描述想听的音乐',
 			'musicTools.noHistory' => '暂无可显示的音乐',
 			'musicTools.historyHint' => '此个人资料的播放历史',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.days' => '天',
 			'musicTools.albumBlocks' => '保持专辑完整',
 			'musicTools.home' => '音乐',

@@ -1,7 +1,7 @@
 {
   "locale": "pt-PT",
   "inherits": "pt",
-  "catalogSha256": "ef2771e9ed06eb2964c8686aef36026ab395e3e2dfd44d67012b086bbcb558b4",
+  "catalogSha256": "d9e4b99af81c146331b14f03ecc41d57e97d3de8a92dfb3db6bd2678ee0573c9",
   "nativeSpeakerReviewed": false,
   "messages": {
     "cast.castToDevice": "jellyfin-web:ButtonCast",
@@ -2313,7 +2313,22 @@
     "common.mediaKind.photoAlbum": "assistant-generated-draft",
     "metadataEdit.metadataConflict": "assistant-generated-draft",
     "bookmarkMigration.unassigned": "assistant-generated-draft",
-    "bookmarkMigration.assignToVersion": "assistant-generated-draft"
+    "bookmarkMigration.assignToVersion": "assistant-generated-draft",
+    "iptv.affectedChannels": "fork-authored",
+    "iptv.choosePlaylist": "fork-authored",
+    "iptv.dynamicStreamExport": "fork-authored",
+    "iptv.exportPrivate": "fork-authored",
+    "iptv.hideMatches": "fork-authored",
+    "iptv.lineupOrder": "fork-authored",
+    "iptv.localPlaylist": "fork-authored",
+    "iptv.localPlaylistHelp": "fork-authored",
+    "iptv.moveDown": "fork-authored",
+    "iptv.moveUp": "fork-authored",
+    "iptv.orderChanged": "fork-authored",
+    "iptv.pastePlaylist": "fork-authored",
+    "iptv.pickerCredit": "fork-authored",
+    "iptv.playlistBase": "fork-authored",
+    "iptv.showMatches": "fork-authored"
   },
   "integrationAiQaReport": "../LANGUAGE_QA_INTEGRATION.md",
   "beforeMainMergeReview": {

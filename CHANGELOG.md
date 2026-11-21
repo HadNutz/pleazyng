@@ -4,6 +4,8 @@
 
 - Preserve the saved per-show audio and subtitle choices when their stored data is unreadable. Playback continues and reports the unsuccessful preference write.
 
+- Import or paste local M3U playlists, curate filtered channel sets, reorder the lineup independently of favorites, and export visible, unlocked channels as M3U and XMLTV. Higher-priority XMLTV sources own the full airing window. Independently implemented in Pleazyng, inspired by [M3U Web Picker](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897) by [Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors.
+
 - Provision the matching Samsung SDK for x64 emulator tester builds and link host build tools with the host compiler.
 - Restore an interrupted mobile movie or episode from OS-saved state, including its position, edition and pause intent, after checking access for the active profile. A normal Back or replacement discards the old playback task.
 
@@ -26,6 +28,8 @@
 - Preserve non-ASCII settings in WebDAV restores, overlapping TV subtitles and delayed Samsung captions. Discard cancelled virtual-keyboard edits and retain selected lyrics when importing MIDI karaoke.
 - Enable motion processing during eligible playback on Android and Fire OS, desktop MPV, and LG and Samsung TV MPV. Change TV mixer strength while watching. On LG, the original hardware plane keeps playing while the filtered texture prepares.
 
+- Add an experimental direct-URL motion player for Amazon Vega OS with WebGL and CPU blending. Vega device playback still needs verification.
+- Apply decoder motion-vector settings before switching decoders when changing Neural during Android or desktop playback.
 - Include FFmpeg motion-compensated interpolation in the bundled Linux, Android and Apple playback engines for eligible motion presets.
 - Apply MPV smoothing toggles and Motion clarity preset changes during eligible Linux and Windows playback, including titles started with smoothing off.
 - Adapt video, music, Steam streaming, browsing and reading to separating folds and physical hinges. Keep the active player and detail view during live window resizing. Add compact cover controls and a Samsung Flex Window music widget.
@@ -96,6 +100,7 @@
 - Preserve audiobook and reading progress on unavailable files. Restore IPTV recording and tuning for affected profiles, label TV keyboard actions for screen readers, and show the actual results of local and network settings restores.
 
 - Keep manual app-store review submissions tracked separately from successful artifact uploads.
+- Remove unused download and music helpers and restore a clean analyzer run. Behaviour is unchanged.
 
 ## [3.0.47] - 2026-11-21
 

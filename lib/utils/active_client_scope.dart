@@ -53,8 +53,6 @@ extension type const PlexTransferScopeId._(String value) implements String {
   ServerId get cacheServerId => ServerId(value);
 }
 
-PlexTransferScopeId buildPlexTransferScopeId(ServerId serverId) => PlexTransferScopeId(serverId);
-
 PlexProfileScopeId buildPlexProfileScopeId({required ServerId serverId, required String profileId}) =>
     PlexProfileScopeId(serverId: serverId, profileId: profileId);
 
