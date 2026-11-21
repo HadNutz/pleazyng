@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Keep landscape-oriented Steam streaming optional for app installation so Google Play does not filter devices without landscape hardware.
 - Prepare configured app-store listings for manual review submission after verified 3.0.45 binaries and refreshed release facts are available.
 - Retry truncated GitHub API responses in the Apple JIT queue controller so transient JSON failures do not strand release jobs.
 - Revalidate macOS packaging recovery receipts against live source runs and artifact inventories when refreshing published release facts.
