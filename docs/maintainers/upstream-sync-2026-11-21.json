@@ -487,8 +487,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "fix(downloads): count purgeable space on iOS and macOS before refusing a download",
-      "disposition": "pending",
-      "evidence": "The vendored fork already checks important-usage capacity on iOS. Its macOS path uses statfs available blocks. Port a volume-aware important-usage fallback into the vendored desktop path. On iOS consider the upstream near-floor/30-second sampling approach and diagnostic byte counts. Preserve staging/destination checks and existing reserve policy. [StorageCapacity.swift L37](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/packages/background_downloader/ios/background_downloader/Sources/background_downloader/StorageCapacity.swift#L37) · [storage_space.dart L185](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/packages/background_downloader/lib/src/desktop/storage_space.dart#L185) · [8352046a9](https://github.com/snapetech-org/pleazyng/commit/8352046a99f2b453dab9d042355133086dc57680)",
+      "disposition": "adapted",
+      "evidence": "Use volume-specific reclaimable capacity near the storage floor on iOS and macOS, with bounded sampling and the existing guarded write and staging paths.",
       "files": [
         "pubspec.lock",
         "pubspec.yaml"
@@ -787,9 +787,9 @@
     }
   ],
   "disposition_counts": {
-    "adapted": 22,
+    "adapted": 23,
     "deferred": 1,
     "retained": 2,
-    "pending": 4
+    "pending": 3
   }
 }
