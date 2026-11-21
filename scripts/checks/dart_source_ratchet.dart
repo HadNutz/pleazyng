@@ -77,26 +77,41 @@ void main(List<String> args) {
   }
   final delta = git(['diff', '--name-status', '--find-renames=80%', '-z', base, '--', 'lib']).split('\x00');
   var failures = 0;
+  final previousCatches = <String, int>{};
+  final currentCatches = <String, List<String>>{};
   for (var i = 0; i < delta.length - 1;) {
     final status = delta[i++];
     final oldPath = delta[i++];
     final path = status.startsWith('R') ? delta[i++] : oldPath;
+    final hadSource = status != 'A' && maintained(oldPath);
+    final previous = hadSource ? git(['show', '$base:$oldPath']) : '';
+    if (hadSource) {
+      for (final entry in catches(previous).entries) {
+        previousCatches.update(entry.key, (n) => n + entry.value, ifAbsent: () => entry.value);
+      }
+    }
     if (status == 'D' || !maintained(path)) continue;
     final text = File(path).readAsStringSync();
-    final previous = status == 'A' ? '' : git(['show', '$base:$oldPath']);
-    final limit = status == 'A' ? 1500 : const LineSplitter().convert(previous).length;
+    final limit = hadSource ? const LineSplitter().convert(previous).length : 1500;
     final lines = const LineSplitter().convert(text).length;
     if (lines > limit) {
       stderr.writeln('$path has $lines lines (limit $limit).');
       failures++;
     }
-    final old = catches(previous);
     for (final entry in catches(text).entries) {
-      if (entry.value > (old[entry.key] ?? 0)) {
-        final fields = jsonDecode(entry.key) as List;
-        stderr.writeln('$path: new undocumented catch (_) in ${fields.first}. Explain the fallback inside the catch.');
-        failures++;
-      }
+      currentCatches.putIfAbsent(entry.key, () => []).addAll(List.filled(entry.value, path));
+    }
+  }
+  // Extracting an unchanged handler into a part preserves its existing review.
+  // Count occurrences to distinguish a move from a new copy of the same code.
+  for (final entry in currentCatches.entries) {
+    if (entry.value.length > (previousCatches[entry.key] ?? 0)) {
+      final fields = jsonDecode(entry.key) as List;
+      stderr.writeln(
+        '${entry.value.toSet().join(', ')}: new undocumented catch (_) in ${fields.first}. '
+        'Explain the fallback inside the catch.',
+      );
+      failures++;
     }
   }
   exitCode = failures == 0 ? 0 : 1;
