@@ -32,6 +32,13 @@ class TrackerAccountStore {
 
   String _scopedKey(String userUuid) => profileScopedPrefsKey(userUuid, _baseKey);
 
+  String _reconnectKey(String userUuid) => profileScopedPrefsKey(userUuid, '${_baseKey}_needs_reconnect');
+
+  Future<bool> needsReconnect(String userUuid) => _persistence.run(() async {
+    final prefs = await BaseSharedPreferencesService.sharedCache();
+    return prefs.getBool(_reconnectKey(userUuid)) ?? false;
+  });
+
   Future<TrackerSession?> load(String userUuid) => _persistence.run(() async {
     final prefs = await BaseSharedPreferencesService.sharedCache();
     final raw = readTolerantString(prefs, _scopedKey(userUuid));
@@ -53,11 +60,17 @@ class TrackerAccountStore {
   Future<void> save(String userUuid, TrackerSession session) => _persistence.run(() async {
     final prefs = await BaseSharedPreferencesService.sharedCache();
     await prefs.setString(_scopedKey(userUuid), await CredentialVault.protect(session.encode()));
+    await prefs.remove(_reconnectKey(userUuid));
   });
 
-  Future<void> clear(String userUuid) => _persistence.run(() async {
+  Future<void> clear(String userUuid, {bool reconnectRequired = false}) => _persistence.run(() async {
     final prefs = await BaseSharedPreferencesService.sharedCache();
     await prefs.remove(_scopedKey(userUuid));
+    if (reconnectRequired) {
+      await prefs.setBool(_reconnectKey(userUuid), true);
+    } else {
+      await prefs.remove(_reconnectKey(userUuid));
+    }
   });
 }
 

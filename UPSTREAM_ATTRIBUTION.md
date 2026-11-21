@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Show a profile-scoped reconnect notice for permanently invalidated tracker sessions. Keep the encrypted vault and ordered credential writes, and clear the warning on sign-in or intentional disconnect. [NoahBK](https://github.com/NoahBK) proposed [Plezy PR #3058](https://github.com/edde746/plezy/pull/3058).
+
 - Play ordered or shuffled video playlists from fork links while retaining server and active profile ownership and the existing music routes. [davidmarcantonio](https://github.com/davidmarcantonio) proposed [Plezy PR #3130](https://github.com/edde746/plezy/pull/3130).
 
 - Applied upstream sentence casing to imported shortcuts and grouped all language variants in the existing fork picker. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/b5144834d19b695cb5e0334e3dfdfb820269b9cd) to upstream Plezy. Pleazyng integrated the behavior for this fork.

@@ -639,7 +639,8 @@
       "author": "NoahBK",
       "state": "open",
       "title": "Show reconnect banners after tracker session invalidation",
-      "decision": "Worth adapting if tracker sign-in expires silently. Keep reconnect notices profile-scoped and clear them on successful sign-in."
+      "decision": "Adapted in Pleazyng. Show a profile-scoped reconnect notice for permanently invalidated tracker sessions. Keep the encrypted vault and ordered credential writes, and clear the warning on sign-in or intentional disconnect.",
+      "upstream_head": "f7220c5396dd6e802a90bd672656c351ac7f9486"
     },
     {
       "number": 3067,
