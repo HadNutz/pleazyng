@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
+
 - Fix Linux Neural falling back to CPU on systems where the bundled WebGPU provider can run the model.
 
 - Protect shared episode downloads when deleting media or signing out of Plex. Retain failed cleanup for retry, remove cancelled multipart downloads, and release local HLS archives when a profile is removed.
