@@ -457,6 +457,7 @@ class _SessionGraph {
   final OfflineWatchSyncService offlineWatch;
 
   static Future<_SessionGraph> create() async {
+    await SettingsService.getInstance();
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     final profileRegistry = ProfileRegistry(db);
     final connectionRegistry = ConnectionRegistry(db);
