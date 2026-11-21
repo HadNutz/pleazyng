@@ -2901,25 +2901,25 @@ class Translations$hotkeys$actions$pt_PT extends Translations$hotkeys$actions$pt
 	@override String get chapterPrevious => 'Capítulo anterior';
 	@override String get episodeNext => 'Próximo episódio';
 	@override String get playPause => 'Reproduzir/Pausar';
-	@override String get volumeUp => 'Aumentar Volume';
-	@override String get volumeDown => 'Diminuir Volume';
+	@override String get volumeUp => 'Aumentar volume';
+	@override String get volumeDown => 'Diminuir volume';
 	@override String seekForward({required Object seconds}) => 'Avançar (${seconds}s)';
 	@override String seekBackward({required Object seconds}) => 'Retroceder (${seconds}s)';
 	@override String get fullscreenToggle => 'Alternar ecrã inteiro';
-	@override String get muteToggle => 'Alternar Silêncio';
-	@override String get subtitleToggle => 'Alternar Legendas';
-	@override String get audioTrackNext => 'Próxima Faixa de Áudio';
-	@override String get subtitleTrackNext => 'Próxima Faixa de Legenda';
-	@override String get episodePrevious => 'Episódio Anterior';
-	@override String get speedIncrease => 'Aumentar Velocidade';
-	@override String get speedDecrease => 'Diminuir Velocidade';
+	@override String get muteToggle => 'Alternar silêncio';
+	@override String get subtitleToggle => 'Alternar legendas';
+	@override String get audioTrackNext => 'Próxima faixa de áudio';
+	@override String get subtitleTrackNext => 'Próxima faixa de legenda';
+	@override String get episodePrevious => 'Episódio anterior';
+	@override String get speedIncrease => 'Aumentar velocidade';
+	@override String get speedDecrease => 'Diminuir velocidade';
 	@override String get speedReset => 'Repor velocidade';
 	@override String get zoomIn => 'Aumentar zoom';
 	@override String get zoomOut => 'Diminuir zoom';
 	@override String get zoomReset => 'Repor zoom';
 	@override String get subSeekNext => 'Ir para a próxima legenda';
 	@override String get subSeekPrev => 'Ir para a legenda anterior';
-	@override String get shaderToggle => 'Alternar Shaders';
+	@override String get shaderToggle => 'Alternar shaders';
 	@override String get skipMarker => 'Saltar introdução/créditos';
 	@override String get screenshot => 'Capturar ecrã';
 }
@@ -4211,18 +4211,18 @@ extension on TranslationsPtPt {
 			'hotkeys.actions.chapterPrevious' => 'Capítulo anterior',
 			'hotkeys.actions.episodeNext' => 'Próximo episódio',
 			'hotkeys.actions.playPause' => 'Reproduzir/Pausar',
-			'hotkeys.actions.volumeUp' => 'Aumentar Volume',
-			'hotkeys.actions.volumeDown' => 'Diminuir Volume',
+			'hotkeys.actions.volumeUp' => 'Aumentar volume',
+			'hotkeys.actions.volumeDown' => 'Diminuir volume',
 			'hotkeys.actions.seekForward' => ({required Object seconds}) => 'Avançar (${seconds}s)',
 			'hotkeys.actions.seekBackward' => ({required Object seconds}) => 'Retroceder (${seconds}s)',
 			'hotkeys.actions.fullscreenToggle' => 'Alternar ecrã inteiro',
-			'hotkeys.actions.muteToggle' => 'Alternar Silêncio',
-			'hotkeys.actions.subtitleToggle' => 'Alternar Legendas',
-			'hotkeys.actions.audioTrackNext' => 'Próxima Faixa de Áudio',
-			'hotkeys.actions.subtitleTrackNext' => 'Próxima Faixa de Legenda',
-			'hotkeys.actions.episodePrevious' => 'Episódio Anterior',
-			'hotkeys.actions.speedIncrease' => 'Aumentar Velocidade',
-			'hotkeys.actions.speedDecrease' => 'Diminuir Velocidade',
+			'hotkeys.actions.muteToggle' => 'Alternar silêncio',
+			'hotkeys.actions.subtitleToggle' => 'Alternar legendas',
+			'hotkeys.actions.audioTrackNext' => 'Próxima faixa de áudio',
+			'hotkeys.actions.subtitleTrackNext' => 'Próxima faixa de legenda',
+			'hotkeys.actions.episodePrevious' => 'Episódio anterior',
+			'hotkeys.actions.speedIncrease' => 'Aumentar velocidade',
+			'hotkeys.actions.speedDecrease' => 'Diminuir velocidade',
 			'hotkeys.actions.speedReset' => 'Repor velocidade',
 			_ => null,
 		} ?? switch (path) {
@@ -4231,7 +4231,7 @@ extension on TranslationsPtPt {
 			'hotkeys.actions.zoomReset' => 'Repor zoom',
 			'hotkeys.actions.subSeekNext' => 'Ir para a próxima legenda',
 			'hotkeys.actions.subSeekPrev' => 'Ir para a legenda anterior',
-			'hotkeys.actions.shaderToggle' => 'Alternar Shaders',
+			'hotkeys.actions.shaderToggle' => 'Alternar shaders',
 			'hotkeys.actions.skipMarker' => 'Saltar introdução/créditos',
 			'hotkeys.actions.screenshot' => 'Capturar ecrã',
 			'hotkeys.setShortcutFor' => ({required Object actionName}) => 'Definir atalho para ${actionName}',

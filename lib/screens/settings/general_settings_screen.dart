@@ -128,7 +128,7 @@ class GeneralSettingsScreen extends StatelessWidget {
           searchable: true,
           options: [
             DialogOption(value: '', title: t.settings.followSystem),
-            for (final locale in AppLocale.values)
+            for (final locale in languagePickerLocales)
               DialogOption(
                 value: locale.name,
                 title: locale.nativeName,

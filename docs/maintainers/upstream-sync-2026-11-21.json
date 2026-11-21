@@ -355,8 +355,8 @@
         "url": "https://github.com/edde746"
       },
       "subject": "chore(i18n): tidy pt-PT shortcut casing, picker ordering and locale tests",
-      "disposition": "pending",
-      "evidence": "Review the shared shortcut translations and group variants next to their base language. The fork iterates the generated enum, with regional variants at the end. Retain fork endonyms, keys, provenance and tests for its additional locales. Regenerate locally from sources. [general_settings_screen.dart L131](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/screens/settings/general_settings_screen.dart#L131) · [strings.g.dart L65](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/strings.g.dart#L65) · [locale_names.g.dart](https://github.com/snapetech-org/pleazyng/blob/b286258b783d292a5425cf1524521e38e14cdc6c/lib/i18n/locale_names.g.dart)",
+      "disposition": "adapted",
+      "evidence": "Applied upstream sentence casing to imported shortcuts and grouped all language variants in the existing fork picker.",
       "files": [
         "lib/i18n/app_locale_utils.dart",
         "lib/i18n/pt-PT.i18n.json",
@@ -787,9 +787,8 @@
     }
   ],
   "disposition_counts": {
-    "adapted": 25,
+    "adapted": 26,
     "deferred": 1,
-    "retained": 2,
-    "pending": 1
+    "retained": 2
   }
 }

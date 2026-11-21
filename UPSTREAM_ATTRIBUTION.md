@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Applied upstream sentence casing to imported shortcuts and grouped all language variants in the existing fork picker. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/b5144834d19b695cb5e0334e3dfdfb820269b9cd) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
 - Integrated 1,901 applicable European Portuguese translations and CLDR regional routing while preserving fork translations and the separate Brazilian catalog. [luismiguelopes](https://github.com/luismiguelopes) contributed [the original change](https://github.com/edde746/plezy/commit/88bd8467ff4051be3a25794ff95ccb31c8b27a01) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 
 - Build hosted iOS release IPAs on the Xcode 27 image and check the effective iOS SDK on both hosted and selected signing runners. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/36f9ae3e31f580c642640dc67e7686215fd054ae) to upstream Plezy. Pleazyng integrated the behavior for this fork.

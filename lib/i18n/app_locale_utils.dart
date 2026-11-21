@@ -97,6 +97,12 @@ AppLocale? _resolveChineseLocale(Locale locale) {
   };
 }
 
+/// Keep regional and script variants next to their base in the language picker.
+final List<AppLocale> languagePickerLocales = List.unmodifiable([
+  for (final language in {for (final locale in AppLocale.values) locale.languageCode})
+    ...AppLocale.values.where((locale) => locale.languageCode == language),
+]);
+
 /// Locales offered to Flutter's `Localizations`, one per [AppLocale].
 final List<Locale> supportedLocalizationsLocales = List.unmodifiable(
   AppLocale.values.map((locale) => locale.localizationsLocale),

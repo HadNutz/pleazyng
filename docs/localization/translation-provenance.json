@@ -2654,7 +2654,7 @@
     "pt-PT": {
       "messagesInFile": 2717,
       "inherits": "pt",
-      "catalogSha256": "de5e2ce5f3c5d1a6912c58c32f35f34eef36fa23047847d70a58b8c29f99051d",
+      "catalogSha256": "a13e717b33b0bb423b43c7e20b4fe27272c413a379ff3c14fe738819f383ed62",
       "sourceCounts": {
         "existing": 3,
         "independent-ai-reviewed-main-swipe-hint": 1,
@@ -2900,7 +2900,8 @@
         "nonlinguistic": 1,
         "retained-main:9a17bbd0bff73071079c8b1bc4d85b77557b42fe": 12,
         "unicode-cldr-generated": 4,
-        "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01": 1901
+        "upstream-plezy:88bd8467ff4051be3a25794ff95ccb31c8b27a01": 1891,
+        "upstream-plezy:b5144834d19b695cb5e0334e3dfdfb820269b9cd": 10
       },
       "detail": "provenance/pt-PT.json"
     },

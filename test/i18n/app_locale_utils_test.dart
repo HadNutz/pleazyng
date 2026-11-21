@@ -59,6 +59,15 @@ void main() {
     });
   });
 
+  test('picker groups every regional and script variant with its base language', () {
+    expect(languagePickerLocales, unorderedEquals(AppLocale.values));
+    for (final first in AppLocale.values) {
+      final siblings = languagePickerLocales.where((locale) => locale.languageCode == first.languageCode).toList();
+      final start = languagePickerLocales.indexOf(siblings.first);
+      expect(languagePickerLocales.sublist(start, start + siblings.length), siblings);
+    }
+  });
+
   group('localizationsLocale', () {
     // Every Text inherits this locale, and platform font fallback picks Han
     // glyph forms from it. DirectWrite resolves a bare `zh` to a Japanese font.
