@@ -4597,6 +4597,7 @@ class _Translations$common$mediaKind$fa extends Translations$common$mediaKind$en
 	@override String get clip => 'فیلم کوتاه';
 	@override String get photo => 'عکس';
 	@override String get folder => 'پوشه';
+	@override String get photoAlbum => 'آلبوم عکس';
 }
 
 // Path: settings.startupSectionOptions
@@ -5841,6 +5842,7 @@ extension on TranslationsFa {
 			'common.mediaKind.clip' => 'فیلم کوتاه',
 			'common.mediaKind.photo' => 'عکس',
 			'common.mediaKind.folder' => 'پوشه',
+			'common.mediaKind.photoAlbum' => 'آلبوم عکس',
 			'screens.licenses' => 'مجوز',
 			'screens.switchProfile' => 'سوئیچ پروفایل',
 			'screens.subtitleStyling' => 'زیرنویس سبک',
@@ -6150,9 +6152,9 @@ extension on TranslationsFa {
 			'settings.companionRemoteServerStartFailed' => 'نمی توانم سرور همراه را راه اندازی کنم.',
 			'settings.companionRemoteServerStopFailed' => 'نمی توانم سرور همراه را متوقف کنم.',
 			'settings.autoPip' => 'عکس های خودکار در تصویر',
-			'settings.autoPipDescription' => 'به طور خودکار تصویر-در-تصویر را وارد کنید هنگامی که برنامه را در طول پخش ترک می کنید',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'به طور خودکار تصویر-در-تصویر را وارد کنید هنگامی که برنامه را در طول پخش ترک می کنید',
 			'settings.matchContentFrameRate' => 'مسابقه محتوای فریم نرخ',
 			'settings.matchContentFrameRateDescription' => 'بازی نمایش نرخ بازسازی به محتوای ویدئویی',
 			'settings.matchContentResolution' => 'حل محتوای مسابقه',
@@ -6664,9 +6666,9 @@ extension on TranslationsFa {
 			'accessibility.largeTargetsHint' => 'کنترل های به اشتراک گذاشته شده را برای لمس و ناوبری کمک کننده فضای بیشتری فراهم می کند.',
 			'accessibility.navigationHint' => 'برای جابه‌جایی بین کنترل‌ها از Tab و Shift+Tab، برای فعال‌سازی از Enter یا Space و برای بستن از Escape یا دکمهٔ بازگشت استفاده کنید. وقتی کتاب باز است، بزرگ‌نمایی و تنظیمات خواندن در دسترس‌اند.',
 			'accessibility.textSizeDescription' => 'متن رابط مقیاس در Pleazyng علاوه بر تنظیمات اندازه متن سیستم دستگاه شما.',
-			'accessibility.boldTextHint' => 'از یک وزن سنگین تر برای برچسب های رابط و پیام ها استفاده کنید تا آنها را آسان تر تشخیص دهند.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'از یک وزن سنگین تر برای برچسب های رابط و پیام ها استفاده کنید تا آنها را آسان تر تشخیص دهند.',
 			'tooltips.shufflePlay' => 'بازی شوفلی',
 			'tooltips.playTrailer' => 'بازی تریلر',
 			'tooltips.markAsWatched' => 'مارک به نظر می رسد',
@@ -7178,9 +7180,9 @@ extension on TranslationsFa {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (سال ${age})',
 			'errors.searchFailed' => ({required Object error}) => 'جستجو شکست خورده: ${error}',
 			'errors.searchUnavailable' => 'جستجو نمی تواند به هیچ سرور رسانه ای دسترسی داشته باشد.',
-			'errors.connectionTimeout' => ({required Object context}) => 'زمان اتصال در هنگام بارگذاری ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'زمان اتصال در هنگام بارگذاری ${context}',
 			'errors.connectionFailed' => 'عدم امکان اتصال به سرورهای رسانه ای',
 			'errors.unableToLoad' => ({required Object context}) => 'قابل بارگذاری نیست ${context}.لطفا دوباره امتحان کنید.',
 			'errors.noClientAvailable' => 'هیچ مشتری در دسترس نیست',
@@ -7692,9 +7694,9 @@ extension on TranslationsFa {
 			'playlists.removeItem' => 'حذف از فهرست پخش',
 			'playlists.smartPlaylist' => 'بازی هوشمند',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fa'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} مورد', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} مورد', ), 
-			'playlists.emptyPlaylist' => 'این لیست خالی است',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'این لیست خالی است',
 			'playlists.deleteConfirm' => 'لیست بازی را حذف کنید؟',
 			'playlists.deleteMessage' => ({required Object name}) => 'آیا مطمئن هستید که می خواهید "${name}" را حذف کنید؟',
 			'playlists.created' => 'Playlist ایجاد شده',
@@ -8206,9 +8208,9 @@ extension on TranslationsFa {
 			'performanceOverlay.hwFormat' => 'فای فای فای',
 			'performanceOverlay.matrix' => 'ماتریکس',
 			'performanceOverlay.primaries' => 'اولویت ها',
-			'performanceOverlay.transfer' => 'انتقال',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'انتقال',
 			'performanceOverlay.renderFps' => 'رندر FPS',
 			'performanceOverlay.displayFps' => 'نمایش FPS',
 			'performanceOverlay.avSync' => 'A / V همگام سازی',
@@ -8720,9 +8722,9 @@ extension on TranslationsFa {
 			'homeLayout.continueWatchingHomeDescription' => 'روند پیشرفت مجدد نشان داده شده در خانه',
 			'homeLayout.nextUpHomeDescription' => 'قسمت بعدی ناشناخته سریال به صورت جداگانه در خانه نمایش داده می شود',
 			'homeLayout.library' => 'کتابخانه',
-			'homeLayout.showInRecommended' => 'نمایش در کتابخانه توصیه شده',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'نمایش در کتابخانه توصیه شده',
 			'homeLayout.customPlexRow' => 'مشخصات Plex خط',
 			'homeLayout.heroNeedsLibrary' => 'نگاهی به کتابخانه اول – قهرمان نیاز به جایی برای نشان دادن',
 			'homeLayout.heroNeedsSurface' => 'کتابخانه یا خانه را اول ببینید – قهرمان باید جایی برای نشان دادن',
@@ -9234,9 +9236,9 @@ extension on TranslationsFa {
 			'audiobook.statusFinished' => 'به پایان رسید',
 			'audiobook.goToTime' => 'به زمان برو',
 			'audiobook.timeHelp' => 'ساعت: دقیقه ها: ثانیه ها یا دقیقه ها: ثانیه ها',
-			'audiobook.recoveryHelp' => 'یک کپی رمزگذاری شده اخیر را قبل از حرکت یا اصلاح داده های همگام سازی صادر کنید. واردات با وضعیت فعلی ادغام می شود؛ آنها هرگز تاریخچه همگامه محلی را جایگزین نمی کنند.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'یک کپی رمزگذاری شده اخیر را قبل از حرکت یا اصلاح داده های همگام سازی صادر کنید. واردات با وضعیت فعلی ادغام می شود؛ آنها هرگز تاریخچه همگامه محلی را جایگزین نمی کنند.',
 			'audiobook.recoveryExport' => 'صادرات رمزگذاری شده بازگرداندن فایل',
 			'audiobook.recoveryImport' => 'واردات فایل های رمزگذاری شده',
 			'audiobook.recoveryImportConfirm' => 'آیا این فایل بازگرداندن رمزگذاری شده با موقعیت های خواندن فعلی و یادداشت ها ترکیب می شود؟ تاریخچه موجود حفظ خواهد شد. کتابخانه به اشتراک گذاشته شده و شناسه آیتم شامل نمی شود؛ قبل از واردات، شناسه های مطابقت را بر روی هر دستگاه تنظیم کنید.',
@@ -9748,9 +9750,9 @@ extension on TranslationsFa {
 			'musicTools.days' => 'روزها',
 			'musicTools.albumBlocks' => 'آلبوم‌ها را کامل نگه دار',
 			'musicTools.home' => 'موسیقی‌ها',
-			'musicTools.recent' => 'اخیراً پخش‌شده',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'اخیراً پخش‌شده',
 			'musicTools.apiKey' => 'کلید API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'دقیقه ها',

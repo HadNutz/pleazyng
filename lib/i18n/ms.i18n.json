@@ -221,7 +221,8 @@
       "playlist": "Senarai Main",
       "clip": "Klip",
       "photo": "Gambar",
-      "folder": "Folder dalam"
+      "folder": "Folder dalam",
+      "photoAlbum": "Album foto"
     }
   },
   "screens": {

@@ -4597,6 +4597,7 @@ class _Translations$common$mediaKind$sv extends Translations$common$mediaKind$en
 	@override String get clip => 'Klipp';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Mapp';
+	@override String get photoAlbum => 'Fotoalbum';
 }
 
 // Path: settings.startupSectionOptions
@@ -5841,6 +5842,7 @@ extension on TranslationsSv {
 			'common.mediaKind.clip' => 'Klipp',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Mapp',
+			'common.mediaKind.photoAlbum' => 'Fotoalbum',
 			'screens.licenses' => 'Licenser',
 			'screens.switchProfile' => 'Byt profil',
 			'screens.subtitleStyling' => 'Utseende för undertexter',
@@ -6150,9 +6152,9 @@ extension on TranslationsSv {
 			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
 			'settings.autoPip' => 'Automatisk bild-i-bild',
-			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
 			'settings.matchContentFrameRate' => 'Matcha innehållets bildfrekvens',
 			'settings.matchContentFrameRateDescription' => 'Matcha skärmens uppdateringsfrekvens med videoinnehållet',
 			'settings.matchContentResolution' => 'Anpassa till innehållets upplösning',
@@ -6664,9 +6666,9 @@ extension on TranslationsSv {
 			'accessibility.largeTargetsHint' => 'Ge delade kontroller mer utrymme för beröring och assistent navigering.',
 			'accessibility.navigationHint' => 'Använd Tab och Shift+Tab för att flytta mellan kontroller, Enter eller mellanslag för att aktivera och Escape eller Tillbaka för att stänga. Zoom och läsinställningar är tillgängliga när en bok är öppen.',
 			'accessibility.textSizeDescription' => 'Skala gränssnittet text i Pleazyng utöver enhetens systemtextstorlek inställning.',
-			'accessibility.boldTextHint' => 'Använd en tyngre vikt för gränssnittets etiketter och meddelanden för att göra dem lättare att skilja.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Använd en tyngre vikt för gränssnittets etiketter och meddelanden för att göra dem lättare att skilja.',
 			'tooltips.shufflePlay' => 'Blanda uppspelning',
 			'tooltips.playTrailer' => 'Spela trailer',
 			'tooltips.markAsWatched' => 'Markera som sedd',
@@ -7178,9 +7180,9 @@ extension on TranslationsSv {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (blev ${age} år)',
 			'errors.searchFailed' => ({required Object error}) => 'Sökningen misslyckades: ${error}',
 			'errors.searchUnavailable' => 'Sökningen kunde inte nå någon medieserver.',
-			'errors.connectionTimeout' => ({required Object context}) => 'Anslutningen tog för lång tid när ${context} lästes in',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'Anslutningen tog för lång tid när ${context} lästes in',
 			'errors.connectionFailed' => 'Det gick inte att ansluta till medieservern',
 			'errors.unableToLoad' => ({required Object context}) => 'Det gick inte att läsa in ${context}. Försök igen.',
 			'errors.noClientAvailable' => 'Ingen klient är tillgänglig',
@@ -7692,9 +7694,9 @@ extension on TranslationsSv {
 			'playlists.removeItem' => 'Ta bort från spellista',
 			'playlists.smartPlaylist' => 'Smart spellista',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} objekt', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} objekt', ), 
-			'playlists.emptyPlaylist' => 'Denna spellista är tom',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Denna spellista är tom',
 			'playlists.deleteConfirm' => 'Ta bort spellista?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Är du säker på att du vill ta bort "${name}"?',
 			'playlists.created' => 'Spellistan har skapats',
@@ -8206,9 +8208,9 @@ extension on TranslationsSv {
 			'performanceOverlay.hwFormat' => 'HW-format',
 			'performanceOverlay.matrix' => 'Matris',
 			'performanceOverlay.primaries' => 'Primärfärger',
-			'performanceOverlay.transfer' => 'Överföring',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Överföring',
 			'performanceOverlay.renderFps' => 'Renderings-FPS',
 			'performanceOverlay.displayFps' => 'Skärm-FPS',
 			'performanceOverlay.avSync' => 'A/V-synk',
@@ -8720,9 +8722,9 @@ extension on TranslationsSv {
 			'homeLayout.continueWatchingHomeDescription' => 'Den återkommande framsteg raden visas på hemmet',
 			'homeLayout.nextUpHomeDescription' => 'Nästa oövervakas episod rad visas separat på Home',
 			'homeLayout.library' => 'Bibliotek',
-			'homeLayout.showInRecommended' => 'Utställning i biblioteket rekommenderas',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'Utställning i biblioteket rekommenderas',
 			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
 			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
@@ -9234,9 +9236,9 @@ extension on TranslationsSv {
 			'audiobook.statusFinished' => 'Avslutad',
 			'audiobook.goToTime' => 'Gå till tiden',
 			'audiobook.timeHelp' => 'Klockor: minuter: sekunder eller minuter: sekunder',
-			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
 			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
@@ -9748,9 +9750,9 @@ extension on TranslationsSv {
 			'musicTools.days' => 'Dagar',
 			'musicTools.albumBlocks' => 'Håll hela album samman',
 			'musicTools.home' => 'Musik',
-			'musicTools.recent' => 'Senast spelat',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Senast spelat',
 			'musicTools.apiKey' => 'API-nyckel',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minuter',

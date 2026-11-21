@@ -221,7 +221,8 @@
       "playlist": "Oynatma listesi",
       "clip": "Klip",
       "photo": "Fotoğraf",
-      "folder": "Klasör"
+      "folder": "Klasör",
+      "photoAlbum": "Fotoğraf albümü"
     }
   },
   "screens": {

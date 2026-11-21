@@ -4597,6 +4597,7 @@ class _Translations$common$mediaKind$bg extends Translations$common$mediaKind$en
 	@override String get clip => 'Клип';
 	@override String get photo => 'Снимка';
 	@override String get folder => 'Папка';
+	@override String get photoAlbum => 'Фотоалбум';
 }
 
 // Path: settings.startupSectionOptions
@@ -5841,6 +5842,7 @@ extension on TranslationsBg {
 			'common.mediaKind.clip' => 'Клип',
 			'common.mediaKind.photo' => 'Снимка',
 			'common.mediaKind.folder' => 'Папка',
+			'common.mediaKind.photoAlbum' => 'Фотоалбум',
 			'screens.licenses' => 'Лицензи',
 			'screens.switchProfile' => 'Смяна на профил',
 			'screens.subtitleStyling' => 'Стил на субтитрите',
@@ -6150,9 +6152,9 @@ extension on TranslationsBg {
 			'settings.companionRemoteServerStartFailed' => 'Сървърът за дистанционно управление не можа да бъде стартиран',
 			'settings.companionRemoteServerStopFailed' => 'Сървърът за дистанционно управление не можа да бъде спрян',
 			'settings.autoPip' => 'Автоматичен режим картина в картината',
-			'settings.autoPipDescription' => 'Автоматично включвай режима картина в картината при излизане от приложението по време на възпроизвеждане',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Автоматично включвай режима картина в картината при излизане от приложението по време на възпроизвеждане',
 			'settings.matchContentFrameRate' => 'Напасване към кадровата честота на съдържанието',
 			'settings.matchContentFrameRateDescription' => 'Напасни честотата на опресняване на дисплея към видео съдържанието',
 			'settings.matchContentResolution' => 'Съобразяване с разделителната способност на съдържанието',
@@ -6664,9 +6666,9 @@ extension on TranslationsBg {
 			'accessibility.largeTargetsHint' => 'Дават споделени контрола повече място за докосване и асистирана навигация.',
 			'accessibility.navigationHint' => 'Използвайте Tab и Shift+Tab за преминаване между контролите, Enter или интервал за активиране и Escape или бутона Назад за затваряне. Когато е отворена книга, са достъпни мащабиране и настройки за четене.',
 			'accessibility.textSizeDescription' => 'Скалиране на интерфейса текст в Pleazyng в допълнение към настройката за текстови размери на устройството.',
-			'accessibility.boldTextHint' => 'Използвайте по-тежка тежест за етикетите на интерфейса и съобщенията, за да ги направите по-лесни за разграничаване.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Използвайте по-тежка тежест за етикетите на интерфейса и съобщенията, за да ги направите по-лесни за разграничаване.',
 			'tooltips.shufflePlay' => 'Разбъркано възпроизвеждане',
 			'tooltips.playTrailer' => 'Пусни трейлър',
 			'tooltips.markAsWatched' => 'Маркирай като гледано',
@@ -7178,9 +7180,9 @@ extension on TranslationsBg {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (на ${age} г.)',
 			'errors.searchFailed' => ({required Object error}) => 'Търсенето е неуспешно: ${error}',
 			'errors.searchUnavailable' => 'Търсенето не можа да достигне до нито един медиен сървър.',
-			'errors.connectionTimeout' => ({required Object context}) => 'Изтече времето за връзка при зареждане на ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'Изтече времето за връзка при зареждане на ${context}',
 			'errors.connectionFailed' => 'Не може да се осъществи връзка с медиен сървър',
 			'errors.unableToLoad' => ({required Object context}) => 'Не може да се зареди ${context}. Опитайте отново.',
 			'errors.noClientAvailable' => 'Няма наличен клиент',
@@ -7692,9 +7694,9 @@ extension on TranslationsBg {
 			'playlists.removeItem' => 'Премахни от плейлист',
 			'playlists.smartPlaylist' => 'Умен плейлист',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bg'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} елемент', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} елемента', ), 
-			'playlists.emptyPlaylist' => 'Този плейлист е празен',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Този плейлист е празен',
 			'playlists.deleteConfirm' => 'Да се изтрие ли плейлистът?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Сигурни ли сте, че искате да изтриете "${name}"?',
 			'playlists.created' => 'Плейлистът е създаден',
@@ -8206,9 +8208,9 @@ extension on TranslationsBg {
 			'performanceOverlay.hwFormat' => 'HW формат',
 			'performanceOverlay.matrix' => 'Матрица',
 			'performanceOverlay.primaries' => 'Основни цветове',
-			'performanceOverlay.transfer' => 'Трансфер',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Трансфер',
 			'performanceOverlay.renderFps' => 'FPS при изобразяване',
 			'performanceOverlay.displayFps' => 'FPS на дисплея',
 			'performanceOverlay.avSync' => 'A/V синхр.',
@@ -8720,9 +8722,9 @@ extension on TranslationsBg {
 			'homeLayout.continueWatchingHomeDescription' => 'Ревюта на напредъка, показана на дома',
 			'homeLayout.nextUpHomeDescription' => 'Следващата незабелязана серия от епизоди, поканени отделно на Home',
 			'homeLayout.library' => 'Библиотека',
-			'homeLayout.showInRecommended' => 'Препоръчителна библиотека в библиотеката',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'Препоръчителна библиотека в библиотеката',
 			'homeLayout.customPlexRow' => 'Използвайте Plex ред',
 			'homeLayout.heroNeedsLibrary' => 'Проверете библиотеката първо — Героя трябва някъде да покаже',
 			'homeLayout.heroNeedsSurface' => 'Проверете Библиотеката или Дома първо — Героя трябва някъде да покаже',
@@ -9234,9 +9236,9 @@ extension on TranslationsBg {
 			'audiobook.statusFinished' => 'Завършен',
 			'audiobook.goToTime' => 'Отидете в времето',
 			'audiobook.timeHelp' => 'Време: минути: секунди или минути: секунди',
-			'audiobook.recoveryHelp' => 'Експортирайте неотдавна шифрована копие, преди да преместите или поправите данни за синхронизиране. Импортират се с текущото състояние; те никога не заместват местната история на синхронността.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Експортирайте неотдавна шифрована копие, преди да преместите или поправите данни за синхронизиране. Импортират се с текущото състояние; те никога не заместват местната история на синхронността.',
 			'audiobook.recoveryExport' => 'Износ на криптирани файлове за възстановяване',
 			'audiobook.recoveryImport' => 'Въвеждане на криптирани файлове за възстановяване',
 			'audiobook.recoveryImportConfirm' => 'Комбинирайте този криптиран файл за възстановяване с текущи позиции за четене и бележки? съществуващата история ще бъде запазена. споделена библиотека и идентификатори на елементи не са включени; зададете съответстващите идентификации на всяко устройство, преди да импортирате.',
@@ -9748,9 +9750,9 @@ extension on TranslationsBg {
 			'musicTools.days' => 'Дни',
 			'musicTools.albumBlocks' => 'Запазване на целите албуми заедно',
 			'musicTools.home' => 'Музика',
-			'musicTools.recent' => 'Наскоро слушани',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Наскоро слушани',
 			'musicTools.apiKey' => 'API ключ',
 			'musicTools.missing' => 'Н/Д',
 			'musicTools.minutes' => 'Минути',

@@ -4574,6 +4574,7 @@ class _Translations$common$mediaKind$th extends Translations$common$mediaKind$en
 	@override String get clip => 'คลิก';
 	@override String get photo => 'ภาพถ่าย';
 	@override String get folder => 'แผง';
+	@override String get photoAlbum => 'อัลบั้มรูปภาพ';
 }
 
 // Path: settings.startupSectionOptions
@@ -5816,6 +5817,7 @@ extension on TranslationsTh {
 			'common.mediaKind.clip' => 'คลิก',
 			'common.mediaKind.photo' => 'ภาพถ่าย',
 			'common.mediaKind.folder' => 'แผง',
+			'common.mediaKind.photoAlbum' => 'อัลบั้มรูปภาพ',
 			'screens.licenses' => 'ใบอนุญาต',
 			'screens.switchProfile' => 'โปรไฟล์สวิทช์',
 			'screens.subtitleStyling' => 'สไตล์ Subtitle',
@@ -6125,9 +6127,9 @@ extension on TranslationsTh {
 			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
-			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
 			'settings.matchContentFrameRate' => 'Match Content Frame Rate ความเร็ว',
 			'settings.matchContentFrameRateDescription' => 'การแสดงผล Match อัตราการฟื้นฟูไปยังเนื้อหาวิดีโอ',
 			'settings.matchContentResolution' => 'โซลูชั่นเนื้อหา Match',
@@ -6639,9 +6641,9 @@ extension on TranslationsTh {
 			'accessibility.largeTargetsHint' => 'ให้การควบคุมร่วมกันพื้นที่มากขึ้นสําหรับสัมผัสและนิวเวชั่นช่วย',
 			'accessibility.navigationHint' => 'ใช้ Tab และ Shift+Tab เพื่อย้ายระหว่างควบคุม Enter หรือ Space เพื่อเปิดใช้งาน และ Escape หรือ Back เพื่อปิด โปรแกรมอ่าน zoom และเลือกอ่านพร้อมใช้งานในขณะที่หนังสือเปิด',
 			'accessibility.textSizeDescription' => 'หมายเลขอินเตอร์เฟซขนาดใน Pleazyng นอกจากการตั้งค่าขนาดข้อความระบบของอุปกรณ์ของคุณ',
-			'accessibility.boldTextHint' => 'ใช้น้ําหนักที่หนักขึ้นสําหรับแท็กอินเตอร์เฟซและข้อความเพื่อให้ง่ายต่อการแยกต่างหาก',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'ใช้น้ําหนักที่หนักขึ้นสําหรับแท็กอินเตอร์เฟซและข้อความเพื่อให้ง่ายต่อการแยกต่างหาก',
 			'tooltips.shufflePlay' => 'เล่น Shuffle',
 			'tooltips.playTrailer' => 'เล่น Trailer',
 			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
@@ -7153,9 +7155,9 @@ extension on TranslationsTh {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (อายุ ${age})',
 			'errors.searchFailed' => ({required Object error}) => 'ค้นหาล้มเหลว: ${error}',
 			'errors.searchUnavailable' => 'ค้นหาไม่สามารถเข้าถึงเซิร์ฟเวอร์สื่อใด ๆ',
-			'errors.connectionTimeout' => ({required Object context}) => 'เวลาการเชื่อมต่อเมื่อโหลด ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'เวลาการเชื่อมต่อเมื่อโหลด ${context}',
 			'errors.connectionFailed' => 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์สื่อ',
 			'errors.unableToLoad' => ({required Object context}) => 'ไม่สามารถโหลด ${context} โปรดลองอีกครั้ง',
 			'errors.noClientAvailable' => 'ไม่มีลูกค้า',
@@ -7667,9 +7669,9 @@ extension on TranslationsTh {
 			'playlists.removeItem' => 'ลบออกจากเพลย์ลิสต์',
 			'playlists.smartPlaylist' => 'การเล่นสมาร์ท',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('th'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} รายการ', ), 
-			'playlists.emptyPlaylist' => 'รายการเล่นนี้ว่างเปล่า',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'รายการเล่นนี้ว่างเปล่า',
 			'playlists.deleteConfirm' => 'ลบ Playlist',
 			'playlists.deleteMessage' => ({required Object name}) => 'คุณแน่ใจว่าคุณต้องการลบ "${name}"',
 			'playlists.created' => 'Playlist สร้างขึ้น',
@@ -8181,9 +8183,9 @@ extension on TranslationsTh {
 			'performanceOverlay.hwFormat' => 'มณฑลสหรัฐอเมริกา',
 			'performanceOverlay.matrix' => 'มะตริก',
 			'performanceOverlay.primaries' => 'หลัก',
-			'performanceOverlay.transfer' => 'การถ่ายโอน',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'การถ่ายโอน',
 			'performanceOverlay.renderFps' => 'ฟิล์ม',
 			'performanceOverlay.displayFps' => 'แสดง FPS',
 			'performanceOverlay.avSync' => 'A / V Sync',
@@ -8695,9 +8697,9 @@ extension on TranslationsTh {
 			'homeLayout.continueWatchingHomeDescription' => 'เถื่อนขั้นตอนที่แสดงไว้ในบ้าน',
 			'homeLayout.nextUpHomeDescription' => 'ต่อไปไม่ได้รับการสังเกต episod sequence แสดงแยกต่างหากใน Home',
 			'homeLayout.library' => 'คลังสื่อ',
-			'homeLayout.showInRecommended' => 'แสดงในห้องสมุดแนะนํา',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'แสดงในห้องสมุดแนะนํา',
 			'homeLayout.customPlexRow' => 'คู่มือ Plex รอบ',
 			'homeLayout.heroNeedsLibrary' => 'ตรวจสอบห้องสมุดแรก — Hero ต้องการที่ไหนที่จะแสดง',
 			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
@@ -9209,9 +9211,9 @@ extension on TranslationsTh {
 			'audiobook.statusFinished' => 'เสร็จ',
 			'audiobook.goToTime' => 'ไปยัง เวลา',
 			'audiobook.timeHelp' => 'ชั่วโมง:นาที:วินาทีหรือนาที:วินาที',
-			'audiobook.recoveryHelp' => 'Export a recent encrypted copy before moving or repairing sync data. นําเข้ามาพร้อมกับสถานะปัจจุบัน พวกเขาไม่เคยแทนที่ประวัติการซิงค์ในท้องถิ่น ให้รหัสซิงโครแยกกัน',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Export a recent encrypted copy before moving or repairing sync data. นําเข้ามาพร้อมกับสถานะปัจจุบัน พวกเขาไม่เคยแทนที่ประวัติการซิงค์ในท้องถิ่น ให้รหัสซิงโครแยกกัน',
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImport' => 'นําเข้าไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
@@ -9723,9 +9725,9 @@ extension on TranslationsTh {
 			'musicTools.days' => 'วัน',
 			'musicTools.albumBlocks' => 'เก็บอัลบั้มทั้งชุดไว้ด้วยกัน',
 			'musicTools.home' => 'เพลง',
-			'musicTools.recent' => 'เล่นล่าสุด',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'เล่นล่าสุด',
 			'musicTools.apiKey' => 'คีย์ API',
 			'musicTools.missing' => 'หมายเลขรุ่น: A',
 			'musicTools.minutes' => 'นาที',

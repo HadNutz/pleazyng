@@ -4597,6 +4597,7 @@ class _Translations$common$mediaKind$hu extends Translations$common$mediaKind$en
 	@override String get clip => 'Klip';
 	@override String get photo => 'Fénykép';
 	@override String get folder => 'Mappa';
+	@override String get photoAlbum => 'Fotóalbum';
 }
 
 // Path: settings.startupSectionOptions
@@ -5841,6 +5842,7 @@ extension on TranslationsHu {
 			'common.mediaKind.clip' => 'Klip',
 			'common.mediaKind.photo' => 'Fénykép',
 			'common.mediaKind.folder' => 'Mappa',
+			'common.mediaKind.photoAlbum' => 'Fotóalbum',
 			'screens.licenses' => 'Licencek',
 			'screens.switchProfile' => 'Profilváltás',
 			'screens.subtitleStyling' => 'Feliratok stílusa',
@@ -6150,9 +6152,9 @@ extension on TranslationsHu {
 			'settings.companionRemoteServerStartFailed' => 'Nem sikerült elindítani a kísérőtávirányító szerverét',
 			'settings.companionRemoteServerStopFailed' => 'Nem sikerült leállítani a kísérőtávirányító szerverét',
 			'settings.autoPip' => 'Automatikus kép a képben (PiP)',
-			'settings.autoPipDescription' => 'Lejátszás közben az alkalmazás elhagyásakor automatikusan kép a képben módra vált',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Lejátszás közben az alkalmazás elhagyásakor automatikusan kép a képben módra vált',
 			'settings.matchContentFrameRate' => 'Képkockasebesség illesztése a tartalomhoz',
 			'settings.matchContentFrameRateDescription' => 'A kijelző frissítési frekvenciájának igazítása a videóhoz',
 			'settings.matchContentResolution' => 'Igazítás a tartalom felbontásához',
@@ -6664,9 +6666,9 @@ extension on TranslationsHu {
 			'accessibility.largeTargetsHint' => 'A megosztott vezérlők több helyet biztosítanak a hozzáféréshez és a segéd navigációhoz.',
 			'accessibility.navigationHint' => 'A Tab és a Shift+Tab billentyűkkel léphetsz a vezérlők között, az Enter vagy a szóköz aktiválja őket, az Escape vagy a Vissza pedig bezár. Megnyitott könyvnél a nagyítás és az olvasási beállítások is elérhetők.',
 			'accessibility.textSizeDescription' => 'Skála felület szöveg Pleazyng-ben a készülék rendszer szöveges méretének beállítása mellett.',
-			'accessibility.boldTextHint' => 'Használjon súlyosabb felület címkéket és üzeneteket, hogy könnyebben megkülönböztessék őket.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Használjon súlyosabb felület címkéket és üzeneteket, hogy könnyebben megkülönböztessék őket.',
 			'tooltips.shufflePlay' => 'Véletlenszerű lejátszás',
 			'tooltips.playTrailer' => 'Előzetes lejátszása',
 			'tooltips.markAsWatched' => 'Megjelölés megtekintettként',
@@ -7178,9 +7180,9 @@ extension on TranslationsHu {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} évesen)',
 			'errors.searchFailed' => ({required Object error}) => 'Keresés sikertelen: ${error}',
 			'errors.searchUnavailable' => 'A keresés egyetlen médiaszervert sem tudott elérni.',
-			'errors.connectionTimeout' => ({required Object context}) => 'Hálózati időtúllépés a következő betöltésekor: ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'Hálózati időtúllépés a következő betöltésekor: ${context}',
 			'errors.connectionFailed' => 'Nem sikerült csatlakozni a médiaszerverhez',
 			'errors.unableToLoad' => ({required Object context}) => 'Nem sikerült betölteni a következőt: ${context}. Próbáld újra.',
 			'errors.noClientAvailable' => 'Nincs elérhető kliens',
@@ -7692,9 +7694,9 @@ extension on TranslationsHu {
 			'playlists.removeItem' => 'Eltávolítás a lejátszási listáról',
 			'playlists.smartPlaylist' => 'Okos lejátszási lista',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elem', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} elem', ), 
-			'playlists.emptyPlaylist' => 'Ez a lejátszási lista üres',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Ez a lejátszási lista üres',
 			'playlists.deleteConfirm' => 'Törlöd a lejátszási listát?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Biztosan törölni szeretnéd a következőt: "${name}"?',
 			'playlists.created' => 'Lejátszási lista létrehozva',
@@ -8206,9 +8208,9 @@ extension on TranslationsHu {
 			'performanceOverlay.hwFormat' => 'Hardverformátum',
 			'performanceOverlay.matrix' => 'Mátrix',
 			'performanceOverlay.primaries' => 'Elsődleges színek',
-			'performanceOverlay.transfer' => 'Átvitel',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Átvitel',
 			'performanceOverlay.renderFps' => 'Renderelési FPS',
 			'performanceOverlay.displayFps' => 'Kijelző-FPS',
 			'performanceOverlay.avSync' => 'A/V-szinkron',
@@ -8720,9 +8722,9 @@ extension on TranslationsHu {
 			'homeLayout.continueWatchingHomeDescription' => 'A folyamatos folyamatok újbóli sorát mutatják be otthon',
 			'homeLayout.nextUpHomeDescription' => 'A következő nem figyelt epizód sorozatot külön-külön mutatott a Home',
 			'homeLayout.library' => 'Könyvtár',
-			'homeLayout.showInRecommended' => 'A könyvtárban ajánlott',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'A könyvtárban ajánlott',
 			'homeLayout.customPlexRow' => 'Személyes Plex sor',
 			'homeLayout.heroNeedsLibrary' => 'Kövesse a könyvtárat először – Hero kell valahol megmutatni',
 			'homeLayout.heroNeedsSurface' => 'Kezdőlap / Könyvtár / Kezdőlapi könyvtár / A hősnek valahol kell megmutatnia',
@@ -9234,9 +9236,9 @@ extension on TranslationsHu {
 			'audiobook.statusFinished' => 'befejezett',
 			'audiobook.goToTime' => 'Menj az időbe',
 			'audiobook.timeHelp' => 'Idők: percek: másodpercek, vagy percek: másodpercek',
-			'audiobook.recoveryHelp' => 'A szinkronizációs adatok áthelyezése vagy javítása előtt exportáljon egy nemrégiben titkosított másolatot. Az importok összeolvadnak a jelenlegi állapotgal; soha nem helyettesítik a helyi szinkrálás történetét.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'A szinkronizációs adatok áthelyezése vagy javítása előtt exportáljon egy nemrégiben titkosított másolatot. Az importok összeolvadnak a jelenlegi állapotgal; soha nem helyettesítik a helyi szinkrálás történetét.',
 			'audiobook.recoveryExport' => 'Export titkosított helyreállítási fájl',
 			'audiobook.recoveryImport' => 'Import titkosított helyreállítási fájl',
 			'audiobook.recoveryImportConfirm' => 'Ez a titkosított helyreállítási fájl összekapcsolja az aktuális olvasási pozíciókkal és jegyzetekkel? A meglévő történelem megmarad. Megosztott könyvtár és elem azonosítók nem szerepelnek; beállítja az egyes eszközök megfelelő azonosítóját az import előtt.',
@@ -9748,9 +9750,9 @@ extension on TranslationsHu {
 			'musicTools.days' => 'Napok',
 			'musicTools.albumBlocks' => 'Teljes albumok együtt tartása',
 			'musicTools.home' => 'Zene',
-			'musicTools.recent' => 'Legutóbb lejátszott',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Legutóbb lejátszott',
 			'musicTools.apiKey' => 'API-kulcs',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Perc',

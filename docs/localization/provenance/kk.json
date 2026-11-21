@@ -1,7 +1,7 @@
 {
   "locale": "kk",
   "inherits": null,
-  "catalogSha256": "44d23c2634b278191924b42c7dce14cb1f031721a4385c55020e8b0340bdf4a9",
+  "catalogSha256": "ceae20a1d2f288685e20d38940415ba34d9301394094779672954dd97494f4fc",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3689,7 +3689,8 @@
     "settings.topShelfUpdateFailed": "assistant-generated-draft",
     "seerr.withdrawRequest": "assistant-generated-draft",
     "settings.showFinishTime": "assistant-generated-draft",
-    "settings.showFinishTimeDescription": "assistant-generated-draft"
+    "settings.showFinishTimeDescription": "assistant-generated-draft",
+    "common.mediaKind.photoAlbum": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "collections.deleteConfirm": "existing",

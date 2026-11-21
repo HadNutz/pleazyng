@@ -1089,6 +1089,7 @@ class _Translations$common$mediaKind$fr_CA extends Translations$common$mediaKind
 	@override String get track => 'Piste';
 	@override String get playlist => 'Liste de lecture';
 	@override String get folder => 'Dossier';
+	@override String get photoAlbum => 'Album photo';
 }
 
 // Path: themeEditor.slots
@@ -1380,6 +1381,7 @@ extension on TranslationsFrCa {
 			'common.mediaKind.track' => 'Piste',
 			'common.mediaKind.playlist' => 'Liste de lecture',
 			'common.mediaKind.folder' => 'Dossier',
+			'common.mediaKind.photoAlbum' => 'Album photo',
 			'screens.subtitleStyling' => 'Style des sous-titres',
 			'screens.logs' => 'Journaux',
 			'settings.title' => 'Paramètres',
@@ -1854,9 +1856,9 @@ extension on TranslationsFrCa {
 			'romm.copyLink' => 'Copy game link',
 			'romm.linkCopied' => 'Game link copied',
 			'romm.openLink' => 'Open game link',
-			'romm.linkHelp' => 'Paste a Pleazyng game link. Connect the matching RomM server before opening it.',
 			_ => null,
 		} ?? switch (path) {
+			'romm.linkHelp' => 'Paste a Pleazyng game link. Connect the matching RomM server before opening it.',
 			'romm.copyMismatch' => 'This link identifies a different copy. Choose the intended game from your library.',
 			'romm.requestStatus' => 'Library indexing',
 			'romm.notIndexed' => 'The requested game is not indexed in this library yet.',

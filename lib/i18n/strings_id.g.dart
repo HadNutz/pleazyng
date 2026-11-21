@@ -4574,6 +4574,7 @@ class _Translations$common$mediaKind$id extends Translations$common$mediaKind$en
 	@override String get clip => 'Fitur';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Map';
+	@override String get photoAlbum => 'Album foto';
 }
 
 // Path: settings.startupSectionOptions
@@ -5816,6 +5817,7 @@ extension on TranslationsId {
 			'common.mediaKind.clip' => 'Fitur',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Map',
+			'common.mediaKind.photoAlbum' => 'Album foto',
 			'screens.licenses' => 'Lisensi',
 			'screens.switchProfile' => 'Profil Switch',
 			'screens.subtitleStyling' => 'Subtitle gaya',
@@ -6125,9 +6127,9 @@ extension on TranslationsId {
 			'settings.companionRemoteServerStartFailed' => 'Tidak bisa memulai server',
 			'settings.companionRemoteServerStopFailed' => 'Tidak bisa menghentikan server',
 			'settings.autoPip' => 'Foto-foto dalam gambar',
-			'settings.autoPipDescription' => 'Secara otomatis masuk gambar-in-gambar ketika Anda meninggalkan aplikasi selama pemutaran',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Secara otomatis masuk gambar-in-gambar ketika Anda meninggalkan aplikasi selama pemutaran',
 			'settings.matchContentFrameRate' => 'Perbandingan Content Frame Rate',
 			'settings.matchContentFrameRateDescription' => 'Pertandingan paparan tingkat pembaharuan untuk konten video',
 			'settings.matchContentResolution' => 'Resolusi Konten Pertandingan',
@@ -6639,9 +6641,9 @@ extension on TranslationsId {
 			'accessibility.largeTargetsHint' => 'Memberi kontrol yang dikongsi lebih banyak ruang untuk sentuhan dan navigasi asisten.',
 			'accessibility.navigationHint' => 'Gunakan Tab dan Shift+Tab untuk berpindah antar kontrol, Enter atau Space untuk mengaktifkan, dan Escape atau tombol Kembali untuk menutup. Zoom dan preferensi membaca tersedia saat buku terbuka.',
 			'accessibility.textSizeDescription' => 'Skala antara muka teks dalam Pleazyng ditambah dengan pengaturan ukuran teks sistem perangkat Anda.',
-			'accessibility.boldTextHint' => 'Gunakan berat yang lebih berat untuk label dan pesan antarmuka untuk membuat mereka lebih mudah dibedakan.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Gunakan berat yang lebih berat untuk label dan pesan antarmuka untuk membuat mereka lebih mudah dibedakan.',
 			'tooltips.shufflePlay' => 'Permainan Shuffle',
 			'tooltips.playTrailer' => 'Bermain Trailer',
 			'tooltips.markAsWatched' => 'Mark yang ditonton',
@@ -7153,9 +7155,9 @@ extension on TranslationsId {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (usia ${age})',
 			'errors.searchFailed' => ({required Object error}) => 'Pencarian gagal: ${error}',
 			'errors.searchUnavailable' => 'Pencarian tidak dapat mencapai server media apapun.',
-			'errors.connectionTimeout' => ({required Object context}) => 'Menghubungkan timeout saat muat ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'Menghubungkan timeout saat muat ${context}',
 			'errors.connectionFailed' => 'Tidak dapat terhubung ke server media',
 			'errors.unableToLoad' => ({required Object context}) => 'Tidak dapat mengisi ${context}. silakan coba lagi.',
 			'errors.noClientAvailable' => 'Tidak ada klien yang tersedia',
@@ -7667,9 +7669,9 @@ extension on TranslationsId {
 			'playlists.removeItem' => 'Hapus dari daftar putar',
 			'playlists.smartPlaylist' => 'Daftar Pemain Pintar',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('id'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', ), 
-			'playlists.emptyPlaylist' => 'Playlist ini kosong',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Playlist ini kosong',
 			'playlists.deleteConfirm' => 'Menghapus Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Apakah Anda yakin Anda ingin menghapus "${name}"?',
 			'playlists.created' => 'Playlist yang diciptakan',
@@ -8181,9 +8183,9 @@ extension on TranslationsId {
 			'performanceOverlay.hwFormat' => 'Format perangkat keras',
 			'performanceOverlay.matrix' => 'Matriks',
 			'performanceOverlay.primaries' => 'Primarisasi',
-			'performanceOverlay.transfer' => 'Pindahkan',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Pindahkan',
 			'performanceOverlay.renderFps' => 'Keterangan FPS',
 			'performanceOverlay.displayFps' => 'Tampilan FPS',
 			'performanceOverlay.avSync' => 'A / V Sync',
@@ -8695,9 +8697,9 @@ extension on TranslationsId {
 			'homeLayout.continueWatchingHomeDescription' => 'Rangkaian kemajuan yang ditunjukkan di rumah',
 			'homeLayout.nextUpHomeDescription' => 'Next Unwatched episode series yang ditampilkan secara terpisah di Home',
 			'homeLayout.library' => 'Pustaka',
-			'homeLayout.showInRecommended' => 'Perpustakaan yang disarankan',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'Perpustakaan yang disarankan',
 			'homeLayout.customPlexRow' => 'Keterampilan Plex baris',
 			'homeLayout.heroNeedsLibrary' => 'Periksa perpustakaan pertama — Hero perlu di suatu tempat untuk menunjukkan',
 			'homeLayout.heroNeedsSurface' => 'Periksa Perpustakaan atau Rumah terlebih dahulu — Hero perlu di suatu tempat untuk menunjukkan',
@@ -9209,9 +9211,9 @@ extension on TranslationsId {
 			'audiobook.statusFinished' => 'selesai',
 			'audiobook.goToTime' => 'Pergi ke Waktu',
 			'audiobook.timeHelp' => 'Waktu: menit: detik, atau menit: detik',
-			'audiobook.recoveryHelp' => 'Ekspor salinan yang disulitkan baru-baru ini sebelum memindahkan atau memperbaiki data sink. Import bergabung dengan keadaan saat ini; mereka tidak pernah mengganti sejarah sink lokal.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Ekspor salinan yang disulitkan baru-baru ini sebelum memindahkan atau memperbaiki data sink. Import bergabung dengan keadaan saat ini; mereka tidak pernah mengganti sejarah sink lokal.',
 			'audiobook.recoveryExport' => 'Mengekspor file pemulihan yang disulitkan',
 			'audiobook.recoveryImport' => 'Mengimport file pemulihan yang disulitkan',
 			'audiobook.recoveryImportConfirm' => 'Menggabungkan file pemulihan yang disulitkan ini dengan posisi bacaan dan catatan saat ini? sejarah yang ada akan disimpan. perpustakaan berbagi dan ID item tidak termasuk; menetapkan ID yang sepadan pada setiap perangkat sebelum mengimpor.',
@@ -9723,9 +9725,9 @@ extension on TranslationsId {
 			'musicTools.days' => 'Hari',
 			'musicTools.albumBlocks' => 'Satukan album utuh',
 			'musicTools.home' => 'Musik',
-			'musicTools.recent' => 'Baru diputar',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Baru diputar',
 			'musicTools.apiKey' => 'Kunci API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'Minit',

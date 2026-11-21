@@ -4604,6 +4604,7 @@ class Translations$common$mediaKind$pt extends Translations$common$mediaKind$en 
 	@override String get clip => 'Clipe';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Pasta';
+	@override String get photoAlbum => 'Álbum de fotos';
 }
 
 // Path: settings.startupSectionOptions
@@ -5848,6 +5849,7 @@ extension on TranslationsPt {
 			'common.mediaKind.clip' => 'Clipe',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Pasta',
+			'common.mediaKind.photoAlbum' => 'Álbum de fotos',
 			'screens.licenses' => 'Licenças',
 			'screens.switchProfile' => 'Trocar Perfil',
 			'screens.subtitleStyling' => 'Estilo de Legendas',
@@ -6157,9 +6159,9 @@ extension on TranslationsPt {
 			'settings.companionRemoteServerStartFailed' => 'Não foi possível iniciar o servidor de controle remoto',
 			'settings.companionRemoteServerStopFailed' => 'Não foi possível parar o servidor de controle remoto',
 			'settings.autoPip' => 'Picture-in-picture automático',
-			'settings.autoPipDescription' => 'Entrar automaticamente no modo picture-in-picture ao sair do app durante a reprodução',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Entrar automaticamente no modo picture-in-picture ao sair do app durante a reprodução',
 			'settings.matchContentFrameRate' => 'Ajustar à taxa de quadros do conteúdo',
 			'settings.matchContentFrameRateDescription' => 'Ajustar a taxa de atualização da tela ao conteúdo de vídeo',
 			'settings.matchContentResolution' => 'Ajustar à resolução do conteúdo',
@@ -6671,9 +6673,9 @@ extension on TranslationsPt {
 			'accessibility.largeTargetsHint' => 'Dê controles compartilhados mais espaço para toque e navegação assistiva.',
 			'accessibility.navigationHint' => 'Use Tab e Shift+Tab para navegar entre os controles, Enter ou a barra de espaço para ativar e Escape ou Voltar para fechar. O zoom e as preferências de leitura ficam disponíveis quando um livro está aberto.',
 			'accessibility.textSizeDescription' => 'Escala o texto de interface em Pleazyng, além da configuração do tamanho de texto do sistema do seu dispositivo.',
-			'accessibility.boldTextHint' => 'Use um peso mais pesado para etiquetas de interface e mensagens para torná-los mais fáceis de distinguir.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Use um peso mais pesado para etiquetas de interface e mensagens para torná-los mais fáceis de distinguir.',
 			'tooltips.shufflePlay' => 'Reprodução aleatória',
 			'tooltips.playTrailer' => 'Reproduzir trailer',
 			'tooltips.markAsWatched' => 'Marcar como assistido',
@@ -7185,9 +7187,9 @@ extension on TranslationsPt {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (aos ${age} anos)',
 			'errors.searchFailed' => ({required Object error}) => 'Falha na busca: ${error}',
 			'errors.searchUnavailable' => 'A busca não conseguiu alcançar nenhum servidor de mídia.',
-			'errors.connectionTimeout' => ({required Object context}) => 'Tempo de conexão esgotado ao carregar ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'Tempo de conexão esgotado ao carregar ${context}',
 			'errors.connectionFailed' => 'Não foi possível conectar ao servidor de mídia',
 			'errors.unableToLoad' => ({required Object context}) => 'Não foi possível carregar ${context}. Tente novamente.',
 			'errors.noClientAvailable' => 'Nenhum cliente disponível',
@@ -7699,9 +7701,9 @@ extension on TranslationsPt {
 			'playlists.removeItem' => 'Remover da Playlist',
 			'playlists.smartPlaylist' => 'Playlist Inteligente',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} itens', ), 
-			'playlists.emptyPlaylist' => 'Esta playlist está vazia',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Esta playlist está vazia',
 			'playlists.deleteConfirm' => 'Excluir Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Tem certeza de que deseja excluir "${name}"?',
 			'playlists.created' => 'Playlist criada',
@@ -8213,9 +8215,9 @@ extension on TranslationsPt {
 			'performanceOverlay.hwFormat' => 'Formato HW',
 			'performanceOverlay.matrix' => 'Matriz',
 			'performanceOverlay.primaries' => 'Primárias',
-			'performanceOverlay.transfer' => 'Transferência',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Transferência',
 			'performanceOverlay.renderFps' => 'FPS de renderização',
 			'performanceOverlay.displayFps' => 'FPS da tela',
 			'performanceOverlay.avSync' => 'Sincronia A/V',
@@ -8727,9 +8729,9 @@ extension on TranslationsPt {
 			'homeLayout.continueWatchingHomeDescription' => 'A linha de progressão de recesso mostrada em Home',
 			'homeLayout.nextUpHomeDescription' => 'A próxima sequência de episódios não observados mostrada separadamente em Home',
 			'homeLayout.library' => 'Biblioteca',
-			'homeLayout.showInRecommended' => 'Exposição em Biblioteca Recomendada',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'Exposição em Biblioteca Recomendada',
 			'homeLayout.customPlexRow' => 'Cadeia de Cadeia Plex',
 			'homeLayout.heroNeedsLibrary' => 'Veja a Biblioteca primeiro – Hero precisa de algum lugar para mostrar',
 			'homeLayout.heroNeedsSurface' => 'Veja a Biblioteca ou a Casa primeiro — Hero precisa de algum lugar para mostrar',
@@ -9241,9 +9243,9 @@ extension on TranslationsPt {
 			'audiobook.statusFinished' => 'Finalizado',
 			'audiobook.goToTime' => 'Vá ao tempo',
 			'audiobook.timeHelp' => 'Horas: minutos: segundos ou minutos: segundos',
-			'audiobook.recoveryHelp' => 'Exportar uma cópia recentemente criptografada antes de mover ou reparar dados de sincronização. Importações se misturam com o estado atual; eles nunca substituem a história local da sincronización.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Exportar uma cópia recentemente criptografada antes de mover ou reparar dados de sincronização. Importações se misturam com o estado atual; eles nunca substituem a história local da sincronización.',
 			'audiobook.recoveryExport' => 'Exportação de arquivos de recuperação criptografados',
 			'audiobook.recoveryImport' => 'Importar arquivo de recuperação criptografado',
 			'audiobook.recoveryImportConfirm' => 'Combine este arquivo de recuperação criptografado com as posições e notas de leitura atuais? História existente será mantida. bibliotecas compartilhadas e IDs de itens não são incluídos; definir IDs correspondentes em cada dispositivo antes da importação.',
@@ -9755,9 +9757,9 @@ extension on TranslationsPt {
 			'musicTools.days' => 'Dias',
 			'musicTools.albumBlocks' => 'Manter álbuns completos juntos',
 			'musicTools.home' => 'Música',
-			'musicTools.recent' => 'Reproduzidas recentemente',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Reproduzidas recentemente',
 			'musicTools.apiKey' => 'Chave API',
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minutos',

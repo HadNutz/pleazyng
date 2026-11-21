@@ -43,7 +43,8 @@
       "artist": "Artiste",
       "track": "Piste",
       "playlist": "Liste de lecture",
-      "folder": "Dossier"
+      "folder": "Dossier",
+      "photoAlbum": "Album photo"
     }
   },
   "screens": {

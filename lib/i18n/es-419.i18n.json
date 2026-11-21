@@ -45,7 +45,8 @@
       "collection": "Colección",
       "playlist": "Lista de reproducción",
       "photo": "Foto",
-      "folder": "Carpeta"
+      "folder": "Carpeta",
+      "photoAlbum": "Álbum de fotos"
     }
   },
   "screens": {

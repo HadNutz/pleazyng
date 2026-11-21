@@ -221,7 +221,8 @@
       "playlist": "播放列表",
       "clip": "短片",
       "photo": "照片",
-      "folder": "文件夹"
+      "folder": "文件夹",
+      "photoAlbum": "相册"
     }
   },
   "screens": {

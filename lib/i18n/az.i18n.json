@@ -221,7 +221,8 @@
       "playlist": "Pleylist",
       "clip": "Klip",
       "photo": "Şəkil",
-      "folder": "Qovluq"
+      "folder": "Qovluq",
+      "photoAlbum": "Fotoalbom"
     }
   },
   "screens": {

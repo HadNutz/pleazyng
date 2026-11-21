@@ -221,7 +221,8 @@
       "playlist": "Плейлист",
       "clip": "Клип",
       "photo": "Снимка",
-      "folder": "Папка"
+      "folder": "Папка",
+      "photoAlbum": "Фотоалбум"
     }
   },
   "screens": {

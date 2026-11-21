@@ -4597,6 +4597,7 @@ class _Translations$common$mediaKind$kk extends Translations$common$mediaKind$en
 	@override String get clip => 'Клип';
 	@override String get photo => 'Фото';
 	@override String get folder => 'Қалта';
+	@override String get photoAlbum => 'Фотоальбом';
 }
 
 // Path: settings.startupSectionOptions
@@ -5841,6 +5842,7 @@ extension on TranslationsKk {
 			'common.mediaKind.clip' => 'Клип',
 			'common.mediaKind.photo' => 'Фото',
 			'common.mediaKind.folder' => 'Қалта',
+			'common.mediaKind.photoAlbum' => 'Фотоальбом',
 			'screens.licenses' => 'Лицензиялар',
 			'screens.switchProfile' => 'Профильді ауыстыру',
 			'screens.subtitleStyling' => 'Субтитр баптаулары',
@@ -6150,9 +6152,9 @@ extension on TranslationsKk {
 			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
 			'settings.companionRemoteServerStopFailed' => 'Көмекші серверді тоқтату мүмкін болмады',
 			'settings.autoPip' => 'Автоматты Суреттегі сурет (PiP)',
-			'settings.autoPipDescription' => 'Видео ойнап жатқанда қолданбадан шыққанда авто-PiP режиміне өту',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Видео ойнап жатқанда қолданбадан шыққанда авто-PiP режиміне өту',
 			'settings.matchContentFrameRate' => 'Кадр жиілігін сәйкестендіру',
 			'settings.matchContentFrameRateDescription' => 'Экран жиілігін видео мазмұнына сәйкестендіру',
 			'settings.matchContentResolution' => 'Мазмұнның ажыратымдылығына бейімдеу',
@@ -6664,9 +6666,9 @@ extension on TranslationsKk {
 			'accessibility.largeTargetsHint' => '«Жеңіске» және «Жектеу» деген әлі де ұзақ уақытқа дейін ұзақ уақыт бойы жасылып отыр.',
 			'accessibility.navigationHint' => 'Басқару элементтері арасында ауысу үшін Tab және Shift+Tab, іске қосу үшін Enter немесе Бос орын, жабу үшін Escape немесе Артқа түймесін пайдаланыңыз. Кітап ашық кезде масштаб пен оқу параметрлерін өзгертуге болады.',
 			'accessibility.textSizeDescription' => 'Осылайша «Барселона» АҚ-ның «Атлантикалық» және «Текст-Системалық» АҚ қағидаларынан тұрады.',
-			'accessibility.boldTextHint' => 'Қандай-ақ интерфейс етикетке және мақалалар үшін көптеген жылдардан тұрады.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Қандай-ақ интерфейс етикетке және мақалалар үшін көптеген жылдардан тұрады.',
 			'tooltips.shufflePlay' => 'Араластырып ойнату',
 			'tooltips.playTrailer' => 'Трейлерді ойнату',
 			'tooltips.markAsWatched' => 'Көрілді деп белгілеу',
@@ -7178,9 +7180,9 @@ extension on TranslationsKk {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} жасында)',
 			'errors.searchFailed' => ({required Object error}) => 'Іздеу қатесі: ${error}',
 			'errors.searchUnavailable' => 'Іздеу ешбір медиа серверге қосыла алмады.',
-			'errors.connectionTimeout' => ({required Object context}) => '${context} жүктеу уақыты өтті',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => '${context} жүктеу уақыты өтті',
 			'errors.connectionFailed' => 'Медиа серверіне қосылу мүмкін емес',
 			'errors.unableToLoad' => ({required Object context}) => '${context} жүктеу мүмкін болмады.',
 			'errors.noClientAvailable' => 'Қолжетімді клиент жоқ',
@@ -7692,9 +7694,9 @@ extension on TranslationsKk {
 			'playlists.removeItem' => 'Тізімнен өшіру',
 			'playlists.smartPlaylist' => 'Ақылды ойнату тізімі',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('kk'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемент', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемент', ), 
-			'playlists.emptyPlaylist' => 'Бұл ойнату тізімі бос',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Бұл ойнату тізімі бос',
 			'playlists.deleteConfirm' => 'Ойнату тізімі өшірілсін бе?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" өшірілсін бе?',
 			'playlists.created' => 'Ойнату тізімі жасалды',
@@ -8206,9 +8208,9 @@ extension on TranslationsKk {
 			'performanceOverlay.hwFormat' => 'HW форматы',
 			'performanceOverlay.matrix' => 'Матрица',
 			'performanceOverlay.primaries' => 'Негізгі түстер',
-			'performanceOverlay.transfer' => 'Беріліс',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Беріліс',
 			'performanceOverlay.renderFps' => 'Рендер FPS',
 			'performanceOverlay.displayFps' => 'Дисплей FPS',
 			'performanceOverlay.avSync' => 'A/V синхрондау',
@@ -8720,9 +8722,9 @@ extension on TranslationsKk {
 			'homeLayout.continueWatchingHomeDescription' => 'Өнімдермен көшiрiнiң өнерінің өнерімен',
 			'homeLayout.nextUpHomeDescription' => '«Аяқтар» АҚШ-ның «Аяға» АҚШ бағдарламасының өзарамен таныстыратын',
 			'homeLayout.library' => 'Кітапхана',
-			'homeLayout.showInRecommended' => 'Библиотеканың тұрақтанды',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'Библиотеканың тұрақтанды',
 			'homeLayout.customPlexRow' => 'Қазір Plex қаңтар',
 			'homeLayout.heroNeedsLibrary' => '«Жеңіске үлес қосқандар» деген әйгілі әндердің авторы.',
 			'homeLayout.heroNeedsSurface' => '«Жеңіске» және «Жектесі» деген әйгілі әндер шыққан әндер шырқалып, биленді.',
@@ -9234,9 +9236,9 @@ extension on TranslationsKk {
 			'audiobook.statusFinished' => 'Өткен',
 			'audiobook.goToTime' => 'Қазіргі уақытта',
 			'audiobook.timeHelp' => 'Өнімдер: 1 минут, 1 минут, 1 секунды',
-			'audiobook.recoveryHelp' => 'Қаланың тұрақты тұрғындарының саны 10 адамды құрайды және 1 адамды қағидалардан тұрады.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Қаланың тұрақты тұрғындарының саны 10 адамды құрайды және 1 адамды қағидалардан тұрады.',
 			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
 			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
 			'audiobook.recoveryImportConfirm' => 'Бұл криптовалюталық дағдарыстағы қанағаттанды және жабдықтармен көруге болады? іс-әрекеттің историю бар. Жабдықтау библиотекасы және элементтік ID-дер не пайдаланылады; екеуінде импортируға дейін әртүрлі айналысатын идентификатордан қабылдайды.',
@@ -9748,9 +9750,9 @@ extension on TranslationsKk {
 			'musicTools.days' => 'Күндер',
 			'musicTools.albumBlocks' => 'Альбомдарды тұтас сақтау',
 			'musicTools.home' => 'Музыка',
-			'musicTools.recent' => 'Жақында тыңдалған',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Жақында тыңдалған',
 			'musicTools.apiKey' => 'API кілті',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Минут',

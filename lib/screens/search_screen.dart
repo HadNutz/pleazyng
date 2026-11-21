@@ -607,6 +607,7 @@ class _SearchScreenState extends State<SearchScreen>
     MediaKind.collection ||
     MediaKind.playlist ||
     MediaKind.clip ||
+    MediaKind.photoAlbum ||
     MediaKind.photo ||
     MediaKind.folder ||
     MediaKind.unknown => null,
@@ -1194,7 +1195,7 @@ class _SearchScreenState extends State<SearchScreen>
     MediaKind.collection => t.libraries.tabs.collections,
     MediaKind.playlist => t.libraries.tabs.playlists,
     // Unreachable: excluded from _kindFilterOrder.
-    MediaKind.clip || MediaKind.photo || MediaKind.folder || MediaKind.unknown => kind.id,
+    MediaKind.clip || MediaKind.photo || MediaKind.photoAlbum || MediaKind.folder || MediaKind.unknown => kind.id,
   };
 
   String _catalogSourceName(CatalogSourceId id) {

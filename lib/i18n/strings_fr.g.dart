@@ -4638,6 +4638,7 @@ class Translations$common$mediaKind$fr extends Translations$common$mediaKind$en 
 	@override String get clip => 'Clip';
 	@override String get photo => 'Photo';
 	@override String get folder => 'Dossier';
+	@override String get photoAlbum => 'Album photo';
 }
 
 // Path: settings.startupSectionOptions
@@ -5885,6 +5886,7 @@ extension on TranslationsFr {
 			'common.mediaKind.clip' => 'Clip',
 			'common.mediaKind.photo' => 'Photo',
 			'common.mediaKind.folder' => 'Dossier',
+			'common.mediaKind.photoAlbum' => 'Album photo',
 			'screens.licenses' => 'Licences',
 			'screens.switchProfile' => 'Changer de profil',
 			'screens.subtitleStyling' => 'Configuration des sous-titres',
@@ -6194,9 +6196,9 @@ extension on TranslationsFr {
 			'settings.companionRemoteServerStartFailed' => 'Impossible de démarrer le serveur de télécommande',
 			'settings.companionRemoteServerStopFailed' => 'Impossible d\'arrêter le serveur de télécommande',
 			'settings.autoPip' => 'Mode image dans l’image automatique',
-			'settings.autoPipDescription' => 'Passer en mode image dans l’image si vous quittez l’application pendant la lecture',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Passer en mode image dans l’image si vous quittez l’application pendant la lecture',
 			'settings.matchContentFrameRate' => 'Adapter la fréquence d’images au contenu',
 			'settings.matchContentFrameRateDescription' => 'Adapter la fréquence de rafraîchissement de l’écran au contenu vidéo',
 			'settings.matchContentResolution' => 'Adapter à la résolution du contenu',
@@ -6708,9 +6710,9 @@ extension on TranslationsFr {
 			'accessibility.largeTargetsHint' => 'Donnez plus de place aux contrôles partagés pour la navigation touchante et assistante.',
 			'accessibility.navigationHint' => 'Utilisez Tab et Shift+Tab pour passer d’une commande à l’autre, Enter ou la barre d’espace pour l’activer, et Escape ou Retour pour fermer. Le zoom et les préférences de lecture sont disponibles lorsqu’un livre est ouvert.',
 			'accessibility.textSizeDescription' => 'Texte de l\'interface d\'échelle dans Pleazyng en plus de la configuration de taille du texte système de votre appareil.',
-			'accessibility.boldTextHint' => 'Utilisez un poids plus lourd pour les étiquettes et les messages d’interface afin de les rendre plus faciles à distinguer.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Utilisez un poids plus lourd pour les étiquettes et les messages d’interface afin de les rendre plus faciles à distinguer.',
 			'tooltips.shufflePlay' => 'Lecture aléatoire',
 			'tooltips.playTrailer' => 'Lire la bande-annonce',
 			'tooltips.markAsWatched' => 'Marquer comme vu',
@@ -7222,9 +7224,9 @@ extension on TranslationsFr {
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min restantes',
 			'discover.moreLikeThis' => 'Plus de contenus similaires',
 			'discover.titleCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titre', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} titres', ), 
-			'discover.person.born' => 'Naissance',
 			_ => null,
 		} ?? switch (path) {
+			'discover.person.born' => 'Naissance',
 			'discover.person.died' => 'Décès',
 			'discover.person.birthplace' => 'Lieu de naissance',
 			'discover.person.dateWithAge' => ({required Object date, required Object age}) => '${date} (${age} ans)',
@@ -7736,9 +7738,9 @@ extension on TranslationsFr {
 			'playlists.title' => 'Playlists',
 			'playlists.playlist' => 'Playlist',
 			'playlists.noPlaylists' => 'Aucune playlist trouvée',
-			'playlists.create' => 'Créer une playlist',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.create' => 'Créer une playlist',
 			'playlists.playlistName' => 'Nom de playlist',
 			'playlists.enterPlaylistName' => 'Saisissez le nom de la playlist',
 			'playlists.delete' => 'Supprimer la playlist',
@@ -8250,9 +8252,9 @@ extension on TranslationsFr {
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Couche de base HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Couche de base SDR',
 			'performanceOverlay.dvRouteReshaped' => 'Remodelage RPU (gpu-next)',
-			'performanceOverlay.dvRouteFelGraphActive' => 'Graphique expérimental P7 FEL (non qualifié)',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteFelGraphActive' => 'Graphique expérimental P7 FEL (non qualifié)',
 			'performanceOverlay.p7Conversion' => 'Conv. P7',
 			'performanceOverlay.sampleRate' => 'Fréquence d’échantillonnage',
 			'performanceOverlay.pixelFormat' => 'Fmt pixel',
@@ -8764,9 +8766,9 @@ extension on TranslationsFr {
 			'homeLayout.showOnHome' => 'Afficher sur l\'écran de maison',
 			'homeLayout.home' => 'Accueil',
 			'homeLayout.removeFromHome' => 'Retirez de chez vous',
-			'homeLayout.selectRowsFirst' => 'Sélectionnez les lignes de maison ci-dessous d\'abord.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.selectRowsFirst' => 'Sélectionnez les lignes de maison ci-dessous d\'abord.',
 			'homeLayout.plexManagedRows' => ({required Object n}) => '${n} Plex rangées gérées',
 			'homeLayout.continueWatching' => 'Continuer à regarder',
 			'homeLayout.continueWatchingLibraryDescription' => 'La suite de la bibliothèque de la suite',
@@ -9278,9 +9280,9 @@ extension on TranslationsFr {
 			'audiobook.sortTitle' => 'Titre',
 			'audiobook.sortAuthor' => 'Auteur',
 			'audiobook.sortNarrator' => 'Narrateur',
-			'audiobook.sortSeries' => 'Commande série',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortSeries' => 'Commande série',
 			'audiobook.sortRecent' => 'récemment ouvert',
 			'audiobook.statusFilter' => 'Le statut de lecture',
 			'audiobook.statusAll' => 'Tous les livres',
@@ -9792,9 +9794,9 @@ extension on TranslationsFr {
 			'musicExperience.on' => 'sur',
 			'musicExperience.off' => 'Désactivé',
 			'musicExperience.unknown' => 'Inconnu',
-			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
 			_ => null,
 		} ?? switch (path) {
+			'musicExperience.routeLost' => 'Sortie audio déconnectée. Lecture en pause.',
 			'musicExperience.autoDriving' => 'Ouvrir le mode conduite à la connexion à une voiture',
 			'musicExperience.routeHint' => 'Le système de la voiture décide si l’application peut s’afficher automatiquement.',
 			'musicExperience.bluetoothDriving' => 'Sorties Bluetooth pour la conduite',

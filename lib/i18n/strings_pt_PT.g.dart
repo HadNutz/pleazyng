@@ -2842,6 +2842,7 @@ class Translations$common$mediaKind$pt_PT extends Translations$common$mediaKind$
 	@override String get folder => 'Pasta';
 	@override String get show => 'Série';
 	@override String get playlist => 'Playlist';
+	@override String get photoAlbum => 'Álbum de fotografias';
 }
 
 // Path: common.ratingSource
@@ -3801,6 +3802,7 @@ extension on TranslationsPtPt {
 			'common.mediaKind.folder' => 'Pasta',
 			'common.mediaKind.show' => 'Série',
 			'common.mediaKind.playlist' => 'Playlist',
+			'common.mediaKind.photoAlbum' => 'Álbum de fotografias',
 			'common.clear' => 'Limpar',
 			'common.later' => 'Depois',
 			'common.confirm' => 'Confirmar',
@@ -4230,9 +4232,9 @@ extension on TranslationsPtPt {
 			'hotkeys.actions.fullscreenToggle' => 'Alternar ecrã inteiro',
 			'hotkeys.actions.muteToggle' => 'Alternar silêncio',
 			'hotkeys.actions.subtitleToggle' => 'Alternar legendas',
-			'hotkeys.actions.audioTrackNext' => 'Próxima faixa de áudio',
 			_ => null,
 		} ?? switch (path) {
+			'hotkeys.actions.audioTrackNext' => 'Próxima faixa de áudio',
 			'hotkeys.actions.subtitleTrackNext' => 'Próxima faixa de legenda',
 			'hotkeys.actions.episodePrevious' => 'Episódio anterior',
 			'hotkeys.actions.speedIncrease' => 'Aumentar velocidade',
@@ -4744,9 +4746,9 @@ extension on TranslationsPtPt {
 			'accountPreferences.displayMissingEpisodesDescription' => 'Listar episódios que o servidor conhece, mas para os quais não há ficheiro.',
 			'accountPreferences.hidePlayedInLatest' => 'Ocultar itens vistos em Recentes',
 			'accountPreferences.hidePlayedInLatestDescription' => 'Manter fora das linhas Recentes do servidor os itens que já viu.',
-			'accountPreferences.displayCollectionsView' => 'Mostrar a vista de Coleções',
 			_ => null,
 		} ?? switch (path) {
+			'accountPreferences.displayCollectionsView' => 'Mostrar a vista de Coleções',
 			'accountPreferences.displayCollectionsViewDescription' => 'Oferecer a vista de Coleções do servidor juntamente com as suas bibliotecas.',
 			'accountPreferences.rewatchingInNextUp' => 'Manter em A seguir as séries que está a rever',
 			'accountPreferences.rewatchingInNextUpDescription' => 'Ao terminar uma série, comece a vê-la de novo e A seguir acompanha a nova visualização em vez de remover a série.',
@@ -5258,9 +5260,9 @@ extension on TranslationsPtPt {
 			'watchTogether.reconnectingDescription' => 'A ligação caiu. Vai voltar à sala automaticamente.',
 			'watchTogether.connected' => 'Ligado',
 			'watchTogether.disconnected' => 'Desligado',
-			'watchTogether.youAreHost' => 'É o anfitrião',
 			_ => null,
 		} ?? switch (path) {
+			'watchTogether.youAreHost' => 'É o anfitrião',
 			'watchTogether.hostedBy' => ({required Object name}) => 'Anfitrião: ${name}',
 			'watchTogether.hostControlsPlayback' => 'O anfitrião controla a reprodução',
 			'watchTogether.anyoneCanControl' => 'Qualquer pessoa pode controlar a reprodução',
@@ -5772,9 +5774,9 @@ extension on TranslationsPtPt {
 			'seerr.languageProfile' => 'Perfil de idioma',
 			'seerr.noTags' => 'Sem etiquetas',
 			'seerr.defaultOption' => ({required Object name}) => '${name} (predefinido)',
-			'seerr.animeNote' => 'Esta série é um anime.',
 			_ => null,
 		} ?? switch (path) {
+			'seerr.animeNote' => 'Esta série é um anime.',
 			'seerr.requestSubmitted' => 'Pedido enviado',
 			'seerr.requestFailed' => ({required Object error}) => 'Falha no pedido: ${error}',
 			'seerr.requestsLoadFailed' => 'Não foi possível carregar as opções de pedido',

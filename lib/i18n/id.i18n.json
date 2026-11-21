@@ -221,7 +221,8 @@
       "playlist": "Daftar Putar",
       "clip": "Fitur",
       "photo": "Foto",
-      "folder": "Map"
+      "folder": "Map",
+      "photoAlbum": "Album foto"
     }
   },
   "screens": {

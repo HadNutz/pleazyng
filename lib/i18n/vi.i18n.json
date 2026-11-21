@@ -221,7 +221,8 @@
       "playlist": "Danh sách phát",
       "clip": "Video ngắn",
       "photo": "Hình Ảnh",
-      "folder": "Thư mục"
+      "folder": "Thư mục",
+      "photoAlbum": "Album ảnh"
     }
   },
   "screens": {

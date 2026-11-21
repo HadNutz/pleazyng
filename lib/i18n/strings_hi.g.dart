@@ -4597,6 +4597,7 @@ class _Translations$common$mediaKind$hi extends Translations$common$mediaKind$en
 	@override String get clip => 'क्लिप';
 	@override String get photo => 'फोटो';
 	@override String get folder => 'फ़ोल्डर';
+	@override String get photoAlbum => 'फ़ोटो एल्बम';
 }
 
 // Path: settings.startupSectionOptions
@@ -5841,6 +5842,7 @@ extension on TranslationsHi {
 			'common.mediaKind.clip' => 'क्लिप',
 			'common.mediaKind.photo' => 'फोटो',
 			'common.mediaKind.folder' => 'फ़ोल्डर',
+			'common.mediaKind.photoAlbum' => 'फ़ोटो एल्बम',
 			'screens.licenses' => 'अनुमतिएँ',
 			'screens.switchProfile' => 'स्विच प्रोफ़ाइल',
 			'screens.subtitleStyling' => 'Subtitle स्टाइलिंग',
@@ -6150,9 +6152,9 @@ extension on TranslationsHi {
 			'settings.companionRemoteServerStartFailed' => 'साथी सर्वर शुरू नहीं किया जा सकता',
 			'settings.companionRemoteServerStopFailed' => 'साथी सर्वर को रोक नहीं पाया',
 			'settings.autoPip' => 'Auto Picture-in-Picture के बारे में टिप्पणियाँ',
-			'settings.autoPipDescription' => 'स्वचालित रूप से छवि-इन-चित्र दर्ज करें जब आप प्लेबैक के दौरान ऐप छोड़ देते हैं',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'स्वचालित रूप से छवि-इन-चित्र दर्ज करें जब आप प्लेबैक के दौरान ऐप छोड़ देते हैं',
 			'settings.matchContentFrameRate' => 'मैच सामग्री फ्रेम दर',
 			'settings.matchContentFrameRateDescription' => 'मैच डिस्प्ले वीडियो सामग्री के लिए ताज़ा दर',
 			'settings.matchContentResolution' => 'मैच सामग्री संकल्प',
@@ -6664,9 +6666,9 @@ extension on TranslationsHi {
 			'accessibility.largeTargetsHint' => 'साझा नियंत्रण को स्पर्श और सहायक नेविगेशन के लिए अधिक स्थान दें।',
 			'accessibility.navigationHint' => 'नियंत्रणों के बीच जाने के लिए Tab और Shift+Tab, सक्रिय करने के लिए Enter या Space और बंद करने के लिए Escape या वापस जाने वाले बटन का उपयोग करें। किताब खुली होने पर ज़ूम और पढ़ने की प्राथमिकताएँ उपलब्ध रहती हैं।',
 			'accessibility.textSizeDescription' => 'अपने डिवाइस की सिस्टम टेक्स्ट आकार सेटिंग के अलावा Pleazyng इंटरफ़ेस का टेक्स्ट आकार बदलें।',
-			'accessibility.boldTextHint' => 'इंटरफ़ेस लेबल और संदेशों के लिए एक भारी वजन का उपयोग करें ताकि उन्हें अलग करना आसान हो सके।',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'इंटरफ़ेस लेबल और संदेशों के लिए एक भारी वजन का उपयोग करें ताकि उन्हें अलग करना आसान हो सके।',
 			'tooltips.shufflePlay' => 'शूफ खेल',
 			'tooltips.playTrailer' => 'ट्रेलर खेलना',
 			'tooltips.markAsWatched' => 'मार्क देखने के लिए',
@@ -7178,9 +7180,9 @@ extension on TranslationsHi {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (वय ${age})',
 			'errors.searchFailed' => ({required Object error}) => 'खोज विफल: ${error}',
 			'errors.searchUnavailable' => 'किसी भी मीडिया सर्वर तक पहुंच नहीं पाया।',
-			'errors.connectionTimeout' => ({required Object context}) => 'लोड करते समय कनेक्शन टाइम-आउट ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'लोड करते समय कनेक्शन टाइम-आउट ${context}',
 			'errors.connectionFailed' => 'मीडिया सर्वर से कनेक्ट नहीं कर सकते',
 			'errors.unableToLoad' => ({required Object context}) => '${context} लोड करने में असमर्थ है. कृपया फिर से कोशिश करें.',
 			'errors.noClientAvailable' => 'कोई ग्राहक उपलब्ध नहीं',
@@ -7692,9 +7694,9 @@ extension on TranslationsHi {
 			'playlists.removeItem' => 'Playlist से हटाएँ',
 			'playlists.smartPlaylist' => 'स्मार्ट प्लेलिस्ट',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} आइटम', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} आइटम', ), 
-			'playlists.emptyPlaylist' => 'यह प्लेलिस्ट खाली है',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'यह प्लेलिस्ट खाली है',
 			'playlists.deleteConfirm' => 'प्लेलिस्ट को हटा दें?',
 			'playlists.deleteMessage' => ({required Object name}) => 'क्या आप निश्चित हैं कि आप "${name}" को हटाना चाहते हैं?',
 			'playlists.created' => 'Playlist बनाया गया',
@@ -8206,9 +8208,9 @@ extension on TranslationsHi {
 			'performanceOverlay.hwFormat' => 'एफएमटी',
 			'performanceOverlay.matrix' => 'मैट्रिक्स',
 			'performanceOverlay.primaries' => 'प्राथमिकताएं',
-			'performanceOverlay.transfer' => 'स्थानांतरण',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'स्थानांतरण',
 			'performanceOverlay.renderFps' => 'एफपीएस',
 			'performanceOverlay.displayFps' => 'FPS प्रदर्शित करें',
 			'performanceOverlay.avSync' => 'A/V सिंक्रनाइज़ेशन',
@@ -8720,9 +8722,9 @@ extension on TranslationsHi {
 			'homeLayout.continueWatchingHomeDescription' => 'Home पर दिखाए गए पुनरावृत्ति-प्रगति की पंक्ति',
 			'homeLayout.nextUpHomeDescription' => 'अगला अनदेखा किए गए एपिसोड की पंक्ति अलग से दिखाई देती है होम',
 			'homeLayout.library' => 'लाइब्रेरी',
-			'homeLayout.showInRecommended' => 'पुस्तकालय में प्रदर्शित की सिफारिश',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'पुस्तकालय में प्रदर्शित की सिफारिश',
 			'homeLayout.customPlexRow' => 'कस्टम Plex पंक्ति',
 			'homeLayout.heroNeedsLibrary' => 'पहले पुस्तकालय की जांच करें - नायक को कहीं दिखाने की जरूरत है',
 			'homeLayout.heroNeedsSurface' => 'पहले पुस्तकालय या होम की जांच करें — नायक को कहीं दिखाने की जरूरत है',
@@ -9234,9 +9236,9 @@ extension on TranslationsHi {
 			'audiobook.statusFinished' => 'समाप्त',
 			'audiobook.goToTime' => 'समय के लिए जाओ',
 			'audiobook.timeHelp' => 'घंटे: मिनट: सेकंड, या मिनट: सेकंड',
-			'audiobook.recoveryHelp' => 'सिंक डेटा को स्थानांतरित या ठीक करने से पहले हाल की एन्क्रिप्टेड कॉपी निर्यात करें। आयात मौजूदा स्थिति के साथ मिलते हैं; वे स्थानीय सिंक इतिहास को कभी नहीं बदलते। सिंक कोड अलग से रखें।',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'सिंक डेटा को स्थानांतरित या ठीक करने से पहले हाल की एन्क्रिप्टेड कॉपी निर्यात करें। आयात मौजूदा स्थिति के साथ मिलते हैं; वे स्थानीय सिंक इतिहास को कभी नहीं बदलते। सिंक कोड अलग से रखें।',
 			'audiobook.recoveryExport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइलों का निर्यात',
 			'audiobook.recoveryImport' => 'एन्क्रिप्टेड पुनर्प्राप्ति फ़ाइल आयात',
 			'audiobook.recoveryImportConfirm' => 'मौजूदा इतिहास बनाए रखा जाएगा. साझा पुस्तकालय और आइटम आईडी शामिल नहीं हैं; आयात करने से पहले प्रत्येक डिवाइस पर फिट आईडी सेट करें.',
@@ -9748,9 +9750,9 @@ extension on TranslationsHi {
 			'musicTools.days' => 'दिन',
 			'musicTools.albumBlocks' => 'पूरे एल्बम साथ रखें',
 			'musicTools.home' => 'संगीत',
-			'musicTools.recent' => 'हाल ही में सुने गए',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'हाल ही में सुने गए',
 			'musicTools.apiKey' => 'API कुंजी',
 			'musicTools.missing' => 'ए / ए',
 			'musicTools.minutes' => 'मिनट',

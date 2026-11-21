@@ -4597,6 +4597,7 @@ class _Translations$common$mediaKind$az extends Translations$common$mediaKind$en
 	@override String get clip => 'Klip';
 	@override String get photo => 'Şəkil';
 	@override String get folder => 'Qovluq';
+	@override String get photoAlbum => 'Fotoalbom';
 }
 
 // Path: settings.startupSectionOptions
@@ -5841,6 +5842,7 @@ extension on TranslationsAz {
 			'common.mediaKind.clip' => 'Klip',
 			'common.mediaKind.photo' => 'Şəkil',
 			'common.mediaKind.folder' => 'Qovluq',
+			'common.mediaKind.photoAlbum' => 'Fotoalbom',
 			'screens.licenses' => 'Lisenziyalar',
 			'screens.switchProfile' => 'Profili dəyiş',
 			'screens.subtitleStyling' => 'Altyazı tənzimləmələri',
@@ -6150,9 +6152,9 @@ extension on TranslationsAz {
 			'settings.companionRemoteServerStartFailed' => 'Köməkçi pult serveri başladıla bilmədi',
 			'settings.companionRemoteServerStopFailed' => 'Köməkçi pult serveri dayandırıla bilmədi',
 			'settings.autoPip' => 'Avtomatik Pəncərə daxilində Pəncərə (PiP)',
-			'settings.autoPipDescription' => 'Oynatma zamanı tətbiqdən çıxdıqda avtomatik PiP rejiminə keç',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Oynatma zamanı tətbiqdən çıxdıqda avtomatik PiP rejiminə keç',
 			'settings.matchContentFrameRate' => 'Kadr tezliyini uyğunlaşdır',
 			'settings.matchContentFrameRateDescription' => 'Ekran yenilənmə tezliyini video məzmununa uyğunlaşdır',
 			'settings.matchContentResolution' => 'Məzmunun görüntü keyfiyyətinə uyğunlaş',
@@ -6664,9 +6666,9 @@ extension on TranslationsAz {
 			'accessibility.largeTargetsHint' => '“Müşən” komandaları daha çox touch və asistivi navigasiya üçün yer verir.',
 			'accessibility.navigationHint' => 'İdarəetmə elementləri arasında keçmək üçün Tab və Shift+Tab, aktivləşdirmək üçün Enter və ya Boşluq, bağlamaq üçün Escape və ya Geri düyməsindən istifadə edin. Kitab açıq olduqda böyütmə və oxu tənzimləmələri əlçatandır.',
 			'accessibility.textSizeDescription' => 'VVD-nin textiyi, sistemin texti-büyüklüğü ayarının yanı sıra Pleazyng-də ölçülür.',
-			'accessibility.boldTextHint' => 'İnternet etiketləri və mesajları üçün daha ağır bir ağırlık kullanın ki, onları ayırt etmək kolaydır.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'İnternet etiketləri və mesajları üçün daha ağır bir ağırlık kullanın ki, onları ayırt etmək kolaydır.',
 			'tooltips.shufflePlay' => 'Qarışıq oynat',
 			'tooltips.playTrailer' => 'Treyleri oynat',
 			'tooltips.markAsWatched' => 'Baxıldı olaraq işarələ',
@@ -7178,9 +7180,9 @@ extension on TranslationsAz {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} yaşında)',
 			'errors.searchFailed' => ({required Object error}) => 'Axtarış uğursuz oldu: ${error}',
 			'errors.searchUnavailable' => 'Axtarış heç bir media serverinə çata bilmədi.',
-			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklənərkən vaxt bitdi',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklənərkən vaxt bitdi',
 			'errors.connectionFailed' => 'Media serverinə qoşulmaq olmur',
 			'errors.unableToLoad' => ({required Object context}) => '${context} yüklənə bilmədi. Lütfən təzədən cəhd edin.',
 			'errors.noClientAvailable' => 'Əlçatan klient yoxdur',
@@ -7692,9 +7694,9 @@ extension on TranslationsAz {
 			'playlists.removeItem' => 'Oynatma siyahısından sil',
 			'playlists.smartPlaylist' => 'Ağıllı oynatma siyahısı',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('az'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', ), 
-			'playlists.emptyPlaylist' => 'Bu oynatma siyahısı boşdur',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Bu oynatma siyahısı boşdur',
 			'playlists.deleteConfirm' => 'Oynatma siyahısı silinsin?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" siyahısını silmək istədiyinizdən əminsiniz?',
 			'playlists.created' => 'Oynatma siyahısı yaradıldı',
@@ -8206,9 +8208,9 @@ extension on TranslationsAz {
 			'performanceOverlay.hwFormat' => 'HW formatı',
 			'performanceOverlay.matrix' => 'Matrisa',
 			'performanceOverlay.primaries' => 'Əsas rənglər',
-			'performanceOverlay.transfer' => 'Ötürmə',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Ötürmə',
 			'performanceOverlay.renderFps' => 'Emal FPS-i',
 			'performanceOverlay.displayFps' => 'Ekran FPS-i',
 			'performanceOverlay.avSync' => 'A/V Eyniləşdirilməsi',
@@ -8720,9 +8722,9 @@ extension on TranslationsAz {
 			'homeLayout.continueWatchingHomeDescription' => 'Evdə göstərilmiş olan “Gözlük”',
 			'homeLayout.nextUpHomeDescription' => 'Sonraki İçerikDünyanın ən azı yerləri evdə',
 			'homeLayout.library' => 'Kitabxana',
-			'homeLayout.showInRecommended' => 'İnternet-kitabətdə danışılanlar',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'İnternet-kitabətdə danışılanlar',
 			'homeLayout.customPlexRow' => 'Xərimlər Plex',
 			'homeLayout.heroNeedsLibrary' => 'Birincisi, “Bibliothèque” – “Hero”ın bir yerə baxması lazımdır.',
 			'homeLayout.heroNeedsSurface' => 'Birincisi kütüphanə və ya evə baxın — Hero bir yerə göstərmək lazımdır',
@@ -9234,9 +9236,9 @@ extension on TranslationsAz {
 			'audiobook.statusFinished' => 'Hazırda',
 			'audiobook.goToTime' => 'Zamanla gəlin',
 			'audiobook.timeHelp' => 'Saatlar:minutlar:saniyələr və ya minutlar:saniyələr',
-			'audiobook.recoveryHelp' => 'Son zamanlarda şifrə edilmiş bir kopyayı ithal etmədən əvvəl və ya sinqlər verilerini düzeltmək. İthalatlar mevcut durumla birleşir; yerel sinq tarihini asılmazlar. Sinq kodunu ayrı tutun.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Son zamanlarda şifrə edilmiş bir kopyayı ithal etmədən əvvəl və ya sinqlər verilerini düzeltmək. İthalatlar mevcut durumla birleşir; yerel sinq tarihini asılmazlar. Sinq kodunu ayrı tutun.',
 			'audiobook.recoveryExport' => 'Şifrelə qayıtma dosyası',
 			'audiobook.recoveryImport' => 'Şifrelə qayıtma dosyası',
 			'audiobook.recoveryImportConfirm' => 'Bu şifrə edilmiş qaytarma dosyasını günümüzdeki okuma pozisyonları və notlarla birleştirir? mevcut geçmişi tutulur. Paylaşılmış kütüphane və element kimlikləri içermez; ithal etmeden əvvəl hər cihazda eşitsiz kimliklər ayarlayın.',
@@ -9748,9 +9750,9 @@ extension on TranslationsAz {
 			'musicTools.days' => 'Günlər',
 			'musicTools.albumBlocks' => 'Albomları bütöv saxla',
 			'musicTools.home' => 'Musiqi',
-			'musicTools.recent' => 'Son dinlənilənlər',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Son dinlənilənlər',
 			'musicTools.apiKey' => 'API açarı',
 			'musicTools.missing' => 'Yoxdur',
 			'musicTools.minutes' => 'Dəqiqə',

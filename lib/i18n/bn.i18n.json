@@ -221,7 +221,8 @@
       "playlist": "প্লেলিস্ট",
       "clip": "ক্লিপ",
       "photo": "ছবি",
-      "folder": "ফোল্ডার"
+      "folder": "ফোল্ডার",
+      "photoAlbum": "ছবির অ্যালবাম"
     }
   },
   "screens": {

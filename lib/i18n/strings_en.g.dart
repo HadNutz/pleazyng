@@ -15836,6 +15836,9 @@ class Translations$common$mediaKind$en {
 
 	/// en: 'Folder'
 	String get folder => 'Folder';
+
+	/// en: 'Photo album'
+	String get photoAlbum => 'Photo album';
 }
 
 // Path: settings.startupSectionOptions
@@ -18476,6 +18479,7 @@ extension on Translations {
 			'common.mediaKind.clip' => 'Clip',
 			'common.mediaKind.photo' => 'Photo',
 			'common.mediaKind.folder' => 'Folder',
+			'common.mediaKind.photoAlbum' => 'Photo album',
 			'screens.licenses' => 'Licenses',
 			'screens.switchProfile' => 'Switch Profile',
 			'screens.subtitleStyling' => 'Subtitle Styling',
@@ -18775,9 +18779,9 @@ extension on Translations {
 			'settings.maxVolume' => 'Maximum Volume',
 			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
 			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
-			'settings.discordRichPresence' => 'Discord Rich Presence',
 			_ => null,
 		} ?? switch (path) {
+			'settings.discordRichPresence' => 'Discord Rich Presence',
 			'settings.discordRichPresenceDescription' => 'Show what you\'re watching on Discord',
 			'settings.services' => 'Services',
 			'settings.servicesDescription' => 'Connect Trakt, MyAnimeList, Seerr, and more',
@@ -19289,9 +19293,9 @@ extension on Translations {
 			'accessibility.mediaCardSeason' => ({required Object title, required Object seasonInfo}) => '${title}, ${seasonInfo}',
 			'accessibility.mediaCardWatched' => 'watched',
 			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
-			'accessibility.mediaCardUnwatched' => 'unwatched',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.mediaCardUnwatched' => 'unwatched',
 			'accessibility.tapToPlay' => 'Tap to play',
 			'accessibility.decrease' => 'Decrease',
 			'accessibility.increase' => 'Increase',
@@ -19803,9 +19807,9 @@ extension on Translations {
 			'iptv.deleteDispatcharrRecordingConfirm' => 'Delete this recording and its file from the Dispatcharr server?',
 			'iptv.stopRecording' => 'Stop recording',
 			'iptv.recordingDeleted' => 'Recording deleted.',
-			'iptv.recordingScheduled' => 'Recording scheduled on Dispatcharr.',
 			_ => null,
 		} ?? switch (path) {
+			'iptv.recordingScheduled' => 'Recording scheduled on Dispatcharr.',
 			'iptv.scheduleRecordingOnDevice' => 'Schedule local recording',
 			'iptv.localRecordingScheduled' => 'Local recording scheduled. Pleazyng must be running when it starts.',
 			'iptv.localRecordingAlreadyScheduled' => 'This program is already scheduled for local recording.',
@@ -20317,9 +20321,9 @@ extension on Translations {
 			'explore.status.airing' => 'Airing',
 			'explore.status.ended' => 'Ended',
 			'explore.status.canceled' => 'Canceled',
-			'explore.status.upcoming' => 'Upcoming',
 			_ => null,
 		} ?? switch (path) {
+			'explore.status.upcoming' => 'Upcoming',
 			'explore.episodeCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episode', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episodes', ), 
 			'explore.cast' => 'Cast',
 			'explore.characters' => 'Characters',
@@ -20831,9 +20835,9 @@ extension on Translations {
 			'downloads.customAmountAny' => 'Custom amount (any)...',
 			'downloads.randomEpisodes' => 'Random episodes',
 			'downloads.includeSpecials' => 'Include Specials',
-			'downloads.howManyEpisodes' => 'How many episodes?',
 			_ => null,
 		} ?? switch (path) {
+			'downloads.howManyEpisodes' => 'How many episodes?',
 			'downloads.invalidEpisodeCount' => 'Enter a valid episode count.',
 			'downloads.keepSynced' => 'Keep synced',
 			'downloads.downloadOnce' => 'Download once',
@@ -21345,9 +21349,9 @@ extension on Translations {
 			'matchScreen.titleHint' => 'Title',
 			'matchScreen.yearHint' => 'Year',
 			'matchScreen.search' => 'Search',
-			'matchScreen.noMatchesFound' => 'No matches found',
 			_ => null,
 		} ?? switch (path) {
+			'matchScreen.noMatchesFound' => 'No matches found',
 			'matchScreen.plexDiscover' => 'Plex Discover',
 			'matchScreen.plexLibrary' => 'Plex library',
 			'matchScreen.jellyfinLibrary' => 'Jellyfin library',
@@ -21859,9 +21863,9 @@ extension on Translations {
 			'platform.photoLibraryPermission' => 'Choose images from your photo library to use as media artwork.',
 			'platform.cameraPermission' => 'Scan QR codes to pair a Companion Remote.',
 			'universalMedia.title' => 'Open media',
-			'universalMedia.shortcutHelp' => 'Play a link, playlist, or file for this session.',
 			_ => null,
 		} ?? switch (path) {
+			'universalMedia.shortcutHelp' => 'Play a link, playlist, or file for this session.',
 			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
 			'universalMedia.openWhat' => 'What would you like to open?',
 			'universalMedia.stream' => 'Stream address',
@@ -22373,9 +22377,9 @@ extension on Translations {
 			'sourceSetup.nfsSetupHint' => 'Check these settings if the connection does not open.',
 			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
 			'sourceSetup.ftpHelp' => 'FTP uses passive mode. Use ftp:// for plain FTP, ftpes:// for explicit TLS, or ftps:// for TLS (implicit on port 990; explicit on other ports).',
-			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.openSubtitles' => 'OpenSubtitles',
 			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
 			'sourceSetup.apiKey' => 'API key',
 			'sourceSetup.optionalUsername' => 'Account username (optional)',
@@ -22887,9 +22891,9 @@ extension on Translations {
 			'podcasts.directoryLink' => 'Open directory listing',
 			'podcasts.feedAdded' => 'Podcast added.',
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
-			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
 			'podcasts.imported' => 'Subscriptions imported.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
@@ -23401,9 +23405,9 @@ extension on Translations {
 			'karaokeUi.sendRawVocalAudioForPrivateTake' => 'Send raw vocal audio to save a private take on the host',
 			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
-			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
 			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
 			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',

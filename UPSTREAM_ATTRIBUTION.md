@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- Open individual Plex and Jellyfin photos full-screen and browse nested photo albums with pagination. The viewer bounds decoded images and uses the profile navigator’s Back handling. [jmtagarro](https://github.com/jmtagarro) proposed [Plezy PR #3020](https://github.com/edde746/plezy/pull/3020).
+
 - Allow the finish clock next to remaining time to be hidden independently on desktop, touch and remote controls. Existing users keep their visible finish clock. [jtlopezdev](https://github.com/jtlopezdev) proposed [Plezy PR #3070](https://github.com/edde746/plezy/pull/3070).
 
 - Give long TV summaries the available width while keeping titles, metadata, actions and the fork’s directional layout in their existing columns. [smee2018](https://github.com/smee2018) proposed [Plezy PR #3087](https://github.com/edde746/plezy/pull/3087).

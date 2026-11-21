@@ -221,7 +221,8 @@
       "playlist": "Плейлист",
       "clip": "Кліп",
       "photo": "Фото",
-      "folder": "Тека"
+      "folder": "Тека",
+      "photoAlbum": "Фотоальбом"
     }
   },
   "screens": {

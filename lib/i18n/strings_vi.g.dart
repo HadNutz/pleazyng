@@ -4574,6 +4574,7 @@ class _Translations$common$mediaKind$vi extends Translations$common$mediaKind$en
 	@override String get clip => 'Video ngắn';
 	@override String get photo => 'Hình Ảnh';
 	@override String get folder => 'Thư mục';
+	@override String get photoAlbum => 'Album ảnh';
 }
 
 // Path: settings.startupSectionOptions
@@ -5816,6 +5817,7 @@ extension on TranslationsVi {
 			'common.mediaKind.clip' => 'Video ngắn',
 			'common.mediaKind.photo' => 'Hình Ảnh',
 			'common.mediaKind.folder' => 'Thư mục',
+			'common.mediaKind.photoAlbum' => 'Album ảnh',
 			'screens.licenses' => 'Giấy phép',
 			'screens.switchProfile' => 'Tính năng Switch Profile',
 			'screens.subtitleStyling' => 'Kiểu phụ đề',
@@ -6125,9 +6127,9 @@ extension on TranslationsVi {
 			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
 			'settings.companionRemoteServerStopFailed' => 'Không thể dừng lại máy chủ đồng nghiệp',
 			'settings.autoPip' => 'Ảnh Auto Picture in Picture',
-			'settings.autoPipDescription' => 'Tự động nhập hình ảnh trong khi bạn rời khỏi ứng dụng trong khi chơi',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Tự động nhập hình ảnh trong khi bạn rời khỏi ứng dụng trong khi chơi',
 			'settings.matchContentFrameRate' => 'Match Content Frame Tỷ lệ',
 			'settings.matchContentFrameRateDescription' => 'Match hiển thị tốc độ phục hồi cho nội dung video',
 			'settings.matchContentResolution' => 'Match Content Quyết định',
@@ -6639,9 +6641,9 @@ extension on TranslationsVi {
 			'accessibility.largeTargetsHint' => 'Tăng diện tích các điều khiển dùng chung để dễ chạm và điều hướng bằng công nghệ hỗ trợ.',
 			'accessibility.navigationHint' => 'Dùng Tab và Shift+Tab để di chuyển giữa các điều khiển, Enter hoặc Space để kích hoạt, Escape hoặc nút Quay lại để đóng. Bạn có thể chỉnh mức thu phóng và tùy chọn đọc khi mở sách.',
 			'accessibility.textSizeDescription' => 'Tích hợp văn bản giao diện trong Pleazyng ngoài thiết lập kích thước văn bản hệ thống của thiết bị của bạn.',
-			'accessibility.boldTextHint' => 'Sử dụng trọng lượng nặng hơn cho các nhãn giao diện và tin nhắn để làm cho chúng dễ dàng phân biệt.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Sử dụng trọng lượng nặng hơn cho các nhãn giao diện và tin nhắn để làm cho chúng dễ dàng phân biệt.',
 			'tooltips.shufflePlay' => 'Shuffle chơi',
 			'tooltips.playTrailer' => 'Trò chơi Trailer',
 			'tooltips.markAsWatched' => 'Mark theo dõi',
@@ -7153,9 +7155,9 @@ extension on TranslationsVi {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (trẻ ${age})',
 			'errors.searchFailed' => ({required Object error}) => 'Tìm kiếm thất bại: ${error}',
 			'errors.searchUnavailable' => 'Tìm kiếm không thể truy cập bất kỳ máy chủ phương tiện nào.',
-			'errors.connectionTimeout' => ({required Object context}) => 'Thời gian kết nối trong khi tải ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'Thời gian kết nối trong khi tải ${context}',
 			'errors.connectionFailed' => 'Không thể kết nối với Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'Không thể tải ${context}. xin vui lòng thử lại.',
 			'errors.noClientAvailable' => 'Không có khách hàng',
@@ -7667,9 +7669,9 @@ extension on TranslationsVi {
 			'playlists.removeItem' => 'Xóa khỏi danh sách phát',
 			'playlists.smartPlaylist' => 'Đồ chơi thông minh',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} mục', ), 
-			'playlists.emptyPlaylist' => 'Danh sách game này trống',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Danh sách game này trống',
 			'playlists.deleteConfirm' => 'xóa playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Bạn có chắc chắn bạn muốn xóa "${name}" không?',
 			'playlists.created' => 'Playlist tạo ra',
@@ -8181,9 +8183,9 @@ extension on TranslationsVi {
 			'performanceOverlay.hwFormat' => 'Định dạng phần cứng',
 			'performanceOverlay.matrix' => 'Ma trận',
 			'performanceOverlay.primaries' => 'nguyên nhân',
-			'performanceOverlay.transfer' => 'Chuyển đổi',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Chuyển đổi',
 			'performanceOverlay.renderFps' => 'Đánh giá FPS',
 			'performanceOverlay.displayFps' => 'Hiển thị FPS',
 			'performanceOverlay.avSync' => 'A/V đồng bộ',
@@ -8695,9 +8697,9 @@ extension on TranslationsVi {
 			'homeLayout.continueWatchingHomeDescription' => 'Lời bài hát: The Resume-Progress Trail Showed On Home',
 			'homeLayout.nextUpHomeDescription' => 'Next Unwatched episode series hiển thị riêng biệt trên Home',
 			'homeLayout.library' => 'Thư viện',
-			'homeLayout.showInRecommended' => 'Hiển thị trong Thư viện khuyến cáo',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'Hiển thị trong Thư viện khuyến cáo',
 			'homeLayout.customPlexRow' => 'Tính năng: Plex',
 			'homeLayout.heroNeedsLibrary' => 'Kiểm tra Thư viện đầu tiên — Hero cần một nơi nào đó để hiển thị',
 			'homeLayout.heroNeedsSurface' => 'Kiểm tra Thư viện hoặc Nhà đầu tiên — Anh hùng cần một nơi nào đó để hiển thị',
@@ -9209,9 +9211,9 @@ extension on TranslationsVi {
 			'audiobook.statusFinished' => 'Kết thúc',
 			'audiobook.goToTime' => 'Đi đến thời gian',
 			'audiobook.timeHelp' => 'Thời gian: phút: giây, hoặc phút: giây',
-			'audiobook.recoveryHelp' => 'Xuất một bản sao được mã hóa gần đây trước khi di chuyển hoặc sửa chữa dữ liệu đồng bộ. nhập khẩu kết hợp với trạng thái hiện tại; họ không bao giờ thay thế lịch sử đồng bộ địa phương. Giữ mã đồng bộ riêng biệt.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Xuất một bản sao được mã hóa gần đây trước khi di chuyển hoặc sửa chữa dữ liệu đồng bộ. nhập khẩu kết hợp với trạng thái hiện tại; họ không bao giờ thay thế lịch sử đồng bộ địa phương. Giữ mã đồng bộ riêng biệt.',
 			'audiobook.recoveryExport' => 'Xuất khẩu file recovery mã hóa',
 			'audiobook.recoveryImport' => 'nhập file recovery mã hóa',
 			'audiobook.recoveryImportConfirm' => 'Kết hợp tệp phục hồi mã hóa này với các vị trí đọc và ghi chú hiện tại? Lịch sử hiện có sẽ được giữ lại. Thư viện chia sẻ và ID mục không bao gồm; thiết lập ID phù hợp trên mỗi thiết bị trước khi nhập khẩu.',
@@ -9723,9 +9725,9 @@ extension on TranslationsVi {
 			'musicTools.days' => 'Ngày',
 			'musicTools.albumBlocks' => 'Giữ nguyên album',
 			'musicTools.home' => 'Nhạc',
-			'musicTools.recent' => 'Đã phát gần đây',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Đã phát gần đây',
 			'musicTools.apiKey' => 'Khóa API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'phút',

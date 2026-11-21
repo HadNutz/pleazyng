@@ -1165,6 +1165,7 @@ class _FindNextScreenState extends State<FindNextScreen> {
     MediaKind.collection ||
     MediaKind.playlist ||
     MediaKind.clip ||
+    MediaKind.photoAlbum ||
     MediaKind.photo ||
     MediaKind.folder ||
     MediaKind.unknown => null,

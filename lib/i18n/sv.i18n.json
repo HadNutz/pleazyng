@@ -221,7 +221,8 @@
       "playlist": "Spellista",
       "clip": "Klipp",
       "photo": "Foto",
-      "folder": "Mapp"
+      "folder": "Mapp",
+      "photoAlbum": "Fotoalbum"
     }
   },
   "screens": {

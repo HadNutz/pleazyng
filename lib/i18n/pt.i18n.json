@@ -221,7 +221,8 @@
       "playlist": "Playlist",
       "clip": "Clipe",
       "photo": "Foto",
-      "folder": "Pasta"
+      "folder": "Pasta",
+      "photoAlbum": "Álbum de fotos"
     }
   },
   "screens": {

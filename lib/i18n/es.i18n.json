@@ -221,7 +221,8 @@
       "playlist": "Lista de reproducción",
       "clip": "Clip",
       "photo": "Foto",
-      "folder": "Carpeta"
+      "folder": "Carpeta",
+      "photoAlbum": "Álbum de fotos"
     }
   },
   "screens": {

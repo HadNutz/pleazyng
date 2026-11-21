@@ -221,7 +221,8 @@
       "playlist": "Pleylist",
       "clip": "Klip",
       "photo": "Foto",
-      "folder": "Papka"
+      "folder": "Papka",
+      "photoAlbum": "Fotoalbom"
     }
   },
   "screens": {

@@ -4593,6 +4593,7 @@ class _Translations$common$mediaKind$zh_Hant extends Translations$common$mediaKi
 	@override String get clip => '短片';
 	@override String get photo => '相片';
 	@override String get folder => '資料夾';
+	@override String get photoAlbum => '相簿';
 }
 
 // Path: settings.startupSectionOptions
@@ -5837,6 +5838,7 @@ extension on TranslationsZhHant {
 			'common.mediaKind.clip' => '短片',
 			'common.mediaKind.photo' => '相片',
 			'common.mediaKind.folder' => '資料夾',
+			'common.mediaKind.photoAlbum' => '相簿',
 			'screens.licenses' => '授權條款',
 			'screens.switchProfile' => '切換使用者',
 			'screens.subtitleStyling' => '字幕樣式',
@@ -6146,9 +6148,9 @@ extension on TranslationsZhHant {
 			'settings.companionRemoteServerStartFailed' => '無法啟動隨身遙控器伺服器',
 			'settings.companionRemoteServerStopFailed' => '無法停止隨身遙控器伺服器',
 			'settings.autoPip' => '自動進入子母畫面',
-			'settings.autoPipDescription' => '播放影片時離開應用程式將自動進入子母畫面模式',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => '播放影片時離開應用程式將自動進入子母畫面模式',
 			'settings.matchContentFrameRate' => '符合影片影格率',
 			'settings.matchContentFrameRateDescription' => '將顯示器更新率同步至影片影格率',
 			'settings.matchContentResolution' => '符合內容解析度',
@@ -6660,9 +6662,9 @@ extension on TranslationsZhHant {
 			'accessibility.largeTargetsHint' => '共享控制器提供更多觸控和輔助導航空間。',
 			'accessibility.navigationHint' => '使用 Tab 和 Shift+Tab 在控制項之間移動，按 Enter 或空白鍵啟用，按 Escape 或返回按鈕關閉。開啟書籍後，可調整縮放比例和閱讀偏好設定。',
 			'accessibility.textSizeDescription' => '在 Pleazyng 中擴充套件介面文字,以及您的裝置的系統文字大小設定。',
-			'accessibility.boldTextHint' => '加粗介面標籤與訊息的字重，讓它們更容易辨識。',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => '加粗介面標籤與訊息的字重，讓它們更容易辨識。',
 			'tooltips.shufflePlay' => '隨機播放',
 			'tooltips.playTrailer' => '播放預告片',
 			'tooltips.markAsWatched' => '標記為已觀看',
@@ -7174,9 +7176,9 @@ extension on TranslationsZhHant {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date}（享年 ${age} 歲）',
 			'errors.searchFailed' => ({required Object error}) => '搜尋失敗：${error}',
 			'errors.searchUnavailable' => '搜尋無法連線至任何媒體伺服器。',
-			'errors.connectionTimeout' => ({required Object context}) => '載入 ${context} 時連線逾時',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => '載入 ${context} 時連線逾時',
 			'errors.connectionFailed' => '無法連線至媒體伺服器',
 			'errors.unableToLoad' => ({required Object context}) => '無法載入 ${context}。請重試。',
 			'errors.noClientAvailable' => '沒有可用用戶端',
@@ -7688,9 +7690,9 @@ extension on TranslationsZhHant {
 			'playlists.removeItem' => '從播放清單中移除',
 			'playlists.smartPlaylist' => '智慧播放清單',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}個項目', ), 
-			'playlists.emptyPlaylist' => '此播放清單為空',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => '此播放清單為空',
 			'playlists.deleteConfirm' => '刪除播放清單？',
 			'playlists.deleteMessage' => ({required Object name}) => '確定要刪除「${name}」嗎？',
 			'playlists.created' => '播放清單已建立',
@@ -8202,9 +8204,9 @@ extension on TranslationsZhHant {
 			'performanceOverlay.hwFormat' => '硬體格式',
 			'performanceOverlay.matrix' => '矩陣',
 			'performanceOverlay.primaries' => '基色',
-			'performanceOverlay.transfer' => '傳輸特性',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => '傳輸特性',
 			'performanceOverlay.renderFps' => '渲染 FPS',
 			'performanceOverlay.displayFps' => '螢幕 FPS',
 			'performanceOverlay.avSync' => '影音同步（A/V Sync）',
@@ -8716,9 +8718,9 @@ extension on TranslationsZhHant {
 			'homeLayout.continueWatchingHomeDescription' => '重新進展序列顯示在家',
 			'homeLayout.nextUpHomeDescription' => '下一篇 未觀看的集合序列在主頁上單獨顯示',
 			'homeLayout.library' => '媒體庫',
-			'homeLayout.showInRecommended' => '圖書館推薦',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => '圖書館推薦',
 			'homeLayout.customPlexRow' => '定製 Plex 行',
 			'homeLayout.heroNeedsLibrary' => '檢視圖書館首先 - 英雄需要在某處展示',
 			'homeLayout.heroNeedsSurface' => '檢視圖書館或家先 - 英雄需要在某處展示',
@@ -9230,9 +9232,9 @@ extension on TranslationsZhHant {
 			'audiobook.statusFinished' => '結束',
 			'audiobook.goToTime' => '走到時間',
 			'audiobook.timeHelp' => '時間: 分鐘: 秒或 分鐘: 秒',
-			'audiobook.recoveryHelp' => '移動或修復同步資料前，請先匯出近期的加密備份。匯入資料會與目前狀態合併，不會取代本機同步記錄。請另外保存同步代碼。',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => '移動或修復同步資料前，請先匯出近期的加密備份。匯入資料會與目前狀態合併，不會取代本機同步記錄。請另外保存同步代碼。',
 			'audiobook.recoveryExport' => '輸出加密恢復檔案',
 			'audiobook.recoveryImport' => '輸入加密恢復檔案',
 			'audiobook.recoveryImportConfirm' => '將此加密恢復檔案與當前閱讀位置和筆記相結合嗎?現有歷史記錄將被保留. 共享圖書館和專案 ID 不包含; 在進口之前,在每個裝置上設定匹配 ID。',
@@ -9744,9 +9746,9 @@ extension on TranslationsZhHant {
 			'musicTools.days' => '天',
 			'musicTools.albumBlocks' => '保持專輯完整',
 			'musicTools.home' => '音樂',
-			'musicTools.recent' => '最近播放',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 金鑰',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分鐘',

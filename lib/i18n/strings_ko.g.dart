@@ -4592,6 +4592,7 @@ class _Translations$common$mediaKind$ko extends Translations$common$mediaKind$en
 	@override String get clip => '클립';
 	@override String get photo => '사진';
 	@override String get folder => '폴더';
+	@override String get photoAlbum => '사진 앨범';
 }
 
 // Path: settings.startupSectionOptions
@@ -5836,6 +5837,7 @@ extension on TranslationsKo {
 			'common.mediaKind.clip' => '클립',
 			'common.mediaKind.photo' => '사진',
 			'common.mediaKind.folder' => '폴더',
+			'common.mediaKind.photoAlbum' => '사진 앨범',
 			'screens.licenses' => '라이선스',
 			'screens.switchProfile' => '프로필 전환',
 			'screens.subtitleStyling' => '자막 스타일 설정',
@@ -6145,9 +6147,9 @@ extension on TranslationsKo {
 			'settings.companionRemoteServerStartFailed' => '컴패니언 리모트 서버를 시작할 수 없습니다',
 			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
 			'settings.autoPip' => '자동 PIP 모드',
-			'settings.autoPipDescription' => '재생 중 앱을 떠나면 자동으로 화면 속 화면 모드로 전환합니다',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => '재생 중 앱을 떠나면 자동으로 화면 속 화면 모드로 전환합니다',
 			'settings.matchContentFrameRate' => '콘텐츠 프레임 레이트 맞춤',
 			'settings.matchContentFrameRateDescription' => '디스플레이 새로 고침 빈도를 동영상 콘텐츠에 맞춤',
 			'settings.matchContentResolution' => '콘텐츠 해상도에 맞추기',
@@ -6659,9 +6661,9 @@ extension on TranslationsKo {
 			'accessibility.largeTargetsHint' => '공통 컨트롤의 영역을 넓혀 터치와 보조 기술을 통한 탐색을 쉽게 합니다.',
 			'accessibility.navigationHint' => 'Tab과 Shift+Tab으로 컨트롤 사이를 이동하고, Enter 또는 Space로 실행하고, Escape 또는 뒤로 버튼으로 닫으세요. 책을 열면 확대/축소와 읽기 설정을 사용할 수 있습니다.',
 			'accessibility.textSizeDescription' => 'Pleazyng에서 스케일 인터페이스 텍스트는 장치의 시스템 텍스트 크기 설정 외에도.',
-			'accessibility.boldTextHint' => '인터페이스 라벨과 메시지에 더 무거운 무게를 사용하여 구별하기 쉽습니다.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => '인터페이스 라벨과 메시지에 더 무거운 무게를 사용하여 구별하기 쉽습니다.',
 			'tooltips.shufflePlay' => '무작위 재생',
 			'tooltips.playTrailer' => '예고편 재생',
 			'tooltips.markAsWatched' => '시청 완료로 표시',
@@ -7173,9 +7175,9 @@ extension on TranslationsKo {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (향년 ${age}세)',
 			'errors.searchFailed' => ({required Object error}) => '검색 실패: ${error}',
 			'errors.searchUnavailable' => '검색이 어떤 미디어 서버에도 연결할 수 없습니다.',
-			'errors.connectionTimeout' => ({required Object context}) => '${context} 로드 중 연결 시간 초과',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => '${context} 로드 중 연결 시간 초과',
 			'errors.connectionFailed' => '미디어 서버에 연결할 수 없습니다',
 			'errors.unableToLoad' => ({required Object context}) => '${context}을(를) 불러올 수 없습니다. 다시 시도하세요.',
 			'errors.noClientAvailable' => '사용 가능한 클라이언트가 없습니다',
@@ -7687,9 +7689,9 @@ extension on TranslationsKo {
 			'playlists.removeItem' => '재생 목록에서 항목 제거',
 			'playlists.smartPlaylist' => '스마트 재생 목록',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}개 항목', ), 
-			'playlists.emptyPlaylist' => '이 재생 목록은 비어 있습니다',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => '이 재생 목록은 비어 있습니다',
 			'playlists.deleteConfirm' => '재생 목록을 삭제하시겠습니까?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}"을(를) 삭제하시겠습니까?',
 			'playlists.created' => '재생 목록이 생성되었습니다',
@@ -8201,9 +8203,9 @@ extension on TranslationsKo {
 			'performanceOverlay.hwFormat' => 'HW 형식',
 			'performanceOverlay.matrix' => '매트릭스',
 			'performanceOverlay.primaries' => '원색',
-			'performanceOverlay.transfer' => '전송',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => '전송',
 			'performanceOverlay.renderFps' => '렌더 FPS',
 			'performanceOverlay.displayFps' => '디스플레이 FPS',
 			'performanceOverlay.avSync' => 'A/V 동기화',
@@ -8715,9 +8717,9 @@ extension on TranslationsKo {
 			'homeLayout.continueWatchingHomeDescription' => 'Home에 표시된 재현 진행 순서',
 			'homeLayout.nextUpHomeDescription' => '다음 무시된 에피소드 순서가 집에서 별도로 표시됩니다.',
 			'homeLayout.library' => '라이브러리',
-			'homeLayout.showInRecommended' => '추천 도서관에서 제공하는',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => '추천 도서관에서 제공하는',
 			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
 			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
 			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
@@ -9229,9 +9231,9 @@ extension on TranslationsKo {
 			'audiobook.statusFinished' => '마무리',
 			'audiobook.goToTime' => '시간에 가라',
 			'audiobook.timeHelp' => '시간:분:초 또는 분:초',
-			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
 			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
@@ -9743,9 +9745,9 @@ extension on TranslationsKo {
 			'musicTools.days' => '일',
 			'musicTools.albumBlocks' => '앨범 전체를 함께 유지',
 			'musicTools.home' => '음악',
-			'musicTools.recent' => '최근 재생한 음악',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => '최근 재생한 음악',
 			'musicTools.apiKey' => 'API 키',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '분',

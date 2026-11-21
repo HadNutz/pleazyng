@@ -1105,6 +1105,7 @@ class _Translations$common$mediaKind$es_419 extends Translations$common$mediaKin
 	@override String get playlist => 'Lista de reproducción';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Carpeta';
+	@override String get photoAlbum => 'Álbum de fotos';
 }
 
 // Path: themeEditor.slots
@@ -1411,6 +1412,7 @@ extension on TranslationsEs419 {
 			'common.mediaKind.playlist' => 'Lista de reproducción',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Carpeta',
+			'common.mediaKind.photoAlbum' => 'Álbum de fotos',
 			'screens.subtitleStyling' => 'Estilo de subtítulos',
 			'screens.logs' => 'Registros',
 			'settings.title' => 'Configuración',
@@ -1883,9 +1885,9 @@ extension on TranslationsEs419 {
 			'romm.sync' => 'Sync saves',
 			'romm.savedLocally' => 'Progress kept on this device; upload is pending.',
 			'romm.pause' => 'Pause',
-			'romm.kContinue' => 'Continue',
 			_ => null,
 		} ?? switch (path) {
+			'romm.kContinue' => 'Continue',
 			'romm.saveState' => 'Save state',
 			'romm.loadState' => 'Load state',
 			'romm.saveAndExit' => 'Save and exit',

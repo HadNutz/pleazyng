@@ -4687,6 +4687,7 @@ class Translations$common$mediaKind$es extends Translations$common$mediaKind$en 
 	@override String get clip => 'Clip';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Carpeta';
+	@override String get photoAlbum => 'Álbum de fotos';
 }
 
 // Path: settings.startupSectionOptions
@@ -5968,6 +5969,7 @@ extension on TranslationsEs {
 			'common.mediaKind.clip' => 'Clip',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Carpeta',
+			'common.mediaKind.photoAlbum' => 'Álbum de fotos',
 			'screens.licenses' => 'Licencias',
 			'screens.switchProfile' => 'Cambiar perfil',
 			'screens.subtitleStyling' => 'Estilo de subtítulos',
@@ -6274,9 +6276,9 @@ extension on TranslationsEs {
 			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
 			'settings.companionRemoteServer' => 'Servidor de control remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
-			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
 			'settings.companionRemoteServerStopFailed' => 'No se pudo detener el servidor de control remoto',
 			'settings.autoPip' => 'Imagen en imagen automática',
 			'settings.autoPipDescription' => 'Activar automáticamente el modo de imagen en imagen al salir de la aplicación durante la reproducción',
@@ -6788,9 +6790,9 @@ extension on TranslationsEs {
 			'accessibility.reduceMotion' => 'Reducir movimiento',
 			'accessibility.reduceMotionHint' => 'Detener el movimiento del indicador de foco, las transiciones de página y los efectos decorativos.',
 			'accessibility.largeTargets' => 'Objetivos de mayor toque',
-			'accessibility.largeTargetsHint' => 'Dale controles compartidos más espacio para el toque y la navegación asistiva.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargetsHint' => 'Dale controles compartidos más espacio para el toque y la navegación asistiva.',
 			'accessibility.navigationHint' => 'Usa Tab y Shift+Tab para moverte entre los controles, Enter o la barra espaciadora para activarlos y Escape o Atrás para cerrar. El zoom y las preferencias de lectura están disponibles cuando hay un libro abierto.',
 			'accessibility.textSizeDescription' => 'Escala el texto de la interfaz en Pleazyng además de la configuración de tamaño del texto del sistema de su dispositivo.',
 			'accessibility.boldTextHint' => 'Utilice un peso más pesado para las etiquetas de interfaz y los mensajes para que sean más fáciles de distinguir.',
@@ -7302,9 +7304,9 @@ extension on TranslationsEs {
 			'discover.findNext.artworkUnavailable' => 'Imagen no disponible',
 			'discover.findNext.savedFeedback' => 'Añadido a las selecciones guardadas',
 			'discover.findNext.skippedFeedback' => 'Omitido por ahora',
-			'discover.findNext.releaseToConfirm' => 'Suelta para confirmar',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.releaseToConfirm' => 'Suelta para confirmar',
 			'discover.findNext.remoteHint' => 'Portada enfocada: ← / → elegir · Seleccionar: detalles · ↑ / ↓ mover el foco',
 			'discover.studio' => 'Estudio',
 			'discover.rating' => 'Valoración',
@@ -7816,9 +7818,9 @@ extension on TranslationsEs {
 			'collections.selectCollection' => 'Seleccionar colección',
 			'collections.collectionName' => 'Nombre de la colección',
 			'collections.enterCollectionName' => 'Introduce el nombre de la colección',
-			'collections.addedToCollection' => 'Añadido a la colección',
 			_ => null,
 		} ?? switch (path) {
+			'collections.addedToCollection' => 'Añadido a la colección',
 			'collections.errorAddingToCollection' => 'Error al añadir a la colección',
 			'collections.created' => 'Colección creada',
 			'collections.removeFromCollection' => 'Eliminar de la colección',
@@ -8330,9 +8332,9 @@ extension on TranslationsEs {
 			'performanceOverlay.decoder' => 'Decodificador',
 			'performanceOverlay.rawDecoder' => 'Decodificador sin procesar',
 			'performanceOverlay.tunneling' => 'Túnel',
-			'performanceOverlay.passthrough' => 'Transferencia directa',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.passthrough' => 'Transferencia directa',
 			'performanceOverlay.aspect' => 'Aspecto',
 			'performanceOverlay.rotation' => 'Rotación',
 			'performanceOverlay.dvSource' => 'Origen DV',
@@ -8844,9 +8846,9 @@ extension on TranslationsEs {
 			'homeLayout.syncAccountTitle' => 'Síntese el diseño con tu cuenta Plex',
 			'homeLayout.syncAccountOn' => 'En: este dispositivo comparte orden de línea, líneas, Hero y Auto-slide con sus otros dispositivos.',
 			'homeLayout.syncAccountOff' => 'Desactivado: este dispositivo mantiene su propio layout.',
-			'homeLayout.syncNow' => 'Síntomas ahora',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.syncNow' => 'Síntomas ahora',
 			'homeLayout.plexHomeManager' => 'Plex Director de la casa',
 			'homeLayout.managePlexRows' => 'Gestión Plex líneas en Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
@@ -9358,9 +9360,9 @@ extension on TranslationsEs {
 			'audiobook.finished' => 'Finalizado',
 			'audiobook.readingPosition' => ({required Object percent}) => 'Leer · ${percent}%',
 			'audiobook.chapterTimeline' => 'Capítulo Progreso',
-			'audiobook.bookTimeline' => 'Todo el libro Progreso',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.bookTimeline' => 'Todo el libro Progreso',
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Tiempo restante en este capítulo: ${time}',
 			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
@@ -9872,9 +9874,9 @@ extension on TranslationsEs {
 			'bonusExtras.deviceNotice' => 'La opción «En este dispositivo» requiere un entorno de ejecución compatible con OpenAI instalado en localhost.',
 			'bonusExtras.save' => 'Guardar',
 			'bonusExtras.cancel' => 'Cancelar',
-			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.invalidSettings' => 'Comprueba las direcciones de los servidores y el nombre del modelo. El modo en la nube requiere HTTPS; el modo en este dispositivo requiere localhost.',
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
 			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
 			'bonusExtras.linkTitle' => 'Título del extra',

@@ -4597,6 +4597,7 @@ class _Translations$common$mediaKind$tr extends Translations$common$mediaKind$en
 	@override String get clip => 'Klip';
 	@override String get photo => 'Fotoğraf';
 	@override String get folder => 'Klasör';
+	@override String get photoAlbum => 'Fotoğraf albümü';
 }
 
 // Path: settings.startupSectionOptions
@@ -5841,6 +5842,7 @@ extension on TranslationsTr {
 			'common.mediaKind.clip' => 'Klip',
 			'common.mediaKind.photo' => 'Fotoğraf',
 			'common.mediaKind.folder' => 'Klasör',
+			'common.mediaKind.photoAlbum' => 'Fotoğraf albümü',
 			'screens.licenses' => 'Lisanslar',
 			'screens.switchProfile' => 'Profil Değiştir',
 			'screens.subtitleStyling' => 'Altyazı Biçimlendirmesi',
@@ -6150,9 +6152,9 @@ extension on TranslationsTr {
 			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
 			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
 			'settings.autoPip' => 'Otomatik Pencere İçinde Pencere (PiP)',
-			'settings.autoPipDescription' => 'Oynatma sırasında uygulamadan çıktığınızda otomatik olarak pencere içinde pencere moduna geç',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'Oynatma sırasında uygulamadan çıktığınızda otomatik olarak pencere içinde pencere moduna geç',
 			'settings.matchContentFrameRate' => 'İçerik Kare Hızını Eşitle',
 			'settings.matchContentFrameRateDescription' => 'Ekran yenileme hızını video içeriğiyle eşitle',
 			'settings.matchContentResolution' => 'İçerik çözünürlüğüne uyarla',
@@ -6664,9 +6666,9 @@ extension on TranslationsTr {
 			'accessibility.largeTargetsHint' => 'Paylaşılan kontroller dokunmatik ve yardımcı navigasyon için daha fazla yer verir.',
 			'accessibility.navigationHint' => 'Kontroller arasında geçiş yapmak için Tab ve Shift+Tab, etkinleştirmek için Enter veya boşluk tuşu, kapatmak için Escape veya Geri düğmesini kullanın. Kitap açıkken yakınlaştırma ve okuma tercihleri kullanılabilir.',
 			'accessibility.textSizeDescription' => 'Pleazyng\'de ölçekli arayüz metni, cihazınızın sistem metin boyutu ayarına ek olarak.',
-			'accessibility.boldTextHint' => 'Bir arayüz etiketleri ve mesajları için daha ağır bir ağırlık kullanın, bunları ayırt etmek kolay hale getirin.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'Bir arayüz etiketleri ve mesajları için daha ağır bir ağırlık kullanın, bunları ayırt etmek kolay hale getirin.',
 			'tooltips.shufflePlay' => 'Karışık oynat',
 			'tooltips.playTrailer' => 'Fragmanı oynat',
 			'tooltips.markAsWatched' => 'İzlendi olarak işaretle',
@@ -7178,9 +7180,9 @@ extension on TranslationsTr {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (${age} yaşında)',
 			'errors.searchFailed' => ({required Object error}) => 'Arama başarısız: ${error}',
 			'errors.searchUnavailable' => 'Arama hiçbir medya sunucusuna ulaşamadı.',
-			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklenirken bağlantı zaman aşımına uğradı',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklenirken bağlantı zaman aşımına uğradı',
 			'errors.connectionFailed' => 'Medya sunucusuna bağlanılamıyor',
 			'errors.unableToLoad' => ({required Object context}) => '${context} yüklenemedi. Lütfen tekrar deneyin.',
 			'errors.noClientAvailable' => 'Kullanılabilir istemci yok',
@@ -7692,9 +7694,9 @@ extension on TranslationsTr {
 			'playlists.removeItem' => 'Oynatma Listesinden Kaldır',
 			'playlists.smartPlaylist' => 'Akıllı Oynatma Listesi',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('tr'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} öge', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} öge', ), 
-			'playlists.emptyPlaylist' => 'Bu oynatma listesi boş',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'Bu oynatma listesi boş',
 			'playlists.deleteConfirm' => 'Oynatma Listesi Silinsin mi?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" listesini silmek istediğinizden emin misiniz?',
 			'playlists.created' => 'Oynatma listesi oluşturuldu',
@@ -8206,9 +8208,9 @@ extension on TranslationsTr {
 			'performanceOverlay.hwFormat' => 'HW Biçimi',
 			'performanceOverlay.matrix' => 'Matris',
 			'performanceOverlay.primaries' => 'Ana Renkler',
-			'performanceOverlay.transfer' => 'Aktarım',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'Aktarım',
 			'performanceOverlay.renderFps' => 'İşleme FPS',
 			'performanceOverlay.displayFps' => 'Ekran FPS',
 			'performanceOverlay.avSync' => 'A/V Eşitleme',
@@ -8720,9 +8722,9 @@ extension on TranslationsTr {
 			'homeLayout.continueWatchingHomeDescription' => 'Home > Gelişmiş Gelişme > Evde Gösterilen Gelişmeler',
 			'homeLayout.nextUpHomeDescription' => 'Sonraki izlenmemiş bölüm sırası ayrı olarak gösterildi',
 			'homeLayout.library' => 'Kitaplık',
-			'homeLayout.showInRecommended' => 'Kütüphane önerilen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'Kütüphane önerilen',
 			'homeLayout.customPlexRow' => 'Özel Plex satır',
 			'homeLayout.heroNeedsLibrary' => 'İlk Kütüphaneyi Kontrol Edin - Kahramanın Gösterilmesi Gereken Bir Yer',
 			'homeLayout.heroNeedsSurface' => 'İlk önce Kütüphane veya Ev\'i kontrol edin - Kahramanın göstermesi gereken bir yer var',
@@ -9234,9 +9236,9 @@ extension on TranslationsTr {
 			'audiobook.statusFinished' => 'bitmiş',
 			'audiobook.goToTime' => 'Zamanına gidin',
 			'audiobook.timeHelp' => 'Saatler: dakikalar: saniye veya dakikalar: saniye',
-			'audiobook.recoveryHelp' => 'Son zamanlarda şifrelenmiş bir kopyasını aktarmadan önce veya senkronizasyon verilerini düzeltmeden önce ihraç edin. ithalat mevcut durumla birleşir; yerel senkrona geçmişi asla değiştirmezler. senkronu ayrı tutun.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'Son zamanlarda şifrelenmiş bir kopyasını aktarmadan önce veya senkronizasyon verilerini düzeltmeden önce ihraç edin. ithalat mevcut durumla birleşir; yerel senkrona geçmişi asla değiştirmezler. senkronu ayrı tutun.',
 			'audiobook.recoveryExport' => 'İhracat şifreli kurtarma dosyası',
 			'audiobook.recoveryImport' => 'İthalat Şifreli Kurtarma Dosyası',
 			'audiobook.recoveryImportConfirm' => 'Bu şifreli kurtarma dosyasını mevcut okuma pozisyonları ve notları ile birleştirin? Mevcut geçmişi muhafaza edilecektir. Paylaşılan kütüphane ve öğe kimlikleri dahil değildir; ithal etmeden önce her cihazda eşleşen kimlikler ayarlayın.',
@@ -9748,9 +9750,9 @@ extension on TranslationsTr {
 			'musicTools.days' => 'Günler',
 			'musicTools.albumBlocks' => 'Albümleri bütün olarak tut',
 			'musicTools.home' => 'Müzik',
-			'musicTools.recent' => 'Son çalınanlar',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'Son çalınanlar',
 			'musicTools.apiKey' => 'API anahtarı',
 			'musicTools.missing' => 'Yok',
 			'musicTools.minutes' => 'Dakika',

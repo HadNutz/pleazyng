@@ -221,7 +221,8 @@
       "playlist": "Lejátszási lista",
       "clip": "Klip",
       "photo": "Fénykép",
-      "folder": "Mappa"
+      "folder": "Mappa",
+      "photoAlbum": "Fotóalbum"
     }
   },
   "screens": {

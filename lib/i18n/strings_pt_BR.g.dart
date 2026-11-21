@@ -1146,6 +1146,7 @@ class Translations$common$mediaKind$pt_BR extends Translations$common$mediaKind$
 	@override String get clip => 'Destaque';
 	@override String get photo => 'Fotos';
 	@override String get folder => 'Pasta';
+	@override String get photoAlbum => 'Álbum de fotos';
 }
 
 // Path: themeEditor.slots
@@ -1471,6 +1472,7 @@ extension on TranslationsPtBr {
 			'common.mediaKind.clip' => 'Destaque',
 			'common.mediaKind.photo' => 'Fotos',
 			'common.mediaKind.folder' => 'Pasta',
+			'common.mediaKind.photoAlbum' => 'Álbum de fotos',
 			'screens.subtitleStyling' => 'Estilização da legenda',
 			'screens.logs' => 'Registros',
 			'settings.title' => 'Configurações',
@@ -1926,9 +1928,9 @@ extension on TranslationsPtBr {
 			'romm.refreshBeforePlay' => 'Refresh this library to check available players.',
 			'romm.missing' => 'This copy has no game files on the server.',
 			'romm.noRoute' => 'No compatible in-app player is available for this copy.',
-			'romm.firmware' => 'Firmware',
 			_ => null,
 		} ?? switch (path) {
+			'romm.firmware' => 'Firmware',
 			'romm.firmwareHelp' => 'Some systems need firmware. Manage it in RomM; the selected emulator reports any missing requirements at launch.',
 			'romm.achievements' => 'RetroAchievements',
 			'romm.achievementsHelp' => 'Achievement information comes from RomM. The browser player does not earn new achievements.',

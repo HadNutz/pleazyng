@@ -4605,6 +4605,7 @@ class _Translations$common$mediaKind$he extends Translations$common$mediaKind$en
 	@override String get clip => 'קליפ';
 	@override String get photo => 'תמונה';
 	@override String get folder => 'תיקייה';
+	@override String get photoAlbum => 'אלבום תמונות';
 }
 
 // Path: settings.startupSectionOptions
@@ -5849,6 +5850,7 @@ extension on TranslationsHe {
 			'common.mediaKind.clip' => 'קליפ',
 			'common.mediaKind.photo' => 'תמונה',
 			'common.mediaKind.folder' => 'תיקייה',
+			'common.mediaKind.photoAlbum' => 'אלבום תמונות',
 			'screens.licenses' => 'רישיונות',
 			'screens.switchProfile' => 'פרופיל Switch',
 			'screens.subtitleStyling' => 'עיצוב כתוביות',
@@ -6158,9 +6160,9 @@ extension on TranslationsHe {
 			'settings.companionRemoteServerStartFailed' => 'לא יכולתי להתחיל את שרת החברות',
 			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
 			'settings.autoPip' => 'צילום: Auto Picture in Picture',
-			'settings.autoPipDescription' => 'כניסת תמונה בתמונה באופן אוטומטי כאשר אתה עוזב את האפליקציה במהלך הצגת',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => 'כניסת תמונה בתמונה באופן אוטומטי כאשר אתה עוזב את האפליקציה במהלך הצגת',
 			'settings.matchContentFrameRate' => 'תחרות תוכן Frame',
 			'settings.matchContentFrameRateDescription' => 'משחק תצוגה שיעור חידוש לתוכן וידאו',
 			'settings.matchContentResolution' => 'פתרון תוכן Match',
@@ -6672,9 +6674,9 @@ extension on TranslationsHe {
 			'accessibility.largeTargetsHint' => 'להגדיל את השטח של הפקדים המשותפים כדי להקל על מגע ועל ניווט בעזרת טכנולוגיות מסייעות.',
 			'accessibility.navigationHint' => 'אפשר להשתמש ב-Tab וב-Shift+Tab כדי לעבור בין הפקדים, ב-Enter או ב-Space כדי להפעיל, וב-Escape או בכפתור החזרה כדי לסגור. כשספר פתוח, אפשר לשנות את הזום ואת העדפות הקריאה.',
 			'accessibility.textSizeDescription' => 'טקסט אינטראקציה בקנה מידה ב- Pleazyng מלבד הגדרת גודל הטקסט של המערכת במכשיר שלך.',
-			'accessibility.boldTextHint' => 'השתמש במשקל כבד יותר עבור תוויות ממשק והודעות כדי להפוך אותם קל יותר להבדיל.',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => 'השתמש במשקל כבד יותר עבור תוויות ממשק והודעות כדי להפוך אותם קל יותר להבדיל.',
 			'tooltips.shufflePlay' => 'שושן משחק',
 			'tooltips.playTrailer' => 'משחק טריילר',
 			'tooltips.markAsWatched' => 'מארק כפי שנצפה',
@@ -7186,9 +7188,9 @@ extension on TranslationsHe {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date} (בגיל ${age})',
 			'errors.searchFailed' => ({required Object error}) => 'חיפוש לא הצליח: ${error}',
 			'errors.searchUnavailable' => 'החיפוש לא יכול להגיע לשירותי התקשורת.',
-			'errors.connectionTimeout' => ({required Object context}) => 'זמן חיבור בזמן הטעינה ${context}',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => 'זמן חיבור בזמן הטעינה ${context}',
 			'errors.connectionFailed' => 'אי אפשר להתחבר לשרת מדיה',
 			'errors.unableToLoad' => ({required Object context}) => 'אין אפשרות להעלות ${context}.',
 			'errors.noClientAvailable' => 'אין לקוחות זמינים',
@@ -7700,9 +7702,9 @@ extension on TranslationsHe {
 			'playlists.removeItem' => 'הסר מרשימת הניגון',
 			'playlists.smartPlaylist' => 'חכמה Playlist',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריט', two: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריטים', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריטים', ), 
-			'playlists.emptyPlaylist' => 'רשימת המשחקים הזאת ריקה',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => 'רשימת המשחקים הזאת ריקה',
 			'playlists.deleteConfirm' => 'לשחרר את Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'האם אתה בטוח שאתה רוצה למחוק את "${name}"?',
 			'playlists.created' => 'Playlist שנוצר',
@@ -8214,9 +8216,9 @@ extension on TranslationsHe {
 			'performanceOverlay.hwFormat' => 'ה-Fmt',
 			'performanceOverlay.matrix' => 'מתיקס',
 			'performanceOverlay.primaries' => 'ראשוני',
-			'performanceOverlay.transfer' => 'העברה',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => 'העברה',
 			'performanceOverlay.renderFps' => 'רנדה FPS',
 			'performanceOverlay.displayFps' => 'תצוגה FPS',
 			'performanceOverlay.avSync' => 'A/V סינכרון',
@@ -8728,9 +8730,9 @@ extension on TranslationsHe {
 			'homeLayout.continueWatchingHomeDescription' => 'רצועת ההתקדמות המוצגת בבית',
 			'homeLayout.nextUpHomeDescription' => 'השורה הבאה של הפרק לא נצפה הוצגה בנפרד בבית',
 			'homeLayout.library' => 'ספרייה',
-			'homeLayout.showInRecommended' => 'תגית: הספרייה המומלצת',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => 'תגית: הספרייה המומלצת',
 			'homeLayout.customPlexRow' => 'אישית Plex שורה',
 			'homeLayout.heroNeedsLibrary' => 'ראשית, בדוק את הספרייה – גיבור צריך איפשהו להראות',
 			'homeLayout.heroNeedsSurface' => 'ראשית בדוק את הספרייה או הבית – גיבור צריך איפשהו להראות',
@@ -9242,9 +9244,9 @@ extension on TranslationsHe {
 			'audiobook.statusFinished' => 'הסתיימה',
 			'audiobook.goToTime' => 'ללכת בזמן',
 			'audiobook.timeHelp' => 'שעות: דקות: שניות או דקות: שניות',
-			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
 			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImportConfirm' => 'שילוב זה קובץ ההחזרה מוצפן עם עמדות הקריאה הנוכחיות והערות? ההיסטוריה הקיימת תישמר. ספרייה משותפת ו- פריטים מזהים אינם נכללים; הגדרת מזהים מתאימים על כל מכשיר לפני ייבוא.',
@@ -9756,9 +9758,9 @@ extension on TranslationsHe {
 			'musicTools.days' => 'ימים',
 			'musicTools.albumBlocks' => 'שמירה על אלבומים שלמים ביחד',
 			'musicTools.home' => 'מוסיקה',
-			'musicTools.recent' => 'הושמעו לאחרונה',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => 'הושמעו לאחרונה',
 			'musicTools.apiKey' => 'מפתח API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'דקות',

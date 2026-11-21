@@ -221,7 +221,8 @@
       "playlist": "เพลย์ลิสต์",
       "clip": "คลิก",
       "photo": "ภาพถ่าย",
-      "folder": "แผง"
+      "folder": "แผง",
+      "photoAlbum": "อัลบั้มรูปภาพ"
     }
   },
   "screens": {

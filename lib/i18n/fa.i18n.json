@@ -221,7 +221,8 @@
       "playlist": "لیست پخش",
       "clip": "فیلم کوتاه",
       "photo": "عکس",
-      "folder": "پوشه"
+      "folder": "پوشه",
+      "photoAlbum": "آلبوم عکس"
     }
   },
   "screens": {

@@ -4592,6 +4592,7 @@ class Translations$common$mediaKind$zh extends Translations$common$mediaKind$en 
 	@override String get clip => '短片';
 	@override String get photo => '照片';
 	@override String get folder => '文件夹';
+	@override String get photoAlbum => '相册';
 }
 
 // Path: settings.startupSectionOptions
@@ -5836,6 +5837,7 @@ extension on TranslationsZh {
 			'common.mediaKind.clip' => '短片',
 			'common.mediaKind.photo' => '照片',
 			'common.mediaKind.folder' => '文件夹',
+			'common.mediaKind.photoAlbum' => '相册',
 			'screens.licenses' => '许可证',
 			'screens.switchProfile' => '切换用户',
 			'screens.subtitleStyling' => '字幕样式',
@@ -6145,9 +6147,9 @@ extension on TranslationsZh {
 			'settings.companionRemoteServerStartFailed' => '无法启动远程控制服务器',
 			'settings.companionRemoteServerStopFailed' => '无法停止远程控制服务器',
 			'settings.autoPip' => '自动画中画',
-			'settings.autoPipDescription' => '播放期间离开应用时自动进入画中画模式',
 			_ => null,
 		} ?? switch (path) {
+			'settings.autoPipDescription' => '播放期间离开应用时自动进入画中画模式',
 			'settings.matchContentFrameRate' => '匹配内容帧率',
 			'settings.matchContentFrameRateDescription' => '使显示器刷新率与视频帧率匹配',
 			'settings.matchContentResolution' => '匹配内容分辨率',
@@ -6659,9 +6661,9 @@ extension on TranslationsZh {
 			'accessibility.largeTargetsHint' => '共享控制器提供更多触摸和辅助导航空间。',
 			'accessibility.navigationHint' => '使用 Tab 和 Shift+Tab 在控件之间移动，按 Enter 或空格键激活，按 Escape 或返回按钮关闭。打开书籍后，可调整缩放比例和阅读偏好。',
 			'accessibility.textSizeDescription' => '在 Pleazyng 中扩展接口文本,以及您的设备的系统文本大小设置。',
-			'accessibility.boldTextHint' => '加粗界面标签和消息的字重，让它们更容易辨认。',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.boldTextHint' => '加粗界面标签和消息的字重，让它们更容易辨认。',
 			'tooltips.shufflePlay' => '随机播放',
 			'tooltips.playTrailer' => '播放预告片',
 			'tooltips.markAsWatched' => '标记为已观看',
@@ -7173,9 +7175,9 @@ extension on TranslationsZh {
 			'discover.person.dateWithAgeAtDeath' => ({required Object date, required Object age}) => '${date}（享年 ${age} 岁）',
 			'errors.searchFailed' => ({required Object error}) => '搜索失败：${error}',
 			'errors.searchUnavailable' => '搜索无法连接任何媒体服务器。',
-			'errors.connectionTimeout' => ({required Object context}) => '加载 ${context} 时连接超时',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionTimeout' => ({required Object context}) => '加载 ${context} 时连接超时',
 			'errors.connectionFailed' => '无法连接到媒体服务器',
 			'errors.unableToLoad' => ({required Object context}) => '无法加载${context}。请重试。',
 			'errors.noClientAvailable' => '没有可用客户端',
@@ -7687,9 +7689,9 @@ extension on TranslationsZh {
 			'playlists.removeItem' => '从播放列表中移除',
 			'playlists.smartPlaylist' => '智能播放列表',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}个项目', ), 
-			'playlists.emptyPlaylist' => '此播放列表为空',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.emptyPlaylist' => '此播放列表为空',
 			'playlists.deleteConfirm' => '删除播放列表？',
 			'playlists.deleteMessage' => ({required Object name}) => '确定要删除“${name}”吗？',
 			'playlists.created' => '播放列表已创建',
@@ -8201,9 +8203,9 @@ extension on TranslationsZh {
 			'performanceOverlay.hwFormat' => '硬件格式',
 			'performanceOverlay.matrix' => '矩阵',
 			'performanceOverlay.primaries' => '基色',
-			'performanceOverlay.transfer' => '传递特性',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.transfer' => '传递特性',
 			'performanceOverlay.renderFps' => '渲染 FPS',
 			'performanceOverlay.displayFps' => '显示 FPS',
 			'performanceOverlay.avSync' => 'A/V 同步',
@@ -8715,9 +8717,9 @@ extension on TranslationsZh {
 			'homeLayout.continueWatchingHomeDescription' => '重新进展序列显示在家',
 			'homeLayout.nextUpHomeDescription' => '下一篇 未观看的集合序列在主页上单独显示',
 			'homeLayout.library' => '媒体库',
-			'homeLayout.showInRecommended' => '图书馆推荐',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.showInRecommended' => '图书馆推荐',
 			'homeLayout.customPlexRow' => '定制 Plex 行',
 			'homeLayout.heroNeedsLibrary' => '查看图书馆首先 - 英雄需要在某处展示',
 			'homeLayout.heroNeedsSurface' => '查看图书馆或家先 - 英雄需要在某处展示',
@@ -9229,9 +9231,9 @@ extension on TranslationsZh {
 			'audiobook.statusFinished' => '结束',
 			'audiobook.goToTime' => '走到时间',
 			'audiobook.timeHelp' => '时间: 分钟: 秒或 分钟: 秒',
-			'audiobook.recoveryHelp' => '移动或修复同步数据前，请先导出近期的加密备份。导入内容会与当前状态合并，不会覆盖本地同步历史。请另行保存同步代码。',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryHelp' => '移动或修复同步数据前，请先导出近期的加密备份。导入内容会与当前状态合并，不会覆盖本地同步历史。请另行保存同步代码。',
 			'audiobook.recoveryExport' => '输出加密恢复文件',
 			'audiobook.recoveryImport' => '输入加密恢复文件',
 			'audiobook.recoveryImportConfirm' => '将此加密恢复文件与当前阅读位置和笔记相结合吗?现有历史记录将被保留. 共享图书馆和项目 ID 不包含; 在进口之前,在每个设备上设置匹配 ID。',
@@ -9743,9 +9745,9 @@ extension on TranslationsZh {
 			'musicTools.days' => '天',
 			'musicTools.albumBlocks' => '保持专辑完整',
 			'musicTools.home' => '音乐',
-			'musicTools.recent' => '最近播放',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.recent' => '最近播放',
 			'musicTools.apiKey' => 'API 密钥',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分钟',

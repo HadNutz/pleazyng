@@ -221,7 +221,8 @@
       "playlist": "Spilleliste",
       "clip": "Klipp",
       "photo": "Bilde",
-      "folder": "Mappe"
+      "folder": "Mappe",
+      "photoAlbum": "Fotoalbum"
     }
   },
   "screens": {

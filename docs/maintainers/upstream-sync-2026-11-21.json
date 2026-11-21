@@ -569,7 +569,8 @@
       "author": "jmtagarro",
       "state": "open",
       "title": "fix(photos): open albums as containers and show photos in a full-screen viewer",
-      "decision": "Worth a separate photo UX review. Check album navigation and full-resolution display on supported backends before selecting a port."
+      "decision": "Adapted in Pleazyng. Open individual Plex and Jellyfin photos full-screen and browse nested photo albums with pagination. The viewer bounds decoded images and uses the profile navigator’s Back handling.",
+      "upstream_head": "bb2a07021f929b0e72110fcb79c4764017464e47"
     },
     {
       "number": 3026,
