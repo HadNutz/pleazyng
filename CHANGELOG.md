@@ -2,11 +2,16 @@
 
 ## [Unreleased]
 
+- Keep manual app-store review submissions tracked separately from successful artifact uploads.
+
+## [3.0.47] - 2026-11-21
+
 - Keep landscape-oriented Steam streaming optional for app installation so Google Play does not filter devices without landscape hardware.
-- Prepare configured app-store listings for manual review submission after verified 3.0.45 binaries and refreshed release facts are available.
 - Retry truncated GitHub API responses in the Apple JIT queue controller so transient JSON failures do not strand release jobs.
 - Revalidate macOS packaging recovery receipts against live source runs and artifact inventories when refreshing published release facts.
 - Recover a failed Tizen package by rebuilding only that artifact from verified current source while reusing the other platform outputs.
+- Fetch pinned Tizen Linux V4L2 headers through a checksum-verified mirror when GitHub raw content is rate-limited, and retain passing platform outputs during packaging recovery.
+- Retry transient Discord release dispatch failures so a published core release is announced without cutting another version.
 
 ## [3.0.45] - 2026-11-21
 
