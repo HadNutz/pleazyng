@@ -124,13 +124,20 @@ jobs:
           foreach ($line in $environment) {
             if ($line -match '^([^=]+)=(.*)$') { [Environment]::SetEnvironmentVariable($Matches[1], $Matches[2], 'Process') }
           }
-          $llvm = Join-Path $env:ProgramFiles 'LLVM\bin'
-          $compiler = Join-Path $llvm 'clang-cl.exe'
-          $tidy = Join-Path $llvm 'clang-tidy.exe'
+          # The VS 18 STL requires Clang 22 or newer. Build with the selected
+          # Visual C++ toolchain and analyze its commands with a compatible LLVM.
+          $venv = Join-Path $env:RUNNER_TEMP 'windows-tidy'
+          $requirements = Join-Path $env:RUNNER_TEMP 'windows-tidy.txt'
+          'clang-tidy==23.1.4 --hash=sha256:8107e05930f53dc477dbb5fb8108d7c10464176fc95d3e58f4ee7317887aed59' | Set-Content -Encoding ascii $requirements
+          python -m venv $venv
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          & (Join-Path $venv 'Scripts/python.exe') -m pip install --only-binary=:all: --no-deps --require-hashes -r $requirements
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $tidy = Join-Path $venv 'Scripts/clang-tidy.exe'
           & $tidy --version
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           $build = Join-Path $env:RUNNER_TEMP 'steam-windows'
-          cmake -G Ninja -S native/games/steam -B $build "-DCMAKE_C_COMPILER=$compiler" "-DCMAKE_CXX_COMPILER=$compiler" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -DPLEZY_STEAM_PYROWAVE=ON
+          cmake -G Ninja -S native/games/steam -B $build -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -DPLEZY_STEAM_PYROWAVE=ON
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           cmake --build $build --target plezy_steam_windows --parallel 2
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
