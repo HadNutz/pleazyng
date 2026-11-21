@@ -783,7 +783,8 @@
       "author": "davidmarcantonio",
       "state": "open",
       "title": "feat(deep-links): play and shuffle video playlists from plezy:// links",
-      "decision": "Strong optional candidate. Fork links already resolve several media kinds and shuffle shows. Add a distinct video-playlist resolution and handoff for ordered and shuffled play while preserving profile/server identity."
+      "decision": "Adapted in Pleazyng. Play ordered or shuffled video playlists from fork links while retaining server and active profile ownership and the existing music routes.",
+      "upstream_head": "d5746336934859c292edaa9bf54c2326a98c18b1"
     }
   ],
   "disposition_counts": {

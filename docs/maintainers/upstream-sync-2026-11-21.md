@@ -69,7 +69,7 @@ Reviewed upstream range `738e18fdc552ace910dedabf6e689ab74e1dae58` through `8310
 | [#3111](https://github.com/edde746/plezy/pull/3111) | [@wetpas](https://github.com/wetpas) | open | Pleazyng already has a Requests screen and user-scoped request browsing. Compare owner-authorized withdrawal/removal and surface only any missing actions. |
 | [#3118](https://github.com/edde746/plezy/pull/3118) | [@denizt](https://github.com/denizt) | open | Worth considering. A permission-aware per-item metadata refresh is distinct from metadata editing and library-wide refresh. |
 | [#3119](https://github.com/edde746/plezy/pull/3119) | [@jpdexter101-lang](https://github.com/jpdexter101-lang) | open | The fork already aggregates sources for merged Recently Added rows (#1652). Check ordering/deduplication tests before importing anything. |
-| [#3130](https://github.com/edde746/plezy/pull/3130) | [@davidmarcantonio](https://github.com/davidmarcantonio) | open | Strong optional candidate. Fork links already resolve several media kinds and shuffle shows. Add a distinct video-playlist resolution and handoff for ordered and shuffled play while preserving profile/server identity. |
+| [#3130](https://github.com/edde746/plezy/pull/3130) | [@davidmarcantonio](https://github.com/davidmarcantonio) | open | Adapted in Pleazyng. Play ordered or shuffled video playlists from fork links while retaining server and active profile ownership and the existing music routes. |
 
 ## Upstream sources
 

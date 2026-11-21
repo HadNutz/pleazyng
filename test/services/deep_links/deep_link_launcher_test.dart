@@ -7,6 +7,7 @@ import 'package:plezy/media/media_kind.dart';
 import 'package:plezy/media/library_query.dart';
 import 'package:plezy/utils/media_server_http_client.dart';
 import 'package:plezy/services/music/music_queue_items.dart';
+import 'package:plezy/media/media_playlist.dart';
 import 'package:plezy/media/media_server_client.dart';
 import 'package:plezy/services/data_aggregation_service.dart';
 import 'package:plezy/services/deep_links/deep_link.dart';
@@ -29,13 +30,14 @@ class _Client implements MediaServerClient, ScopedMediaServerClient {
   @override
   String get scopedServerId => '$serverId|$user';
   String user = 'original';
-  Future<void> Function()? beforeItem, beforeMusic;
+  Future<void> Function()? beforeItem, beforeMusic, beforePlaylist;
   int musicReads = 0;
   int? musicTotal;
 
   final items = <String, MediaItem>{};
   final onDeck = <String, MediaItem>{};
   final descendants = <String, List<MediaItem>>{};
+  final playlists = <String, MediaPlaylist>{};
   Object? fetchError;
 
   @override
@@ -79,6 +81,12 @@ class _Client implements MediaServerClient, ScopedMediaServerClient {
   }
 
   @override
+  Future<MediaPlaylist?> fetchPlaylistMetadata(String id) async {
+    await beforePlaylist?.call();
+    return playlists[id];
+  }
+
+  @override
   Future<List<MediaItem>> fetchPlayableDescendants(String parentId) async => descendants[parentId] ?? const [];
 
   @override
@@ -102,6 +110,9 @@ MediaItem _item(
   index: episode,
   viewCount: viewCount,
 );
+
+MediaPlaylist _playlist(String id, String serverId, {String type = 'video'}) =>
+    MediaPlaylist(id: id, backend: MediaBackend.plex, title: id, playlistType: type, serverId: serverId);
 
 LibraryLookupResult _lookup(List<MediaItem> items, {Set<String> failed = const {}, Set<String> unqueried = const {}}) =>
     (
@@ -210,6 +221,41 @@ void main() {
       servers.add(_Client('s1')..items['show'] = _item('show', MediaKind.show, 's1'));
       final resolution = await servers.resolver().resolve(_itemLink('s1', 'show', mode: PlayMode.shuffle));
       expect(resolution, isA<PlayLinkShuffle>().having((r) => r.item.id, 'item', 'show'));
+    });
+
+    test('plays a video playlist in order, or shuffled', () async {
+      servers.add(
+        _Client('s1')
+          ..items['pl'] = _item('pl', MediaKind.playlist, 's1')
+          ..playlists['pl'] = _playlist('pl', 's1'),
+      );
+      Matcher playlist({required bool shuffle}) => isA<PlayLinkPlaylist>()
+          .having((r) => r.playlist.id, 'playlist', 'pl')
+          .having((r) => r.shuffle, 'shuffle', shuffle);
+      expect(await servers.resolver().resolve(_itemLink('s1', 'pl')), playlist(shuffle: false));
+      expect(await servers.resolver().resolve(_itemLink('s1', 'pl', mode: PlayMode.shuffle)), playlist(shuffle: true));
+    });
+
+    test('finds a playlist the server does not serve as an item', () async {
+      servers.add(_Client('s1')..playlists['pl'] = _playlist('pl', 's1'));
+      final resolution = await servers.resolver().resolve(_itemLink('s1', 'pl', mode: PlayMode.shuffle));
+      expect(resolution, isA<PlayLinkPlaylist>().having((r) => r.shuffle, 'shuffle', true));
+    });
+
+    test('refuses a music or photo playlist', () async {
+      servers.add(_Client('s1')..playlists['pl'] = _playlist('pl', 's1', type: 'audio'));
+      expect(await servers.resolver().resolve(_itemLink('s1', 'pl')), _fails(PlayLinkFailureReason.unsupportedItem));
+    });
+
+    test('a stale session or a different server cannot launch the playlist', () async {
+      final client = _Client('s1')..playlists['pl'] = _playlist('pl', 'other');
+      servers.add(client);
+      expect(await servers.resolver().resolve(_itemLink('s1', 'pl')), _fails(PlayLinkFailureReason.notFound));
+      client.playlists['pl'] = _playlist('pl', 's1');
+      client.beforePlaylist = () async {
+        client.user = 'different';
+      };
+      expect(await servers.resolver().resolve(_itemLink('s1', 'pl')), _fails(PlayLinkFailureReason.serverUnavailable));
     });
 
     test('music links use the music session and missing items still fail', () async {
