@@ -894,6 +894,8 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · 視聴を続ける';
 	@override String get showTopShelfContentDescription => 'オフにすると、すべてのプロフィールで Pleazyng の画像のみが表示されます。';
 	@override String get topShelfUpdateFailed => 'Top Shelf を更新できませんでした。もう一度お試しください。';
+	@override String get showFinishTime => '終了時刻を表示';
+	@override String get showFinishTimeDescription => '残り時間の横に動画の終了予定時刻を表示します。';
 }
 
 // Path: themeEditor
@@ -6359,6 +6361,8 @@ extension on TranslationsJa {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 視聴を続ける',
 			'settings.showTopShelfContentDescription' => 'オフにすると、すべてのプロフィールで Pleazyng の画像のみが表示されます。',
 			'settings.topShelfUpdateFailed' => 'Top Shelf を更新できませんでした。もう一度お試しください。',
+			'settings.showFinishTime' => '終了時刻を表示',
+			'settings.showFinishTimeDescription' => '残り時間の横に動画の終了予定時刻を表示します。',
 			'themeEditor.builtIn' => '標準',
 			'themeEditor.presets' => 'プリセット',
 			'themeEditor.custom' => 'カスタム',
@@ -6656,10 +6660,10 @@ extension on TranslationsJa {
 			'accessibility.navigationHint' => 'TabとShift+Tabで操作項目を移動し、EnterまたはSpaceで実行、Escapeまたは戻るボタンで閉じます。本を開いている間は、拡大率や読書設定を変更できます。',
 			'accessibility.textSizeDescription' => 'Pleazyng のスケールインターフェイスのテキストは、デバイスのシステムのテキスタイル設定に加えて。',
 			'accessibility.boldTextHint' => 'インターフェイスラベルやメッセージに重い重さを使用して、それらを区別しやすくなります。',
-			'tooltips.shufflePlay' => 'シャッフル再生',
-			'tooltips.playTrailer' => '予告編を再生',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'シャッフル再生',
+			'tooltips.playTrailer' => '予告編を再生',
 			'tooltips.markAsWatched' => '視聴済みにする',
 			'tooltips.markAsUnwatched' => '未視聴にする',
 			'audioTracks.track' => ({required Object n}) => '音声トラック${n}',
@@ -7170,10 +7174,10 @@ extension on TranslationsJa {
 			'errors.searchFailed' => ({required Object error}) => '検索に失敗しました: ${error}',
 			'errors.searchUnavailable' => '検索中にメディアサーバーへ接続できませんでした。',
 			'errors.connectionTimeout' => ({required Object context}) => '${context}の読み込み中に接続がタイムアウトしました',
-			'errors.connectionFailed' => 'メディアサーバーに接続できません',
-			'errors.unableToLoad' => ({required Object context}) => '${context}を読み込めませんでした。もう一度お試しください。',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'メディアサーバーに接続できません',
+			'errors.unableToLoad' => ({required Object context}) => '${context}を読み込めませんでした。もう一度お試しください。',
 			'errors.noClientAvailable' => 'クライアントが利用できません',
 			'errors.pleaseEnterToken' => 'トークンを入力してください',
 			'errors.invalidToken' => '無効なトークン',
@@ -7684,10 +7688,10 @@ extension on TranslationsJa {
 			'playlists.smartPlaylist' => 'スマートプレイリスト',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}件', ), 
 			'playlists.emptyPlaylist' => 'このプレイリストは空です',
-			'playlists.deleteConfirm' => 'プレイリストを削除しますか？',
-			'playlists.deleteMessage' => ({required Object name}) => '「${name}」を削除しますか？',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'プレイリストを削除しますか？',
+			'playlists.deleteMessage' => ({required Object name}) => '「${name}」を削除しますか？',
 			'playlists.created' => 'プレイリストを作成しました',
 			'playlists.deleted' => 'プレイリストを削除しました',
 			'playlists.itemAdded' => 'プレイリストに追加しました',
@@ -8198,10 +8202,10 @@ extension on TranslationsJa {
 			'performanceOverlay.matrix' => 'マトリクス',
 			'performanceOverlay.primaries' => 'プライマリ',
 			'performanceOverlay.transfer' => '伝達特性',
-			'performanceOverlay.renderFps' => '描画 FPS',
-			'performanceOverlay.displayFps' => '表示 FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => '描画 FPS',
+			'performanceOverlay.displayFps' => '表示 FPS',
 			'performanceOverlay.avSync' => 'A/V 同期',
 			'performanceOverlay.dropped' => 'ドロップ',
 			'performanceOverlay.dvRpus' => 'DV RPU',
@@ -8712,10 +8716,10 @@ extension on TranslationsJa {
 			'homeLayout.nextUpHomeDescription' => '次の未見のエピソードの順番がホームで別々に表示されます。',
 			'homeLayout.library' => 'ライブラリ',
 			'homeLayout.showInRecommended' => '図書館で紹介される',
-			'homeLayout.customPlexRow' => '定制 Plex ライン',
-			'homeLayout.heroNeedsLibrary' => '図書館をチェックするには、まずヒーローがどこかで表示する必要があります。',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => '定制 Plex ライン',
+			'homeLayout.heroNeedsLibrary' => '図書館をチェックするには、まずヒーローがどこかで表示する必要があります。',
 			'homeLayout.heroNeedsSurface' => '図書館またはホームをチェックするには、まず、ヒーローがどこかで表示する必要があります。',
 			'homeLayout.removeHub' => 'ハブを削除',
 			'homeLayout.noPlexRows' => '番号 Plex 管理行がこの図書館に戻りました。',
@@ -9226,10 +9230,10 @@ extension on TranslationsJa {
 			'audiobook.goToTime' => '時間へ行く',
 			'audiobook.timeHelp' => '時間:分:秒、または分:秒',
 			'audiobook.recoveryHelp' => '同期データを移動または修正する前に、最近暗号化されたコピーを輸出します. インポートは現在の状態と合併し、現地の同期史を決して置き換えることはありません。',
-			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
-			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'エクスポート暗号化回復ファイル',
+			'audiobook.recoveryImport' => '暗号化された復元ファイルの輸入',
 			'audiobook.recoveryImportConfirm' => 'この暗号化された回復ファイルを現在の読み込みポジションとノートと組み合わせますか? 既存の歴史が保存されます. 共有図書館およびアイテムIDは含まれていません。',
 			'audiobook.recoveryExported' => '暗号化されたリハビリファイルが保存されました。',
 			'audiobook.recoveryImported' => 'リハビリデータが合併。',
@@ -9740,10 +9744,10 @@ extension on TranslationsJa {
 			'musicTools.albumBlocks' => 'アルバム全体をまとめる',
 			'musicTools.home' => '音楽',
 			'musicTools.recent' => '最近再生した曲',
-			'musicTools.apiKey' => 'API キー',
-			'musicTools.missing' => 'N/A',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API キー',
+			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分',
 			'musicTools.rules' => 'フィルター',
 			'musicTools.exclusiveOutput' => '排他オーディオ出力',

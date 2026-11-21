@@ -793,7 +793,9 @@
     "streamBufferSizeMiB": "বাফার আকার: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · দেখা অব্যাহত রাখুন",
     "showTopShelfContentDescription": "বন্ধ করলে সব প্রোফাইলে শুধু Pleazyng-এর ছবি দেখানো হবে।",
-    "topShelfUpdateFailed": "Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।"
+    "topShelfUpdateFailed": "Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।",
+    "showFinishTime": "শেষ হওয়ার সময় দেখান",
+    "showFinishTimeDescription": "বাকি সময়ের পাশে ভিডিওটি কখন শেষ হবে তা দেখান।"
   },
   "themeEditor": {
     "builtIn": "ভিত্তিতে",

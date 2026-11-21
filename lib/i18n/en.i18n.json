@@ -800,7 +800,9 @@
     "streamBufferSizeMiB": "Buffer Size: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Continue Watching",
     "showTopShelfContentDescription": "Turn off to show only Pleazyng artwork for all profiles.",
-    "topShelfUpdateFailed": "Could not update Apple TV Top Shelf. Try again."
+    "topShelfUpdateFailed": "Could not update Apple TV Top Shelf. Try again.",
+    "showFinishTime": "Show finish time",
+    "showFinishTimeDescription": "Show when the current video will end next to the remaining time."
   },
   "themeEditor": {
     "builtIn": "Built-in",

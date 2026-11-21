@@ -1,7 +1,7 @@
 {
   "locale": "az",
   "inherits": null,
-  "catalogSha256": "343712c1f9ab6d363ea8f1903512d1523f78c4f2a85d290158c7e7370df6937b",
+  "catalogSha256": "614a6a53817aa78e84b3d5b0be5e32813ec1c7f55fc284530bdae33882eccf4d",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3684,7 +3684,9 @@
     "settings.showTopShelfContent": "assistant-generated-draft",
     "settings.showTopShelfContentDescription": "assistant-generated-draft",
     "settings.topShelfUpdateFailed": "assistant-generated-draft",
-    "seerr.withdrawRequest": "assistant-generated-draft"
+    "seerr.withdrawRequest": "assistant-generated-draft",
+    "settings.showFinishTime": "assistant-generated-draft",
+    "settings.showFinishTimeDescription": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "addServer.allowHttp": "m2m100-draft",

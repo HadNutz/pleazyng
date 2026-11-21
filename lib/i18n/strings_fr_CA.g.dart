@@ -223,6 +223,8 @@ class _Translations$settings$fr_CA extends Translations$settings$fr {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuer à visionner';
 	@override String get showTopShelfContentDescription => 'Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.';
 	@override String get topShelfUpdateFailed => 'Impossible de mettre à jour Top Shelf. Réessayez.';
+	@override String get showFinishTime => 'Afficher l’heure de fin';
+	@override String get showFinishTimeDescription => 'Affiche l’heure de fin de la vidéo à côté du temps restant.';
 }
 
 // Path: themeEditor
@@ -1418,6 +1420,8 @@ extension on TranslationsFrCa {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuer à visionner',
 			'settings.showTopShelfContentDescription' => 'Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.',
 			'settings.topShelfUpdateFailed' => 'Impossible de mettre à jour Top Shelf. Réessayez.',
+			'settings.showFinishTime' => 'Afficher l’heure de fin',
+			'settings.showFinishTimeDescription' => 'Affiche l’heure de fin de la vidéo à côté du temps restant.',
 			'themeEditor.custom' => 'Personnalisation',
 			'themeEditor.preview' => 'Prévisualisation',
 			'themeEditor.slots.text' => 'Texte',
@@ -1851,10 +1855,10 @@ extension on TranslationsFrCa {
 			'romm.linkCopied' => 'Game link copied',
 			'romm.openLink' => 'Open game link',
 			'romm.linkHelp' => 'Paste a Pleazyng game link. Connect the matching RomM server before opening it.',
-			'romm.copyMismatch' => 'This link identifies a different copy. Choose the intended game from your library.',
-			'romm.requestStatus' => 'Library indexing',
 			_ => null,
 		} ?? switch (path) {
+			'romm.copyMismatch' => 'This link identifies a different copy. Choose the intended game from your library.',
+			'romm.requestStatus' => 'Library indexing',
 			'romm.notIndexed' => 'The requested game is not indexed in this library yet.',
 			'romm.touchControls' => 'Touch controls',
 			'romm.controls' => 'Controls',

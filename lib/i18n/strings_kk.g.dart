@@ -896,6 +896,8 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Көруді жалғастыру';
 	@override String get showTopShelfContentDescription => 'Өшіргенде барлық профильде тек Pleazyng суреті көрсетіледі.';
 	@override String get topShelfUpdateFailed => 'Top Shelf жаңартылмады. Қайталап көріңіз.';
+	@override String get showFinishTime => 'Аяқталу уақытын көрсету';
+	@override String get showFinishTimeDescription => 'Қалған уақыттың жанында бейненің қашан аяқталатынын көрсету.';
 }
 
 // Path: themeEditor
@@ -6364,6 +6366,8 @@ extension on TranslationsKk {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Көруді жалғастыру',
 			'settings.showTopShelfContentDescription' => 'Өшіргенде барлық профильде тек Pleazyng суреті көрсетіледі.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf жаңартылмады. Қайталап көріңіз.',
+			'settings.showFinishTime' => 'Аяқталу уақытын көрсету',
+			'settings.showFinishTimeDescription' => 'Қалған уақыттың жанында бейненің қашан аяқталатынын көрсету.',
 			'themeEditor.builtIn' => 'Кірістірілген',
 			'themeEditor.presets' => 'Дайын тақырыптар',
 			'themeEditor.custom' => 'Жеке',
@@ -6661,10 +6665,10 @@ extension on TranslationsKk {
 			'accessibility.navigationHint' => 'Басқару элементтері арасында ауысу үшін Tab және Shift+Tab, іске қосу үшін Enter немесе Бос орын, жабу үшін Escape немесе Артқа түймесін пайдаланыңыз. Кітап ашық кезде масштаб пен оқу параметрлерін өзгертуге болады.',
 			'accessibility.textSizeDescription' => 'Осылайша «Барселона» АҚ-ның «Атлантикалық» және «Текст-Системалық» АҚ қағидаларынан тұрады.',
 			'accessibility.boldTextHint' => 'Қандай-ақ интерфейс етикетке және мақалалар үшін көптеген жылдардан тұрады.',
-			'tooltips.shufflePlay' => 'Араластырып ойнату',
-			'tooltips.playTrailer' => 'Трейлерді ойнату',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'Араластырып ойнату',
+			'tooltips.playTrailer' => 'Трейлерді ойнату',
 			'tooltips.markAsWatched' => 'Көрілді деп белгілеу',
 			'tooltips.markAsUnwatched' => 'Көрілмеді деп белгілеу',
 			'audioTracks.track' => ({required Object n}) => 'Аудиожол ${n}',
@@ -7175,10 +7179,10 @@ extension on TranslationsKk {
 			'errors.searchFailed' => ({required Object error}) => 'Іздеу қатесі: ${error}',
 			'errors.searchUnavailable' => 'Іздеу ешбір медиа серверге қосыла алмады.',
 			'errors.connectionTimeout' => ({required Object context}) => '${context} жүктеу уақыты өтті',
-			'errors.connectionFailed' => 'Медиа серверіне қосылу мүмкін емес',
-			'errors.unableToLoad' => ({required Object context}) => '${context} жүктеу мүмкін болмады.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'Медиа серверіне қосылу мүмкін емес',
+			'errors.unableToLoad' => ({required Object context}) => '${context} жүктеу мүмкін болмады.',
 			'errors.noClientAvailable' => 'Қолжетімді клиент жоқ',
 			'errors.pleaseEnterToken' => 'Токенді енгізіңіз',
 			'errors.invalidToken' => 'Жарамсыз токен',
@@ -7689,10 +7693,10 @@ extension on TranslationsKk {
 			'playlists.smartPlaylist' => 'Ақылды ойнату тізімі',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('kk'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемент', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемент', ), 
 			'playlists.emptyPlaylist' => 'Бұл ойнату тізімі бос',
-			'playlists.deleteConfirm' => 'Ойнату тізімі өшірілсін бе?',
-			'playlists.deleteMessage' => ({required Object name}) => '"${name}" өшірілсін бе?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'Ойнату тізімі өшірілсін бе?',
+			'playlists.deleteMessage' => ({required Object name}) => '"${name}" өшірілсін бе?',
 			'playlists.created' => 'Ойнату тізімі жасалды',
 			'playlists.deleted' => 'Ойнату тізімі өшірілді',
 			'playlists.itemAdded' => 'Тізімге қосылды',
@@ -8203,10 +8207,10 @@ extension on TranslationsKk {
 			'performanceOverlay.matrix' => 'Матрица',
 			'performanceOverlay.primaries' => 'Негізгі түстер',
 			'performanceOverlay.transfer' => 'Беріліс',
-			'performanceOverlay.renderFps' => 'Рендер FPS',
-			'performanceOverlay.displayFps' => 'Дисплей FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'Рендер FPS',
+			'performanceOverlay.displayFps' => 'Дисплей FPS',
 			'performanceOverlay.avSync' => 'A/V синхрондау',
 			'performanceOverlay.dropped' => 'Өткізілген кадрлар',
 			'performanceOverlay.dvRpus' => 'DV RPU-лар',
@@ -8717,10 +8721,10 @@ extension on TranslationsKk {
 			'homeLayout.nextUpHomeDescription' => '«Аяқтар» АҚШ-ның «Аяға» АҚШ бағдарламасының өзарамен таныстыратын',
 			'homeLayout.library' => 'Кітапхана',
 			'homeLayout.showInRecommended' => 'Библиотеканың тұрақтанды',
-			'homeLayout.customPlexRow' => 'Қазір Plex қаңтар',
-			'homeLayout.heroNeedsLibrary' => '«Жеңіске үлес қосқандар» деген әйгілі әндердің авторы.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'Қазір Plex қаңтар',
+			'homeLayout.heroNeedsLibrary' => '«Жеңіске үлес қосқандар» деген әйгілі әндердің авторы.',
 			'homeLayout.heroNeedsSurface' => '«Жеңіске» және «Жектесі» деген әйгілі әндер шыққан әндер шырқалып, биленді.',
 			'homeLayout.removeHub' => 'Өткен қағал',
 			'homeLayout.noPlexRows' => 'Бұл кітапхана үшін Plex басқаратын қатарлар табылмады.',
@@ -9231,10 +9235,10 @@ extension on TranslationsKk {
 			'audiobook.goToTime' => 'Қазіргі уақытта',
 			'audiobook.timeHelp' => 'Өнімдер: 1 минут, 1 минут, 1 секунды',
 			'audiobook.recoveryHelp' => 'Қаланың тұрақты тұрғындарының саны 10 адамды құрайды және 1 адамды қағидалардан тұрады.',
-			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
-			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
+			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
 			'audiobook.recoveryImportConfirm' => 'Бұл криптовалюталық дағдарыстағы қанағаттанды және жабдықтармен көруге болады? іс-әрекеттің историю бар. Жабдықтау библиотекасы және элементтік ID-дер не пайдаланылады; екеуінде импортируға дейін әртүрлі айналысатын идентификатордан қабылдайды.',
 			'audiobook.recoveryExported' => 'Қазіргі уақытта өңдеуге кеңінен танымал.',
 			'audiobook.recoveryImported' => 'Ауыздан дағдарыста.',
@@ -9745,10 +9749,10 @@ extension on TranslationsKk {
 			'musicTools.albumBlocks' => 'Альбомдарды тұтас сақтау',
 			'musicTools.home' => 'Музыка',
 			'musicTools.recent' => 'Жақында тыңдалған',
-			'musicTools.apiKey' => 'API кілті',
-			'musicTools.missing' => 'N/A',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API кілті',
+			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Минут',
 			'musicTools.rules' => 'Фильтрлер',
 			'musicTools.exclusiveOutput' => 'Эксклюзивті аудио шығыс',

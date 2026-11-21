@@ -793,7 +793,9 @@
     "streamBufferSizeMiB": "Buffer ölçüsü: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · İzləməyə davam et",
     "showTopShelfContentDescription": "Söndürdükdə bütün profillər üçün yalnız Pleazyng şəkli görünür.",
-    "topShelfUpdateFailed": "Top Shelf yenilənmədi. Yenidən cəhd edin."
+    "topShelfUpdateFailed": "Top Shelf yenilənmədi. Yenidən cəhd edin.",
+    "showFinishTime": "Bitmə vaxtını göstər",
+    "showFinishTimeDescription": "Videonun bitmə vaxtını qalan vaxtın yanında göstər."
   },
   "themeEditor": {
     "builtIn": "Daxili",

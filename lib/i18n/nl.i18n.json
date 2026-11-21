@@ -793,7 +793,9 @@
     "streamBufferSizeMiB": "Buffer grootte: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Verder kijken",
     "showTopShelfContentDescription": "Schakel dit uit om voor alle profielen alleen de Pleazyng-afbeelding te tonen.",
-    "topShelfUpdateFailed": "Top Shelf kon niet worden bijgewerkt. Probeer het opnieuw."
+    "topShelfUpdateFailed": "Top Shelf kon niet worden bijgewerkt. Probeer het opnieuw.",
+    "showFinishTime": "Eindtijd tonen",
+    "showFinishTimeDescription": "Toon naast de resterende tijd hoe laat de video eindigt."
   },
   "themeEditor": {
     "builtIn": "Ingebouwd",

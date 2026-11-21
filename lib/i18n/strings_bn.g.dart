@@ -896,6 +896,8 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · দেখা অব্যাহত রাখুন';
 	@override String get showTopShelfContentDescription => 'বন্ধ করলে সব প্রোফাইলে শুধু Pleazyng-এর ছবি দেখানো হবে।';
 	@override String get topShelfUpdateFailed => 'Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।';
+	@override String get showFinishTime => 'শেষ হওয়ার সময় দেখান';
+	@override String get showFinishTimeDescription => 'বাকি সময়ের পাশে ভিডিওটি কখন শেষ হবে তা দেখান।';
 }
 
 // Path: themeEditor
@@ -6364,6 +6366,8 @@ extension on TranslationsBn {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · দেখা অব্যাহত রাখুন',
 			'settings.showTopShelfContentDescription' => 'বন্ধ করলে সব প্রোফাইলে শুধু Pleazyng-এর ছবি দেখানো হবে।',
 			'settings.topShelfUpdateFailed' => 'Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।',
+			'settings.showFinishTime' => 'শেষ হওয়ার সময় দেখান',
+			'settings.showFinishTimeDescription' => 'বাকি সময়ের পাশে ভিডিওটি কখন শেষ হবে তা দেখান।',
 			'themeEditor.builtIn' => 'ভিত্তিতে',
 			'themeEditor.presets' => 'প্রজাতন',
 			'themeEditor.custom' => 'কাস্টম',
@@ -6661,10 +6665,10 @@ extension on TranslationsBn {
 			'accessibility.navigationHint' => 'নিয়ন্ত্রণগুলির মধ্যে যেতে Tab ও Shift+Tab, সক্রিয় করতে Enter বা Space এবং বন্ধ করতে Escape বা ফিরে যাওয়ার বোতাম ব্যবহার করুন। বই খোলা থাকলে জুম ও পড়ার পছন্দগুলি বদলানো যায়।',
 			'accessibility.textSizeDescription' => 'আপনার ডিভাইসের সিস্টেম টেক্সটের আকারের সেটিংয়ের পাশাপাশি Pleazyng ইন্টারফেসের লেখার আকারও পরিবর্তন করুন।',
 			'accessibility.boldTextHint' => 'ইন্টারফেস ট্যাগ এবং বার্তাগুলির জন্য একটি গভীর ওজন ব্যবহার করুন যা তাদের বিতর্ক করা সহজ করে।',
-			'tooltips.shufflePlay' => 'শফল খেলা',
-			'tooltips.playTrailer' => 'ট্র্যালার খেলুন',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'শফল খেলা',
+			'tooltips.playTrailer' => 'ট্র্যালার খেলুন',
 			'tooltips.markAsWatched' => 'মার্ক দেখে',
 			'tooltips.markAsUnwatched' => 'মার্ক অবিশ্বাসিত',
 			'audioTracks.track' => ({required Object n}) => 'অডিও ট্র্যাক ${n}',
@@ -7175,10 +7179,10 @@ extension on TranslationsBn {
 			'errors.searchFailed' => ({required Object error}) => 'অনুসন্ধান ভুল হয়েছে: ${error}',
 			'errors.searchUnavailable' => 'কোন মিডিয়া সার্ভারে অনুসন্ধান পাওয়া যায়নি।',
 			'errors.connectionTimeout' => ({required Object context}) => 'লোডিং সময়মাত্রা ${context}',
-			'errors.connectionFailed' => 'মিডিয়া সার্ভারের সাথে যোগাযোগ করতে পারবেন না',
-			'errors.unableToLoad' => ({required Object context}) => '${context} পুনরায় চেষ্টা করুন।',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'মিডিয়া সার্ভারের সাথে যোগাযোগ করতে পারবেন না',
+			'errors.unableToLoad' => ({required Object context}) => '${context} পুনরায় চেষ্টা করুন।',
 			'errors.noClientAvailable' => 'কোন গ্রাহক পাওয়া যায় না',
 			'errors.pleaseEnterToken' => 'দয়া করে একটি টকেন লিখুন',
 			'errors.invalidToken' => 'অসুবিধা টকেন',
@@ -7689,10 +7693,10 @@ extension on TranslationsBn {
 			'playlists.smartPlaylist' => 'স্মার্ট Playlist',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}টি আইটেম', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}টি আইটেম', ), 
 			'playlists.emptyPlaylist' => 'এই খেলাটি खाली',
-			'playlists.deleteConfirm' => 'Playlist খেলা?',
-			'playlists.deleteMessage' => ({required Object name}) => 'আপনি কি নিশ্চিত যে আপনি "${name}" মুছে ফেলতে চান?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'Playlist খেলা?',
+			'playlists.deleteMessage' => ({required Object name}) => 'আপনি কি নিশ্চিত যে আপনি "${name}" মুছে ফেলতে চান?',
 			'playlists.created' => 'Playlist তৈরি',
 			'playlists.deleted' => 'Playlist 삭제',
 			'playlists.itemAdded' => 'Playlist এ যোগ করা',
@@ -8203,10 +8207,10 @@ extension on TranslationsBn {
 			'performanceOverlay.matrix' => 'ম্যাট্রিক্স',
 			'performanceOverlay.primaries' => 'প্রাথমিক',
 			'performanceOverlay.transfer' => 'ট্রান্সফার',
-			'performanceOverlay.renderFps' => 'ফিপিএস ফিপিএস',
-			'performanceOverlay.displayFps' => 'ফিপিএস প্রদর্শন',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'ফিপিএস ফিপিএস',
+			'performanceOverlay.displayFps' => 'ফিপিএস প্রদর্শন',
 			'performanceOverlay.avSync' => 'A/V সিন্ক',
 			'performanceOverlay.dropped' => 'ধ্বংস',
 			'performanceOverlay.dvRpus' => 'ডিপিএল',
@@ -8717,10 +8721,10 @@ extension on TranslationsBn {
 			'homeLayout.nextUpHomeDescription' => 'Next Unwatched Episode পরবর্তী পরিস্থিতি নির্দিষ্টভাবে দেখানো হয় Home',
 			'homeLayout.library' => 'লাইব্রেরি',
 			'homeLayout.showInRecommended' => 'লাইব্রেরিতে প্রদর্শন করা উচিত',
-			'homeLayout.customPlexRow' => 'কাস্টম Plex রান',
-			'homeLayout.heroNeedsLibrary' => 'প্রথমে লাইব্রেরি চেক করুন — হ্যারো দেখার জন্য কোথাও প্রয়োজন',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'কাস্টম Plex রান',
+			'homeLayout.heroNeedsLibrary' => 'প্রথমে লাইব্রেরি চেক করুন — হ্যারো দেখার জন্য কোথাও প্রয়োজন',
 			'homeLayout.heroNeedsSurface' => 'প্রথমে লাইব্রেরি বা হোম দেখুন — হেরো দেখার জন্য কোথাও প্রয়োজন',
 			'homeLayout.removeHub' => 'হাব থেকে বের করুন',
 			'homeLayout.noPlexRows' => 'নম্বর Plex পরিচালিত লাইন এই লাইব্রেরি জন্য ফিরে এসেছে।',
@@ -9231,10 +9235,10 @@ extension on TranslationsBn {
 			'audiobook.goToTime' => 'সময় নিয়ে যান',
 			'audiobook.timeHelp' => 'ঘণ্টা : মিনিট : সেকেন্ড বা মিনিট : সেকেন্ড',
 			'audiobook.recoveryHelp' => 'সিঙ্ক ডেটা সরানোর বা মেরামত করার আগে সাম্প্রতিক এনক্রিপ্ট করা কপি রপ্তানি করুন। আমদানি করলে বর্তমান অবস্থার সঙ্গে ডেটা মিশে যাবে; স্থানীয় সিঙ্ক ইতিহাস কখনো প্রতিস্থাপিত হবে না। সিঙ্ক কোড আলাদা করে রাখুন।',
-			'audiobook.recoveryExport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
-			'audiobook.recoveryImport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
+			'audiobook.recoveryImport' => 'ডাউনলোড সক্রিপ্ট ফাইল',
 			'audiobook.recoveryImportConfirm' => 'এই এনক্রিপ্ট করা পুনরুদ্ধার ফাইলটি বর্তমান পড়ার অবস্থান ও নোটের সঙ্গে মেশাবেন? আগের ইতিহাস থাকবে। শেয়ার করা লাইব্রেরি ও আইটেম ID এতে নেই; আমদানির আগে প্রতিটি ডিভাইসে একই ID সেট করুন।',
 			'audiobook.recoveryExported' => 'সক্রিপ্ট ফাইল পুনরায় সংরক্ষণ করা হয়েছে।',
 			'audiobook.recoveryImported' => 'রেকর্ড ডেটা একত্রিত।',
@@ -9745,10 +9749,10 @@ extension on TranslationsBn {
 			'musicTools.albumBlocks' => 'সম্পূর্ণ অ্যালবাম একসাথে রাখুন',
 			'musicTools.home' => 'সঙ্গীত',
 			'musicTools.recent' => 'সম্প্রতি শোনা',
-			'musicTools.apiKey' => 'API কী',
-			'musicTools.missing' => 'ন/এ',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API কী',
+			'musicTools.missing' => 'ন/এ',
 			'musicTools.minutes' => 'মিনিট',
 			'musicTools.rules' => 'ফিল্টারগুলি',
 			'musicTools.exclusiveOutput' => 'একচেটিয়া অডিও আউটপুট',

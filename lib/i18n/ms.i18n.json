@@ -791,7 +791,9 @@
     "streamBufferSizeMiB": "Saiz Buffer: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Menyambung tontonan",
     "showTopShelfContentDescription": "Matikan untuk memaparkan gambar Pleazyng sahaja bagi semua profil.",
-    "topShelfUpdateFailed": "Top Shelf tidak dapat dikemas kini. Cuba lagi."
+    "topShelfUpdateFailed": "Top Shelf tidak dapat dikemas kini. Cuba lagi.",
+    "showFinishTime": "Tunjukkan waktu tamat",
+    "showFinishTimeDescription": "Paparkan waktu video akan tamat di sebelah baki masa."
   },
   "themeEditor": {
     "builtIn": "dibina dalam",

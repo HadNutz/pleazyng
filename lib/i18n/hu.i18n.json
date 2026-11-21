@@ -793,7 +793,9 @@
     "streamBufferSizeMiB": "Buffer méret: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Folytatás",
     "showTopShelfContentDescription": "Kikapcsolva minden profilnál csak a Pleazyng képe jelenik meg.",
-    "topShelfUpdateFailed": "A Top Shelf frissítése sikertelen. Próbáld újra."
+    "topShelfUpdateFailed": "A Top Shelf frissítése sikertelen. Próbáld újra.",
+    "showFinishTime": "Befejezési idő megjelenítése",
+    "showFinishTimeDescription": "A hátralévő idő mellett megjelenik, mikor ér véget a videó."
   },
   "themeEditor": {
     "builtIn": "Beépített",

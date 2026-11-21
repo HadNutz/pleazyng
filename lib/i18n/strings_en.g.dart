@@ -2385,6 +2385,12 @@ class Translations$settings$en {
 
 	/// en: 'Could not update Apple TV Top Shelf. Try again.'
 	String get topShelfUpdateFailed => 'Could not update Apple TV Top Shelf. Try again.';
+
+	/// en: 'Show finish time'
+	String get showFinishTime => 'Show finish time';
+
+	/// en: 'Show when the current video will end next to the remaining time.'
+	String get showFinishTimeDescription => 'Show when the current video will end next to the remaining time.';
 }
 
 // Path: themeEditor
@@ -19029,6 +19035,8 @@ extension on Translations {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continue Watching',
 			'settings.showTopShelfContentDescription' => 'Turn off to show only Pleazyng artwork for all profiles.',
 			'settings.topShelfUpdateFailed' => 'Could not update Apple TV Top Shelf. Try again.',
+			'settings.showFinishTime' => 'Show finish time',
+			'settings.showFinishTimeDescription' => 'Show when the current video will end next to the remaining time.',
 			'themeEditor.builtIn' => 'Built-in',
 			'themeEditor.presets' => 'Presets',
 			'themeEditor.custom' => 'Custom',
@@ -19282,10 +19290,10 @@ extension on Translations {
 			'accessibility.mediaCardWatched' => 'watched',
 			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
 			'accessibility.mediaCardUnwatched' => 'unwatched',
-			'accessibility.tapToPlay' => 'Tap to play',
-			'accessibility.decrease' => 'Decrease',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.tapToPlay' => 'Tap to play',
+			'accessibility.decrease' => 'Decrease',
 			'accessibility.increase' => 'Increase',
 			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
@@ -19796,10 +19804,10 @@ extension on Translations {
 			'iptv.stopRecording' => 'Stop recording',
 			'iptv.recordingDeleted' => 'Recording deleted.',
 			'iptv.recordingScheduled' => 'Recording scheduled on Dispatcharr.',
-			'iptv.scheduleRecordingOnDevice' => 'Schedule local recording',
-			'iptv.localRecordingScheduled' => 'Local recording scheduled. Pleazyng must be running when it starts.',
 			_ => null,
 		} ?? switch (path) {
+			'iptv.scheduleRecordingOnDevice' => 'Schedule local recording',
+			'iptv.localRecordingScheduled' => 'Local recording scheduled. Pleazyng must be running when it starts.',
 			'iptv.localRecordingAlreadyScheduled' => 'This program is already scheduled for local recording.',
 			'iptv.localRecordingSchedules' => 'Local recording schedule',
 			'iptv.scheduledOnThisDevice' => 'Scheduled on this device',
@@ -20310,10 +20318,10 @@ extension on Translations {
 			'explore.status.ended' => 'Ended',
 			'explore.status.canceled' => 'Canceled',
 			'explore.status.upcoming' => 'Upcoming',
-			'explore.episodeCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episode', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episodes', ), 
-			'explore.cast' => 'Cast',
 			_ => null,
 		} ?? switch (path) {
+			'explore.episodeCount' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episode', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(n)} episodes', ), 
+			'explore.cast' => 'Cast',
 			'explore.characters' => 'Characters',
 			'explore.addToWatchlist' => 'Add to Watchlist',
 			'explore.removeFromWatchlist' => 'Remove from Watchlist',
@@ -20824,10 +20832,10 @@ extension on Translations {
 			'downloads.randomEpisodes' => 'Random episodes',
 			'downloads.includeSpecials' => 'Include Specials',
 			'downloads.howManyEpisodes' => 'How many episodes?',
-			'downloads.invalidEpisodeCount' => 'Enter a valid episode count.',
-			'downloads.keepSynced' => 'Keep synced',
 			_ => null,
 		} ?? switch (path) {
+			'downloads.invalidEpisodeCount' => 'Enter a valid episode count.',
+			'downloads.keepSynced' => 'Keep synced',
 			'downloads.downloadOnce' => 'Download once',
 			'downloads.keepNUnwatched' => ({required Object count}) => 'Keep ${count} unwatched',
 			'downloads.editSyncRule' => 'Edit sync rule',
@@ -21338,10 +21346,10 @@ extension on Translations {
 			'matchScreen.yearHint' => 'Year',
 			'matchScreen.search' => 'Search',
 			'matchScreen.noMatchesFound' => 'No matches found',
-			'matchScreen.plexDiscover' => 'Plex Discover',
-			'matchScreen.plexLibrary' => 'Plex library',
 			_ => null,
 		} ?? switch (path) {
+			'matchScreen.plexDiscover' => 'Plex Discover',
+			'matchScreen.plexLibrary' => 'Plex library',
 			'matchScreen.jellyfinLibrary' => 'Jellyfin library',
 			'matchScreen.embyLibrary' => 'Emby library',
 			'serverTasks.title' => 'Server Tasks',
@@ -21852,10 +21860,10 @@ extension on Translations {
 			'platform.cameraPermission' => 'Scan QR codes to pair a Companion Remote.',
 			'universalMedia.title' => 'Open media',
 			'universalMedia.shortcutHelp' => 'Play a link, playlist, or file for this session.',
-			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
-			'universalMedia.openWhat' => 'What would you like to open?',
 			_ => null,
 		} ?? switch (path) {
+			'universalMedia.intro' => 'Open a link, playlist, or file. Playback uses Pleazyng’s standard player and does not add history to your library.',
+			'universalMedia.openWhat' => 'What would you like to open?',
 			'universalMedia.stream' => 'Stream address',
 			'universalMedia.playlist' => 'Playlist',
 			'universalMedia.files' => 'Device files',
@@ -22366,10 +22374,10 @@ extension on Translations {
 			'sourceSetup.nfsSetupDetails' => 'Use an NFSv3 TCP export. The NFS service and mount service must both support RPC-with-TLS when encryption is required. Leave the custom certificate blank for a server certificate trusted by this device, or add the NAS CA/self-signed certificate. The certificate name must match the host in the endpoint. If the NAS asks for mutual TLS, add its PKCS#12 client identity. Finally, confirm the export allows the configured AUTH_SYS UID/GID and the client port policy.',
 			'sourceSetup.ftpHelp' => 'FTP uses passive mode. Use ftp:// for plain FTP, ftpes:// for explicit TLS, or ftps:// for TLS (implicit on port 990; explicit on other ports).',
 			'sourceSetup.openSubtitles' => 'OpenSubtitles',
-			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
-			'sourceSetup.apiKey' => 'API key',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.subtitleSetup' => 'Optional subtitle search for standalone videos.',
+			'sourceSetup.apiKey' => 'API key',
 			'sourceSetup.optionalUsername' => 'Account username (optional)',
 			'sourceSetup.optionalPassword' => 'Account password (optional)',
 			'sourceSetup.subtitlePrivacy' => 'Get an API key from opensubtitles.com. Search sends the video title and available IMDb/TMDB IDs, never the video file. The key and optional account credentials are encrypted with this source.',
@@ -22880,10 +22888,10 @@ extension on Translations {
 			'podcasts.feedAdded' => 'Podcast added.',
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
-			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
-			'podcasts.imported' => 'Subscriptions imported.',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
+			'podcasts.imported' => 'Subscriptions imported.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
 			'podcasts.viewAll' => 'Show more episodes',
@@ -23394,10 +23402,10 @@ extension on Translations {
 			'karaokeUi.enablePhoneMicrophone' => 'Enable phone microphone',
 			'karaokeUi.muteAndSavePhoneInput' => 'Mute and save',
 			'karaokeUi.pitchMIDIPracticeOnly' => ({required Object value1}) => 'Pitch MIDI ${value1} · practice only',
-			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
-			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			_ => null,
 		} ?? switch (path) {
+			'karaokeUi.phoneInputStopped' => ({required Object value1}) => 'Phone input stopped: ${value1}',
+			'karaokeUi.phoneInputNetworkFellBehind' => 'Phone input stopped because the network fell behind.',
 			'karaokeUi.phoneInputRequiresSecureContext' => 'A trusted HTTPS connection is required.',
 			'karaokeUi.phoneInputRequires16kHzCapture' => 'This browser cannot supply the required 16 kHz capture path.',
 			'karaokeUi.phoneInputNeedsActivePerformance' => 'Return to an active performance before enabling capture.',

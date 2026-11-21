@@ -793,7 +793,9 @@
     "streamBufferSizeMiB": "Баукерлік: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Көруді жалғастыру",
     "showTopShelfContentDescription": "Өшіргенде барлық профильде тек Pleazyng суреті көрсетіледі.",
-    "topShelfUpdateFailed": "Top Shelf жаңартылмады. Қайталап көріңіз."
+    "topShelfUpdateFailed": "Top Shelf жаңартылмады. Қайталап көріңіз.",
+    "showFinishTime": "Аяқталу уақытын көрсету",
+    "showFinishTimeDescription": "Қалған уақыттың жанында бейненің қашан аяқталатынын көрсету."
   },
   "themeEditor": {
     "builtIn": "Кірістірілген",

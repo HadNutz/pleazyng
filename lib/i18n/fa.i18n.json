@@ -793,7 +793,9 @@
     "streamBufferSizeMiB": "حجم بوفری: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · ادامه تماشا",
     "showTopShelfContentDescription": "با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.",
-    "topShelfUpdateFailed": "به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید."
+    "topShelfUpdateFailed": "به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.",
+    "showFinishTime": "نمایش زمان پایان",
+    "showFinishTimeDescription": "زمان پایان ویدیو را کنار زمان باقی‌مانده نشان می‌دهد."
   },
   "themeEditor": {
     "builtIn": "ساخته شده",

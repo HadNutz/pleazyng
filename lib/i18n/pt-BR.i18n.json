@@ -131,7 +131,9 @@
     "dvOfflineSdr": "",
     "showTopShelfContent": "Apple TV Top Shelf · Continuar assistindo",
     "showTopShelfContentDescription": "Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.",
-    "topShelfUpdateFailed": "Não foi possível atualizar o Top Shelf. Tente novamente."
+    "topShelfUpdateFailed": "Não foi possível atualizar o Top Shelf. Tente novamente.",
+    "showFinishTime": "Mostrar horário de término",
+    "showFinishTimeDescription": "Mostra quando o vídeo vai terminar ao lado do tempo restante."
   },
   "themeEditor": {
     "custom": "Personalizado",

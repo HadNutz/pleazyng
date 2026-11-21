@@ -900,6 +900,8 @@ class _Translations$settings$ru extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Продолжить просмотр';
 	@override String get showTopShelfContentDescription => 'Если выключить этот параметр, для всех профилей будет показано только изображение Pleazyng.';
 	@override String get topShelfUpdateFailed => 'Не удалось обновить Top Shelf. Попробуйте ещё раз.';
+	@override String get showFinishTime => 'Показывать время окончания';
+	@override String get showFinishTimeDescription => 'Показывать рядом с оставшимся временем, когда закончится видео.';
 }
 
 // Path: themeEditor
@@ -6414,6 +6416,8 @@ extension on TranslationsRu {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Продолжить просмотр',
 			'settings.showTopShelfContentDescription' => 'Если выключить этот параметр, для всех профилей будет показано только изображение Pleazyng.',
 			'settings.topShelfUpdateFailed' => 'Не удалось обновить Top Shelf. Попробуйте ещё раз.',
+			'settings.showFinishTime' => 'Показывать время окончания',
+			'settings.showFinishTimeDescription' => 'Показывать рядом с оставшимся временем, когда закончится видео.',
 			'themeEditor.builtIn' => 'Встроенные',
 			'themeEditor.presets' => 'Готовые',
 			'themeEditor.custom' => 'Своя',
@@ -6711,10 +6715,10 @@ extension on TranslationsRu {
 			'accessibility.navigationHint' => 'Используйте Tab и Shift+Tab для перехода между элементами управления, Enter или пробел для активации, Escape или кнопку «Назад» для закрытия. Когда книга открыта, доступны масштабирование и настройки чтения.',
 			'accessibility.textSizeDescription' => 'Скалируйте текст интерфейса в Pleazyng, помимо настройки размеров текста системы вашего устройства.',
 			'accessibility.boldTextHint' => 'Используйте более тяжёлый вес для интерфейсов и сообщений, чтобы их было легче отличить.',
-			'tooltips.shufflePlay' => 'Случайное воспроизведение',
-			'tooltips.playTrailer' => 'Воспроизвести трейлер',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'Случайное воспроизведение',
+			'tooltips.playTrailer' => 'Воспроизвести трейлер',
 			'tooltips.markAsWatched' => 'Отметить как просмотренное',
 			'tooltips.markAsUnwatched' => 'Отметить как непросмотренное',
 			'audioTracks.track' => ({required Object n}) => 'Аудиодорожка ${n}',
@@ -7225,10 +7229,10 @@ extension on TranslationsRu {
 			'errors.searchFailed' => ({required Object error}) => 'Ошибка поиска: ${error}',
 			'errors.searchUnavailable' => 'Поиску не удалось связаться ни с одним медиасервером.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Таймаут подключения при загрузке ${context}',
-			'errors.connectionFailed' => 'Не удалось подключиться к медиасерверу',
-			'errors.unableToLoad' => ({required Object context}) => 'Не удалось загрузить ${context}. Повторите попытку.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'Не удалось подключиться к медиасерверу',
+			'errors.unableToLoad' => ({required Object context}) => 'Не удалось загрузить ${context}. Повторите попытку.',
 			'errors.noClientAvailable' => 'Клиент недоступен',
 			'errors.pleaseEnterToken' => 'Введите токен',
 			'errors.invalidToken' => 'Недействительный токен',
@@ -7739,10 +7743,10 @@ extension on TranslationsRu {
 			'playlists.smartPlaylist' => 'Умный плейлист',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемент', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемента', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элементов', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} элемента', ), 
 			'playlists.emptyPlaylist' => 'Этот плейлист пуст',
-			'playlists.deleteConfirm' => 'Удалить плейлист?',
-			'playlists.deleteMessage' => ({required Object name}) => 'Вы уверены, что хотите удалить "${name}"?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'Удалить плейлист?',
+			'playlists.deleteMessage' => ({required Object name}) => 'Вы уверены, что хотите удалить "${name}"?',
 			'playlists.created' => 'Плейлист создан',
 			'playlists.deleted' => 'Плейлист удалён',
 			'playlists.itemAdded' => 'Добавлено в плейлист',
@@ -8253,10 +8257,10 @@ extension on TranslationsRu {
 			'performanceOverlay.matrix' => 'Матрица',
 			'performanceOverlay.primaries' => 'Основные цвета',
 			'performanceOverlay.transfer' => 'Передача',
-			'performanceOverlay.renderFps' => 'FPS рендера',
-			'performanceOverlay.displayFps' => 'FPS дисплея',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'FPS рендера',
+			'performanceOverlay.displayFps' => 'FPS дисплея',
 			'performanceOverlay.avSync' => 'A/V синхр.',
 			'performanceOverlay.dropped' => 'Пропущено',
 			'performanceOverlay.dvRpus' => 'DV RPU',
@@ -8767,10 +8771,10 @@ extension on TranslationsRu {
 			'homeLayout.nextUpHomeDescription' => 'Следующая не наблюдаемая серия эпизодов показывается отдельно на Home',
 			'homeLayout.library' => 'Библиотека',
 			'homeLayout.showInRecommended' => 'Показать в библиотеке рекомендуется',
-			'homeLayout.customPlexRow' => 'Собственный Plex ряд',
-			'homeLayout.heroNeedsLibrary' => 'Проверьте библиотеку сначала — Герою нужно где-то показать',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'Собственный Plex ряд',
+			'homeLayout.heroNeedsLibrary' => 'Проверьте библиотеку сначала — Герою нужно где-то показать',
 			'homeLayout.heroNeedsSurface' => 'Проверьте библиотеку или дом сначала — Герою нужно где-то показать',
 			'homeLayout.removeHub' => 'Удаление Hub',
 			'homeLayout.noPlexRows' => 'No Plex управляемые строки возвращены для этой библиотеки.',
@@ -9281,10 +9285,10 @@ extension on TranslationsRu {
 			'audiobook.goToTime' => 'Идите в Время',
 			'audiobook.timeHelp' => 'Часы: минуты: секунды или минуты: секунды',
 			'audiobook.recoveryHelp' => 'Экспортируйте недавно зашифрованную копию перед перемещением или восстановлением данных синхронизации. Импорты сливаются с текущим состоянием; они никогда не замещают историю локальной синхронности.',
-			'audiobook.recoveryExport' => 'Экспорт шифрованных файлов восстановления',
-			'audiobook.recoveryImport' => 'Импорт шифрованных файлов восстановления',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'Экспорт шифрованных файлов восстановления',
+			'audiobook.recoveryImport' => 'Импорт шифрованных файлов восстановления',
 			'audiobook.recoveryImportConfirm' => 'Сочетает этот зашифрованный файл восстановления с текущими позициями чтения и записями? существующая история будет сохранена. совместная библиотека и идентификаторы элементов не включены; установите соответствующие идентификационные данные на каждом устройстве до импорта.',
 			'audiobook.recoveryExported' => 'Зашифрованный файл восстановления сохранился.',
 			'audiobook.recoveryImported' => 'Данные о восстановлении объединены.',
@@ -9795,10 +9799,10 @@ extension on TranslationsRu {
 			'musicTools.albumBlocks' => 'Сохранять альбомы целиком',
 			'musicTools.home' => 'Музыка',
 			'musicTools.recent' => 'Недавно прослушанные',
-			'musicTools.apiKey' => 'Ключ API',
-			'musicTools.missing' => 'Н/Д',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'Ключ API',
+			'musicTools.missing' => 'Н/Д',
 			'musicTools.minutes' => 'Минуты',
 			'musicTools.rules' => 'Фильтры',
 			'musicTools.exclusiveOutput' => 'Монопольный аудиовыход',

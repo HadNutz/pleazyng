@@ -896,6 +896,8 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Fortsätt titta';
 	@override String get showTopShelfContentDescription => 'Stäng av för att endast visa Pleazyng-bilden för alla profiler.';
 	@override String get topShelfUpdateFailed => 'Det gick inte att uppdatera Top Shelf. Försök igen.';
+	@override String get showFinishTime => 'Visa sluttid';
+	@override String get showFinishTimeDescription => 'Visa när videon slutar bredvid återstående tid.';
 }
 
 // Path: themeEditor
@@ -6364,6 +6366,8 @@ extension on TranslationsSv {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Fortsätt titta',
 			'settings.showTopShelfContentDescription' => 'Stäng av för att endast visa Pleazyng-bilden för alla profiler.',
 			'settings.topShelfUpdateFailed' => 'Det gick inte att uppdatera Top Shelf. Försök igen.',
+			'settings.showFinishTime' => 'Visa sluttid',
+			'settings.showFinishTimeDescription' => 'Visa när videon slutar bredvid återstående tid.',
 			'themeEditor.builtIn' => 'Inbyggda',
 			'themeEditor.presets' => 'Förinställda',
 			'themeEditor.custom' => 'Anpassat',
@@ -6661,10 +6665,10 @@ extension on TranslationsSv {
 			'accessibility.navigationHint' => 'Använd Tab och Shift+Tab för att flytta mellan kontroller, Enter eller mellanslag för att aktivera och Escape eller Tillbaka för att stänga. Zoom och läsinställningar är tillgängliga när en bok är öppen.',
 			'accessibility.textSizeDescription' => 'Skala gränssnittet text i Pleazyng utöver enhetens systemtextstorlek inställning.',
 			'accessibility.boldTextHint' => 'Använd en tyngre vikt för gränssnittets etiketter och meddelanden för att göra dem lättare att skilja.',
-			'tooltips.shufflePlay' => 'Blanda uppspelning',
-			'tooltips.playTrailer' => 'Spela trailer',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'Blanda uppspelning',
+			'tooltips.playTrailer' => 'Spela trailer',
 			'tooltips.markAsWatched' => 'Markera som sedd',
 			'tooltips.markAsUnwatched' => 'Markera som osedd',
 			'audioTracks.track' => ({required Object n}) => 'Ljudspår ${n}',
@@ -7175,10 +7179,10 @@ extension on TranslationsSv {
 			'errors.searchFailed' => ({required Object error}) => 'Sökningen misslyckades: ${error}',
 			'errors.searchUnavailable' => 'Sökningen kunde inte nå någon medieserver.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Anslutningen tog för lång tid när ${context} lästes in',
-			'errors.connectionFailed' => 'Det gick inte att ansluta till medieservern',
-			'errors.unableToLoad' => ({required Object context}) => 'Det gick inte att läsa in ${context}. Försök igen.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'Det gick inte att ansluta till medieservern',
+			'errors.unableToLoad' => ({required Object context}) => 'Det gick inte att läsa in ${context}. Försök igen.',
 			'errors.noClientAvailable' => 'Ingen klient är tillgänglig',
 			'errors.pleaseEnterToken' => 'Ange en token',
 			'errors.invalidToken' => 'Ogiltig token',
@@ -7689,10 +7693,10 @@ extension on TranslationsSv {
 			'playlists.smartPlaylist' => 'Smart spellista',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} objekt', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} objekt', ), 
 			'playlists.emptyPlaylist' => 'Denna spellista är tom',
-			'playlists.deleteConfirm' => 'Ta bort spellista?',
-			'playlists.deleteMessage' => ({required Object name}) => 'Är du säker på att du vill ta bort "${name}"?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'Ta bort spellista?',
+			'playlists.deleteMessage' => ({required Object name}) => 'Är du säker på att du vill ta bort "${name}"?',
 			'playlists.created' => 'Spellistan har skapats',
 			'playlists.deleted' => 'Spellistan har tagits bort',
 			'playlists.itemAdded' => 'Objektet har lagts till i spellistan',
@@ -8203,10 +8207,10 @@ extension on TranslationsSv {
 			'performanceOverlay.matrix' => 'Matris',
 			'performanceOverlay.primaries' => 'Primärfärger',
 			'performanceOverlay.transfer' => 'Överföring',
-			'performanceOverlay.renderFps' => 'Renderings-FPS',
-			'performanceOverlay.displayFps' => 'Skärm-FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'Renderings-FPS',
+			'performanceOverlay.displayFps' => 'Skärm-FPS',
 			'performanceOverlay.avSync' => 'A/V-synk',
 			'performanceOverlay.dropped' => 'Tappade bildrutor',
 			'performanceOverlay.dvRpus' => 'DV-RPU:er',
@@ -8717,10 +8721,10 @@ extension on TranslationsSv {
 			'homeLayout.nextUpHomeDescription' => 'Nästa oövervakas episod rad visas separat på Home',
 			'homeLayout.library' => 'Bibliotek',
 			'homeLayout.showInRecommended' => 'Utställning i biblioteket rekommenderas',
-			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
-			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
+			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
 			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
 			'homeLayout.removeHub' => 'Ta bort Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex-hanterade rader återvände till denna bibliotek.',
@@ -9231,10 +9235,10 @@ extension on TranslationsSv {
 			'audiobook.goToTime' => 'Gå till tiden',
 			'audiobook.timeHelp' => 'Klockor: minuter: sekunder eller minuter: sekunder',
 			'audiobook.recoveryHelp' => 'Exportera en nyligen krypterad kopia innan du flyttar eller reparerar synkroniseringsdata. Importer går ihop med den aktuella tillståndet; de ersätter aldrig lokal synkroniseringshistoria. Håll synkronkoden separat.',
-			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
-			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
+			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
 			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
 			'audiobook.recoveryExported' => 'Den krypterade återhämtningsfilen sparas.',
 			'audiobook.recoveryImported' => 'Data återhämtning sammansatt.',
@@ -9745,10 +9749,10 @@ extension on TranslationsSv {
 			'musicTools.albumBlocks' => 'Håll hela album samman',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Senast spelat',
-			'musicTools.apiKey' => 'API-nyckel',
-			'musicTools.missing' => 'N/A',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API-nyckel',
+			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minuter',
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusiv ljudutgång',

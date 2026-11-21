@@ -580,6 +580,8 @@ class Translations$settings$pt_PT extends Translations$settings$pt {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar a ver';
 	@override String get showTopShelfContentDescription => 'Desative para apresentar apenas a imagem do Pleazyng em todos os perfis.';
 	@override String get topShelfUpdateFailed => 'Não foi possível atualizar o Top Shelf. Tente novamente.';
+	@override String get showFinishTime => 'Mostrar hora de fim';
+	@override String get showFinishTimeDescription => 'Apresenta a hora a que o vídeo termina junto ao tempo restante.';
 }
 
 // Path: themeEditor
@@ -4174,6 +4176,8 @@ extension on TranslationsPtPt {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar a ver',
 			'settings.showTopShelfContentDescription' => 'Desative para apresentar apenas a imagem do Pleazyng em todos os perfis.',
 			'settings.topShelfUpdateFailed' => 'Não foi possível atualizar o Top Shelf. Tente novamente.',
+			'settings.showFinishTime' => 'Mostrar hora de fim',
+			'settings.showFinishTimeDescription' => 'Apresenta a hora a que o vídeo termina junto ao tempo restante.',
 			'themeEditor.custom' => 'Personalizado',
 			'themeEditor.preview' => 'Antevisão',
 			'themeEditor.slots.text' => 'Texto',
@@ -4227,10 +4231,10 @@ extension on TranslationsPtPt {
 			'hotkeys.actions.muteToggle' => 'Alternar silêncio',
 			'hotkeys.actions.subtitleToggle' => 'Alternar legendas',
 			'hotkeys.actions.audioTrackNext' => 'Próxima faixa de áudio',
-			'hotkeys.actions.subtitleTrackNext' => 'Próxima faixa de legenda',
-			'hotkeys.actions.episodePrevious' => 'Episódio anterior',
 			_ => null,
 		} ?? switch (path) {
+			'hotkeys.actions.subtitleTrackNext' => 'Próxima faixa de legenda',
+			'hotkeys.actions.episodePrevious' => 'Episódio anterior',
 			'hotkeys.actions.speedIncrease' => 'Aumentar velocidade',
 			'hotkeys.actions.speedDecrease' => 'Diminuir velocidade',
 			'hotkeys.actions.speedReset' => 'Repor velocidade',
@@ -4741,10 +4745,10 @@ extension on TranslationsPtPt {
 			'accountPreferences.hidePlayedInLatest' => 'Ocultar itens vistos em Recentes',
 			'accountPreferences.hidePlayedInLatestDescription' => 'Manter fora das linhas Recentes do servidor os itens que já viu.',
 			'accountPreferences.displayCollectionsView' => 'Mostrar a vista de Coleções',
-			'accountPreferences.displayCollectionsViewDescription' => 'Oferecer a vista de Coleções do servidor juntamente com as suas bibliotecas.',
-			'accountPreferences.rewatchingInNextUp' => 'Manter em A seguir as séries que está a rever',
 			_ => null,
 		} ?? switch (path) {
+			'accountPreferences.displayCollectionsViewDescription' => 'Oferecer a vista de Coleções do servidor juntamente com as suas bibliotecas.',
+			'accountPreferences.rewatchingInNextUp' => 'Manter em A seguir as séries que está a rever',
 			'accountPreferences.rewatchingInNextUpDescription' => 'Ao terminar uma série, comece a vê-la de novo e A seguir acompanha a nova visualização em vez de remover a série.',
 			'accountPreferences.watchedIndicator' => 'Indicadores de visto',
 			'accountPreferences.mediaReviewsVisibility' => 'Avaliações e críticas',
@@ -5255,10 +5259,10 @@ extension on TranslationsPtPt {
 			'watchTogether.connected' => 'Ligado',
 			'watchTogether.disconnected' => 'Desligado',
 			'watchTogether.youAreHost' => 'É o anfitrião',
-			'watchTogether.hostedBy' => ({required Object name}) => 'Anfitrião: ${name}',
-			'watchTogether.hostControlsPlayback' => 'O anfitrião controla a reprodução',
 			_ => null,
 		} ?? switch (path) {
+			'watchTogether.hostedBy' => ({required Object name}) => 'Anfitrião: ${name}',
+			'watchTogether.hostControlsPlayback' => 'O anfitrião controla a reprodução',
 			'watchTogether.anyoneCanControl' => 'Qualquer pessoa pode controlar a reprodução',
 			'watchTogether.roomLocked' => 'Sala bloqueada',
 			'watchTogether.nowPlaying' => 'A reproduzir agora',
@@ -5769,10 +5773,10 @@ extension on TranslationsPtPt {
 			'seerr.noTags' => 'Sem etiquetas',
 			'seerr.defaultOption' => ({required Object name}) => '${name} (predefinido)',
 			'seerr.animeNote' => 'Esta série é um anime.',
-			'seerr.requestSubmitted' => 'Pedido enviado',
-			'seerr.requestFailed' => ({required Object error}) => 'Falha no pedido: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'seerr.requestSubmitted' => 'Pedido enviado',
+			'seerr.requestFailed' => ({required Object error}) => 'Falha no pedido: ${error}',
 			'seerr.requestsLoadFailed' => 'Não foi possível carregar as opções de pedido',
 			'seerr.nothingToRequest' => 'Tudo já está disponível ou foi pedido.',
 			'seerr.statusPartiallyAvailable' => 'Parcialmente disponível',

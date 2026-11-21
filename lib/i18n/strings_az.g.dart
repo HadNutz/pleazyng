@@ -896,6 +896,8 @@ class _Translations$settings$az extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · İzləməyə davam et';
 	@override String get showTopShelfContentDescription => 'Söndürdükdə bütün profillər üçün yalnız Pleazyng şəkli görünür.';
 	@override String get topShelfUpdateFailed => 'Top Shelf yenilənmədi. Yenidən cəhd edin.';
+	@override String get showFinishTime => 'Bitmə vaxtını göstər';
+	@override String get showFinishTimeDescription => 'Videonun bitmə vaxtını qalan vaxtın yanında göstər.';
 }
 
 // Path: themeEditor
@@ -6364,6 +6366,8 @@ extension on TranslationsAz {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · İzləməyə davam et',
 			'settings.showTopShelfContentDescription' => 'Söndürdükdə bütün profillər üçün yalnız Pleazyng şəkli görünür.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf yenilənmədi. Yenidən cəhd edin.',
+			'settings.showFinishTime' => 'Bitmə vaxtını göstər',
+			'settings.showFinishTimeDescription' => 'Videonun bitmə vaxtını qalan vaxtın yanında göstər.',
 			'themeEditor.builtIn' => 'Daxili',
 			'themeEditor.presets' => 'Hazır mövzular',
 			'themeEditor.custom' => 'Xüsusi',
@@ -6661,10 +6665,10 @@ extension on TranslationsAz {
 			'accessibility.navigationHint' => 'İdarəetmə elementləri arasında keçmək üçün Tab və Shift+Tab, aktivləşdirmək üçün Enter və ya Boşluq, bağlamaq üçün Escape və ya Geri düyməsindən istifadə edin. Kitab açıq olduqda böyütmə və oxu tənzimləmələri əlçatandır.',
 			'accessibility.textSizeDescription' => 'VVD-nin textiyi, sistemin texti-büyüklüğü ayarının yanı sıra Pleazyng-də ölçülür.',
 			'accessibility.boldTextHint' => 'İnternet etiketləri və mesajları üçün daha ağır bir ağırlık kullanın ki, onları ayırt etmək kolaydır.',
-			'tooltips.shufflePlay' => 'Qarışıq oynat',
-			'tooltips.playTrailer' => 'Treyleri oynat',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'Qarışıq oynat',
+			'tooltips.playTrailer' => 'Treyleri oynat',
 			'tooltips.markAsWatched' => 'Baxıldı olaraq işarələ',
 			'tooltips.markAsUnwatched' => 'Baxılmadı olaraq işarələ',
 			'audioTracks.track' => ({required Object n}) => 'Səs zolağı ${n}',
@@ -7175,10 +7179,10 @@ extension on TranslationsAz {
 			'errors.searchFailed' => ({required Object error}) => 'Axtarış uğursuz oldu: ${error}',
 			'errors.searchUnavailable' => 'Axtarış heç bir media serverinə çata bilmədi.',
 			'errors.connectionTimeout' => ({required Object context}) => '${context} yüklənərkən vaxt bitdi',
-			'errors.connectionFailed' => 'Media serverinə qoşulmaq olmur',
-			'errors.unableToLoad' => ({required Object context}) => '${context} yüklənə bilmədi. Lütfən təzədən cəhd edin.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'Media serverinə qoşulmaq olmur',
+			'errors.unableToLoad' => ({required Object context}) => '${context} yüklənə bilmədi. Lütfən təzədən cəhd edin.',
 			'errors.noClientAvailable' => 'Əlçatan klient yoxdur',
 			'errors.pleaseEnterToken' => 'Lütfən token daxil edin',
 			'errors.invalidToken' => 'Yanlış token',
@@ -7689,10 +7693,10 @@ extension on TranslationsAz {
 			'playlists.smartPlaylist' => 'Ağıllı oynatma siyahısı',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('az'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} element', ), 
 			'playlists.emptyPlaylist' => 'Bu oynatma siyahısı boşdur',
-			'playlists.deleteConfirm' => 'Oynatma siyahısı silinsin?',
-			'playlists.deleteMessage' => ({required Object name}) => '"${name}" siyahısını silmək istədiyinizdən əminsiniz?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'Oynatma siyahısı silinsin?',
+			'playlists.deleteMessage' => ({required Object name}) => '"${name}" siyahısını silmək istədiyinizdən əminsiniz?',
 			'playlists.created' => 'Oynatma siyahısı yaradıldı',
 			'playlists.deleted' => 'Oynatma siyahısı silindi',
 			'playlists.itemAdded' => 'Oynatma siyahısına əlavə edildi',
@@ -8203,10 +8207,10 @@ extension on TranslationsAz {
 			'performanceOverlay.matrix' => 'Matrisa',
 			'performanceOverlay.primaries' => 'Əsas rənglər',
 			'performanceOverlay.transfer' => 'Ötürmə',
-			'performanceOverlay.renderFps' => 'Emal FPS-i',
-			'performanceOverlay.displayFps' => 'Ekran FPS-i',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'Emal FPS-i',
+			'performanceOverlay.displayFps' => 'Ekran FPS-i',
 			'performanceOverlay.avSync' => 'A/V Eyniləşdirilməsi',
 			'performanceOverlay.dropped' => 'İtirilmiş kadrlar',
 			'performanceOverlay.dvRpus' => 'DV RPU-ları',
@@ -8717,10 +8721,10 @@ extension on TranslationsAz {
 			'homeLayout.nextUpHomeDescription' => 'Sonraki İçerikDünyanın ən azı yerləri evdə',
 			'homeLayout.library' => 'Kitabxana',
 			'homeLayout.showInRecommended' => 'İnternet-kitabətdə danışılanlar',
-			'homeLayout.customPlexRow' => 'Xərimlər Plex',
-			'homeLayout.heroNeedsLibrary' => 'Birincisi, “Bibliothèque” – “Hero”ın bir yerə baxması lazımdır.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'Xərimlər Plex',
+			'homeLayout.heroNeedsLibrary' => 'Birincisi, “Bibliothèque” – “Hero”ın bir yerə baxması lazımdır.',
 			'homeLayout.heroNeedsSurface' => 'Birincisi kütüphanə və ya evə baxın — Hero bir yerə göstərmək lazımdır',
 			'homeLayout.removeHub' => 'Həkimə qalıb',
 			'homeLayout.noPlexRows' => 'Bu kütüphane üçün Plex-managed sıra qayıtılıb.',
@@ -9231,10 +9235,10 @@ extension on TranslationsAz {
 			'audiobook.goToTime' => 'Zamanla gəlin',
 			'audiobook.timeHelp' => 'Saatlar:minutlar:saniyələr və ya minutlar:saniyələr',
 			'audiobook.recoveryHelp' => 'Son zamanlarda şifrə edilmiş bir kopyayı ithal etmədən əvvəl və ya sinqlər verilerini düzeltmək. İthalatlar mevcut durumla birleşir; yerel sinq tarihini asılmazlar. Sinq kodunu ayrı tutun.',
-			'audiobook.recoveryExport' => 'Şifrelə qayıtma dosyası',
-			'audiobook.recoveryImport' => 'Şifrelə qayıtma dosyası',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'Şifrelə qayıtma dosyası',
+			'audiobook.recoveryImport' => 'Şifrelə qayıtma dosyası',
 			'audiobook.recoveryImportConfirm' => 'Bu şifrə edilmiş qaytarma dosyasını günümüzdeki okuma pozisyonları və notlarla birleştirir? mevcut geçmişi tutulur. Paylaşılmış kütüphane və element kimlikləri içermez; ithal etmeden əvvəl hər cihazda eşitsiz kimliklər ayarlayın.',
 			'audiobook.recoveryExported' => 'Şifrelə qayıtma dosyası qurulmuşdur.',
 			'audiobook.recoveryImported' => 'İtraf verileri birləşmişdir.',
@@ -9745,10 +9749,10 @@ extension on TranslationsAz {
 			'musicTools.albumBlocks' => 'Albomları bütöv saxla',
 			'musicTools.home' => 'Musiqi',
 			'musicTools.recent' => 'Son dinlənilənlər',
-			'musicTools.apiKey' => 'API açarı',
-			'musicTools.missing' => 'Yoxdur',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API açarı',
+			'musicTools.missing' => 'Yoxdur',
 			'musicTools.minutes' => 'Dəqiqə',
 			'musicTools.rules' => 'Filtrlər',
 			'musicTools.exclusiveOutput' => 'Eksklüziv səs çıxışı',

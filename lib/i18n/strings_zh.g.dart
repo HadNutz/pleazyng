@@ -894,6 +894,8 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · 继续观看';
 	@override String get showTopShelfContentDescription => '关闭后，所有个人资料都只会显示 Pleazyng 图片。';
 	@override String get topShelfUpdateFailed => '无法更新 Top Shelf。请重试。';
+	@override String get showFinishTime => '显示结束时间';
+	@override String get showFinishTimeDescription => '在剩余时长旁显示视频预计结束的时间。';
 }
 
 // Path: themeEditor
@@ -6359,6 +6361,8 @@ extension on TranslationsZh {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 继续观看',
 			'settings.showTopShelfContentDescription' => '关闭后，所有个人资料都只会显示 Pleazyng 图片。',
 			'settings.topShelfUpdateFailed' => '无法更新 Top Shelf。请重试。',
+			'settings.showFinishTime' => '显示结束时间',
+			'settings.showFinishTimeDescription' => '在剩余时长旁显示视频预计结束的时间。',
 			'themeEditor.builtIn' => '内置',
 			'themeEditor.presets' => '预设',
 			'themeEditor.custom' => '自定义',
@@ -6656,10 +6660,10 @@ extension on TranslationsZh {
 			'accessibility.navigationHint' => '使用 Tab 和 Shift+Tab 在控件之间移动，按 Enter 或空格键激活，按 Escape 或返回按钮关闭。打开书籍后，可调整缩放比例和阅读偏好。',
 			'accessibility.textSizeDescription' => '在 Pleazyng 中扩展接口文本,以及您的设备的系统文本大小设置。',
 			'accessibility.boldTextHint' => '加粗界面标签和消息的字重，让它们更容易辨认。',
-			'tooltips.shufflePlay' => '随机播放',
-			'tooltips.playTrailer' => '播放预告片',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => '随机播放',
+			'tooltips.playTrailer' => '播放预告片',
 			'tooltips.markAsWatched' => '标记为已观看',
 			'tooltips.markAsUnwatched' => '标记为未观看',
 			'audioTracks.track' => ({required Object n}) => '音轨 ${n}',
@@ -7170,10 +7174,10 @@ extension on TranslationsZh {
 			'errors.searchFailed' => ({required Object error}) => '搜索失败：${error}',
 			'errors.searchUnavailable' => '搜索无法连接任何媒体服务器。',
 			'errors.connectionTimeout' => ({required Object context}) => '加载 ${context} 时连接超时',
-			'errors.connectionFailed' => '无法连接到媒体服务器',
-			'errors.unableToLoad' => ({required Object context}) => '无法加载${context}。请重试。',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => '无法连接到媒体服务器',
+			'errors.unableToLoad' => ({required Object context}) => '无法加载${context}。请重试。',
 			'errors.noClientAvailable' => '没有可用客户端',
 			'errors.pleaseEnterToken' => '请输入一个令牌',
 			'errors.invalidToken' => '令牌无效',
@@ -7684,10 +7688,10 @@ extension on TranslationsZh {
 			'playlists.smartPlaylist' => '智能播放列表',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}个项目', ), 
 			'playlists.emptyPlaylist' => '此播放列表为空',
-			'playlists.deleteConfirm' => '删除播放列表？',
-			'playlists.deleteMessage' => ({required Object name}) => '确定要删除“${name}”吗？',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => '删除播放列表？',
+			'playlists.deleteMessage' => ({required Object name}) => '确定要删除“${name}”吗？',
 			'playlists.created' => '播放列表已创建',
 			'playlists.deleted' => '播放列表已删除',
 			'playlists.itemAdded' => '已添加到播放列表',
@@ -8198,10 +8202,10 @@ extension on TranslationsZh {
 			'performanceOverlay.matrix' => '矩阵',
 			'performanceOverlay.primaries' => '基色',
 			'performanceOverlay.transfer' => '传递特性',
-			'performanceOverlay.renderFps' => '渲染 FPS',
-			'performanceOverlay.displayFps' => '显示 FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => '渲染 FPS',
+			'performanceOverlay.displayFps' => '显示 FPS',
 			'performanceOverlay.avSync' => 'A/V 同步',
 			'performanceOverlay.dropped' => '丢帧',
 			'performanceOverlay.dvRpus' => 'DV RPU',
@@ -8712,10 +8716,10 @@ extension on TranslationsZh {
 			'homeLayout.nextUpHomeDescription' => '下一篇 未观看的集合序列在主页上单独显示',
 			'homeLayout.library' => '媒体库',
 			'homeLayout.showInRecommended' => '图书馆推荐',
-			'homeLayout.customPlexRow' => '定制 Plex 行',
-			'homeLayout.heroNeedsLibrary' => '查看图书馆首先 - 英雄需要在某处展示',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => '定制 Plex 行',
+			'homeLayout.heroNeedsLibrary' => '查看图书馆首先 - 英雄需要在某处展示',
 			'homeLayout.heroNeedsSurface' => '查看图书馆或家先 - 英雄需要在某处展示',
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex号管理行返回此图书馆。',
@@ -9226,10 +9230,10 @@ extension on TranslationsZh {
 			'audiobook.goToTime' => '走到时间',
 			'audiobook.timeHelp' => '时间: 分钟: 秒或 分钟: 秒',
 			'audiobook.recoveryHelp' => '移动或修复同步数据前，请先导出近期的加密备份。导入内容会与当前状态合并，不会覆盖本地同步历史。请另行保存同步代码。',
-			'audiobook.recoveryExport' => '输出加密恢复文件',
-			'audiobook.recoveryImport' => '输入加密恢复文件',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => '输出加密恢复文件',
+			'audiobook.recoveryImport' => '输入加密恢复文件',
 			'audiobook.recoveryImportConfirm' => '将此加密恢复文件与当前阅读位置和笔记相结合吗?现有历史记录将被保留. 共享图书馆和项目 ID 不包含; 在进口之前,在每个设备上设置匹配 ID。',
 			'audiobook.recoveryExported' => '加密恢复文件保存。',
 			'audiobook.recoveryImported' => '恢复数据合并。',
@@ -9740,10 +9744,10 @@ extension on TranslationsZh {
 			'musicTools.albumBlocks' => '保持专辑完整',
 			'musicTools.home' => '音乐',
 			'musicTools.recent' => '最近播放',
-			'musicTools.apiKey' => 'API 密钥',
-			'musicTools.missing' => 'N/A',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API 密钥',
+			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分钟',
 			'musicTools.rules' => '筛选',
 			'musicTools.exclusiveOutput' => '独占音频输出',

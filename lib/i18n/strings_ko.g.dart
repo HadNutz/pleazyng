@@ -894,6 +894,8 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · 계속 시청';
 	@override String get showTopShelfContentDescription => '끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.';
 	@override String get topShelfUpdateFailed => 'Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요.';
+	@override String get showFinishTime => '종료 시각 표시';
+	@override String get showFinishTimeDescription => '남은 시간 옆에 동영상이 끝나는 시각을 표시합니다.';
 }
 
 // Path: themeEditor
@@ -6359,6 +6361,8 @@ extension on TranslationsKo {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 계속 시청',
 			'settings.showTopShelfContentDescription' => '끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요.',
+			'settings.showFinishTime' => '종료 시각 표시',
+			'settings.showFinishTimeDescription' => '남은 시간 옆에 동영상이 끝나는 시각을 표시합니다.',
 			'themeEditor.builtIn' => '기본 제공',
 			'themeEditor.presets' => '프리셋',
 			'themeEditor.custom' => '사용자 지정',
@@ -6656,10 +6660,10 @@ extension on TranslationsKo {
 			'accessibility.navigationHint' => 'Tab과 Shift+Tab으로 컨트롤 사이를 이동하고, Enter 또는 Space로 실행하고, Escape 또는 뒤로 버튼으로 닫으세요. 책을 열면 확대/축소와 읽기 설정을 사용할 수 있습니다.',
 			'accessibility.textSizeDescription' => 'Pleazyng에서 스케일 인터페이스 텍스트는 장치의 시스템 텍스트 크기 설정 외에도.',
 			'accessibility.boldTextHint' => '인터페이스 라벨과 메시지에 더 무거운 무게를 사용하여 구별하기 쉽습니다.',
-			'tooltips.shufflePlay' => '무작위 재생',
-			'tooltips.playTrailer' => '예고편 재생',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => '무작위 재생',
+			'tooltips.playTrailer' => '예고편 재생',
 			'tooltips.markAsWatched' => '시청 완료로 표시',
 			'tooltips.markAsUnwatched' => '미시청으로 표시',
 			'audioTracks.track' => ({required Object n}) => '오디오 트랙 ${n}',
@@ -7170,10 +7174,10 @@ extension on TranslationsKo {
 			'errors.searchFailed' => ({required Object error}) => '검색 실패: ${error}',
 			'errors.searchUnavailable' => '검색이 어떤 미디어 서버에도 연결할 수 없습니다.',
 			'errors.connectionTimeout' => ({required Object context}) => '${context} 로드 중 연결 시간 초과',
-			'errors.connectionFailed' => '미디어 서버에 연결할 수 없습니다',
-			'errors.unableToLoad' => ({required Object context}) => '${context}을(를) 불러올 수 없습니다. 다시 시도하세요.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => '미디어 서버에 연결할 수 없습니다',
+			'errors.unableToLoad' => ({required Object context}) => '${context}을(를) 불러올 수 없습니다. 다시 시도하세요.',
 			'errors.noClientAvailable' => '사용 가능한 클라이언트가 없습니다',
 			'errors.pleaseEnterToken' => '토큰을 입력해 주세요',
 			'errors.invalidToken' => '토큰이 유효하지 않습니다',
@@ -7684,10 +7688,10 @@ extension on TranslationsKo {
 			'playlists.smartPlaylist' => '스마트 재생 목록',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(count, other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)}개 항목', ), 
 			'playlists.emptyPlaylist' => '이 재생 목록은 비어 있습니다',
-			'playlists.deleteConfirm' => '재생 목록을 삭제하시겠습니까?',
-			'playlists.deleteMessage' => ({required Object name}) => '"${name}"을(를) 삭제하시겠습니까?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => '재생 목록을 삭제하시겠습니까?',
+			'playlists.deleteMessage' => ({required Object name}) => '"${name}"을(를) 삭제하시겠습니까?',
 			'playlists.created' => '재생 목록이 생성되었습니다',
 			'playlists.deleted' => '재생 목록이 삭제되었습니다',
 			'playlists.itemAdded' => '재생 목록에 추가되었습니다',
@@ -8198,10 +8202,10 @@ extension on TranslationsKo {
 			'performanceOverlay.matrix' => '매트릭스',
 			'performanceOverlay.primaries' => '원색',
 			'performanceOverlay.transfer' => '전송',
-			'performanceOverlay.renderFps' => '렌더 FPS',
-			'performanceOverlay.displayFps' => '디스플레이 FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => '렌더 FPS',
+			'performanceOverlay.displayFps' => '디스플레이 FPS',
 			'performanceOverlay.avSync' => 'A/V 동기화',
 			'performanceOverlay.dropped' => '드롭됨',
 			'performanceOverlay.dvRpus' => 'DV RPU',
@@ -8712,10 +8716,10 @@ extension on TranslationsKo {
 			'homeLayout.nextUpHomeDescription' => '다음 무시된 에피소드 순서가 집에서 별도로 표시됩니다.',
 			'homeLayout.library' => '라이브러리',
 			'homeLayout.showInRecommended' => '추천 도서관에서 제공하는',
-			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
-			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
+			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
 			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
 			'homeLayout.removeHub' => 'Hub 삭제',
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
@@ -9226,10 +9230,10 @@ extension on TranslationsKo {
 			'audiobook.goToTime' => '시간에 가라',
 			'audiobook.timeHelp' => '시간:분:초 또는 분:초',
 			'audiobook.recoveryHelp' => '동기화 데이터를 이동하거나 복구하기 전에 최근 암호화 된 복사본을 수출합니다.수입은 현재 상태와 결합됩니다; 그들은 결코 지역 동기 역사를 대체하지 않습니다.',
-			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
-			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
+			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
 			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
 			'audiobook.recoveryExported' => '암호화 된 복구 파일이 저장되었습니다.',
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
@@ -9740,10 +9744,10 @@ extension on TranslationsKo {
 			'musicTools.albumBlocks' => '앨범 전체를 함께 유지',
 			'musicTools.home' => '음악',
 			'musicTools.recent' => '최근 재생한 음악',
-			'musicTools.apiKey' => 'API 키',
-			'musicTools.missing' => 'N/A',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API 키',
+			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '분',
 			'musicTools.rules' => '필터',
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',

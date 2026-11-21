@@ -658,7 +658,8 @@
       "author": "jtlopezdev",
       "state": "open",
       "title": "feat(player): make the finish time optional",
-      "decision": "Optional. A user preference to hide finish time is independent of playback correctness."
+      "decision": "Adapted in Pleazyng. Allow the finish clock next to remaining time to be hidden independently on desktop, touch and remote controls. Existing users keep their visible finish clock.",
+      "upstream_head": "35768bde7272435605f2d9cf25564577498e573a"
     },
     {
       "number": 3077,

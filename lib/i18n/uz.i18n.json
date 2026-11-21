@@ -793,7 +793,9 @@
     "streamBufferSizeMiB": "Buffer siz: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Tomoshani davom ettirish",
     "showTopShelfContentDescription": "Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.",
-    "topShelfUpdateFailed": "Top Shelf yangilanmadi. Qayta urinib koʻring."
+    "topShelfUpdateFailed": "Top Shelf yangilanmadi. Qayta urinib koʻring.",
+    "showFinishTime": "Tugash vaqtini koʻrsatish",
+    "showFinishTimeDescription": "Qolgan vaqt yonida video qachon tugashini koʻrsatadi."
   },
   "themeEditor": {
     "builtIn": "Oʻrnatilgan",

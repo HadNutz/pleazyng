@@ -1,7 +1,7 @@
 {
   "locale": "ms",
   "inherits": null,
-  "catalogSha256": "746b53b012b156c3e6cff89b16fed90f0efb11792f7ba3a562cf3b0ea562e2f6",
+  "catalogSha256": "9b4a856f906ec36ac3381751f8f4bab3181321d4520290f1ddf6eeed6422d8bc",
   "nativeSpeakerReviewed": false,
   "messages": {
     "app.title": "nonlinguistic",
@@ -3690,7 +3690,9 @@
     "settings.showTopShelfContent": "assistant-generated-draft",
     "settings.showTopShelfContentDescription": "assistant-generated-draft",
     "settings.topShelfUpdateFailed": "assistant-generated-draft",
-    "seerr.withdrawRequest": "assistant-generated-draft"
+    "seerr.withdrawRequest": "assistant-generated-draft",
+    "settings.showFinishTime": "assistant-generated-draft",
+    "settings.showFinishTimeDescription": "assistant-generated-draft"
   },
   "beforeIndependentQaCorrection": {
     "common.yes": "m2m100-draft",

@@ -489,7 +489,9 @@
     "playerScopeTitle": "Por série ou filme",
     "showTopShelfContent": "Apple TV Top Shelf · Continuar a ver",
     "showTopShelfContentDescription": "Desative para apresentar apenas a imagem do Pleazyng em todos os perfis.",
-    "topShelfUpdateFailed": "Não foi possível atualizar o Top Shelf. Tente novamente."
+    "topShelfUpdateFailed": "Não foi possível atualizar o Top Shelf. Tente novamente.",
+    "showFinishTime": "Mostrar hora de fim",
+    "showFinishTimeDescription": "Apresenta a hora a que o vídeo termina junto ao tempo restante."
   },
   "themeEditor": {
     "custom": "Personalizado",

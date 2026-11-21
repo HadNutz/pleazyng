@@ -797,7 +797,9 @@
     "streamBufferSizeMiB": "Buffer velikost: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Pokračovat ve sledování",
     "showTopShelfContentDescription": "Po vypnutí se u všech profilů zobrazí pouze obrázek Pleazyng.",
-    "topShelfUpdateFailed": "Top Shelf se nepodařilo aktualizovat. Zkuste to znovu."
+    "topShelfUpdateFailed": "Top Shelf se nepodařilo aktualizovat. Zkuste to znovu.",
+    "showFinishTime": "Zobrazit čas konce",
+    "showFinishTimeDescription": "Vedle zbývající doby zobrazí čas konce videa."
   },
   "themeEditor": {
     "builtIn": "stavět-in",

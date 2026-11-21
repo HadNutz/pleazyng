@@ -898,6 +898,8 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · המשך צפייה';
 	@override String get showTopShelfContentDescription => 'כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.';
 	@override String get topShelfUpdateFailed => 'עדכון Top Shelf נכשל. אפשר לנסות שוב.';
+	@override String get showFinishTime => 'הצגת שעת הסיום';
+	@override String get showFinishTimeDescription => 'שעת סיום הסרטון תוצג ליד הזמן שנותר.';
 }
 
 // Path: themeEditor
@@ -6372,6 +6374,8 @@ extension on TranslationsHe {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · המשך צפייה',
 			'settings.showTopShelfContentDescription' => 'כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.',
 			'settings.topShelfUpdateFailed' => 'עדכון Top Shelf נכשל. אפשר לנסות שוב.',
+			'settings.showFinishTime' => 'הצגת שעת הסיום',
+			'settings.showFinishTimeDescription' => 'שעת סיום הסרטון תוצג ליד הזמן שנותר.',
 			'themeEditor.builtIn' => 'בנוי',
 			'themeEditor.presets' => 'נציגים',
 			'themeEditor.custom' => 'מותאם אישית',
@@ -6669,10 +6673,10 @@ extension on TranslationsHe {
 			'accessibility.navigationHint' => 'אפשר להשתמש ב-Tab וב-Shift+Tab כדי לעבור בין הפקדים, ב-Enter או ב-Space כדי להפעיל, וב-Escape או בכפתור החזרה כדי לסגור. כשספר פתוח, אפשר לשנות את הזום ואת העדפות הקריאה.',
 			'accessibility.textSizeDescription' => 'טקסט אינטראקציה בקנה מידה ב- Pleazyng מלבד הגדרת גודל הטקסט של המערכת במכשיר שלך.',
 			'accessibility.boldTextHint' => 'השתמש במשקל כבד יותר עבור תוויות ממשק והודעות כדי להפוך אותם קל יותר להבדיל.',
-			'tooltips.shufflePlay' => 'שושן משחק',
-			'tooltips.playTrailer' => 'משחק טריילר',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'שושן משחק',
+			'tooltips.playTrailer' => 'משחק טריילר',
 			'tooltips.markAsWatched' => 'מארק כפי שנצפה',
 			'tooltips.markAsUnwatched' => 'מארק כבלתי צפוי',
 			'audioTracks.track' => ({required Object n}) => 'אודיו טרק ${n}',
@@ -7183,10 +7187,10 @@ extension on TranslationsHe {
 			'errors.searchFailed' => ({required Object error}) => 'חיפוש לא הצליח: ${error}',
 			'errors.searchUnavailable' => 'החיפוש לא יכול להגיע לשירותי התקשורת.',
 			'errors.connectionTimeout' => ({required Object context}) => 'זמן חיבור בזמן הטעינה ${context}',
-			'errors.connectionFailed' => 'אי אפשר להתחבר לשרת מדיה',
-			'errors.unableToLoad' => ({required Object context}) => 'אין אפשרות להעלות ${context}.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'אי אפשר להתחבר לשרת מדיה',
+			'errors.unableToLoad' => ({required Object context}) => 'אין אפשרות להעלות ${context}.',
 			'errors.noClientAvailable' => 'אין לקוחות זמינים',
 			'errors.pleaseEnterToken' => 'אנא הקלד טוקן',
 			'errors.invalidToken' => 'טוקיו חסר תועלת',
@@ -7697,10 +7701,10 @@ extension on TranslationsHe {
 			'playlists.smartPlaylist' => 'חכמה Playlist',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריט', two: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריטים', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} פריטים', ), 
 			'playlists.emptyPlaylist' => 'רשימת המשחקים הזאת ריקה',
-			'playlists.deleteConfirm' => 'לשחרר את Playlist?',
-			'playlists.deleteMessage' => ({required Object name}) => 'האם אתה בטוח שאתה רוצה למחוק את "${name}"?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'לשחרר את Playlist?',
+			'playlists.deleteMessage' => ({required Object name}) => 'האם אתה בטוח שאתה רוצה למחוק את "${name}"?',
 			'playlists.created' => 'Playlist שנוצר',
 			'playlists.deleted' => 'Playlist מוחלף',
 			'playlists.itemAdded' => 'הוספת ל playlist',
@@ -8211,10 +8215,10 @@ extension on TranslationsHe {
 			'performanceOverlay.matrix' => 'מתיקס',
 			'performanceOverlay.primaries' => 'ראשוני',
 			'performanceOverlay.transfer' => 'העברה',
-			'performanceOverlay.renderFps' => 'רנדה FPS',
-			'performanceOverlay.displayFps' => 'תצוגה FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'רנדה FPS',
+			'performanceOverlay.displayFps' => 'תצוגה FPS',
 			'performanceOverlay.avSync' => 'A/V סינכרון',
 			'performanceOverlay.dropped' => 'נופל',
 			'performanceOverlay.dvRpus' => 'דב RPU',
@@ -8725,10 +8729,10 @@ extension on TranslationsHe {
 			'homeLayout.nextUpHomeDescription' => 'השורה הבאה של הפרק לא נצפה הוצגה בנפרד בבית',
 			'homeLayout.library' => 'ספרייה',
 			'homeLayout.showInRecommended' => 'תגית: הספרייה המומלצת',
-			'homeLayout.customPlexRow' => 'אישית Plex שורה',
-			'homeLayout.heroNeedsLibrary' => 'ראשית, בדוק את הספרייה – גיבור צריך איפשהו להראות',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'אישית Plex שורה',
+			'homeLayout.heroNeedsLibrary' => 'ראשית, בדוק את הספרייה – גיבור צריך איפשהו להראות',
 			'homeLayout.heroNeedsSurface' => 'ראשית בדוק את הספרייה או הבית – גיבור צריך איפשהו להראות',
 			'homeLayout.removeHub' => 'להסיר Hub',
 			'homeLayout.noPlexRows' => 'מספר Plex שורות המנוהלות חזרה לספריה זו.',
@@ -9239,10 +9243,10 @@ extension on TranslationsHe {
 			'audiobook.goToTime' => 'ללכת בזמן',
 			'audiobook.timeHelp' => 'שעות: דקות: שניות או דקות: שניות',
 			'audiobook.recoveryHelp' => 'ייצוא עותק מוצפן לאחרונה לפני העברת או תיקון נתוני סינכרון.יבואים מתמזגים עם המצב הנוכחי; הם לעולם לא מחליפים היסטוריה מקומית של סינן.',
-			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
-			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'ייצוא קובץ ההחזרה מוצפן',
+			'audiobook.recoveryImport' => 'ייבוא קובץ ההחזרה מוצפן',
 			'audiobook.recoveryImportConfirm' => 'שילוב זה קובץ ההחזרה מוצפן עם עמדות הקריאה הנוכחיות והערות? ההיסטוריה הקיימת תישמר. ספרייה משותפת ו- פריטים מזהים אינם נכללים; הגדרת מזהים מתאימים על כל מכשיר לפני ייבוא.',
 			'audiobook.recoveryExported' => 'קובץ ההחזרה מוצפן נשמר.',
 			'audiobook.recoveryImported' => 'נתוני ההחזרה מתמזגים.',
@@ -9753,10 +9757,10 @@ extension on TranslationsHe {
 			'musicTools.albumBlocks' => 'שמירה על אלבומים שלמים ביחד',
 			'musicTools.home' => 'מוסיקה',
 			'musicTools.recent' => 'הושמעו לאחרונה',
-			'musicTools.apiKey' => 'מפתח API',
-			'musicTools.missing' => 'N / A',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'מפתח API',
+			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'דקות',
 			'musicTools.rules' => 'מסננים',
 			'musicTools.exclusiveOutput' => 'פלט שמע בלעדי',

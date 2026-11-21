@@ -896,6 +896,8 @@ class _Translations$settings$de extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Weiterschauen';
 	@override String get showTopShelfContentDescription => 'Wenn diese Option deaktiviert ist, sehen alle Profile nur das Pleazyng-Bild.';
 	@override String get topShelfUpdateFailed => 'Top Shelf konnte nicht aktualisiert werden. Versuche es erneut.';
+	@override String get showFinishTime => 'Endzeit anzeigen';
+	@override String get showFinishTimeDescription => 'Zeigt neben der verbleibenden Zeit an, wann das Video endet.';
 }
 
 // Path: themeEditor
@@ -6364,6 +6366,8 @@ extension on TranslationsDe {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Weiterschauen',
 			'settings.showTopShelfContentDescription' => 'Wenn diese Option deaktiviert ist, sehen alle Profile nur das Pleazyng-Bild.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf konnte nicht aktualisiert werden. Versuche es erneut.',
+			'settings.showFinishTime' => 'Endzeit anzeigen',
+			'settings.showFinishTimeDescription' => 'Zeigt neben der verbleibenden Zeit an, wann das Video endet.',
 			'themeEditor.builtIn' => 'Integriert',
 			'themeEditor.presets' => 'Vorlagen',
 			'themeEditor.custom' => 'Benutzerdefiniert',
@@ -6661,10 +6665,10 @@ extension on TranslationsDe {
 			'accessibility.navigationHint' => 'Mit Tab und Shift+Tab wechselst du zwischen Bedienelementen, mit Enter oder der Leertaste aktivierst du sie, und mit Escape oder Zurück schließt du sie. Wenn ein Buch geöffnet ist, kannst du den Zoom und die Leseeinstellungen anpassen.',
 			'accessibility.textSizeDescription' => 'Scale-Interface Text in Pleazyng neben der Systemtextgröße Einstellung Ihres Geräts.',
 			'accessibility.boldTextHint' => 'Verwenden Sie ein schwerer Gewicht für Interface-Label und Nachrichten, um sie leichter zu unterscheiden.',
-			'tooltips.shufflePlay' => 'Zufallswiedergabe',
-			'tooltips.playTrailer' => 'Trailer abspielen',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'Zufallswiedergabe',
+			'tooltips.playTrailer' => 'Trailer abspielen',
 			'tooltips.markAsWatched' => 'Als gesehen markieren',
 			'tooltips.markAsUnwatched' => 'Als ungesehen markieren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospur ${n}',
@@ -7175,10 +7179,10 @@ extension on TranslationsDe {
 			'errors.searchFailed' => ({required Object error}) => 'Suche fehlgeschlagen: ${error}',
 			'errors.searchUnavailable' => 'Die Suche konnte keinen Medienserver erreichen.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Zeitüberschreitung beim Laden von ${context}',
-			'errors.connectionFailed' => 'Keine Verbindung zum Medienserver möglich',
-			'errors.unableToLoad' => ({required Object context}) => '${context} konnte nicht geladen werden. Bitte erneut versuchen.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'Keine Verbindung zum Medienserver möglich',
+			'errors.unableToLoad' => ({required Object context}) => '${context} konnte nicht geladen werden. Bitte erneut versuchen.',
 			'errors.noClientAvailable' => 'Kein Client verfügbar',
 			'errors.pleaseEnterToken' => 'Bitte Token eingeben',
 			'errors.invalidToken' => 'Ungültiges Token',
@@ -7689,10 +7693,10 @@ extension on TranslationsDe {
 			'playlists.smartPlaylist' => 'Intelligente Wiedergabeliste',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('de'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} Element', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} Elemente', ), 
 			'playlists.emptyPlaylist' => 'Diese Wiedergabeliste ist leer',
-			'playlists.deleteConfirm' => 'Wiedergabeliste löschen?',
-			'playlists.deleteMessage' => ({required Object name}) => '„${name}“ wirklich löschen?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'Wiedergabeliste löschen?',
+			'playlists.deleteMessage' => ({required Object name}) => '„${name}“ wirklich löschen?',
 			'playlists.created' => 'Wiedergabeliste erstellt',
 			'playlists.deleted' => 'Wiedergabeliste gelöscht',
 			'playlists.itemAdded' => 'Zur Wiedergabeliste hinzugefügt',
@@ -8203,10 +8207,10 @@ extension on TranslationsDe {
 			'performanceOverlay.matrix' => 'Matrix',
 			'performanceOverlay.primaries' => 'Primärfarben',
 			'performanceOverlay.transfer' => 'Transfer',
-			'performanceOverlay.renderFps' => 'Render-FPS',
-			'performanceOverlay.displayFps' => 'Display-FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'Render-FPS',
+			'performanceOverlay.displayFps' => 'Display-FPS',
 			'performanceOverlay.avSync' => 'A/V-Sync',
 			'performanceOverlay.dropped' => 'Verworfen',
 			'performanceOverlay.dvRpus' => 'DV-RPUs',
@@ -8717,10 +8721,10 @@ extension on TranslationsDe {
 			'homeLayout.nextUpHomeDescription' => 'Die nächste unbeobachtete Episode-Reihe separat auf Home angezeigt',
 			'homeLayout.library' => 'Mediathek',
 			'homeLayout.showInRecommended' => 'Show in der Bibliothek empfohlen',
-			'homeLayout.customPlexRow' => 'Anpassung Plex Runde',
-			'homeLayout.heroNeedsLibrary' => 'Schauen Sie sich die Bibliothek zuerst an – Hero braucht irgendwo zu zeigen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'Anpassung Plex Runde',
+			'homeLayout.heroNeedsLibrary' => 'Schauen Sie sich die Bibliothek zuerst an – Hero braucht irgendwo zu zeigen',
 			'homeLayout.heroNeedsSurface' => 'Schauen Sie sich die Bibliothek oder Home zuerst an – Hero braucht irgendwo zu zeigen',
 			'homeLayout.removeHub' => 'Hub entfernen',
 			'homeLayout.noPlexRows' => 'Nr. Plex-verwaltete Zeilen zurückkehren für diese Bibliothek.',
@@ -9231,10 +9235,10 @@ extension on TranslationsDe {
 			'audiobook.goToTime' => 'Gehen Sie zur Zeit',
 			'audiobook.timeHelp' => 'Stunden: Minuten: Sekunden oder Minuten: Sekunden',
 			'audiobook.recoveryHelp' => 'Exportieren Sie eine kürzlich verschlüsselte Kopie, bevor Sie Sync-Daten bewegen oder reparieren.Importe fusionieren mit dem aktuellen Zustand; sie ersetzen niemals die lokale Sync Geschichte.',
-			'audiobook.recoveryExport' => 'Export verschlüsselte Recovery Datei',
-			'audiobook.recoveryImport' => 'Import verschlüsselte Recovery-Datei',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'Export verschlüsselte Recovery Datei',
+			'audiobook.recoveryImport' => 'Import verschlüsselte Recovery-Datei',
 			'audiobook.recoveryImportConfirm' => 'Kombinieren Sie diese verschlüsselte Recovery-Datei mit aktuellen Lesepositionen und Notizen? bestehende Geschichte wird beibehalten. gemeinsame Bibliothek und Element-IDs sind nicht enthalten; Set matching IDs on each device before importing.',
 			'audiobook.recoveryExported' => 'Verschlüsselte Recovery-Datei wurde gespeichert.',
 			'audiobook.recoveryImported' => 'Wiederherstellungsdaten sind zusammengefasst.',
@@ -9745,10 +9749,10 @@ extension on TranslationsDe {
 			'musicTools.albumBlocks' => 'Vollständige Alben zusammenhalten',
 			'musicTools.home' => 'Musik',
 			'musicTools.recent' => 'Zuletzt gespielt',
-			'musicTools.apiKey' => 'API-Schlüssel',
-			'musicTools.missing' => 'N. v.',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API-Schlüssel',
+			'musicTools.missing' => 'N. v.',
 			'musicTools.minutes' => 'Minuten',
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusive Audioausgabe',

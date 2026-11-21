@@ -795,7 +795,9 @@
     "streamBufferSizeMiB": "גודל בופר: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · המשך צפייה",
     "showTopShelfContentDescription": "כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.",
-    "topShelfUpdateFailed": "עדכון Top Shelf נכשל. אפשר לנסות שוב."
+    "topShelfUpdateFailed": "עדכון Top Shelf נכשל. אפשר לנסות שוב.",
+    "showFinishTime": "הצגת שעת הסיום",
+    "showFinishTimeDescription": "שעת סיום הסרטון תוצג ליד הזמן שנותר."
   },
   "themeEditor": {
     "builtIn": "בנוי",

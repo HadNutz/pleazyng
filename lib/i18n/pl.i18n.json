@@ -797,7 +797,9 @@
     "streamBufferSizeMiB": "rozmiar buffer: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Kontynuuj oglądanie",
     "showTopShelfContentDescription": "Po wyłączeniu wszystkie profile będą widzieć tylko grafikę Pleazyng.",
-    "topShelfUpdateFailed": "Nie udało się zaktualizować Top Shelf. Spróbuj ponownie."
+    "topShelfUpdateFailed": "Nie udało się zaktualizować Top Shelf. Spróbuj ponownie.",
+    "showFinishTime": "Pokaż godzinę zakończenia",
+    "showFinishTimeDescription": "Obok pozostałego czasu wyświetla godzinę zakończenia filmu."
   },
   "themeEditor": {
     "builtIn": "Wbudowane",

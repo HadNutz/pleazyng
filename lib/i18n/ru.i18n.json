@@ -797,7 +797,9 @@
     "streamBufferSizeMiB": "Буфер размер: ${size} MiB",
     "showTopShelfContent": "Apple TV Top Shelf · Продолжить просмотр",
     "showTopShelfContentDescription": "Если выключить этот параметр, для всех профилей будет показано только изображение Pleazyng.",
-    "topShelfUpdateFailed": "Не удалось обновить Top Shelf. Попробуйте ещё раз."
+    "topShelfUpdateFailed": "Не удалось обновить Top Shelf. Попробуйте ещё раз.",
+    "showFinishTime": "Показывать время окончания",
+    "showFinishTimeDescription": "Показывать рядом с оставшимся временем, когда закончится видео."
   },
   "themeEditor": {
     "builtIn": "Встроенные",

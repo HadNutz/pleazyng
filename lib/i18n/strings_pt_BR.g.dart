@@ -261,6 +261,8 @@ class Translations$settings$pt_BR extends Translations$settings$pt {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar assistindo';
 	@override String get showTopShelfContentDescription => 'Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.';
 	@override String get topShelfUpdateFailed => 'Não foi possível atualizar o Top Shelf. Tente novamente.';
+	@override String get showFinishTime => 'Mostrar horário de término';
+	@override String get showFinishTimeDescription => 'Mostra quando o vídeo vai terminar ao lado do tempo restante.';
 }
 
 // Path: themeEditor
@@ -1512,6 +1514,8 @@ extension on TranslationsPtBr {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar assistindo',
 			'settings.showTopShelfContentDescription' => 'Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.',
 			'settings.topShelfUpdateFailed' => 'Não foi possível atualizar o Top Shelf. Tente novamente.',
+			'settings.showFinishTime' => 'Mostrar horário de término',
+			'settings.showFinishTimeDescription' => 'Mostra quando o vídeo vai terminar ao lado do tempo restante.',
 			'themeEditor.custom' => 'Personalizado',
 			'themeEditor.preview' => 'Prévia',
 			'themeEditor.slots.text' => 'Texto',
@@ -1923,10 +1927,10 @@ extension on TranslationsPtBr {
 			'romm.missing' => 'This copy has no game files on the server.',
 			'romm.noRoute' => 'No compatible in-app player is available for this copy.',
 			'romm.firmware' => 'Firmware',
-			'romm.firmwareHelp' => 'Some systems need firmware. Manage it in RomM; the selected emulator reports any missing requirements at launch.',
-			'romm.achievements' => 'RetroAchievements',
 			_ => null,
 		} ?? switch (path) {
+			'romm.firmwareHelp' => 'Some systems need firmware. Manage it in RomM; the selected emulator reports any missing requirements at launch.',
+			'romm.achievements' => 'RetroAchievements',
 			'romm.achievementsHelp' => 'Achievement information comes from RomM. The browser player does not earn new achievements.',
 			'romm.screenshots' => 'Screenshots',
 			'romm.manual' => 'Manual',

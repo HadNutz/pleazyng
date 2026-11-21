@@ -896,6 +896,8 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Verder kijken';
 	@override String get showTopShelfContentDescription => 'Schakel dit uit om voor alle profielen alleen de Pleazyng-afbeelding te tonen.';
 	@override String get topShelfUpdateFailed => 'Top Shelf kon niet worden bijgewerkt. Probeer het opnieuw.';
+	@override String get showFinishTime => 'Eindtijd tonen';
+	@override String get showFinishTimeDescription => 'Toon naast de resterende tijd hoe laat de video eindigt.';
 }
 
 // Path: themeEditor
@@ -6364,6 +6366,8 @@ extension on TranslationsNl {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Verder kijken',
 			'settings.showTopShelfContentDescription' => 'Schakel dit uit om voor alle profielen alleen de Pleazyng-afbeelding te tonen.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf kon niet worden bijgewerkt. Probeer het opnieuw.',
+			'settings.showFinishTime' => 'Eindtijd tonen',
+			'settings.showFinishTimeDescription' => 'Toon naast de resterende tijd hoe laat de video eindigt.',
 			'themeEditor.builtIn' => 'Ingebouwd',
 			'themeEditor.presets' => 'Voorinstellingen',
 			'themeEditor.custom' => 'Aangepast',
@@ -6661,10 +6665,10 @@ extension on TranslationsNl {
 			'accessibility.navigationHint' => 'Gebruik Tab en Shift+Tab om tussen bedieningselementen te bewegen, Enter of de spatiebalk om ze te activeren en Escape of Terug om te sluiten. Als een boek geopend is, zijn zoom en leesvoorkeuren beschikbaar.',
 			'accessibility.textSizeDescription' => 'Scale interface tekst in Pleazyng naast de systeem-text-size instelling van uw apparaat.',
 			'accessibility.boldTextHint' => 'Gebruik een zwaarder gewicht voor interface labels en berichten om ze gemakkelijker te onderscheiden.',
-			'tooltips.shufflePlay' => 'Willekeurig afspelen',
-			'tooltips.playTrailer' => 'Trailer afspelen',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'Willekeurig afspelen',
+			'tooltips.playTrailer' => 'Trailer afspelen',
 			'tooltips.markAsWatched' => 'Als bekeken markeren',
 			'tooltips.markAsUnwatched' => 'Als ongekeken markeren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospoor ${n}',
@@ -7175,10 +7179,10 @@ extension on TranslationsNl {
 			'errors.searchFailed' => ({required Object error}) => 'Zoeken mislukt: ${error}',
 			'errors.searchUnavailable' => 'Zoeken kon geen enkele mediaserver bereiken.',
 			'errors.connectionTimeout' => ({required Object context}) => 'Time-out van verbinding tijdens het laden van ${context}',
-			'errors.connectionFailed' => 'Kan geen verbinding maken met mediaserver',
-			'errors.unableToLoad' => ({required Object context}) => 'Kan ${context} niet laden. Probeer het opnieuw.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'Kan geen verbinding maken met mediaserver',
+			'errors.unableToLoad' => ({required Object context}) => 'Kan ${context} niet laden. Probeer het opnieuw.',
 			'errors.noClientAvailable' => 'Geen client beschikbaar',
 			'errors.pleaseEnterToken' => 'Voer een token in',
 			'errors.invalidToken' => 'Ongeldig token',
@@ -7689,10 +7693,10 @@ extension on TranslationsNl {
 			'playlists.smartPlaylist' => 'Slimme afspeellijst',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('nl'))(count, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} item', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} items', ), 
 			'playlists.emptyPlaylist' => 'Deze afspeellijst is leeg',
-			'playlists.deleteConfirm' => 'Afspeellijst verwijderen?',
-			'playlists.deleteMessage' => ({required Object name}) => 'Weet je zeker dat je "${name}" wilt verwijderen?',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'Afspeellijst verwijderen?',
+			'playlists.deleteMessage' => ({required Object name}) => 'Weet je zeker dat je "${name}" wilt verwijderen?',
 			'playlists.created' => 'Afspeellijst gemaakt',
 			'playlists.deleted' => 'Afspeellijst verwijderd',
 			'playlists.itemAdded' => 'Toegevoegd aan afspeellijst',
@@ -8203,10 +8207,10 @@ extension on TranslationsNl {
 			'performanceOverlay.matrix' => 'Matrix',
 			'performanceOverlay.primaries' => 'Primaire kleuren',
 			'performanceOverlay.transfer' => 'Overdracht',
-			'performanceOverlay.renderFps' => 'Render-FPS',
-			'performanceOverlay.displayFps' => 'Scherm-FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'Render-FPS',
+			'performanceOverlay.displayFps' => 'Scherm-FPS',
 			'performanceOverlay.avSync' => 'A/V-sync',
 			'performanceOverlay.dropped' => 'Gedropt',
 			'performanceOverlay.dvRpus' => 'DV RPU’s',
@@ -8717,10 +8721,10 @@ extension on TranslationsNl {
 			'homeLayout.nextUpHomeDescription' => 'De volgende onbewaarde episode rij verschijnt afzonderlijk op Home',
 			'homeLayout.library' => 'Bibliotheek',
 			'homeLayout.showInRecommended' => 'In de bibliotheek aanbevolen',
-			'homeLayout.customPlexRow' => 'Kijk naar Plex',
-			'homeLayout.heroNeedsLibrary' => 'Check Library first — Hero heeft ergens nodig om te tonen',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'Kijk naar Plex',
+			'homeLayout.heroNeedsLibrary' => 'Check Library first — Hero heeft ergens nodig om te tonen',
 			'homeLayout.heroNeedsSurface' => 'Check Library or Home first — Hero heeft ergens nodig om te tonen',
 			'homeLayout.removeHub' => 'Verwijder Hub',
 			'homeLayout.noPlexRows' => 'Nr. Plex-geheerd rijen teruggekeerd voor deze bibliotheek.',
@@ -9231,10 +9235,10 @@ extension on TranslationsNl {
 			'audiobook.goToTime' => 'Ga naar de tijd',
 			'audiobook.timeHelp' => 'uur: minuten: seconden of minuten: seconden',
 			'audiobook.recoveryHelp' => 'Exporteer een recente versleutelde kopie voor het verplaatsen of repareren van synchronisatiegegevens.Importeren verschijnt met de huidige toestand; ze vervangen nooit de lokale sync-geschiedenis.',
-			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
-			'audiobook.recoveryImport' => 'Geïmporteerde versleutelde herstelbestanden',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
+			'audiobook.recoveryImport' => 'Geïmporteerde versleutelde herstelbestanden',
 			'audiobook.recoveryImportConfirm' => 'Combineer deze versleutelde herstelbestand met de huidige leesposities en noten? bestaande geschiedenis zal worden bewaard. gedeelde bibliotheek en item-ID\'s zijn niet opgenomen; set matching ID\'s on each device before importing.',
 			'audiobook.recoveryExported' => 'Encrypt herstel bestand is opgeslagen.',
 			'audiobook.recoveryImported' => 'Recovery data samengesteld.',
@@ -9745,10 +9749,10 @@ extension on TranslationsNl {
 			'musicTools.albumBlocks' => 'Volledige albums bij elkaar houden',
 			'musicTools.home' => 'Muziek',
 			'musicTools.recent' => 'Onlangs afgespeeld',
-			'musicTools.apiKey' => 'API-sleutel',
-			'musicTools.missing' => 'N/A',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'API-sleutel',
+			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minuten',
 			'musicTools.rules' => 'Filters',
 			'musicTools.exclusiveOutput' => 'Exclusieve audio-uitvoer',

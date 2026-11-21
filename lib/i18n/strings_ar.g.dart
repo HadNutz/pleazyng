@@ -904,6 +904,8 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · متابعة المشاهدة';
 	@override String get showTopShelfContentDescription => 'عند إيقاف هذا الخيار، تظهر صورة Pleazyng فقط لجميع الملفات الشخصية.';
 	@override String get topShelfUpdateFailed => 'تعذّر تحديث Top Shelf. حاول مرة أخرى.';
+	@override String get showFinishTime => 'عرض وقت الانتهاء';
+	@override String get showFinishTimeDescription => 'عرض وقت انتهاء الفيديو بجوار الوقت المتبقي.';
 }
 
 // Path: themeEditor
@@ -6464,6 +6466,8 @@ extension on TranslationsAr {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · متابعة المشاهدة',
 			'settings.showTopShelfContentDescription' => 'عند إيقاف هذا الخيار، تظهر صورة Pleazyng فقط لجميع الملفات الشخصية.',
 			'settings.topShelfUpdateFailed' => 'تعذّر تحديث Top Shelf. حاول مرة أخرى.',
+			'settings.showFinishTime' => 'عرض وقت الانتهاء',
+			'settings.showFinishTimeDescription' => 'عرض وقت انتهاء الفيديو بجوار الوقت المتبقي.',
 			'themeEditor.builtIn' => 'بناء في',
 			'themeEditor.presets' => 'الكهنوت',
 			'themeEditor.custom' => 'مخصص',
@@ -6761,10 +6765,10 @@ extension on TranslationsAr {
 			'accessibility.navigationHint' => 'استخدم Tab وShift+Tab للتنقل بين عناصر التحكم، وEnter أو مفتاح المسافة لتفعيلها، وEscape أو زر الرجوع للإغلاق. تتوفر خيارات التكبير وتفضيلات القراءة أثناء فتح الكتاب.',
 			'accessibility.textSizeDescription' => 'مقياس واجهة النص في Pleazyng بالإضافة إلى إعداد حجم النص النظام على جهازك.',
 			'accessibility.boldTextHint' => 'استخدم وزنًا أثقل لعلامات الواجهة والرسائل لجعلها أسهل في التمييز.',
-			'tooltips.shufflePlay' => 'لعبة Shuffle',
-			'tooltips.playTrailer' => 'لعبة تريلر',
 			_ => null,
 		} ?? switch (path) {
+			'tooltips.shufflePlay' => 'لعبة Shuffle',
+			'tooltips.playTrailer' => 'لعبة تريلر',
 			'tooltips.markAsWatched' => 'مارك كما شاهدت',
 			'tooltips.markAsUnwatched' => 'مارك غير ملاحظة',
 			'audioTracks.track' => ({required Object n}) => 'سياق الصوت ${n}',
@@ -7275,10 +7279,10 @@ extension on TranslationsAr {
 			'errors.searchFailed' => ({required Object error}) => 'البحث فشل: ${error}',
 			'errors.searchUnavailable' => 'لم تتمكن البحث من الوصول إلى أي خادم وسائل الإعلام.',
 			'errors.connectionTimeout' => ({required Object context}) => 'اتصال الوقت أثناء التحميل ${context}',
-			'errors.connectionFailed' => 'عدم القدرة على الاتصال بـ Media Server',
-			'errors.unableToLoad' => ({required Object context}) => 'لا يمكن تحميل ${context}. يرجى المحاولة مرة أخرى.',
 			_ => null,
 		} ?? switch (path) {
+			'errors.connectionFailed' => 'عدم القدرة على الاتصال بـ Media Server',
+			'errors.unableToLoad' => ({required Object context}) => 'لا يمكن تحميل ${context}. يرجى المحاولة مرة أخرى.',
 			'errors.noClientAvailable' => 'لا يوجد عميل متاح',
 			'errors.pleaseEnterToken' => 'يرجى إدخال علامة',
 			'errors.invalidToken' => 'الرموز المعاقبة',
@@ -7789,10 +7793,10 @@ extension on TranslationsAr {
 			'playlists.smartPlaylist' => 'لعبة ذكية',
 			'playlists.itemCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(count, zero: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصر', one: 'عنصر واحد', two: 'عنصران', few: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عناصر', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصرًا', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(count)} عنصر', ), 
 			'playlists.emptyPlaylist' => 'هذه القائمة فارغة',
-			'playlists.deleteConfirm' => 'إلغاء اللعب؟',
-			'playlists.deleteMessage' => ({required Object name}) => 'هل أنت متأكد من أنك تريد إزالة "${name}"؟',
 			_ => null,
 		} ?? switch (path) {
+			'playlists.deleteConfirm' => 'إلغاء اللعب؟',
+			'playlists.deleteMessage' => ({required Object name}) => 'هل أنت متأكد من أنك تريد إزالة "${name}"؟',
 			'playlists.created' => 'لعبة تم إنشاءها',
 			'playlists.deleted' => 'Playlist حذف',
 			'playlists.itemAdded' => 'إضافة إلى playlist',
@@ -8303,10 +8307,10 @@ extension on TranslationsAr {
 			'performanceOverlay.matrix' => 'ماتريكس',
 			'performanceOverlay.primaries' => 'الأوائل',
 			'performanceOverlay.transfer' => 'نقل',
-			'performanceOverlay.renderFps' => 'رينجر FPS',
-			'performanceOverlay.displayFps' => 'عرض FPS',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.renderFps' => 'رينجر FPS',
+			'performanceOverlay.displayFps' => 'عرض FPS',
 			'performanceOverlay.avSync' => 'A / V التزامن',
 			'performanceOverlay.dropped' => 'انقطاع',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
@@ -8817,10 +8821,10 @@ extension on TranslationsAr {
 			'homeLayout.nextUpHomeDescription' => 'صف الحلقة التالية غير المشاهدة، ويظهر بشكل منفصل في الصفحة الرئيسية',
 			'homeLayout.library' => 'المكتبة',
 			'homeLayout.showInRecommended' => 'إظهار ضمن توصيات المكتبة',
-			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
-			'homeLayout.heroNeedsLibrary' => 'حدّد المكتبة أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
+			'homeLayout.heroNeedsLibrary' => 'حدّد المكتبة أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			'homeLayout.heroNeedsSurface' => 'حدّد المكتبة أو الصفحة الرئيسية أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			'homeLayout.removeHub' => 'إزالة قسم المحتوى',
 			'homeLayout.noPlexRows' => 'لم يُرجع Plex أي صفوف يديرها لهذه المكتبة.',
@@ -9331,10 +9335,10 @@ extension on TranslationsAr {
 			'audiobook.goToTime' => 'اذهب إلى الزمن',
 			'audiobook.timeHelp' => 'ساعات: دقائق: ثواني، أو دقائق: ثواني',
 			'audiobook.recoveryHelp' => 'تصدير نسخة مشفرة مؤخرا قبل نقل أو إصلاح بيانات المزامنة.يتم دمج الواردات مع الحالة الحالية؛ أنها لا تحل محل تاريخ المزامن المحلي.',
-			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
-			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
+			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
 			'audiobook.recoveryImportConfirm' => 'هل يجمع هذا ملف إعادة التأهيل المشفر مع مواقف القراءة الحالية والملاحظات؟ سيتم الحفاظ على التاريخ الحالي. لا يتم تضمين المكتبة المشتركة ومعارف العناصر؛ قم بتعيين المعارف المقابلة على كل جهاز قبل الاستيراد.',
 			'audiobook.recoveryExported' => 'تم حفظ ملف الاسترداد المشفر.',
 			'audiobook.recoveryImported' => 'استرداد البيانات مترابطة.',
@@ -9845,10 +9849,10 @@ extension on TranslationsAr {
 			'musicTools.albumBlocks' => 'إبقاء الألبومات كاملة معًا',
 			'musicTools.home' => 'الموسيقى',
 			'musicTools.recent' => 'تم تشغيلها مؤخرًا',
-			'musicTools.apiKey' => 'مفتاح API',
-			'musicTools.missing' => 'N / A',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.apiKey' => 'مفتاح API',
+			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'دقائق',
 			'musicTools.rules' => 'الفلاتر',
 			'musicTools.exclusiveOutput' => 'إخراج صوت حصري',
