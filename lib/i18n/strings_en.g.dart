@@ -4325,12 +4325,6 @@ class Translations$iptv$en {
 	/// en: 'Channel order'
 	String get lineupOrder => 'Channel order';
 
-	/// en: 'Export XMLTV guide'
-	String get exportGuide => 'Export XMLTV guide';
-
-	/// en: 'Low bandwidth'
-	String get lowBandwidth => 'Low bandwidth';
-
 	/// en: 'Move channel up'
 	String get moveUp => 'Move channel up';
 
@@ -19740,8 +19734,6 @@ extension on Translations {
 			'iptv.exportPrivate' => 'This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.',
 			'iptv.dynamicStreamExport' => 'This portal creates a new link each time you play a channel. Its guide can be exported.',
 			'iptv.lineupOrder' => 'Channel order',
-			'iptv.exportGuide' => 'Export XMLTV guide',
-			'iptv.lowBandwidth' => 'Low bandwidth',
 			'iptv.moveUp' => 'Move channel up',
 			'iptv.moveDown' => 'Move channel down',
 			'iptv.orderChanged' => 'The lineup changed. Review the current order and try again.',
@@ -19859,10 +19851,10 @@ extension on Translations {
 			'iptv.noEpisodes' => 'No episodes are available for this series.',
 			'iptv.season' => 'Season',
 			'iptv.specials' => 'Specials',
-			_ => null,
-		} ?? switch (path) {
 			'iptv.localRecordings' => 'Local recordings',
 			'iptv.recordingInProgressLocal' => 'Recording',
+			_ => null,
+		} ?? switch (path) {
 			'iptv.recordingInterrupted' => 'Interrupted',
 			'iptv.recordingMissed' => 'Missed',
 			'iptv.recordingAppClosed' => 'Pleazyng closed before recording started or finished.',
@@ -20373,10 +20365,10 @@ extension on Translations {
 			'explore.rows.recommendedMovies' => 'Recommended Movies',
 			'explore.rows.recommendedShows' => 'Recommended Shows',
 			'explore.rows.trendingMovies' => 'Trending Movies',
-			_ => null,
-		} ?? switch (path) {
 			'explore.rows.trendingShows' => 'Trending Shows',
 			'explore.rows.popularMovies' => 'Popular Movies',
+			_ => null,
+		} ?? switch (path) {
 			'explore.rows.popularShows' => 'Popular Shows',
 			'explore.rows.trendingAnime' => 'Trending Anime',
 			'explore.rows.suggestedAnime' => 'Suggested Anime',
@@ -20887,10 +20879,10 @@ extension on Translations {
 			'downloads.downloadingTooltip' => 'Downloading...',
 			'downloads.downloadingFilesTooltip' => ({required Object files}) => 'Downloading ${files}',
 			'downloads.noDownloadsTree' => 'No downloads',
-			_ => null,
-		} ?? switch (path) {
 			'downloads.pauseAll' => 'Pause all',
 			'downloads.resumeAll' => 'Resume all',
+			_ => null,
+		} ?? switch (path) {
 			'downloads.retryAll' => 'Retry all',
 			'downloads.retryFailed' => 'Retry failed downloads',
 			'downloads.deleteAll' => 'Delete all',
@@ -21401,10 +21393,10 @@ extension on Translations {
 			'metadataEdit.producer' => 'Producer',
 			'metadataEdit.country' => 'Country',
 			'metadataEdit.collection' => 'Collection',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.label' => 'Label',
 			'metadataEdit.quickTag' => 'Quick Tag...',
+			_ => null,
+		} ?? switch (path) {
 			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
 			'matchScreen.match' => 'Match...',
 			'matchScreen.fixMatch' => 'Fix Match...',
@@ -21915,10 +21907,10 @@ extension on Translations {
 			'homeLayout.hide' => 'Hide',
 			'homeLayout.remove' => 'Remove',
 			'homeLayout.libraryResumeRow' => 'This library\'s resume row',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.pressAgainToDelete' => 'Press again to delete',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.on' => 'On',
 			'homeLayout.resetHeroButtonDescription' => 'Turns off every row\'s hero setting and brings back the single rotating banner at the top, like before hero rows existed. Row order is kept.',
 			'homeLayout.tapHeroCardDescription' => 'Choose whether tapping or selecting a Hero card starts playback or opens its details.',
@@ -22429,10 +22421,10 @@ extension on Translations {
 			'sourceSetup.nfsTlsHelp' => 'RPC-with-TLS uses the usual NFS and mount service ports and requires NAS support for RFC 9289. TLS 1.3 is required. The host name or IP must match the certificate. AUTH_SYS UID/GID still apply inside the encrypted channel.',
 			'sourceSetup.clientCertificate' => 'Client certificate (optional)',
 			'sourceSetup.clientCertificateHelp' => 'Lets the NAS authenticate this client; AUTH_SYS IDs still depend on NAS export policy.',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.savedIdentity' => 'A saved client identity will be used.',
 			'sourceSetup.replaceIdentity' => 'Replace saved client identity',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.chooseIdentity' => 'Choose PKCS#12 client identity',
 			'sourceSetup.identityPassphrase' => 'Client identity passphrase',
 			'sourceSetup.identityPassphraseHelp' => 'Leave blank if the file has no passphrase.',
@@ -22943,10 +22935,10 @@ extension on Translations {
 			'podcasts.alreadySubscribed' => 'This feed is already subscribed.',
 			'podcasts.empty' => 'Add a feed, import OPML, or find a show to start listening.',
 			'podcasts.noResults' => 'No matching podcasts.',
-			_ => null,
-		} ?? switch (path) {
 			'podcasts.newest' => 'Newest first',
 			'podcasts.oldest' => 'Oldest first',
+			_ => null,
+		} ?? switch (path) {
 			'podcasts.explicit' => 'Explicit',
 			'podcasts.trending' => 'Trending',
 			'podcasts.indexSetup' => 'Podcast Index settings',
@@ -23457,10 +23449,10 @@ extension on Translations {
 			'karaokeUi.chooseAMicrophone' => 'Choose a microphone',
 			'karaokeUi.microphoneAndPrivateTake' => 'Microphone and private take',
 			'karaokeUi.pitchFeedbackAndDryRecordingUseYourSelectedMicrophone' => 'Pitch feedback and dry recording use your selected microphone. Use an external mixer for amplification.',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.tvMicrophoneCaptureUnavailable' => 'Microphone capture is unavailable in this TV build. Use the karaoke phone companion for mic capture, or connect a microphone to an external mixer for stage amplification.',
 			'karaokeUi.enableMicrophone' => 'Enable microphone',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.muteMicrophone' => 'Mute microphone',
 			'karaokeUi.recordPrivateTake' => 'Record private take',
 			'karaokeUi.savePrivateTake' => 'Save private take',

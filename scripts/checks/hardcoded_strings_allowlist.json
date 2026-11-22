@@ -49,6 +49,10 @@
     "M3U Web Picker": "Third-party project name shown in an attribution dialog.",
     "Zachary Schmook (@zschmook)": "Third-party author attribution shown in the same dialog."
   },
+  "lib/screens/iptv/iptv_channels_settings_screen.dart": {
+    "${t.subtitleAiUi.export} XMLTV": "Localized export action combined with the standard XMLTV format name.",
+    "${t.metadataEdit.hide} · LOW BANDWIDTH": "Localized filter action combined with the exact external playlist group label."
+  },
   "lib/screens/settings/logs_screen.dart": {
     "Android ${info.version.release} (API ${info.version.sdkInt})": "English bug-report diagnostic",
     "TV mode: yes$suffix": "English bug-report diagnostic",

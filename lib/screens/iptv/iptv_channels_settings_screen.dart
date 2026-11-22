@@ -451,7 +451,7 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
             PopupMenuItem(value: 'show', child: Text(t.iptv.showMatches)),
             PopupMenuItem(value: 'hide', child: Text(t.iptv.hideMatches)),
             PopupMenuItem(value: 'm3u', child: Text('${t.subtitleAiUi.export} M3U')),
-            PopupMenuItem(value: 'xml', child: Text(t.iptv.exportGuide)),
+            PopupMenuItem(value: 'xml', child: Text('${t.subtitleAiUi.export} XMLTV')),
           ],
         ),
         IconButton(
@@ -513,7 +513,7 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
                   ),
                   if (_channels.any((c) => c.groupTitle?.trim().toUpperCase() == 'LOW BANDWIDTH'))
                     FilterChip(
-                      label: Text('${t.metadataEdit.hide} · ${t.iptv.lowBandwidth}'),
+                      label: Text('${t.metadataEdit.hide} · LOW BANDWIDTH'),
                       selected: _hideLowBandwidth,
                       onSelected: (v) => setState(() => _hideLowBandwidth = v),
                     ),
