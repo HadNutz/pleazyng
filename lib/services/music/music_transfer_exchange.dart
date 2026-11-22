@@ -180,7 +180,7 @@ class MusicTransferExchange {
     try {
       send({'version': version, 'op': 'result', 'request': id, 'accepted': accepted});
     } catch (_) {
-      // A disconnected peer cannot acknowledge a transfer. The sender stays put.
+      // best-effort: A disconnected peer cannot acknowledge a transfer. The sender stays put.
     }
   }
 

@@ -224,7 +224,8 @@
       "playlist": "Afspeellijst",
       "clip": "Clip",
       "photo": "Foto",
-      "folder": "Map"
+      "folder": "Map",
+      "photoAlbum": "Fotoalbum"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer grootte: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer grootte: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Verder kijken",
+    "showTopShelfContentDescription": "Schakel dit uit om voor alle profielen alleen de Pleazyng-afbeelding te tonen.",
+    "topShelfUpdateFailed": "Top Shelf kon niet worden bijgewerkt. Probeer het opnieuw.",
+    "showFinishTime": "Eindtijd tonen",
+    "showFinishTimeDescription": "Toon naast de resterende tijd hoe laat de video eindigt."
   },
   "themeEditor": {
     "builtIn": "Ingebouwd",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng kon niet controleren welke bestanden hiermee worden verwijderd, dus het kan meer verwijderen dan het hierboven genoemde item. Annuleer en probeer het opnieuw, of verwijder toch.",
     "deleteScopeUnverifiedNoFileInfo": "Je server heeft geen bestandsgegevens voor dit item verstrekt, dus Pleazyng kan niet controleren welke bestanden hiermee worden verwijderd. Het kan meer verwijderen dan het hierboven genoemde item.",
     "mediaDeletedSuccessfully": "Media-item succesvol verwijderd",
+    "mediaDeletionDisabledOnServer": "Het verwijderen van media is op deze server uitgeschakeld. Sta het verwijderen van media toe in de bibliotheekinstellingen van de server.",
     "mediaFailedToDelete": "Verwijderen van media-item mislukt",
     "rate": "Beoordelen",
     "playFromBeginning": "Afspelen vanaf het begin",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr heeft geen gebruikersgegevens geretourneerd",
     "sessionRejectedAfterReauth": "De sessie is na het opnieuw inloggen geweigerd",
     "permissionDenied": "Seerr heeft deze actie geweigerd: je account heeft niet langer de vereiste machtiging",
-    "permissionRevoked": "Je hebt geen toestemming meer om dit aan te vragen"
+    "permissionRevoked": "Je hebt geen toestemming meer om dit aan te vragen",
+    "withdrawRequest": "Verzoek intrekken"
   },
   "services": {
     "title": "Diensten",

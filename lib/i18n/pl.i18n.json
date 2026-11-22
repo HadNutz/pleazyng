@@ -224,7 +224,8 @@
       "playlist": "Playlista",
       "clip": "Klip",
       "photo": "Zdjęcie",
-      "folder": "Folder"
+      "folder": "Folder",
+      "photoAlbum": "Album zdjęć"
     }
   },
   "screens": {
@@ -796,7 +797,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "rozmiar buffer: ${size} MiB"
+    "streamBufferSizeMiB": "rozmiar buffer: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Kontynuuj oglądanie",
+    "showTopShelfContentDescription": "Po wyłączeniu wszystkie profile będą widzieć tylko grafikę Pleazyng.",
+    "topShelfUpdateFailed": "Nie udało się zaktualizować Top Shelf. Spróbuj ponownie.",
+    "showFinishTime": "Pokaż godzinę zakończenia",
+    "showFinishTimeDescription": "Obok pozostałego czasu wyświetla godzinę zakończenia filmu."
   },
   "themeEditor": {
     "builtIn": "Wbudowane",
@@ -1062,6 +1068,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng nie mogło sprawdzić, które pliki zostaną usunięte, więc może usunąć więcej niż element wymieniony powyżej. Anuluj i spróbuj ponownie albo usuń mimo to.",
     "deleteScopeUnverifiedNoFileInfo": "Twój serwer nie podał informacji o plikach tego elementu, więc Pleazyng nie może sprawdzić, które pliki zostaną usunięte. Może usunąć więcej niż element wymieniony powyżej.",
     "mediaDeletedSuccessfully": "Usunięto element multimedialny",
+    "mediaDeletionDisabledOnServer": "Usuwanie multimediów na tym serwerze jest wyłączone. Zezwól na usuwanie multimediów w ustawieniach biblioteki serwera.",
     "mediaFailedToDelete": "Nie udało się usunąć elementu multimedialnego",
     "rate": "Oceń",
     "playFromBeginning": "Odtwórz od początku",
@@ -3482,7 +3489,8 @@
     "noUserInformation": "Seerr nie zwrócił informacji o użytkowniku",
     "sessionRejectedAfterReauth": "Sesja została odrzucona po ponownym zalogowaniu",
     "permissionDenied": "Seerr odrzucił tę akcję: Twoje konto nie ma już wymaganych uprawnień",
-    "permissionRevoked": "Nie masz już uprawnień, aby to zamówić"
+    "permissionRevoked": "Nie masz już uprawnień, aby to zamówić",
+    "withdrawRequest": "Wycofaj prośbę"
   },
   "services": {
     "title": "Usługi",

@@ -6,156 +6,6 @@ import XCTest
 
 @testable import Pleazyng
 
-final class ControllablePropertyCore: MpvPlayerCoreBase {
-  var nextResult: Result<Void, Error>?
-  private(set) var propertyCalls: [(String, String)] = []
-  private var pendingCompletion: ((Result<Void, Error>) -> Void)?
-
-  override func setPropertyAsync(
-    _ name: String,
-    value: String,
-    completion: @escaping (Result<Void, Error>) -> Void
-  ) {
-    propertyCalls.append((name, value))
-    if let nextResult {
-      self.nextResult = nil
-      completion(nextResult)
-    } else {
-      pendingCompletion = completion
-    }
-  }
-
-  func finish(_ result: Result<Void, Error>) {
-    let completion = pendingCompletion
-    pendingCompletion = nil
-    completion?(result)
-  }
-}
-
-final class RecordingSpeedFlushCore: MpvPlayerCoreBase {
-  let currentAudioOutput: String
-  let currentPosition: String
-  private(set) var operations: [String] = []
-
-  init(currentAudioOutput: String, currentPosition: String = "12.5") {
-    self.currentAudioOutput = currentAudioOutput
-    self.currentPosition = currentPosition
-    super.init()
-  }
-
-  override func getPropertyAsync(
-    _ name: String,
-    completion: @escaping (Result<String?, Error>) -> Void
-  ) {
-    operations.append("get:\(name)")
-    let value = name == "current-ao" ? currentAudioOutput : currentPosition
-    completion(.success(value))
-  }
-
-  override func setRawStringPropertyAsync(
-    _ name: String,
-    value: String,
-    completion: @escaping (Result<Void, Error>) -> Void
-  ) {
-    operations.append("set:\(name)=\(value)")
-    completion(.success(()))
-  }
-
-  override func commandAsync(
-    _ args: [String],
-    completion: @escaping (Result<Int64?, Error>) -> Void
-  ) {
-    operations.append("command:\(args.joined(separator: " "))")
-    completion(.success(nil))
-  }
-}
-
-final class RecordingMpvPlugin: MpvPluginShared {
-  var coreBase: MpvPlayerCoreBase?
-  var eventSink: FlutterEventSink?
-  var nameToId: [String: Int] = [:]
-  private(set) var pauseHookValues: [String] = []
-
-  init(core: MpvPlayerCoreBase?) {
-    coreBase = core
-  }
-
-  func setPlayerVisible(_ visible: Bool, restoreOnWindowVisible: Bool) {}
-  func updatePlayerFrame() {}
-  func setPlayerVideoRect(
-    left _: Int, top _: Int, right _: Int, bottom _: Int, devicePixelRatio _: Double
-  ) {}
-  func setPlayerVideoZoom(_ scale: Double) {}
-
-  func didSetPauseProperty(value: String) {
-    pauseHookValues.append(value)
-  }
-}
-
-final class RecordingLifecycleDelegate: MpvPlayerDelegate {
-  private(set) var events: [String] = []
-  private(set) var properties: [String] = []
-
-  func onPropertyChange(name: String, value: Any?, sourceId: Int64?) {
-    properties.append(name)
-  }
-
-  func onEvent(name: String, data: [String: Any]?) {
-    events.append(name)
-  }
-}
-
-final class EventOrderRecorder: MpvPlayerDelegate {
-  private(set) var events: [(name: String, data: [String: Any]?)] = []
-  var onEndFile: (() -> Void)?
-
-  func onPropertyChange(name: String, value: Any?, sourceId: Int64?) {}
-
-  func onEvent(name: String, data: [String: Any]?) {
-    events.append((name, data))
-    if name == "end-file" { onEndFile?() }
-  }
-}
-
-final class FakePictureInPictureController: MpvPictureInPictureControlling {
-  var isPictureInPicturePossible = false
-  private(set) var startCount = 0
-  private(set) var stopCount = 0
-  private(set) var automaticStartValues: [Bool] = []
-  private(set) var invalidateCount = 0
-
-  func startPictureInPicture() { startCount += 1 }
-  func stopPictureInPicture() { stopCount += 1 }
-  func setAutomaticStart(_ enabled: Bool) { automaticStartValues.append(enabled) }
-  func invalidatePlaybackState() { invalidateCount += 1 }
-}
-
-final class RecordingPipDelegate: MpvPipDelegate {
-  private(set) var events: [String] = []
-  var onDidStart: (() -> Void)?
-  func pipWillStart() { events.append("willStart") }
-  func pipDidStart() {
-    onDidStart?()
-    events.append("didStart")
-  }
-  func pipDidStop(restored: Bool) { events.append("didStop:\(restored)") }
-  func pipDidFailToStart(error: Error?) { events.append("failed") }
-  func pipSetPlaying(_ playing: Bool) {}
-  func pipSkip(byInterval seconds: Double, completion: @escaping () -> Void) { completion() }
-  var isPipPlaying: Bool { true }
-  var pipDuration: Double { 60 }
-  var pipPosition: Double { 0 }
-}
-
-final class ReleaseTrackingCore: MpvPlayerCoreBase {
-  let onDeinit: () -> Void
-  init(onDeinit: @escaping () -> Void) {
-    self.onDeinit = onDeinit
-    super.init()
-  }
-  deinit { onDeinit() }
-}
-
 final class MpvPlayerContractTests: XCTestCase {
   // Eventual native/scheduler completion, not a product latency deadline.
   // Cold simulator startup can delay replies while retaining event order.
@@ -242,103 +92,6 @@ final class MpvPlayerContractTests: XCTestCase {
 
     XCTAssertEqual(cancelled.count, 1)
     XCTAssertEqual((cancelled[0] as? FlutterError)?.code, "NOT_INITIALIZED")
-  }
-
-  func testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream() throws {
-    let clip = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: "Butterfly-209", withExtension: "mp4"))
-    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 180))
-    window.isHidden = false
-    let core = MpvPlayerCore()
-    // Select the MPV output that owns the AVFoundation motion options.
-    core.experimentalDolbyVisionRequested = false
-    XCTAssertTrue(core.initialize(in: window))
-    defer {
-      // The video output releases its AVFoundation layers on the main queue.
-      let destroyed = expectation(description: "MPV video output disposed")
-      core.dispose()
-      core.queue.async { destroyed.fulfill() }
-      wait(for: [destroyed], timeout: nativeCompletionTimeout)
-      window.isHidden = true
-    }
-    core.setVisible(true)
-    func command(_ args: [String], timeout: TimeInterval? = nil) throws -> Int64? {
-      let accepted = expectation(description: args[0])
-      var result: Result<Int64?, Error>?
-      core.commandAsync(args) { reply in
-        result = reply
-        accepted.fulfill()
-      }
-      wait(for: [accepted], timeout: timeout ?? nativeCompletionTimeout)
-      return try XCTUnwrap(result).get()
-    }
-    // The cold hosted simulator can take longer to settle than one pass of the fixture.
-    XCTAssertSuccess(awaitProperty(core, name: "loop-file", value: "inf"))
-    _ = try command(["loadfile", clip.path])
-    XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
-    func requirePlaybackAdvance(from previous: Double) {
-      let deadline = Date().addingTimeInterval(30)
-      repeat {
-        if let raw = try? awaitGetProperty(core, name: "time-pos").get(), let seconds = Double(raw),
-          seconds > previous + 0.05 || (seconds > 0 && seconds < previous)
-        {
-          return
-        }
-        RunLoop.current.run(until: Date().addingTimeInterval(0.05))
-      } while Date() < deadline
-      XCTFail("The open clip did not advance from " + String(previous))
-    }
-    requirePlaybackAdvance(from: 0)
-    XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
-    let entry = try XCTUnwrap(try awaitGetProperty(core, name: "playlist/0/id").get())
-    for preset in ["performance", "quality"] {
-      let before = try timePos(core)
-      XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-preset", value: preset))
-      XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "yes"))
-      requirePlaybackAdvance(from: before)
-      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
-    }
-    XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "no"))
-    let before = try timePos(core)
-    requirePlaybackAdvance(from: before)
-    XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
-
-    if try awaitGetProperty(core, name: "pleazyng-vt-motion-supported").get() == "no" {
-      let label = "@plezy-apple-motion"
-      let gpu = "libplacebo=fps=60:frame_mixer=oversample:format=yuv420p"
-      let cpu = "minterpolate=fps=60:mi_mode=blend"
-      let originalHwdec = try awaitGetProperty(core, name: "hwdec").get() ?? "auto"
-      if originalHwdec != "no" {
-        XCTAssertSuccess(awaitProperty(core, name: "hwdec", value: "videotoolbox-copy"))
-      }
-      var gpuActive = false
-      if try awaitGetProperty(core, name: "pleazyng-apple-mixer-gpu-supported").get() == "yes" {
-        do {
-          _ = try command(["vf", "add", "\(label):lavfi=[\(gpu)]"], timeout: 60)
-          gpuActive = true
-        } catch let error as NSError where error.domain == "mpv" {
-          print("GPU mixer rejected the filter: " + error.localizedDescription)
-        }
-      }
-      if !gpuActive { _ = try command(["vf", "add", "\(label):lavfi=[\(cpu)]"]) }
-      let provider = gpuActive ? "libplacebo GPU" : "FFmpeg CPU"
-      let deadline = Date().addingTimeInterval(30)
-      var measured = 0.0
-      repeat {
-        RunLoop.current.run(until: Date().addingTimeInterval(0.1))
-        if let rate = try? awaitGetProperty(core, name: "estimated-vf-fps").get() {
-          measured = Double(rate) ?? 0
-        }
-      } while measured < 45 && Date() < deadline
-      XCTAssertGreaterThanOrEqual(measured, 45, "The 29.97 fps fixture must produce intermediate frames")
-      print("Live motion mixer: \(provider), measured \(measured) fps")
-      _ = try command(["vf", "remove", label], timeout: 60)
-      if originalHwdec != "no" {
-        XCTAssertSuccess(awaitProperty(core, name: "hwdec", value: originalHwdec))
-      }
-      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
-      XCTAssertFalse((try awaitGetProperty(core, name: "vf").get() ?? "").contains(label))
-      requirePlaybackAdvance(from: try timePos(core))
-    }
   }
 
   func testRealSetPropertyValidInvalidNonexistentAndPauseCache() {
@@ -999,6 +752,9 @@ final class MpvPlayerContractTests: XCTestCase {
     XCTAssertEqual(restoreResults, [true, false])
   }
 
+}
+
+extension MpvPlayerContractTests {
   private func invokeSetProperty(
     _ plugin: RecordingMpvPlugin,
     name: String,
@@ -1181,31 +937,6 @@ final class MpvPlayerContractTests: XCTestCase {
     if case .success = result {
       XCTFail("Expected failure", file: file, line: line)
     }
-  }
-}
-
-final class DownloadBackupPolicyTests: XCTestCase {
-  func testManagedRootIsExcludedWithoutExcludingSiblingDocuments() throws {
-    let manager = FileManager.default
-    let base = manager.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
-    let downloads = base.appendingPathComponent("downloads", isDirectory: true)
-    let documents = base.appendingPathComponent("personal", isDirectory: true)
-    try manager.createDirectory(at: downloads, withIntermediateDirectories: true)
-    try manager.createDirectory(at: documents, withIntermediateDirectories: true)
-    defer { try? manager.removeItem(at: base) }
-
-    XCTAssertTrue(try DownloadBackupPolicy.exclude(downloads, allowedRoots: [downloads]))
-    XCTAssertEqual(try downloads.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
-    XCTAssertFalse(try DownloadBackupPolicy.exclude(documents, allowedRoots: [downloads]))
-    XCTAssertNotEqual(try documents.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
-    XCTAssertFalse(try DownloadBackupPolicy.exclude(base, allowedRoots: [downloads]))
-
-    // Recreated directories need their own attribute; a former exclusion is
-    // not treated as a permanent cached success by the policy.
-    try manager.removeItem(at: downloads)
-    try manager.createDirectory(at: downloads, withIntermediateDirectories: true)
-    XCTAssertTrue(try DownloadBackupPolicy.exclude(downloads, allowedRoots: [downloads]))
-    XCTAssertEqual(try downloads.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
   }
 }
 

@@ -224,7 +224,8 @@
       "playlist": "רשימת ניגון",
       "clip": "קליפ",
       "photo": "תמונה",
-      "folder": "תיקייה"
+      "folder": "תיקייה",
+      "photoAlbum": "אלבום תמונות"
     }
   },
   "screens": {
@@ -794,7 +795,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "גודל בופר: ${size} MiB"
+    "streamBufferSizeMiB": "גודל בופר: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · המשך צפייה",
+    "showTopShelfContentDescription": "כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.",
+    "topShelfUpdateFailed": "עדכון Top Shelf נכשל. אפשר לנסות שוב.",
+    "showFinishTime": "הצגת שעת הסיום",
+    "showFinishTimeDescription": "שעת סיום הסרטון תוצג ליד הזמן שנותר."
   },
   "themeEditor": {
     "builtIn": "בנוי",
@@ -1054,6 +1060,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng לא הצליח לבדוק אילו קבצים יימחקו, ולכן ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה. אפשר לבטל ולנסות שוב, או למחוק בכל זאת.",
     "deleteScopeUnverifiedNoFileInfo": "השרת לא סיפק פרטי קבצים עבור הפריט הזה, ולכן Pleazyng לא יכול לבדוק אילו קבצים יימחקו. ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה.",
     "mediaDeletedSuccessfully": "התקשורת הוסרה בהצלחה",
+    "mediaDeletionDisabledOnServer": "מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.",
     "mediaFailedToDelete": "לא הצלחתי למחוק את התקשורת",
     "rate": "דירוג",
     "playFromBeginning": "נגן מהתחלה",
@@ -3444,7 +3451,8 @@
     "noUserInformation": "Seerr לא החזיר מידע משתמש",
     "sessionRejectedAfterReauth": "ההרשמה נדחתה לאחר חתימה נוספת.",
     "permissionDenied": "Seerr הכחישה את הפעולה הזאת: החשבון שלך כבר אין את הרשאה הנדרשת",
-    "permissionRevoked": "אין לך יותר רשות לבקש זאת."
+    "permissionRevoked": "אין לך יותר רשות לבקש זאת.",
+    "withdrawRequest": "ביטול הבקשה"
   },
   "services": {
     "title": "שירותים",

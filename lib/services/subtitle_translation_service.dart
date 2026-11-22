@@ -139,7 +139,7 @@ json.dump(translated, sys.stdout, ensure_ascii=False)
           }
         }
       } catch (_) {
-        // A malformed override falls back to the safe profile glossary.
+        // best-effort: A malformed override falls back to the safe profile glossary.
       }
     }
     final saved = SettingsService.instance.read(SettingsService.subtitleTranslationGlossariesForProfile(profileId));
@@ -318,6 +318,7 @@ json.dump(translated, sys.stdout, ensure_ascii=False)
       ], runInShell: false).timeout(const Duration(seconds: 8));
       return result.exitCode == 0;
     } catch (_) {
+      // best-effort: Gate the optional local subtitle engine on a successful runtime probe.
       return false;
     }
   }

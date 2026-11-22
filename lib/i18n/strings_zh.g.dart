@@ -896,6 +896,11 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => '在显示屏保存艺术作品之前等待这些无输入的几分钟。';
 	@override String get videoCodecOptionDescription => '允许在支持时直接播放此代码器. 未经检查的代码被媒体服务器编码。';
 	@override String streamBufferSizeMiB({required Object size}) => '布格大小: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · 继续观看';
+	@override String get showTopShelfContentDescription => '关闭后，所有个人资料都只会显示 Pleazyng 图片。';
+	@override String get topShelfUpdateFailed => '无法更新 Top Shelf。请重试。';
+	@override String get showFinishTime => '显示结束时间';
+	@override String get showFinishTimeDescription => '在剩余时长旁显示视频预计结束的时间。';
 }
 
 // Path: themeEditor
@@ -1144,6 +1149,7 @@ class Translations$mediaMenu$zh extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng 无法确认此操作会删除哪些文件，因此删除范围可能超出上面提到的项目。请取消后重试，或仍然删除。';
 	@override String get deleteScopeUnverifiedNoFileInfo => '你的服务器没有提供此项目的文件详情，因此 Pleazyng 无法确认此操作会删除哪些文件。删除范围可能超出上面提到的项目。';
 	@override String get mediaDeletedSuccessfully => '媒体项已成功删除';
+	@override String get mediaDeletionDisabledOnServer => '此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。';
 	@override String get mediaFailedToDelete => '删除媒体项失败';
 	@override String get rate => '评分';
 	@override String get playFromBeginning => '从头播放';
@@ -2926,6 +2932,7 @@ class Translations$seerr$zh extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => '重新登录后会话被拒绝';
 	@override String get permissionDenied => 'Seerr 拒绝了此操作：你的账户不再拥有所需权限';
 	@override String get permissionRevoked => '你不再拥有请求此内容的权限';
+	@override String get withdrawRequest => '撤回请求';
 }
 
 // Path: services
@@ -4627,6 +4634,7 @@ class Translations$common$mediaKind$zh extends Translations$common$mediaKind$en 
 	@override String get clip => '短片';
 	@override String get photo => '照片';
 	@override String get folder => '文件夹';
+	@override String get photoAlbum => '相册';
 }
 
 // Path: settings.startupSectionOptions
@@ -5874,6 +5882,7 @@ extension on TranslationsZh {
 			'common.mediaKind.clip' => '短片',
 			'common.mediaKind.photo' => '照片',
 			'common.mediaKind.folder' => '文件夹',
+			'common.mediaKind.photoAlbum' => '相册',
 			'screens.licenses' => '许可证',
 			'screens.switchProfile' => '切换用户',
 			'screens.subtitleStyling' => '字幕样式',
@@ -6180,9 +6189,9 @@ extension on TranslationsZh {
 			'settings.manageLibrariesDescription' => '重新排序和隐藏媒体库',
 			'settings.companionRemoteServer' => '远程控制服务器',
 			'settings.companionRemoteServerDescription' => '允许同一网络中的移动设备控制此应用',
-			'settings.companionRemoteServerStartFailed' => '无法启动远程控制服务器',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => '无法启动远程控制服务器',
 			'settings.companionRemoteServerStopFailed' => '无法停止远程控制服务器',
 			'settings.autoPip' => '自动画中画',
 			'settings.autoPipDescription' => '播放期间离开应用时自动进入画中画模式',
@@ -6396,6 +6405,11 @@ extension on TranslationsZh {
 			'settings.contentScreensaverDelayOptionDescription' => '在显示屏保存艺术作品之前等待这些无输入的几分钟。',
 			'settings.videoCodecOptionDescription' => '允许在支持时直接播放此代码器. 未经检查的代码被媒体服务器编码。',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => '布格大小: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 继续观看',
+			'settings.showTopShelfContentDescription' => '关闭后，所有个人资料都只会显示 Pleazyng 图片。',
+			'settings.topShelfUpdateFailed' => '无法更新 Top Shelf。请重试。',
+			'settings.showFinishTime' => '显示结束时间',
+			'settings.showFinishTimeDescription' => '在剩余时长旁显示视频预计结束的时间。',
 			'themeEditor.builtIn' => '内置',
 			'themeEditor.presets' => '预设',
 			'themeEditor.custom' => '自定义',
@@ -6629,6 +6643,7 @@ extension on TranslationsZh {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng 无法确认此操作会删除哪些文件，因此删除范围可能超出上面提到的项目。请取消后重试，或仍然删除。',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => '你的服务器没有提供此项目的文件详情，因此 Pleazyng 无法确认此操作会删除哪些文件。删除范围可能超出上面提到的项目。',
 			'mediaMenu.mediaDeletedSuccessfully' => '媒体项已成功删除',
+			'mediaMenu.mediaDeletionDisabledOnServer' => '此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。',
 			'mediaMenu.mediaFailedToDelete' => '删除媒体项失败',
 			'mediaMenu.rate' => '评分',
 			'mediaMenu.playFromBeginning' => '从头播放',
@@ -6688,6 +6703,8 @@ extension on TranslationsZh {
 			'accessibility.reduceMotion' => '减少动作',
 			'accessibility.reduceMotionHint' => '停止焦点指示器、页面切换和装饰效果的动画。',
 			'accessibility.largeTargets' => '触摸目标',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => '共享控制器提供更多触摸和辅助导航空间。',
 			'accessibility.navigationHint' => '使用 Tab 和 Shift+Tab 在控件之间移动，按 Enter 或空格键激活，按 Escape 或返回按钮关闭。打开书籍后，可调整缩放比例和阅读偏好。',
 			'accessibility.textSizeDescription' => '在 Pleazyng 中扩展接口文本,以及您的设备的系统文本大小设置。',
@@ -6695,8 +6712,6 @@ extension on TranslationsZh {
 			'tooltips.shufflePlay' => '随机播放',
 			'tooltips.playTrailer' => '播放预告片',
 			'tooltips.markAsWatched' => '标记为已观看',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => '标记为未观看',
 			'audioTracks.track' => ({required Object n}) => '音轨 ${n}',
 			'videoControls.audioLabel' => '音频',
@@ -7202,6 +7217,8 @@ extension on TranslationsZh {
 			'discover.findNext.artworkLoading' => '正在加载图片…',
 			'discover.findNext.artworkUnavailable' => '图片不可用',
 			'discover.findNext.savedFeedback' => '已加入保存的推荐',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => '已暂时跳过',
 			'discover.findNext.releaseToConfirm' => '松开以确认',
 			'discover.findNext.remoteHint' => '封面获得焦点时：← / → 选择 · 选择键查看详情 · ↑ / ↓ 移动焦点',
@@ -7209,8 +7226,6 @@ extension on TranslationsZh {
 			'discover.rating' => '年龄分级',
 			'discover.director' => '导演',
 			'discover.directors' => '导演',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => '电影',
 			'discover.tvShow' => '电视剧',
 			'discover.minutesLeft' => ({required Object minutes}) => '剩余 ${minutes} 分钟',
@@ -7716,6 +7731,8 @@ extension on TranslationsZh {
 			'collections.selectCollection' => '选择合集',
 			'collections.collectionName' => '合集名称',
 			'collections.enterCollectionName' => '输入合集名称',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => '已添加到合集',
 			'collections.errorAddingToCollection' => '添加到合集失败',
 			'collections.created' => '已创建合集',
@@ -7723,8 +7740,6 @@ extension on TranslationsZh {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '将“${title}”从此合集移除？',
 			'collections.removedFromCollection' => '已从合集移除',
 			'collections.removeFromCollectionFailed' => '从合集移除失败',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => '从合集移除时出错：${error}',
 			'collections.searchCollections' => '搜索合集…',
 			'playlists.title' => '播放列表',
@@ -8230,6 +8245,8 @@ extension on TranslationsZh {
 			'performanceOverlay.decoder' => '解码器',
 			'performanceOverlay.rawDecoder' => '原始解码器',
 			'performanceOverlay.tunneling' => '隧道',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => '直通',
 			'performanceOverlay.aspect' => '宽高比',
 			'performanceOverlay.rotation' => '旋转',
@@ -8237,8 +8254,6 @@ extension on TranslationsZh {
 			'performanceOverlay.dvPath' => 'DV 路径',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision 解码器',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision 解码器（P7→8.1）',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => '基础层',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 基础层',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG 基础层',
@@ -8474,6 +8489,7 @@ extension on TranslationsZh {
 			'seerr.sessionRejectedAfterReauth' => '重新登录后会话被拒绝',
 			'seerr.permissionDenied' => 'Seerr 拒绝了此操作：你的账户不再拥有所需权限',
 			'seerr.permissionRevoked' => '你不再拥有请求此内容的权限',
+			'seerr.withdrawRequest' => '撤回请求',
 			'services.title' => '服务',
 			'services.hubSubtitle' => '同步观看进度并请求新内容。',
 			'services.integrations' => '集成',
@@ -8743,6 +8759,8 @@ extension on TranslationsZh {
 			'homeLayout.managePlexRowsDescription' => '开放组织主选行列',
 			'homeLayout.organizeHomeRows' => '安排家居行',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移动, 英雄, 自动滑动, 移除',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '组织 ${library} 行',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '继续观看 + ${n} 行: 移动, 图书馆, 家, 英雄, 自动滑板',
 			'homeLayout.renderAsHero' => '显示为焦点横幅',
@@ -8751,8 +8769,6 @@ extension on TranslationsZh {
 			'homeLayout.autoSlide' => '自动轮播',
 			'homeLayout.autoSlideDescription' => '每隔几秒也会自动切换。电脑上的箭头按钮和电视遥控器的方向键始终可用，使用后会重新开始计时。',
 			'homeLayout.autoSlideEditDescription' => '每隔几秒也会自动切换。关闭时，仅在点击电脑上的箭头按钮或按电视遥控器的左右方向键时切换。无论此设置是否开启，箭头按钮和方向键都可用。',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => '英雄第一',
 			'homeLayout.showOnHome' => '显示在主屏幕上',
 			'homeLayout.home' => '首页',
@@ -9257,6 +9273,8 @@ extension on TranslationsZh {
 			'audiobook.customSpeed' => '定制播放速度',
 			'audiobook.speedHelp' => '选择速度从 0.25× 到 4×。',
 			'audiobook.apply' => '應用',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => '定制睡眠时间',
 			'audiobook.sleepMinutes' => '时间(1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '播放完${count}章后停止',
@@ -9265,8 +9283,6 @@ extension on TranslationsZh {
 			'audiobook.useDefaults' => '使用这些听力控制器为新书',
 			'audiobook.librarySort' => '各式各样的书籍',
 			'audiobook.sortTitle' => '标题',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => '作者',
 			'audiobook.sortNarrator' => '讲话者',
 			'audiobook.sortSeries' => '系列命令',
@@ -9771,6 +9787,8 @@ extension on TranslationsZh {
 			'musicExperience.bluetoothDrivingHint' => '选择会自动打开驾驶视图的已连接蓝牙输出。',
 			'musicTools.loudnessMissing' => '未返回响度数据',
 			'musicTools.loudnessRequested' => '已发送分析请求',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => '此服务器版本不支持分析请求',
 			'musicTools.serverHistory' => '服务器播放历史',
 			'musicTools.nfcWrite' => '写入 NFC 标签',
@@ -9779,8 +9797,6 @@ extension on TranslationsZh {
 			'musicTools.storageBudget' => '预计下载容量上限 (MiB; 0 = ∞)',
 			'musicTools.guestDj' => '客座 DJ',
 			'musicTools.charts' => '收听排行',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => '重新发现',
 			'musicTools.stations' => '音乐电台',
 			'musicTools.prompt' => '描述生成歌单',

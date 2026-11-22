@@ -125,7 +125,10 @@ class NativePreparationOrderTests(unittest.TestCase):
         selector = re.search(r'-only-testing:RunnerTests/(\w+)/(\w+)', APPLE_SUITE.read_text())
         self.assertIsNotNone(selector)
         suite, method = selector.groups()
-        source = (ROOT / 'ios/RunnerTests/RunnerTests.swift').read_text()
+        source = '\n'.join(
+            path.read_text()
+            for path in (ROOT / 'ios/RunnerTests').glob('*.swift')
+        )
         declaration = re.search(rf'^final class {suite}: XCTestCase \{{.*?^\}}', source, re.M | re.S)
         self.assertIsNotNone(declaration, suite)
         self.assertIn(f'func {method}()', declaration.group())
@@ -146,7 +149,11 @@ class NativePreparationOrderTests(unittest.TestCase):
         for platform, sdk, slug in [('macOS', 'macosx', 'macos'),
                                     ('tvOS', 'appletvsimulator', 'tvos')]:
             for runner, xcode, actual_sdk, ok in [
-                ('self-hosted', '27.0', '27.0', True),
+                ('self-hosted', '27.0', '27.0', platform != 'iOS'),
+                ('self-hosted', '27.1', '27.1', platform == 'iOS'),
+                ('self-hosted', '27.2', '27.0', False),
+                ('self-hosted', '27.10', '27.2', platform == 'iOS'),
+                ('self-hosted', 'unknown', '27.2', False),
                 ('self-hosted', '26.5', '27.0', False),
                 ('self-hosted', '27.0', '26.5', False),
                 ('github-hosted', '26.5', '26.5', True),

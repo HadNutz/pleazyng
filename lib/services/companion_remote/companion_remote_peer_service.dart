@@ -369,7 +369,7 @@ class CompanionRemotePeerService with KeepaliveMixin {
         request.response.statusCode = HttpStatus.badRequest;
         await request.response.close();
       } catch (_) {
-        // The upgrade path may already have committed and closed the response.
+        // best-effort: The upgrade path may already have committed and closed the response.
       }
       appLogger.d('CompanionRemote: WebSocket upgrade rejected', error: e);
     }
@@ -720,7 +720,7 @@ class CompanionRemotePeerService with KeepaliveMixin {
       try {
         socket.add(jsonEncode({'type': 'authFailed'}));
       } catch (_) {
-        // The generic close below remains the terminal result.
+        // best-effort: The generic close below remains the terminal result.
       }
     }
     unawaited(_closeHostAdmissionSocket(admission, code: closeCode, reason: closeReason));

@@ -224,7 +224,8 @@
       "playlist": "प्लेलिस्ट",
       "clip": "क्लिप",
       "photo": "फोटो",
-      "folder": "फ़ोल्डर"
+      "folder": "फ़ोल्डर",
+      "photoAlbum": "फ़ोटो एल्बम"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "बफर आकार: ${size} MiB"
+    "streamBufferSizeMiB": "बफर आकार: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · देखना जारी रखें",
+    "showTopShelfContentDescription": "बंद करने पर सभी प्रोफ़ाइल के लिए केवल Pleazyng की तस्वीर दिखाई देगी।",
+    "topShelfUpdateFailed": "Top Shelf अपडेट नहीं हो सका। फिर से कोशिश करें।",
+    "showFinishTime": "समाप्ति का समय दिखाएँ",
+    "showFinishTimeDescription": "बचे हुए समय के पास दिखाएँ कि वीडियो कब समाप्त होगा।"
   },
   "themeEditor": {
     "builtIn": "इमारत में",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng यह जांच नहीं कर सकता है कि यह कौन से फ़ाइलों को हटा देगा, इसलिए यह ऊपर नामित आइटम से अधिक हटा सकता है. रद्द करें और फिर से कोशिश करें, या किसी भी तरह से हटा दें.",
     "deleteScopeUnverifiedNoFileInfo": "आपके सर्वर ने इस आइटम के लिए फ़ाइल विवरण प्रदान नहीं किया है, इसलिए Pleazyng यह जांच नहीं कर सकता है कि यह किस फ़ाइल को हटा देगा. यह ऊपर नामित आइटम से अधिक हटा सकता है.",
     "mediaDeletedSuccessfully": "मीडिया के आइटम को सफलतापूर्वक हटा दिया गया",
+    "mediaDeletionDisabledOnServer": "इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।",
     "mediaFailedToDelete": "मीडिया आइटम को हटाने में विफलता",
     "rate": "दरें",
     "playFromBeginning": "शुरुआत से खेलना",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr ने उपयोगकर्ता जानकारी वापस नहीं की",
     "sessionRejectedAfterReauth": "फिर से हस्ताक्षर करने के बाद बैठक को अस्वीकार कर दिया गया",
     "permissionDenied": "Seerr ने इस कार्रवाई को अस्वीकार कर दिया: आपके खाते में अब आवश्यक अनुमति नहीं है",
-    "permissionRevoked": "अब आपके पास यह अनुरोध करने की अनुमति नहीं है"
+    "permissionRevoked": "अब आपके पास यह अनुरोध करने की अनुमति नहीं है",
+    "withdrawRequest": "अनुरोध वापस लें"
   },
   "services": {
     "title": "सेवाएं",

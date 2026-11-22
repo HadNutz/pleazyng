@@ -224,7 +224,8 @@
       "playlist": "Afspilningsliste",
       "clip": "Klip",
       "photo": "Foto",
-      "folder": "Mappe"
+      "folder": "Mappe",
+      "photoAlbum": "Fotoalbum"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer størrelse: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer størrelse: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Fortsæt med at se",
+    "showTopShelfContentDescription": "Slå fra for kun at vise Pleazyngs billede for alle profiler.",
+    "topShelfUpdateFailed": "Top Shelf kunne ikke opdateres. Prøv igen.",
+    "showFinishTime": "Vis sluttidspunkt",
+    "showFinishTimeDescription": "Vis hvornår videoen slutter, ved siden af den resterende tid."
   },
   "themeEditor": {
     "builtIn": "Indbygget",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng kunne ikke kontrollere, hvilke filer dette vil fjerne, så det kan slette mere end det ovennævnte emne. Annuller og prøv igen, eller slet alligevel.",
     "deleteScopeUnverifiedNoFileInfo": "Din server leverede ikke filoplysninger for dette emne, så Pleazyng kan ikke kontrollere, hvilke filer dette vil fjerne. Det kan slette mere end det ovennævnte emne.",
     "mediaDeletedSuccessfully": "Mediet blev slettet",
+    "mediaDeletionDisabledOnServer": "Sletning af medier er slået fra på denne server. Tillad sletning af medier i serverens biblioteksindstillinger.",
     "mediaFailedToDelete": "Mediet kunne ikke slettes",
     "rate": "Bedøm",
     "playFromBeginning": "Afspil fra begyndelsen",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr returnerede ikke brugeroplysninger",
     "sessionRejectedAfterReauth": "Sessionen blev afvist efter at være logget ind igen",
     "permissionDenied": "Seerr afviste denne handling: din konto har ikke længere den nødvendige tilladelse",
-    "permissionRevoked": "Du har ikke længere tilladelse til at anmode om dette"
+    "permissionRevoked": "Du har ikke længere tilladelse til at anmode om dette",
+    "withdrawRequest": "Træk anmodningen tilbage"
   },
   "services": {
     "title": "Tjenester",

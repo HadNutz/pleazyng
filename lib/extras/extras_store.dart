@@ -38,7 +38,7 @@ class ExtrasStore {
         try {
           await previous;
         } catch (_) {
-          /* next write may repair transient failure */
+          /* best-effort: next write may repair transient failure */
         }
       }
       final data = await _read();
@@ -197,7 +197,7 @@ class ExtrasStore {
       try {
         await pending;
       } catch (_) {
-        /* Still remove. */
+        /* best-effort: Still remove. */
       }
     }
     final prefs = await BaseSharedPreferencesService.sharedCache();
@@ -210,7 +210,7 @@ class ExtrasStore {
       try {
         await pending;
       } catch (_) {
-        /* Still remove. */
+        /* best-effort: Still remove. */
       }
     }
     final prefs = await BaseSharedPreferencesService.sharedCache();

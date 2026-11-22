@@ -80,6 +80,7 @@ class JellyfinLanDiscoveryService {
       if (normalized.isEmpty || id.trim().isEmpty || name.trim().isEmpty) return null;
       return DiscoveredJellyfinServer(address: normalized, id: id.trim(), name: name.trim(), dialect: dialect);
     } catch (_) {
+      // best-effort: Ignore malformed discovery responses while continuing to listen for servers.
       return null;
     }
   }

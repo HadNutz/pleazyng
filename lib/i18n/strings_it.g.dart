@@ -900,6 +900,11 @@ class _Translations$settings$it extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Aspettate questi molti minuti senza input prima di mostrare screensaver artwork.';
 	@override String get videoCodecOptionDescription => 'Permettere la riproduzione diretta di questo codec quando supportato. i codec non controllati sono trascoditi dal server dei media.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Dimensioni Buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continua a guardare';
+	@override String get showTopShelfContentDescription => 'Disattiva per mostrare solo l’immagine di Pleazyng per tutti i profili.';
+	@override String get topShelfUpdateFailed => 'Impossibile aggiornare Top Shelf. Riprova.';
+	@override String get showFinishTime => 'Mostra l’ora di fine';
+	@override String get showFinishTimeDescription => 'Mostra quando finirà il video accanto al tempo rimanente.';
 }
 
 // Path: themeEditor
@@ -1148,6 +1153,7 @@ class _Translations$mediaMenu$it extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng non ha potuto verificare quali file rimuoverà, quindi potrebbe eliminare più di quanto indicato sopra. Annulla e riprova, oppure elimina comunque.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Il tuo server non ha fornito i dettagli del file per questo elemento, quindi Pleazyng non può verificare quali file rimuoverà. Potrebbe eliminare più di quanto indicato sopra.';
 	@override String get mediaDeletedSuccessfully => 'Elemento multimediale eliminato correttamente';
+	@override String get mediaDeletionDisabledOnServer => 'L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server.';
 	@override String get mediaFailedToDelete => 'Impossibile eliminare l\'elemento multimediale';
 	@override String get rate => 'Valuta';
 	@override String get playFromBeginning => 'Riproduci dall\'inizio';
@@ -2933,6 +2939,7 @@ class _Translations$seerr$it extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'La sessione è stata rifiutata dopo aver effettuato nuovamente l\'accesso';
 	@override String get permissionDenied => 'Seerr ha negato questa azione: il tuo account non dispone più dell\'autorizzazione richiesta';
 	@override String get permissionRevoked => 'Non hai più l\'autorizzazione per richiederlo';
+	@override String get withdrawRequest => 'Ritira richiesta';
 }
 
 // Path: services
@@ -4639,6 +4646,7 @@ class _Translations$common$mediaKind$it extends Translations$common$mediaKind$en
 	@override String get clip => 'Clip';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Cartella';
+	@override String get photoAlbum => 'Album fotografico';
 }
 
 // Path: settings.startupSectionOptions
@@ -5886,6 +5894,7 @@ extension on TranslationsIt {
 			'common.mediaKind.clip' => 'Clip',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Cartella',
+			'common.mediaKind.photoAlbum' => 'Album fotografico',
 			'screens.licenses' => 'Licenze',
 			'screens.switchProfile' => 'Cambia profilo',
 			'screens.subtitleStyling' => 'Stile sottotitoli',
@@ -6192,9 +6201,9 @@ extension on TranslationsIt {
 			'settings.manageLibrariesDescription' => 'Riordina e nascondi le librerie',
 			'settings.companionRemoteServer' => 'Server del telecomando',
 			'settings.companionRemoteServerDescription' => 'Consenti ai dispositivi mobili della tua rete di controllare questa app',
-			'settings.companionRemoteServerStartFailed' => 'Impossibile avviare il server del telecomando',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Impossibile avviare il server del telecomando',
 			'settings.companionRemoteServerStopFailed' => 'Impossibile arrestare il server del telecomando',
 			'settings.autoPip' => 'Picture-in-Picture automatica',
 			'settings.autoPipDescription' => 'Attiva automaticamente la modalità Picture-in-Picture quando esci dall\'app durante la riproduzione',
@@ -6408,6 +6417,11 @@ extension on TranslationsIt {
 			'settings.contentScreensaverDelayOptionDescription' => 'Aspettate questi molti minuti senza input prima di mostrare screensaver artwork.',
 			'settings.videoCodecOptionDescription' => 'Permettere la riproduzione diretta di questo codec quando supportato. i codec non controllati sono trascoditi dal server dei media.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Dimensioni Buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continua a guardare',
+			'settings.showTopShelfContentDescription' => 'Disattiva per mostrare solo l’immagine di Pleazyng per tutti i profili.',
+			'settings.topShelfUpdateFailed' => 'Impossibile aggiornare Top Shelf. Riprova.',
+			'settings.showFinishTime' => 'Mostra l’ora di fine',
+			'settings.showFinishTimeDescription' => 'Mostra quando finirà il video accanto al tempo rimanente.',
 			'themeEditor.builtIn' => 'Integrati',
 			'themeEditor.presets' => 'Preimpostati',
 			'themeEditor.custom' => 'Personalizzato',
@@ -6641,6 +6655,7 @@ extension on TranslationsIt {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng non ha potuto verificare quali file rimuoverà, quindi potrebbe eliminare più di quanto indicato sopra. Annulla e riprova, oppure elimina comunque.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Il tuo server non ha fornito i dettagli del file per questo elemento, quindi Pleazyng non può verificare quali file rimuoverà. Potrebbe eliminare più di quanto indicato sopra.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Elemento multimediale eliminato correttamente',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server.',
 			'mediaMenu.mediaFailedToDelete' => 'Impossibile eliminare l\'elemento multimediale',
 			'mediaMenu.rate' => 'Valuta',
 			'mediaMenu.playFromBeginning' => 'Riproduci dall\'inizio',
@@ -6700,6 +6715,8 @@ extension on TranslationsIt {
 			'accessibility.reduceMotion' => 'Ridurre il movimento',
 			'accessibility.reduceMotionHint' => 'Fermare le animazioni dell’indicatore di focus, le transizioni delle pagine e gli effetti decorativi.',
 			'accessibility.largeTargets' => 'obiettivi touch più grandi',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Gioca i controlli condivisi più spazio per la navigazione a touch e assistive.',
 			'accessibility.navigationHint' => 'Usa Tab e Shift+Tab per spostarti tra i controlli, Enter o la barra spaziatrice per attivarli ed Escape o Indietro per chiudere. Quando un libro è aperto, puoi regolare lo zoom e le preferenze di lettura.',
 			'accessibility.textSizeDescription' => 'Scala il testo dell\'interfaccia in Pleazyng oltre alla configurazione di dimensioni del testo del sistema del dispositivo.',
@@ -6707,8 +6724,6 @@ extension on TranslationsIt {
 			'tooltips.shufflePlay' => 'Riproduzione casuale',
 			'tooltips.playTrailer' => 'Riproduci trailer',
 			'tooltips.markAsWatched' => 'Segna come visto',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Segna come non visto',
 			'audioTracks.track' => ({required Object n}) => 'Traccia audio ${n}',
 			'videoControls.audioLabel' => 'Audio',
@@ -7214,6 +7229,8 @@ extension on TranslationsIt {
 			'discover.findNext.artworkLoading' => 'Caricamento immagine…',
 			'discover.findNext.artworkUnavailable' => 'Immagine non disponibile',
 			'discover.findNext.savedFeedback' => 'Aggiunto alle scelte salvate',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Saltato per ora',
 			'discover.findNext.releaseToConfirm' => 'Rilascia per confermare',
 			'discover.findNext.remoteHint' => 'Copertina selezionata: ← / → scegli · Seleziona: dettagli · ↑ / ↓ sposta il focus',
@@ -7221,8 +7238,6 @@ extension on TranslationsIt {
 			'discover.rating' => 'Valutazione',
 			'discover.director' => 'Regista',
 			'discover.directors' => 'Registi',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'Serie TV',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} minuti rimanenti',
@@ -7728,6 +7743,8 @@ extension on TranslationsIt {
 			'collections.selectCollection' => 'Seleziona raccolta',
 			'collections.collectionName' => 'Nome raccolta',
 			'collections.enterCollectionName' => 'Inserisci nome raccolta',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Elemento aggiunto alla raccolta',
 			'collections.errorAddingToCollection' => 'Impossibile aggiungere l\'elemento alla raccolta',
 			'collections.created' => 'Raccolta creata',
@@ -7735,8 +7752,6 @@ extension on TranslationsIt {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Rimuovere "${title}" da questa raccolta?',
 			'collections.removedFromCollection' => 'Elemento rimosso dalla raccolta',
 			'collections.removeFromCollectionFailed' => 'Impossibile rimuovere dalla raccolta',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Errore durante la rimozione dell\'elemento dalla raccolta: ${error}',
 			'collections.searchCollections' => 'Cerca raccolte...',
 			'playlists.title' => 'Playlist',
@@ -8242,6 +8257,8 @@ extension on TranslationsIt {
 			'performanceOverlay.decoder' => 'Decoder',
 			'performanceOverlay.rawDecoder' => 'Decoder raw',
 			'performanceOverlay.tunneling' => 'Tunneling',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Passthrough',
 			'performanceOverlay.aspect' => 'Proporzioni',
 			'performanceOverlay.rotation' => 'Rotazione',
@@ -8249,8 +8266,6 @@ extension on TranslationsIt {
 			'performanceOverlay.dvPath' => 'Percorso DV',
 			'performanceOverlay.dvRouteDecoder' => 'Decoder Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'Decoder Dolby Vision (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Livello base',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Livello base HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Livello base HLG',
@@ -8486,6 +8501,7 @@ extension on TranslationsIt {
 			'seerr.sessionRejectedAfterReauth' => 'La sessione è stata rifiutata dopo aver effettuato nuovamente l\'accesso',
 			'seerr.permissionDenied' => 'Seerr ha negato questa azione: il tuo account non dispone più dell\'autorizzazione richiesta',
 			'seerr.permissionRevoked' => 'Non hai più l\'autorizzazione per richiederlo',
+			'seerr.withdrawRequest' => 'Ritira richiesta',
 			'services.title' => 'Servizi',
 			'services.hubSubtitle' => 'Sincronizza i progressi di visione e richiedi nuovi titoli.',
 			'services.integrations' => 'Integrazioni',
@@ -8755,6 +8771,8 @@ extension on TranslationsIt {
 			'homeLayout.managePlexRowsDescription' => 'Aperto per organizzare le righe selezionate in casa',
 			'homeLayout.organizeHomeRows' => 'Organizzare le linee di casa',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} righe: movimento, eroe, auto-slide, rimozione',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizzare ${library} righe',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continua a guardare + ${n} righe: movimento, Biblioteca, Home, Eroe, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render come carta di eroe',
@@ -8763,8 +8781,6 @@ extension on TranslationsIt {
 			'homeLayout.autoSlide' => 'Auto-Slide',
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) e d-pad (TV) sempre funzionano e riavviano il timer.',
 			'homeLayout.autoSlideEditDescription' => 'Spegne: si muove solo quando si fa clic su una pistola (PC) o premere sinistra/diretta sul remote (TV).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Permettere il primo eroe',
 			'homeLayout.showOnHome' => 'Mostra su Home Screen',
 			'homeLayout.home' => 'Home',
@@ -9269,6 +9285,8 @@ extension on TranslationsIt {
 			'audiobook.customSpeed' => 'Velocità di riproduzione personalizzata',
 			'audiobook.speedHelp' => 'Scegli una velocità da 0,25× a 4×.',
 			'audiobook.apply' => 'Applica',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Timer di arresto personalizzato',
 			'audiobook.sleepMinutes' => 'Minuti (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Capitoli prima dell’arresto: ${count}',
@@ -9277,8 +9295,6 @@ extension on TranslationsIt {
 			'audiobook.useDefaults' => 'Usa questi controlli di ascolto per i nuovi libri',
 			'audiobook.librarySort' => 'Ordina i libri',
 			'audiobook.sortTitle' => 'Titolo',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Autore',
 			'audiobook.sortNarrator' => 'Narratore',
 			'audiobook.sortSeries' => 'Ordine della serie',
@@ -9783,6 +9799,8 @@ extension on TranslationsIt {
 			'musicExperience.bluetoothDrivingHint' => 'Scegli le uscite Bluetooth connesse che aprono automaticamente la vista di guida.',
 			'musicTools.loudnessMissing' => 'Nessun dato sulla sonorità restituito',
 			'musicTools.loudnessRequested' => 'Richiesta di analisi inviata',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Questa versione del server non supporta le richieste di analisi',
 			'musicTools.serverHistory' => 'Cronologia di riproduzione del server',
 			'musicTools.nfcWrite' => 'Scrivi tag NFC',
@@ -9791,8 +9809,6 @@ extension on TranslationsIt {
 			'musicTools.storageBudget' => 'Limite stimato di download (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'DJ ospite',
 			'musicTools.charts' => 'Classifiche di ascolto',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Riscopri',
 			'musicTools.stations' => 'Stazioni musicali',
 			'musicTools.prompt' => 'Playlist da descrizione',

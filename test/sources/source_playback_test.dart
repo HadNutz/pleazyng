@@ -274,6 +274,20 @@ void main() {
     expect(playback.currentFilePositionMs, 47000);
   });
 
+  test('a second decoder failure retries from the newly reached position', () async {
+    await start();
+    for (final seconds in [17, 54]) {
+      final position = Duration(seconds: seconds);
+      native.setPosition(position);
+      native.emitError('stream failed');
+      await playback.retry();
+      expect(native.openStarts.last, position);
+      expect(playback.failure, isNull);
+    }
+    expect(native.openedUris.toSet(), hasLength(1));
+    expect(native.openedUris, hasLength(3));
+  });
+
   test('an intentional seek to zero remains zero after failure', () async {
     await start();
     native.setPosition(const Duration(seconds: 47));

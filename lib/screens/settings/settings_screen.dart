@@ -30,6 +30,7 @@ import '../../providers/libraries_provider.dart';
 import '../../services/donation_service.dart';
 import '../../services/download_storage_service.dart';
 import '../../services/file_picker_service.dart';
+import '../../services/desktop_screenshot_directory.dart';
 import '../../services/saf_storage_service.dart';
 import '../../services/settings_export_service.dart';
 import '../../providers/theme_provider.dart';
@@ -121,6 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
   static const _kManageLibraries = 'manage_libraries';
   static const _kServices = 'services';
   static const _kDownloadLocation = 'download_location';
+  static const _kScreenshotLocation = 'screenshot_location';
   static const _kDownloadOnWifiOnly = 'download_on_wifi_only';
   static const _kAutoRemoveWatchedDownloads = 'auto_remove_watched_downloads';
   static const _kReviewOrphanDownloads = 'review_orphan_downloads';
@@ -340,6 +342,7 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
                   _buildConnectionsSection(sheetContext),
 
                   if (!PlatformDetector.isAppleTV()) _buildDownloadsSection(),
+                  if (PlatformDetector.isDesktopOS()) _buildScreenshotLocationSection(),
 
                   _buildControlsSection(sheetContext),
 
@@ -656,6 +659,25 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
     );
   }
 
+  Widget _buildScreenshotLocationSection() {
+    return SettingsGroup(
+      title: t.romm.screenshots,
+      children: [
+        SettingValueBuilder<String?>(
+          pref: settings.SettingsService.screenshotDirectory,
+          builder: (context, path, _) => FocusableListTile(
+            focusNode: _focusTracker.get(_kScreenshotLocation),
+            leading: const AppIcon(Symbols.folder_rounded, fill: 1),
+            title: Text(t.settings.selectFolder),
+            subtitle: Text(path ?? '~/Pictures', maxLines: 2, overflow: .ellipsis),
+            trailing: const AppIcon(Symbols.chevron_right_rounded, fill: 1),
+            onTap: _showScreenshotLocationDialog,
+          ),
+        ),
+      ],
+    );
+  }
+
   /// Standing answer to "why do my downloads stop when I leave the app" — also
   /// what support can ask a user to read out without needing a log upload.
   Widget _buildBackgroundDownloadsTile() {
@@ -950,6 +972,63 @@ class _SettingsScreenState extends State<SettingsScreen> with FocusableTab, Moun
         ),
         _buildAutoCheckUpdatesOnStartupTile(),
       ],
+    );
+  }
+
+  Future<void> _showScreenshotLocationDialog() async {
+    final currentPath = _settingsService.read(settings.SettingsService.screenshotDirectory);
+
+    await showScopedDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(t.romm.screenshots),
+        content: Column(
+          mainAxisSize: .min,
+          crossAxisAlignment: .start,
+          children: [
+            Text(
+              t.settings.currentPath(path: currentPath ?? '~/Pictures'),
+              style: Theme.of(dialogContext).textTheme.bodySmall,
+            ),
+          ],
+        ),
+        actions: [
+          if (currentPath != null)
+            DialogActionButton(
+              onPressed: () async {
+                final reset = await guardSettingsOperation<bool, FileSystemException>(
+                  context,
+                  operation: 'Screenshot location reset',
+                  body: () async {
+                    await DesktopScreenshotDirectory.reset();
+                    await _settingsService.write(settings.SettingsService.screenshotDirectory, null);
+                    return true;
+                  },
+                );
+                if (reset == true && dialogContext.mounted) Navigator.pop(dialogContext);
+              },
+              label: t.settings.resetToDefault,
+            ),
+          DialogActionButton(onPressed: () => Navigator.pop(dialogContext), label: t.common.cancel),
+          DialogActionButton(
+            onPressed: () async {
+              final changed = await guardSettingsOperation<bool, FileSystemException>(
+                context,
+                operation: 'Screenshot location selection',
+                body: () async {
+                  final selectedPath = await DesktopScreenshotDirectory.choose(t.settings.selectFolder);
+                  if (selectedPath == null || !mounted) return false;
+                  await _settingsService.write(settings.SettingsService.screenshotDirectory, selectedPath);
+                  return true;
+                },
+              );
+              if (changed == true && dialogContext.mounted) Navigator.pop(dialogContext);
+            },
+            label: t.settings.selectFolder,
+            isPrimary: true,
+          ),
+        ],
+      ),
     );
   }
 

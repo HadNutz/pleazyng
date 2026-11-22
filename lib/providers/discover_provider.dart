@@ -1118,7 +1118,7 @@ class DiscoverProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       _replaceInHubs(globalKey, updated);
       safeNotifyListeners();
     } catch (_) {
-      // Silently fail — the item will refresh on the next full reload.
+      // best-effort: Silently fail — the item will refresh on the next full reload.
     }
   }
 

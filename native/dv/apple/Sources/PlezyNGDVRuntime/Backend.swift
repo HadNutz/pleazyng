@@ -17,6 +17,12 @@ public func createBackend() -> UnsafeMutableRawPointer {
   Unmanaged.passRetained(AppleDVBackend()).toOpaque()
 }
 
+private let motionCapabilities = [
+  "pleazyng-vt-motion-supported": "no",
+  "pleazyng-apple-mixer-gpu-supported": "no",
+  "video-out-interpolation": "unavailable"
+]
+
 /// The app's ordinary transport controls and source ownership drive this
 /// backend. Engine availability never stands in for FEL pixel qualification.
 private final class AppleDVBackend: DVRuntimeBackend {
@@ -312,7 +318,7 @@ private final class AppleDVBackend: DVRuntimeBackend {
   }
 
   @MainActor private func value(_ name: String) -> Any? {
-    guard let engine else { return nil }
+    guard let engine else { return options[name] ?? motionCapabilities[name] }
     switch name {
     case "time-pos": return engine.currentTime
     case "duration": return engine.duration
@@ -327,8 +333,6 @@ private final class AppleDVBackend: DVRuntimeBackend {
     case "container-fps", "estimated-vf-fps": return engine.sourceVideoFrameRate
     case "video-codec": return engine.sourceVideoCodecName
     case "current-vo": return "aether"
-    case "pleazyng-vt-motion-supported", "pleazyng-apple-mixer-gpu-supported": return "no"
-    case "video-out-interpolation": return "unavailable"
     case "hwdec-current": return engine.activeVideoDecoder
     case "plezyng-dv-engine": return "plezyng-apple-dv-runtime-v1"
     case "current-tracks/video/dolby-vision-profile": return engine.sourceDVProfile
@@ -347,7 +351,7 @@ private final class AppleDVBackend: DVRuntimeBackend {
             "selected": engine.activeSubtitleTrackIndex == track.id,
           ] as [String: Any]
         }
-    default: return options[name]
+    default: return motionCapabilities[name] ?? options[name]
     }
   }
 }

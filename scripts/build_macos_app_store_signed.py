@@ -47,6 +47,8 @@ INSTALLER_CERTIFICATE_TYPE = "MAC_INSTALLER_DISTRIBUTION"
 PROFILE_TYPE = "MAC_APP_STORE"
 APP_KEYCHAIN_NAME = "Pleazyng-Mac-App-Store.keychain-db"
 INSTALLER_KEYCHAIN_NAME = "Pleazyng-Mac-App-Store-Installer-v2.keychain-db"
+KEYCHAIN_PASSWORD_SALT = b"PleazyngMacAppStore:keychain-password:v2"
+KEYCHAIN_PASSWORD_ITERATIONS = 600_000
 PENDING_DIRECTORY = Path("Library/Application Support/Pleazyng/MacAppStoreSigning/pending")
 PROFILE_DIRECTORY = Path("Library/MobileDevice/Provisioning Profiles")
 EXPECTED_ARCHITECTURES = {"arm64", "x86_64"}
@@ -141,7 +143,15 @@ def _keychain_password() -> str:
     team = os.environ.get(TEAM_SECRET, "")
     if not password or not re.fullmatch(r"[A-Z0-9]{10}", team):
         raise ValueError(f"{CERTIFICATE_PASSWORD_SECRET} and {TEAM_SECRET} are required to protect the persistent signing keychain")
-    return hashlib.sha256(("PleazyngMacAppStore:" + team + password).encode()).hexdigest()
+    material = f"{team}\0{password}".encode()
+    return hashlib.pbkdf2_hmac(
+        "sha256", material, KEYCHAIN_PASSWORD_SALT, KEYCHAIN_PASSWORD_ITERATIONS
+    ).hex()
+
+
+def _unlock_keychain(keychain: Path, password: str) -> None:
+    """Unlock a persistent keychain protected by the current slow KDF."""
+    signing_run(["security", "unlock-keychain", "-p", password, str(keychain)])
 
 
 def _safe_tag(tag: str) -> None:
@@ -269,7 +279,7 @@ def persistent_signing_keychains(report: dict):
             raise ValueError("Persistent Mac App Store Installer keychain is not a regular file")
         for keychain in (app_keychain, installer_keychain):
             os.chmod(keychain, 0o600)
-            signing_run(["security", "unlock-keychain", "-p", password, str(keychain)])
+            _unlock_keychain(keychain, password)
 
         app_names = _keychain_identity_names(app_keychain)
         installer_names = _keychain_identity_names(installer_keychain)

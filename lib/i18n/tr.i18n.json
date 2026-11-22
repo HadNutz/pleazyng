@@ -224,7 +224,8 @@
       "playlist": "Oynatma listesi",
       "clip": "Klip",
       "photo": "Fotoğraf",
-      "folder": "Klasör"
+      "folder": "Klasör",
+      "photoAlbum": "Fotoğraf albümü"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer boyutu: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer boyutu: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · İzlemeye Devam Et",
+    "showTopShelfContentDescription": "Kapatıldığında tüm profillerde yalnızca Pleazyng görseli gösterilir.",
+    "topShelfUpdateFailed": "Top Shelf güncellenemedi. Tekrar deneyin.",
+    "showFinishTime": "Bitiş saatini göster",
+    "showFinishTimeDescription": "Kalan sürenin yanında videonun ne zaman biteceğini gösterir."
   },
   "themeEditor": {
     "builtIn": "Yerleşik",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng bunun hangi dosyaları sileceğini kontrol edemedi, bu yüzden yukarıda adı geçen ögeden daha fazlasını silebilir. İptal edip tekrar deneyin veya yine de silin.",
     "deleteScopeUnverifiedNoFileInfo": "Sunucunuz bu öge için dosya ayrıntıları sağlamadı, bu yüzden Pleazyng bunun hangi dosyaları sileceğini kontrol edemiyor. Yukarıda adı geçen ögeden daha fazlasını silebilir.",
     "mediaDeletedSuccessfully": "Medya ögesi başarıyla silindi",
+    "mediaDeletionDisabledOnServer": "Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.",
     "mediaFailedToDelete": "Medya ögesi silinemedi",
     "rate": "Oyla",
     "playFromBeginning": "Baştan Oynat",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr kullanıcı bilgilerini döndürmedi",
     "sessionRejectedAfterReauth": "Yeniden giriş yapıldıktan sonra oturum reddedildi",
     "permissionDenied": "Seerr bu eylemi reddetti: hesabınız artık gerekli izne sahip değil",
-    "permissionRevoked": "Bunu isteme izniniz artık yok"
+    "permissionRevoked": "Bunu isteme izniniz artık yok",
+    "withdrawRequest": "İsteği geri çek"
   },
   "services": {
     "title": "Servisler",

@@ -117,6 +117,7 @@ class ExtrasAi {
         usedAi: kinds.isNotEmpty || result.isNotEmpty,
       );
     } catch (_) {
+      // best-effort: Local search results remain usable when the optional AI ranking fails.
       return fallback;
     }
   }

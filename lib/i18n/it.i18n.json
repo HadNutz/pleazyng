@@ -224,7 +224,8 @@
       "playlist": "Playlist",
       "clip": "Clip",
       "photo": "Foto",
-      "folder": "Cartella"
+      "folder": "Cartella",
+      "photoAlbum": "Album fotografico"
     }
   },
   "screens": {
@@ -794,7 +795,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Dimensioni Buffer: ${size} MiB"
+    "streamBufferSizeMiB": "Dimensioni Buffer: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Continua a guardare",
+    "showTopShelfContentDescription": "Disattiva per mostrare solo l’immagine di Pleazyng per tutti i profili.",
+    "topShelfUpdateFailed": "Impossibile aggiornare Top Shelf. Riprova.",
+    "showFinishTime": "Mostra l’ora di fine",
+    "showFinishTimeDescription": "Mostra quando finirà il video accanto al tempo rimanente."
   },
   "themeEditor": {
     "builtIn": "Integrati",
@@ -1054,6 +1060,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng non ha potuto verificare quali file rimuoverà, quindi potrebbe eliminare più di quanto indicato sopra. Annulla e riprova, oppure elimina comunque.",
     "deleteScopeUnverifiedNoFileInfo": "Il tuo server non ha fornito i dettagli del file per questo elemento, quindi Pleazyng non può verificare quali file rimuoverà. Potrebbe eliminare più di quanto indicato sopra.",
     "mediaDeletedSuccessfully": "Elemento multimediale eliminato correttamente",
+    "mediaDeletionDisabledOnServer": "L’eliminazione dei contenuti è disattivata su questo server. Consentila nelle impostazioni della libreria del server.",
     "mediaFailedToDelete": "Impossibile eliminare l'elemento multimediale",
     "rate": "Valuta",
     "playFromBeginning": "Riproduci dall'inizio",
@@ -3443,7 +3450,8 @@
     "noUserInformation": "Seerr non ha restituito le informazioni sull'utente",
     "sessionRejectedAfterReauth": "La sessione è stata rifiutata dopo aver effettuato nuovamente l'accesso",
     "permissionDenied": "Seerr ha negato questa azione: il tuo account non dispone più dell'autorizzazione richiesta",
-    "permissionRevoked": "Non hai più l'autorizzazione per richiederlo"
+    "permissionRevoked": "Non hai più l'autorizzazione per richiederlo",
+    "withdrawRequest": "Ritira richiesta"
   },
   "services": {
     "title": "Servizi",

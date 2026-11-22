@@ -224,7 +224,8 @@
       "playlist": "Pleylist",
       "clip": "Klip",
       "photo": "Şəkil",
-      "folder": "Qovluq"
+      "folder": "Qovluq",
+      "photoAlbum": "Fotoalbom"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer ölçüsü: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer ölçüsü: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · İzləməyə davam et",
+    "showTopShelfContentDescription": "Söndürdükdə bütün profillər üçün yalnız Pleazyng şəkli görünür.",
+    "topShelfUpdateFailed": "Top Shelf yenilənmədi. Yenidən cəhd edin.",
+    "showFinishTime": "Bitmə vaxtını göstər",
+    "showFinishTimeDescription": "Videonun bitmə vaxtını qalan vaxtın yanında göstər."
   },
   "themeEditor": {
     "builtIn": "Daxili",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng bunun hansı faylları siləcəyini yoxlaya bilmədi, ona görə də yuxarıda adı çəkilən elementdən daha çoxunu silə bilər. Ləğv edib təzədən cəhd edin və ya yenə də silin.",
     "deleteScopeUnverifiedNoFileInfo": "Serveriniz bu element üçün fayl təfərrüatlarını təqdim etmədi, ona görə Pleazyng bunun hansı faylları siləcəyini yoxlaya bilmir. Yuxarıda adı çəkilən elementdən daha çoxunu silə bilər.",
     "mediaDeletedSuccessfully": "Media elementi uğurla silindi",
+    "mediaDeletionDisabledOnServer": "Bu serverdə media silmək deaktiv edilib. Serverin kitabxana ayarlarında media silməyə icazə verin.",
     "mediaFailedToDelete": "Media elementi silinə bilmədi",
     "rate": "Qiymətləndir",
     "playFromBeginning": "Əvvəldən oynat",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr istifadəçi məlumatlarını qaytarmadı",
     "sessionRejectedAfterReauth": "Yenidən daxil olduqdan sonra sessiya rədd edildi",
     "permissionDenied": "Seerr bu əməliyyatı rədd etdi: hesabınızda artıq tələb olunan icazə yoxdur",
-    "permissionRevoked": "Bunu sorğulamaq üçün artıq icazəniz yoxdur"
+    "permissionRevoked": "Bunu sorğulamaq üçün artıq icazəniz yoxdur",
+    "withdrawRequest": "Sorğunu geri götür"
   },
   "services": {
     "title": "Xidmətlər",

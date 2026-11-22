@@ -902,6 +902,11 @@ class _Translations$settings$cs extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Počkejte na to mnoho minut bez vstupu, než se zobrazí obrazovkový záložní umělecké dílo.';
 	@override String get videoCodecOptionDescription => 'Umožňujte přímé přehrávání pro tento kodek, když je podporován. nekontrolované kodeky jsou transkódovány mediálním serverem.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer velikost: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Pokračovat ve sledování';
+	@override String get showTopShelfContentDescription => 'Po vypnutí se u všech profilů zobrazí pouze obrázek Pleazyng.';
+	@override String get topShelfUpdateFailed => 'Top Shelf se nepodařilo aktualizovat. Zkuste to znovu.';
+	@override String get showFinishTime => 'Zobrazit čas konce';
+	@override String get showFinishTimeDescription => 'Vedle zbývající doby zobrazí čas konce videa.';
 }
 
 // Path: themeEditor
@@ -1156,6 +1161,7 @@ class _Translations$mediaMenu$cs extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng nedokázalo ověřit, které soubory budou odstraněny, takže může smazat více než výše uvedenou položku. Akci zrušte a zkuste to znovu, nebo pokračujte ve smazání.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Server neposkytl podrobnosti o souborech této položky, takže Pleazyng nemůže ověřit, které soubory budou odstraněny. Může být smazáno více než výše uvedená položka.';
 	@override String get mediaDeletedSuccessfully => 'Media objekt byl úspěšně odstraněn';
+	@override String get mediaDeletionDisabledOnServer => 'Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru.';
 	@override String get mediaFailedToDelete => 'Nedokázal odstranit mediální položku';
 	@override String get rate => 'Hodnocení';
 	@override String get playFromBeginning => 'Přehrát od začátku';
@@ -2964,6 +2970,7 @@ class _Translations$seerr$cs extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Zasedání bylo po opětovném podepsání zamítnuto.';
 	@override String get permissionDenied => 'Seerr tuto akci odmítl: Váš účet již nemá požadované povolení';
 	@override String get permissionRevoked => 'Už nemáte právo na to požádat';
+	@override String get withdrawRequest => 'Stáhnout požadavek';
 }
 
 // Path: services
@@ -4674,6 +4681,7 @@ class _Translations$common$mediaKind$cs extends Translations$common$mediaKind$en
 	@override String get clip => 'Filmový klip';
 	@override String get photo => 'Fotka';
 	@override String get folder => 'Složka';
+	@override String get photoAlbum => 'Fotoalbum';
 }
 
 // Path: settings.startupSectionOptions
@@ -5923,6 +5931,7 @@ extension on TranslationsCs {
 			'common.mediaKind.clip' => 'Filmový klip',
 			'common.mediaKind.photo' => 'Fotka',
 			'common.mediaKind.folder' => 'Složka',
+			'common.mediaKind.photoAlbum' => 'Fotoalbum',
 			'screens.licenses' => 'Licence',
 			'screens.switchProfile' => 'Přepínání profilu',
 			'screens.subtitleStyling' => 'Styl titulků',
@@ -6229,9 +6238,9 @@ extension on TranslationsCs {
 			'settings.manageLibrariesDescription' => 'Přehrávat a skrývat knihovny',
 			'settings.companionRemoteServer' => 'Společnost Remote Server',
 			'settings.companionRemoteServerDescription' => 'Umožňujte mobilním zařízením v síti ovládat tuto aplikaci',
-			'settings.companionRemoteServerStartFailed' => 'Nemohla spustit server',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Nemohla spustit server',
 			'settings.companionRemoteServerStopFailed' => 'Nemohla jsem zastavit server',
 			'settings.autoPip' => 'Auto Picture v obraze',
 			'settings.autoPipDescription' => 'Automaticky zadejte obrázek v obrazu, když opustíte aplikaci během přehrávání',
@@ -6445,6 +6454,11 @@ extension on TranslationsCs {
 			'settings.contentScreensaverDelayOptionDescription' => 'Počkejte na to mnoho minut bez vstupu, než se zobrazí obrazovkový záložní umělecké dílo.',
 			'settings.videoCodecOptionDescription' => 'Umožňujte přímé přehrávání pro tento kodek, když je podporován. nekontrolované kodeky jsou transkódovány mediálním serverem.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer velikost: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Pokračovat ve sledování',
+			'settings.showTopShelfContentDescription' => 'Po vypnutí se u všech profilů zobrazí pouze obrázek Pleazyng.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf se nepodařilo aktualizovat. Zkuste to znovu.',
+			'settings.showFinishTime' => 'Zobrazit čas konce',
+			'settings.showFinishTimeDescription' => 'Vedle zbývající doby zobrazí čas konce videa.',
 			'themeEditor.builtIn' => 'stavět-in',
 			'themeEditor.presets' => 'přednášky',
 			'themeEditor.custom' => 'Vlastní',
@@ -6678,6 +6692,7 @@ extension on TranslationsCs {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng nedokázalo ověřit, které soubory budou odstraněny, takže může smazat více než výše uvedenou položku. Akci zrušte a zkuste to znovu, nebo pokračujte ve smazání.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Server neposkytl podrobnosti o souborech této položky, takže Pleazyng nemůže ověřit, které soubory budou odstraněny. Může být smazáno více než výše uvedená položka.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media objekt byl úspěšně odstraněn',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru.',
 			'mediaMenu.mediaFailedToDelete' => 'Nedokázal odstranit mediální položku',
 			'mediaMenu.rate' => 'Hodnocení',
 			'mediaMenu.playFromBeginning' => 'Přehrát od začátku',
@@ -6737,6 +6752,8 @@ extension on TranslationsCs {
 			'accessibility.reduceMotion' => 'Snížení pohybu',
 			'accessibility.reduceMotionHint' => 'Zastaví pohyb indikátoru zaměření, přechody stránek a dekorativní efekty.',
 			'accessibility.largeTargets' => 'větší cíle dotyku',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Dáváme sdíleným ovládacím prvkům více prostoru pro dotyk a asistenční navigaci.',
 			'accessibility.navigationHint' => 'Mezi ovládacími prvky se přesouvejte klávesami Tab a Shift+Tab, aktivujte je klávesou Enter nebo mezerníkem a zavírejte klávesou Escape nebo tlačítkem Zpět. Při otevřené knize je dostupné přiblížení a nastavení čtení.',
 			'accessibility.textSizeDescription' => 'Rozsah textového rozhraní v Pleazyng kromě nastavení velikosti textu systému vašeho zařízení.',
@@ -6744,8 +6761,6 @@ extension on TranslationsCs {
 			'tooltips.shufflePlay' => 'Shuffle hraje',
 			'tooltips.playTrailer' => 'Hrajte trailer',
 			'tooltips.markAsWatched' => 'Mark jako sledovaný',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Mark jako nepozorovaný',
 			'audioTracks.track' => ({required Object n}) => 'Zvukový pás ${n}',
 			'videoControls.audioLabel' => 'Zvuk',
@@ -7251,6 +7266,8 @@ extension on TranslationsCs {
 			'discover.findNext.artworkLoading' => 'Načítání obrázku…',
 			'discover.findNext.artworkUnavailable' => 'Obrázek není k dispozici',
 			'discover.findNext.savedFeedback' => 'Přidáno mezi uložené tipy',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Zatím přeskočeno',
 			'discover.findNext.releaseToConfirm' => 'Uvolněním potvrďte',
 			'discover.findNext.remoteHint' => 'Vybraný obal: ← / → volba · Vybrat: podrobnosti · ↑ / ↓ přesun výběru',
@@ -7258,8 +7275,6 @@ extension on TranslationsCs {
 			'discover.rating' => 'Hodnocení',
 			'discover.director' => 'Režisér',
 			'discover.directors' => 'Režiséři',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV show',
 			'discover.minutesLeft' => ({required Object minutes}) => 'Zbývá ${minutes} min',
@@ -7765,6 +7780,8 @@ extension on TranslationsCs {
 			'collections.selectCollection' => 'Vyberte kolekci',
 			'collections.collectionName' => 'Název kolekce',
 			'collections.enterCollectionName' => 'Vložte název kolekce',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Přidáno do sbírky',
 			'collections.errorAddingToCollection' => 'Nedokázal přidat do sbírky',
 			'collections.created' => 'Sbírka vytvořená',
@@ -7772,8 +7789,6 @@ extension on TranslationsCs {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Odebrat „${title}“ z této kolekce?',
 			'collections.removedFromCollection' => 'Odstranění z kolekce',
 			'collections.removeFromCollectionFailed' => 'Neschopnost odstranit ze sbírky',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Odstranění chyb z sběru: ${error}',
 			'collections.searchCollections' => 'Vyhledávací sbírky...',
 			'playlists.title' => 'Seznamy skladeb',
@@ -8279,6 +8294,8 @@ extension on TranslationsCs {
 			'performanceOverlay.decoder' => 'dekódování',
 			'performanceOverlay.rawDecoder' => 'Růžový decoder',
 			'performanceOverlay.tunneling' => 'tunelů',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Pastrátová',
 			'performanceOverlay.aspect' => 'Pohled',
 			'performanceOverlay.rotation' => 'Rotace',
@@ -8286,8 +8303,6 @@ extension on TranslationsCs {
 			'performanceOverlay.dvPath' => 'Dva cesty',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision dekódování',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision dekodér (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Základní vrstva',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 základní vrstva',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG základní vrstva',
@@ -8523,6 +8538,7 @@ extension on TranslationsCs {
 			'seerr.sessionRejectedAfterReauth' => 'Zasedání bylo po opětovném podepsání zamítnuto.',
 			'seerr.permissionDenied' => 'Seerr tuto akci odmítl: Váš účet již nemá požadované povolení',
 			'seerr.permissionRevoked' => 'Už nemáte právo na to požádat',
+			'seerr.withdrawRequest' => 'Stáhnout požadavek',
 			'services.title' => 'Služby',
 			'services.hubSubtitle' => 'Sync sleduje pokrok a žádá o nové tituly.',
 			'services.integrations' => 'integrace',
@@ -8792,6 +8808,8 @@ extension on TranslationsCs {
 			'homeLayout.managePlexRowsDescription' => 'Otevřeno pro organizaci domácího výběru řádků',
 			'homeLayout.organizeHomeRows' => 'Domácí řádky',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} řádky: pohyb, Hero, Auto-slide, odstranění',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Složení ${library} řádků',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Pokračovat v sledování + ${n} řádky: pohyb, knihovna, Domů, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Vstup jako hrdinská karta',
@@ -8800,8 +8818,6 @@ extension on TranslationsCs {
 			'homeLayout.autoSlide' => 'Auto slide',
 			'homeLayout.autoSlideDescription' => 'Přístupy (PC) a d-pad (TV) vždy fungují a časovač znovu spouští.',
 			'homeLayout.autoSlideEditDescription' => 'Odstraní: pouze se pohybuje, když kliknete na šípku (PC) nebo stisknete levou / pravou na dálku (TV).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'První hrdina',
 			'homeLayout.showOnHome' => 'Zobrazit na domácím obrazovce',
 			'homeLayout.home' => 'Domovská obrazovka',
@@ -9306,6 +9322,8 @@ extension on TranslationsCs {
 			'audiobook.customSpeed' => 'Přizpůsobená hrací rychlost',
 			'audiobook.speedHelp' => 'Vybírejte rychlost od 0,25× do 4×.',
 			'audiobook.apply' => 'aplikovat',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Přizpůsobený čas spánku',
 			'audiobook.sleepMinutes' => 'minuty (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Zastavte se po ${count} kapitolách',
@@ -9314,8 +9332,6 @@ extension on TranslationsCs {
 			'audiobook.useDefaults' => 'Použijte tyto ovládací prvky pro nové knihy',
 			'audiobook.librarySort' => 'Černé knihy',
 			'audiobook.sortTitle' => 'Název',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Autorka',
 			'audiobook.sortNarrator' => 'Příběh',
 			'audiobook.sortSeries' => 'Seriálový příkaz',
@@ -9820,6 +9836,8 @@ extension on TranslationsCs {
 			'musicExperience.bluetoothDrivingHint' => 'Vyberte připojené Bluetooth výstupy, které automaticky otevřou zobrazení pro řízení.',
 			'musicTools.loudnessMissing' => 'Server nevrátil údaje o hlasitosti',
 			'musicTools.loudnessRequested' => 'Požadavek na analýzu byl odeslán',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Tato verze serveru nepodporuje požadavky na analýzu',
 			'musicTools.serverHistory' => 'Historie přehrávání na serveru',
 			'musicTools.nfcWrite' => 'Zapsat NFC štítek',
@@ -9828,8 +9846,6 @@ extension on TranslationsCs {
 			'musicTools.storageBudget' => 'Odhadovaný limit stahování (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Hostující DJ',
 			'musicTools.charts' => 'Žebříčky poslechu',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Znovu objevit',
 			'musicTools.stations' => 'Hudební stanice',
 			'musicTools.prompt' => 'Seznam podle popisu',

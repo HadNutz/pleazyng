@@ -898,6 +898,11 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Vent dette mange minutter uten inngang før du viser skjermbeskyttelse kunstverk.';
 	@override String get videoCodecOptionDescription => 'Tillat direkte spill for denne kodeksen når den støttes. Unchecked codecs transcodes av media serveren.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer størrelse: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Fortsett å se';
+	@override String get showTopShelfContentDescription => 'Slå av for å vise bare Pleazyng-bildet for alle profiler.';
+	@override String get topShelfUpdateFailed => 'Kunne ikke oppdatere Top Shelf. Prøv igjen.';
+	@override String get showFinishTime => 'Vis sluttidspunkt';
+	@override String get showFinishTimeDescription => 'Vis når videoen slutter, ved siden av gjenværende tid.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$nb extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng kunne ikke sjekke hvilke filer dette vil fjerne, så det kan slette mer enn elementet som er nevnt ovenfor. Avbryt og prøv igjen, eller slett likevel.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Serveren din ga ikke fildetaljer for dette elementet, så Pleazyng kan ikke sjekke hvilke filer dette vil fjerne. Det kan slette mer enn elementet som er nevnt ovenfor.';
 	@override String get mediaDeletedSuccessfully => 'Medieelement slettet';
+	@override String get mediaDeletionDisabledOnServer => 'Sletting av medier er slått av på denne serveren. Tillat sletting av medier i serverens bibliotekinnstillinger.';
 	@override String get mediaFailedToDelete => 'Kunne ikke slette medieelement';
 	@override String get rate => 'Vurder';
 	@override String get playFromBeginning => 'Spill fra begynnelsen';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$nb extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Økten ble avvist etter ny innlogging';
 	@override String get permissionDenied => 'Seerr avviste denne handlingen: kontoen din har ikke lenger den nødvendige tillatelsen';
 	@override String get permissionRevoked => 'Du har ikke lenger tillatelse til å be om dette';
+	@override String get withdrawRequest => 'Trekk tilbake forespørselen';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$nb extends Translations$common$mediaKind$en
 	@override String get clip => 'Klipp';
 	@override String get photo => 'Bilde';
 	@override String get folder => 'Mappe';
+	@override String get photoAlbum => 'Fotoalbum';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsNb {
 			'common.mediaKind.clip' => 'Klipp',
 			'common.mediaKind.photo' => 'Bilde',
 			'common.mediaKind.folder' => 'Mappe',
+			'common.mediaKind.photoAlbum' => 'Fotoalbum',
 			'screens.licenses' => 'Lisenser',
 			'screens.switchProfile' => 'Bytt profil',
 			'screens.subtitleStyling' => 'Undertekststil',
@@ -6185,9 +6194,9 @@ extension on TranslationsNb {
 			'settings.manageLibrariesDescription' => 'Omorganiser og skjul biblioteker',
 			'settings.companionRemoteServer' => 'Fjernkontrollserver',
 			'settings.companionRemoteServerDescription' => 'La mobilenheter på nettverket styre denne appen',
-			'settings.companionRemoteServerStartFailed' => 'Kunne ikke starte fjernkontrollserveren',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Kunne ikke starte fjernkontrollserveren',
 			'settings.companionRemoteServerStopFailed' => 'Kunne ikke stoppe fjernkontrollserveren',
 			'settings.autoPip' => 'Automatisk bilde-i-bilde',
 			'settings.autoPipDescription' => 'Åpne bilde-i-bilde når du forlater appen under avspilling',
@@ -6401,6 +6410,11 @@ extension on TranslationsNb {
 			'settings.contentScreensaverDelayOptionDescription' => 'Vent dette mange minutter uten inngang før du viser skjermbeskyttelse kunstverk.',
 			'settings.videoCodecOptionDescription' => 'Tillat direkte spill for denne kodeksen når den støttes. Unchecked codecs transcodes av media serveren.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer størrelse: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Fortsett å se',
+			'settings.showTopShelfContentDescription' => 'Slå av for å vise bare Pleazyng-bildet for alle profiler.',
+			'settings.topShelfUpdateFailed' => 'Kunne ikke oppdatere Top Shelf. Prøv igjen.',
+			'settings.showFinishTime' => 'Vis sluttidspunkt',
+			'settings.showFinishTimeDescription' => 'Vis når videoen slutter, ved siden av gjenværende tid.',
 			'themeEditor.builtIn' => 'Innebygde',
 			'themeEditor.presets' => 'Forhåndsinnstillinger',
 			'themeEditor.custom' => 'Egendefinert',
@@ -6634,6 +6648,7 @@ extension on TranslationsNb {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng kunne ikke sjekke hvilke filer dette vil fjerne, så det kan slette mer enn elementet som er nevnt ovenfor. Avbryt og prøv igjen, eller slett likevel.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Serveren din ga ikke fildetaljer for dette elementet, så Pleazyng kan ikke sjekke hvilke filer dette vil fjerne. Det kan slette mer enn elementet som er nevnt ovenfor.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Medieelement slettet',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Sletting av medier er slått av på denne serveren. Tillat sletting av medier i serverens bibliotekinnstillinger.',
 			'mediaMenu.mediaFailedToDelete' => 'Kunne ikke slette medieelement',
 			'mediaMenu.rate' => 'Vurder',
 			'mediaMenu.playFromBeginning' => 'Spill fra begynnelsen',
@@ -6693,6 +6708,8 @@ extension on TranslationsNb {
 			'accessibility.reduceMotion' => 'Redusere bevegelse',
 			'accessibility.reduceMotionHint' => 'Stopp bevegelser i fokusmarkeringer, sideoverganger og dekorative effekter.',
 			'accessibility.largeTargets' => 'Større touch mål',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Gi delte kontroller mer plass for berøring og assistent navigasjon.',
 			'accessibility.navigationHint' => 'Bruk Tab og Shift+Tab for å flytte mellom kontroller, Enter eller mellomrom for å aktivere og Escape eller Tilbake for å lukke. Zoom og leseinnstillinger er tilgjengelige når en bok er åpen.',
 			'accessibility.textSizeDescription' => 'Skala grensesnitt tekst i Pleazyng i tillegg til enhetens system tekst-størrelse innstilling.',
@@ -6700,8 +6717,6 @@ extension on TranslationsNb {
 			'tooltips.shufflePlay' => 'Tilfeldig avspilling',
 			'tooltips.playTrailer' => 'Spill trailer',
 			'tooltips.markAsWatched' => 'Merk som sett',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Merk som usett',
 			'audioTracks.track' => ({required Object n}) => 'Lydspor ${n}',
 			'videoControls.audioLabel' => 'Lyd',
@@ -7207,6 +7222,8 @@ extension on TranslationsNb {
 			'discover.findNext.artworkLoading' => 'Laster bilde…',
 			'discover.findNext.artworkUnavailable' => 'Bilde utilgjengelig',
 			'discover.findNext.savedFeedback' => 'Lagt til i lagrede valg',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Hoppet over foreløpig',
 			'discover.findNext.releaseToConfirm' => 'Slipp for å bekrefte',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → velg · Velg: detaljer · ↑ / ↓ flytt fokus',
@@ -7214,8 +7231,6 @@ extension on TranslationsNb {
 			'discover.rating' => 'Vurdering',
 			'discover.director' => 'Regissør',
 			'discover.directors' => 'Regissører',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min igjen',
@@ -7721,6 +7736,8 @@ extension on TranslationsNb {
 			'collections.selectCollection' => 'Velg samling',
 			'collections.collectionName' => 'Samlingsnavn',
 			'collections.enterCollectionName' => 'Skriv inn samlingsnavn',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Lagt til i samling',
 			'collections.errorAddingToCollection' => 'Kunne ikke legge til i samling',
 			'collections.created' => 'Samling opprettet',
@@ -7728,8 +7745,6 @@ extension on TranslationsNb {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Fjerne "${title}" fra denne samlingen?',
 			'collections.removedFromCollection' => 'Fjernet fra samling',
 			'collections.removeFromCollectionFailed' => 'Kunne ikke fjerne fra samling',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Feil ved fjerning fra samling: ${error}',
 			'collections.searchCollections' => 'Søk i samlinger...',
 			'playlists.title' => 'Spillelister',
@@ -8235,6 +8250,8 @@ extension on TranslationsNb {
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
 			'performanceOverlay.tunneling' => 'Tunneling',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Direkte utgang',
 			'performanceOverlay.aspect' => 'Format',
 			'performanceOverlay.rotation' => 'Rotasjon',
@@ -8242,8 +8259,6 @@ extension on TranslationsNb {
 			'performanceOverlay.dvPath' => 'DV-sti',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekoder (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Basislag',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislag',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-basislag',
@@ -8479,6 +8494,7 @@ extension on TranslationsNb {
 			'seerr.sessionRejectedAfterReauth' => 'Økten ble avvist etter ny innlogging',
 			'seerr.permissionDenied' => 'Seerr avviste denne handlingen: kontoen din har ikke lenger den nødvendige tillatelsen',
 			'seerr.permissionRevoked' => 'Du har ikke lenger tillatelse til å be om dette',
+			'seerr.withdrawRequest' => 'Trekk tilbake forespørselen',
 			'services.title' => 'Tjenester',
 			'services.hubSubtitle' => 'Synkroniser fremdrift og forespør nye titler.',
 			'services.integrations' => 'Integrasjoner',
@@ -8748,6 +8764,8 @@ extension on TranslationsNb {
 			'homeLayout.managePlexRowsDescription' => 'Åpne for å organisere de hjemmelavede radene',
 			'homeLayout.organizeHomeRows' => 'Organisere hjemmelavede rader',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: bevegelse, Hero, Auto-slide, fjerne',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisere ${library} rader',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsett å se + ${n} rader: bevegelse, Biblioteket, Hjem, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render som en helt kort',
@@ -8756,8 +8774,6 @@ extension on TranslationsNb {
 			'homeLayout.autoSlide' => 'Automatisk bytte',
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) og d-pad (TV) fungerer alltid og starter timeret på nytt.',
 			'homeLayout.autoSlideEditDescription' => 'Slides også på egen hånd hvert få sekunder. Av: bare beveger seg når du klikker på en pil (PC) eller trykker venstre/høyre på fjern (TV).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Oppmuntre til å helte først',
 			'homeLayout.showOnHome' => 'Show på hjemskjermen',
 			'homeLayout.home' => 'Hjem',
@@ -9262,6 +9278,8 @@ extension on TranslationsNb {
 			'audiobook.customSpeed' => 'Custom playback hastighet',
 			'audiobook.speedHelp' => 'Velg en hastighet fra 0.25× til 4×.',
 			'audiobook.apply' => 'Anvendt',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Personlig søvn timer',
 			'audiobook.sleepMinutes' => 'Minutter (1 til 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stopp etter ${count} kapittel',
@@ -9270,8 +9288,6 @@ extension on TranslationsNb {
 			'audiobook.useDefaults' => 'Bruk disse lyttekontroller for nye bøker',
 			'audiobook.librarySort' => 'Sort bøker',
 			'audiobook.sortTitle' => 'Tittel',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Forfatter',
 			'audiobook.sortNarrator' => 'Narratør',
 			'audiobook.sortSeries' => 'Serien ordre',
@@ -9776,6 +9792,8 @@ extension on TranslationsNb {
 			'musicExperience.bluetoothDrivingHint' => 'Velg tilkoblede Bluetooth-utganger som automatisk åpner kjørevisningen.',
 			'musicTools.loudnessMissing' => 'Ingen lydstyrkedata ble returnert',
 			'musicTools.loudnessRequested' => 'Analyseforespørsel sendt',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Denne serverversjonen støtter ikke analyseforespørsler',
 			'musicTools.serverHistory' => 'Avspillingshistorikk på serveren',
 			'musicTools.nfcWrite' => 'Skriv NFC-brikke',
@@ -9784,8 +9802,6 @@ extension on TranslationsNb {
 			'musicTools.storageBudget' => 'Anslått nedlastingsgrense (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Gjeste-DJ',
 			'musicTools.charts' => 'Lyttestatistikk',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Gjenoppdag',
 			'musicTools.stations' => 'Musikkstasjoner',
 			'musicTools.prompt' => 'Spilleliste fra beskrivelse',

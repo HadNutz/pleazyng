@@ -78,6 +78,7 @@ final class SubtitleWhisperCppService {
       ).lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>('fw_version');
       return true;
     } catch (_) {
+      // best-effort: Gate the optional local subtitle engine on a successful runtime probe.
       return false;
     }
   }

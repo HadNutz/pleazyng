@@ -173,6 +173,7 @@ class RommNative extends ChangeNotifier {
       }
       return result;
     } catch (_) {
+      // best-effort: Hide cores whose native availability could not be established.
       return {};
     }
   }

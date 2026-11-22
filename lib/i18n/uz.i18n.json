@@ -224,7 +224,8 @@
       "playlist": "Pleylist",
       "clip": "Klip",
       "photo": "Foto",
-      "folder": "Papka"
+      "folder": "Papka",
+      "photoAlbum": "Fotoalbom"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer siz: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer siz: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Tomoshani davom ettirish",
+    "showTopShelfContentDescription": "Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.",
+    "topShelfUpdateFailed": "Top Shelf yangilanmadi. Qayta urinib koʻring.",
+    "showFinishTime": "Tugash vaqtini koʻrsatish",
+    "showFinishTimeDescription": "Qolgan vaqt yonida video qachon tugashini koʻrsatadi."
   },
   "themeEditor": {
     "builtIn": "Oʻrnatilgan",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng qaysi fayllar olib tashlanishini tekshira olmadi, shuning uchun u yuqorida koʻrsatilgan elementdan koʻproq narsani oʻchirishi mumkin. Bekor qilib qaytadan urining yoki baribir oʻchiring.",
     "deleteScopeUnverifiedNoFileInfo": "Serveringiz ushbu element uchun fayl tafsilotlarini taqdim etmadi, shuning uchun Pleazyng qaysi fayllar olib tashlanishini tekshira olmaydi. U yuqorida koʻrsatilgan elementdan koʻproq narsani oʻchirishi mumkin.",
     "mediaDeletedSuccessfully": "Media elementi muvaffaqiyatli oʻchirildi",
+    "mediaDeletionDisabledOnServer": "Bu serverda media fayllarni oʻchirish oʻchirilgan. Server kutubxonasi sozlamalarida media fayllarni oʻchirishga ruxsat bering.",
     "mediaFailedToDelete": "Media elementini oʻchirib boʻlmadi",
     "rate": "Baho berish",
     "playFromBeginning": "Boshidan ijro etish",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr foydalanuvchi maʼlumotlarini qaytarmadi",
     "sessionRejectedAfterReauth": "Qayta kirilgandan keyin seans rad etildi",
     "permissionDenied": "Seerr bu amalni rad etdi: hisobingizda endi kerakli ruxsat yoʻq",
-    "permissionRevoked": "Buni soʻrash uchun endi ruxsatingiz yoʻq"
+    "permissionRevoked": "Buni soʻrash uchun endi ruxsatingiz yoʻq",
+    "withdrawRequest": "Soʻrovni qaytarib olish"
   },
   "services": {
     "title": "Xizmatlar",

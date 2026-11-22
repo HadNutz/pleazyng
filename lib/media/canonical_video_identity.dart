@@ -34,6 +34,7 @@ Set<String> canonicalVideoIdentitiesForMediaItem(MediaItem media) {
         MediaKind.season ||
         MediaKind.collection ||
         MediaKind.playlist ||
+        MediaKind.photoAlbum ||
         MediaKind.photo ||
         MediaKind.folder ||
         MediaKind.unknown:

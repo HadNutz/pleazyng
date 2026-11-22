@@ -224,7 +224,8 @@
       "playlist": "Плейлист",
       "clip": "Клип",
       "photo": "Фото",
-      "folder": "Папка"
+      "folder": "Папка",
+      "photoAlbum": "Фотоальбом"
     }
   },
   "screens": {
@@ -796,7 +797,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Буфер размер: ${size} MiB"
+    "streamBufferSizeMiB": "Буфер размер: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Продолжить просмотр",
+    "showTopShelfContentDescription": "Если выключить этот параметр, для всех профилей будет показано только изображение Pleazyng.",
+    "topShelfUpdateFailed": "Не удалось обновить Top Shelf. Попробуйте ещё раз.",
+    "showFinishTime": "Показывать время окончания",
+    "showFinishTimeDescription": "Показывать рядом с оставшимся временем, когда закончится видео."
   },
   "themeEditor": {
     "builtIn": "Встроенные",
@@ -1062,6 +1068,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng не смог проверить, какие файлы будут удалены, поэтому может быть удалено больше, чем указанный выше элемент. Отмените и попробуйте снова либо удалите в любом случае.",
     "deleteScopeUnverifiedNoFileInfo": "Ваш сервер не предоставил сведения о файлах для этого элемента, поэтому Pleazyng не может проверить, какие файлы будут удалены. Может быть удалено больше, чем указанный выше элемент.",
     "mediaDeletedSuccessfully": "Медиаэлемент успешно удалён",
+    "mediaDeletionDisabledOnServer": "Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.",
     "mediaFailedToDelete": "Не удалось удалить медиаэлемент",
     "rate": "Оценить",
     "playFromBeginning": "Воспроизвести сначала",
@@ -3482,7 +3489,8 @@
     "noUserInformation": "Seerr не вернул сведения о пользователе",
     "sessionRejectedAfterReauth": "Сеанс был отклонён после повторного входа",
     "permissionDenied": "Seerr отклонил это действие: у вашей учётной записи больше нет необходимого разрешения",
-    "permissionRevoked": "У вас больше нет разрешения запрашивать это"
+    "permissionRevoked": "У вас больше нет разрешения запрашивать это",
+    "withdrawRequest": "Отозвать запрос"
   },
   "services": {
     "title": "Сервисы",

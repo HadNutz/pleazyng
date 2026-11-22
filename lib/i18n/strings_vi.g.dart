@@ -896,6 +896,11 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Đợi nhiều phút này mà không cần nhập trước khi hiển thị màn hình bảo vệ nghệ thuật.';
 	@override String get videoCodecOptionDescription => 'Cho phép phát trực tiếp cho codec này khi được hỗ trợ. codec không kiểm tra được chuyển mã bởi máy chủ truyền thông.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer kích thước: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Tiếp tục xem';
+	@override String get showTopShelfContentDescription => 'Tắt để chỉ hiển thị hình ảnh Pleazyng cho tất cả hồ sơ.';
+	@override String get topShelfUpdateFailed => 'Không thể cập nhật Top Shelf. Hãy thử lại.';
+	@override String get showFinishTime => 'Hiện giờ kết thúc';
+	@override String get showFinishTimeDescription => 'Hiển thị giờ video kết thúc bên cạnh thời lượng còn lại.';
 }
 
 // Path: themeEditor
@@ -1141,6 +1146,7 @@ class _Translations$mediaMenu$vi extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng không thể xác định những tệp sẽ bị xóa, nên có thể xóa nhiều hơn mục nêu trên. Hãy hủy và thử lại, hoặc vẫn xóa.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Máy chủ không cung cấp thông tin tệp cho mục này, nên Pleazyng không thể xác định những tệp sẽ bị xóa. Có thể xóa nhiều hơn mục nêu trên.';
 	@override String get mediaDeletedSuccessfully => 'Media item đã bị xóa thành công';
+	@override String get mediaDeletionDisabledOnServer => 'Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.';
 	@override String get mediaFailedToDelete => 'Không xóa các mục phương tiện truyền thông';
 	@override String get rate => 'Đánh giá';
 	@override String get playFromBeginning => 'Phát từ đầu';
@@ -2911,6 +2917,7 @@ class _Translations$seerr$vi extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Cuộc họp đã bị từ chối sau khi ký lại';
 	@override String get permissionDenied => 'Seerr từ chối hành động này: Tài khoản của bạn không còn được phép yêu cầu';
 	@override String get permissionRevoked => 'Bạn không còn được phép yêu cầu điều này';
+	@override String get withdrawRequest => 'Rút lại yêu cầu';
 }
 
 // Path: services
@@ -4609,6 +4616,7 @@ class _Translations$common$mediaKind$vi extends Translations$common$mediaKind$en
 	@override String get clip => 'Video ngắn';
 	@override String get photo => 'Hình Ảnh';
 	@override String get folder => 'Thư mục';
+	@override String get photoAlbum => 'Album ảnh';
 }
 
 // Path: settings.startupSectionOptions
@@ -5854,6 +5862,7 @@ extension on TranslationsVi {
 			'common.mediaKind.clip' => 'Video ngắn',
 			'common.mediaKind.photo' => 'Hình Ảnh',
 			'common.mediaKind.folder' => 'Thư mục',
+			'common.mediaKind.photoAlbum' => 'Album ảnh',
 			'screens.licenses' => 'Giấy phép',
 			'screens.switchProfile' => 'Tính năng Switch Profile',
 			'screens.subtitleStyling' => 'Kiểu phụ đề',
@@ -6160,9 +6169,9 @@ extension on TranslationsVi {
 			'settings.manageLibrariesDescription' => 'Đặt lại và ẩn thư viện',
 			'settings.companionRemoteServer' => 'Dịch vụ Remote Server',
 			'settings.companionRemoteServerDescription' => 'Cho phép các thiết bị di động trên mạng của bạn để kiểm soát ứng dụng này',
-			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
 			'settings.companionRemoteServerStopFailed' => 'Không thể dừng lại máy chủ đồng nghiệp',
 			'settings.autoPip' => 'Ảnh Auto Picture in Picture',
 			'settings.autoPipDescription' => 'Tự động nhập hình ảnh trong khi bạn rời khỏi ứng dụng trong khi chơi',
@@ -6376,6 +6385,11 @@ extension on TranslationsVi {
 			'settings.contentScreensaverDelayOptionDescription' => 'Đợi nhiều phút này mà không cần nhập trước khi hiển thị màn hình bảo vệ nghệ thuật.',
 			'settings.videoCodecOptionDescription' => 'Cho phép phát trực tiếp cho codec này khi được hỗ trợ. codec không kiểm tra được chuyển mã bởi máy chủ truyền thông.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer kích thước: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Tiếp tục xem',
+			'settings.showTopShelfContentDescription' => 'Tắt để chỉ hiển thị hình ảnh Pleazyng cho tất cả hồ sơ.',
+			'settings.topShelfUpdateFailed' => 'Không thể cập nhật Top Shelf. Hãy thử lại.',
+			'settings.showFinishTime' => 'Hiện giờ kết thúc',
+			'settings.showFinishTimeDescription' => 'Hiển thị giờ video kết thúc bên cạnh thời lượng còn lại.',
 			'themeEditor.builtIn' => 'xây dựng',
 			'themeEditor.presets' => 'Lời bài hát',
 			'themeEditor.custom' => 'Tùy chọn',
@@ -6609,6 +6623,7 @@ extension on TranslationsVi {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng không thể xác định những tệp sẽ bị xóa, nên có thể xóa nhiều hơn mục nêu trên. Hãy hủy và thử lại, hoặc vẫn xóa.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Máy chủ không cung cấp thông tin tệp cho mục này, nên Pleazyng không thể xác định những tệp sẽ bị xóa. Có thể xóa nhiều hơn mục nêu trên.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media item đã bị xóa thành công',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.',
 			'mediaMenu.mediaFailedToDelete' => 'Không xóa các mục phương tiện truyền thông',
 			'mediaMenu.rate' => 'Đánh giá',
 			'mediaMenu.playFromBeginning' => 'Phát từ đầu',
@@ -6668,6 +6683,8 @@ extension on TranslationsVi {
 			'accessibility.reduceMotion' => 'Giảm động lực',
 			'accessibility.reduceMotionHint' => 'Dừng chuyển động của dấu chỉ tiêu điểm, hiệu ứng chuyển trang và các hiệu ứng trang trí.',
 			'accessibility.largeTargets' => 'Mục tiêu Touch lớn hơn',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Tăng diện tích các điều khiển dùng chung để dễ chạm và điều hướng bằng công nghệ hỗ trợ.',
 			'accessibility.navigationHint' => 'Dùng Tab và Shift+Tab để di chuyển giữa các điều khiển, Enter hoặc Space để kích hoạt, Escape hoặc nút Quay lại để đóng. Bạn có thể chỉnh mức thu phóng và tùy chọn đọc khi mở sách.',
 			'accessibility.textSizeDescription' => 'Tích hợp văn bản giao diện trong Pleazyng ngoài thiết lập kích thước văn bản hệ thống của thiết bị của bạn.',
@@ -6675,8 +6692,6 @@ extension on TranslationsVi {
 			'tooltips.shufflePlay' => 'Shuffle chơi',
 			'tooltips.playTrailer' => 'Trò chơi Trailer',
 			'tooltips.markAsWatched' => 'Mark theo dõi',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Mark như không được xem',
 			'audioTracks.track' => ({required Object n}) => 'Âm thanh Track ${n}',
 			'videoControls.audioLabel' => 'Âm thanh',
@@ -7182,6 +7197,8 @@ extension on TranslationsVi {
 			'discover.findNext.artworkLoading' => 'Đang tải ảnh…',
 			'discover.findNext.artworkUnavailable' => 'Không có ảnh',
 			'discover.findNext.savedFeedback' => 'Đã thêm vào các lựa chọn đã lưu',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Đã tạm bỏ qua',
 			'discover.findNext.releaseToConfirm' => 'Thả để xác nhận',
 			'discover.findNext.remoteHint' => 'Khi chọn ảnh bìa: ← / → chọn · Nút Chọn: chi tiết · ↑ / ↓ chuyển tiêu điểm',
@@ -7189,8 +7206,6 @@ extension on TranslationsVi {
 			'discover.rating' => 'Đánh giá',
 			'discover.director' => 'Đạo Diễn',
 			'discover.directors' => 'Đạo Diễn',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Phim',
 			'discover.tvShow' => 'chương trình TV',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} phút left',
@@ -7696,6 +7711,8 @@ extension on TranslationsVi {
 			'collections.selectCollection' => 'Chọn bộ sưu tập',
 			'collections.collectionName' => 'Collection Tên',
 			'collections.enterCollectionName' => 'Nhập tên bộ sưu tập',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Thêm vào Collection',
 			'collections.errorAddingToCollection' => 'Không thể thêm vào bộ sưu tập',
 			'collections.created' => 'Bộ sưu tập được tạo ra',
@@ -7703,8 +7720,6 @@ extension on TranslationsVi {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Xóa “${title}” khỏi bộ sưu tập này?',
 			'collections.removedFromCollection' => 'Loại bỏ từ bộ sưu tập',
 			'collections.removeFromCollectionFailed' => 'Không thể loại bỏ khỏi bộ sưu tập',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Sai lầm xóa khỏi bộ sưu tập: ${error}',
 			'collections.searchCollections' => 'Tìm kiếm bộ sưu tập',
 			'playlists.title' => 'Danh sách phát',
@@ -8210,6 +8225,8 @@ extension on TranslationsVi {
 			'performanceOverlay.decoder' => 'Bộ giải mã',
 			'performanceOverlay.rawDecoder' => 'Mã Decoder',
 			'performanceOverlay.tunneling' => 'đường hầm',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Truyền thẳng',
 			'performanceOverlay.aspect' => 'Khía cạnh',
 			'performanceOverlay.rotation' => 'Xoay',
@@ -8217,8 +8234,6 @@ extension on TranslationsVi {
 			'performanceOverlay.dvPath' => 'Đường DV',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision Bộ xử lý',
 			'performanceOverlay.dvRouteDecoderP81' => 'Bộ giải mã Dolby Vision (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Lớp cơ sở',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lớp cơ sở',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG cơ sở lớp',
@@ -8454,6 +8469,7 @@ extension on TranslationsVi {
 			'seerr.sessionRejectedAfterReauth' => 'Cuộc họp đã bị từ chối sau khi ký lại',
 			'seerr.permissionDenied' => 'Seerr từ chối hành động này: Tài khoản của bạn không còn được phép yêu cầu',
 			'seerr.permissionRevoked' => 'Bạn không còn được phép yêu cầu điều này',
+			'seerr.withdrawRequest' => 'Rút lại yêu cầu',
 			'services.title' => 'Dịch vụ',
 			'services.hubSubtitle' => 'Sync theo dõi tiến bộ và yêu cầu các tiêu đề mới.',
 			'services.integrations' => 'Integration',
@@ -8723,6 +8739,8 @@ extension on TranslationsVi {
 			'homeLayout.managePlexRowsDescription' => 'Mở để tổ chức các dòng được chọn tại nhà',
 			'homeLayout.organizeHomeRows' => 'Tổ chức Home Rows',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} hàng: di chuyển, Anh hùng, Auto-slide, loại bỏ',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Tổ chức ${library} hàng',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Tiếp tục xem + ${n} hàng: di chuyển, Thư viện, Nhà, Anh hùng, tự động-slide',
 			'homeLayout.renderAsHero' => 'Render như một thẻ anh hùng',
@@ -8731,8 +8749,6 @@ extension on TranslationsVi {
 			'homeLayout.autoSlide' => 'tự động slide',
 			'homeLayout.autoSlideDescription' => 'Lấy (PC) và d-pad (TV) luôn hoạt động và khởi động lại đồng hồ.',
 			'homeLayout.autoSlideEditDescription' => 'Ngoài ra, nó tự nhảy mỗi vài giây. tắt: chỉ di chuyển khi bạn nhấp vào một mũi tên (PC) hoặc nhấn trái / phải trên từ xa (TV).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Khả năng Hero đầu tiên',
 			'homeLayout.showOnHome' => 'Hiển thị trên màn hình Home',
 			'homeLayout.home' => 'Trang chủ',
@@ -9237,6 +9253,8 @@ extension on TranslationsVi {
 			'audiobook.customSpeed' => 'Tốc độ playback tùy chỉnh',
 			'audiobook.speedHelp' => 'Chọn tốc độ từ 0.25× đến 4×.',
 			'audiobook.apply' => 'Ứng dụng',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Thời gian giấc ngủ tùy chỉnh',
 			'audiobook.sleepMinutes' => 'Thời gian (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Ngừng sau các chương ${count}',
@@ -9245,8 +9263,6 @@ extension on TranslationsVi {
 			'audiobook.useDefaults' => 'Sử dụng các điều khiển lắng nghe này cho các cuốn sách mới',
 			'audiobook.librarySort' => 'sort sách',
 			'audiobook.sortTitle' => 'Tiêu đề',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Tác giả',
 			'audiobook.sortNarrator' => 'Nữ diễn viên',
 			'audiobook.sortSeries' => 'Lệnh Series',
@@ -9751,6 +9767,8 @@ extension on TranslationsVi {
 			'musicExperience.bluetoothDrivingHint' => 'Chọn đầu ra Bluetooth đã kết nối để tự động mở giao diện lái xe.',
 			'musicTools.loudnessMissing' => 'Không nhận được dữ liệu độ lớn âm thanh',
 			'musicTools.loudnessRequested' => 'Đã gửi yêu cầu phân tích',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Phiên bản máy chủ này không hỗ trợ yêu cầu phân tích',
 			'musicTools.serverHistory' => 'Lịch sử phát trên máy chủ',
 			'musicTools.nfcWrite' => 'Ghi thẻ NFC',
@@ -9759,8 +9777,6 @@ extension on TranslationsVi {
 			'musicTools.storageBudget' => 'Giới hạn tải xuống ước tính (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'DJ khách mời',
 			'musicTools.charts' => 'Bảng xếp hạng nghe',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Khám phá lại',
 			'musicTools.stations' => 'Đài âm nhạc',
 			'musicTools.prompt' => 'Danh sách từ mô tả',

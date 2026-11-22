@@ -224,7 +224,8 @@
       "playlist": "Spilleliste",
       "clip": "Klipp",
       "photo": "Bilde",
-      "folder": "Mappe"
+      "folder": "Mappe",
+      "photoAlbum": "Fotoalbum"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer størrelse: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer størrelse: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Fortsett å se",
+    "showTopShelfContentDescription": "Slå av for å vise bare Pleazyng-bildet for alle profiler.",
+    "topShelfUpdateFailed": "Kunne ikke oppdatere Top Shelf. Prøv igjen.",
+    "showFinishTime": "Vis sluttidspunkt",
+    "showFinishTimeDescription": "Vis når videoen slutter, ved siden av gjenværende tid."
   },
   "themeEditor": {
     "builtIn": "Innebygde",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng kunne ikke sjekke hvilke filer dette vil fjerne, så det kan slette mer enn elementet som er nevnt ovenfor. Avbryt og prøv igjen, eller slett likevel.",
     "deleteScopeUnverifiedNoFileInfo": "Serveren din ga ikke fildetaljer for dette elementet, så Pleazyng kan ikke sjekke hvilke filer dette vil fjerne. Det kan slette mer enn elementet som er nevnt ovenfor.",
     "mediaDeletedSuccessfully": "Medieelement slettet",
+    "mediaDeletionDisabledOnServer": "Sletting av medier er slått av på denne serveren. Tillat sletting av medier i serverens bibliotekinnstillinger.",
     "mediaFailedToDelete": "Kunne ikke slette medieelement",
     "rate": "Vurder",
     "playFromBeginning": "Spill fra begynnelsen",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr returnerte ingen brukerinformasjon",
     "sessionRejectedAfterReauth": "Økten ble avvist etter ny innlogging",
     "permissionDenied": "Seerr avviste denne handlingen: kontoen din har ikke lenger den nødvendige tillatelsen",
-    "permissionRevoked": "Du har ikke lenger tillatelse til å be om dette"
+    "permissionRevoked": "Du har ikke lenger tillatelse til å be om dette",
+    "withdrawRequest": "Trekk tilbake forespørselen"
   },
   "services": {
     "title": "Tjenester",

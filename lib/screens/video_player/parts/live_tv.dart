@@ -766,7 +766,9 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
       if (buffered != null) {
         try {
           await buffered.stop();
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('Could not stop the buffered recording after initialization failed.');
+        }
       }
       try {
         final size = partial != null && await partial.exists() ? await partial.length() : 0;

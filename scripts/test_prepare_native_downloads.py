@@ -76,13 +76,15 @@ class NativeDownloadsTests(unittest.TestCase):
     def test_gradle_staging_is_consumed_by_the_unchanged_wrapper_url(self):
         wrapper = self.root / "android/gradle/wrapper"
         wrapper.mkdir(parents=True)
-        (wrapper / "gradle-wrapper.properties").write_text("distributionUrl=https\\://services.gradle.org/distributions/gradle-9.6.1-all.zip\ndistributionSha256Sum=" + self.digest + "\n")
+        (wrapper / "gradle-wrapper.properties").write_text("distributionUrl=https\\://services.gradle.org/distributions/gradle-9.9.2-all.zip\ndistributionSha256Sum=" + self.digest + "\n")
         archive = self.root / "gradle.zip"
         archive.write_bytes(self.content)
         home = self.root / "gradle-home"
         with patch.dict(downloads.os.environ, {"GRADLE_USER_HOME": str(home)}), patch.object(downloads, "pinned_asset", return_value=archive):
             downloads.prepare_gradle(self.root, self.root / "cache")
-        staged = home / "wrapper/dists/gradle-9.6.1-all/4xnwe4ed5w7qqynisxnnvegss/gradle-9.6.1-all.zip"
+        url = "https://services.gradle.org/distributions/gradle-9.9.2-all.zip"
+        url_hash = downloads.base36(int.from_bytes(hashlib.md5(url.encode()).digest(), "big"))
+        staged = home / "wrapper/dists/gradle-9.9.2-all" / url_hash / "gradle-9.9.2-all.zip"
         self.assertEqual(staged.read_bytes(), self.content)
         self.assertFalse(staged.with_suffix(".zip.ok").exists(), "Only the original Wrapper may acknowledge verification/extraction")
 

@@ -46,6 +46,7 @@ class SteamInputProfile {
     try {
       return SteamInputProfile.decode(text);
     } catch (_) {
+      // best-effort: Restore the default input profile when the saved mapping cannot be decoded.
       return SteamInputProfile.defaults();
     }
   }

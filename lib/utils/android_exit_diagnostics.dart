@@ -123,7 +123,7 @@ abstract final class AndroidExitDiagnostics {
         unawaited(_persistStartupPhase(phase.id));
       }
     } catch (_) {
-      // Startup diagnostics must never affect the startup path.
+      // best-effort: Startup diagnostics must never affect the startup path.
     }
   }
 

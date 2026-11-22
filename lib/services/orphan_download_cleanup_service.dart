@@ -325,6 +325,7 @@ class _ScanState {
       final resolved = path.normalize(await File(entityPath).resolveSymbolicLinks());
       return path.isWithin(rootPath, resolved);
     } catch (_) {
+      // best-effort: Refuse cleanup when the file cannot be resolved inside the selected root.
       return false;
     }
   }

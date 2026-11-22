@@ -329,7 +329,7 @@ class TraktClient implements DisposableTrackerClient {
       try {
         await refresh();
       } catch (_) {
-        // Fall through; the request will hit 401 naturally and retry.
+        // best-effort: Fall through; the request will hit 401 naturally and retry.
       }
     }
 

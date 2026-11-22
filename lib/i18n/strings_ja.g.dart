@@ -896,6 +896,11 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'スクリーンセーバーアートワークを表示する前に入力なしで数分待ってください。';
 	@override String get videoCodecOptionDescription => 'このコデックがサポートされているときに直接再生を許可します. チェックされていないコデックスはメディアサーバーによってトランスコードされます。';
 	@override String streamBufferSizeMiB({required Object size}) => 'バッファーサイズ: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · 視聴を続ける';
+	@override String get showTopShelfContentDescription => 'オフにすると、すべてのプロフィールで Pleazyng の画像のみが表示されます。';
+	@override String get topShelfUpdateFailed => 'Top Shelf を更新できませんでした。もう一度お試しください。';
+	@override String get showFinishTime => '終了時刻を表示';
+	@override String get showFinishTimeDescription => '残り時間の横に動画の終了予定時刻を表示します。';
 }
 
 // Path: themeEditor
@@ -1144,6 +1149,7 @@ class _Translations$mediaMenu$ja extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Plezyは削除対象のファイルを確認できなかったため、上記のアイテム以上に削除される可能性があります。キャンセルして再試行するか、それでも削除してください。';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'サーバーがこのアイテムのファイル情報を提供しなかったため、Plezyは削除対象のファイルを確認できません。上記のアイテム以上に削除される可能性があります。';
 	@override String get mediaDeletedSuccessfully => 'メディアアイテムを正常に削除しました';
+	@override String get mediaDeletionDisabledOnServer => 'このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。';
 	@override String get mediaFailedToDelete => 'メディアアイテムの削除に失敗しました';
 	@override String get rate => '評価';
 	@override String get playFromBeginning => '最初から再生';
@@ -2926,6 +2932,7 @@ class _Translations$seerr$ja extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => '再サインイン後にセッションが拒否されました';
 	@override String get permissionDenied => 'Seerrがこの操作を拒否しました: アカウントに必要な権限がありません';
 	@override String get permissionRevoked => 'これをリクエストする権限がなくなりました';
+	@override String get withdrawRequest => 'リクエストを取り消す';
 }
 
 // Path: services
@@ -4627,6 +4634,7 @@ class _Translations$common$mediaKind$ja extends Translations$common$mediaKind$en
 	@override String get clip => 'クリップ';
 	@override String get photo => '写真';
 	@override String get folder => 'フォルダ';
+	@override String get photoAlbum => 'フォトアルバム';
 }
 
 // Path: settings.startupSectionOptions
@@ -5874,6 +5882,7 @@ extension on TranslationsJa {
 			'common.mediaKind.clip' => 'クリップ',
 			'common.mediaKind.photo' => '写真',
 			'common.mediaKind.folder' => 'フォルダ',
+			'common.mediaKind.photoAlbum' => 'フォトアルバム',
 			'screens.licenses' => 'ライセンス',
 			'screens.switchProfile' => 'プロフィール切替',
 			'screens.subtitleStyling' => '字幕スタイル',
@@ -6180,9 +6189,9 @@ extension on TranslationsJa {
 			'settings.manageLibrariesDescription' => 'ライブラリを並べ替えたり非表示にしたりできます',
 			'settings.companionRemoteServer' => 'コンパニオンリモートサーバー',
 			'settings.companionRemoteServerDescription' => 'ネットワーク上のモバイルデバイスからこのアプリを操作できるようにする',
-			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
 			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
 			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			'settings.autoPipDescription' => '再生中にアプリを離れると、自動的にピクチャーインピクチャーに切り替えます',
@@ -6396,6 +6405,11 @@ extension on TranslationsJa {
 			'settings.contentScreensaverDelayOptionDescription' => 'スクリーンセーバーアートワークを表示する前に入力なしで数分待ってください。',
 			'settings.videoCodecOptionDescription' => 'このコデックがサポートされているときに直接再生を許可します. チェックされていないコデックスはメディアサーバーによってトランスコードされます。',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'バッファーサイズ: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 視聴を続ける',
+			'settings.showTopShelfContentDescription' => 'オフにすると、すべてのプロフィールで Pleazyng の画像のみが表示されます。',
+			'settings.topShelfUpdateFailed' => 'Top Shelf を更新できませんでした。もう一度お試しください。',
+			'settings.showFinishTime' => '終了時刻を表示',
+			'settings.showFinishTimeDescription' => '残り時間の横に動画の終了予定時刻を表示します。',
 			'themeEditor.builtIn' => '標準',
 			'themeEditor.presets' => 'プリセット',
 			'themeEditor.custom' => 'カスタム',
@@ -6629,6 +6643,7 @@ extension on TranslationsJa {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Plezyは削除対象のファイルを確認できなかったため、上記のアイテム以上に削除される可能性があります。キャンセルして再試行するか、それでも削除してください。',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'サーバーがこのアイテムのファイル情報を提供しなかったため、Plezyは削除対象のファイルを確認できません。上記のアイテム以上に削除される可能性があります。',
 			'mediaMenu.mediaDeletedSuccessfully' => 'メディアアイテムを正常に削除しました',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。',
 			'mediaMenu.mediaFailedToDelete' => 'メディアアイテムの削除に失敗しました',
 			'mediaMenu.rate' => '評価',
 			'mediaMenu.playFromBeginning' => '最初から再生',
@@ -6688,6 +6703,8 @@ extension on TranslationsJa {
 			'accessibility.reduceMotion' => '動きを減らす',
 			'accessibility.reduceMotionHint' => 'フォーカス表示、ページ切り替え、装飾効果の動きを止めます。',
 			'accessibility.largeTargets' => 'タッチターゲットの拡大',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => '共通の操作ボタンの領域を広げ、タッチ操作や支援技術による操作をしやすくします。',
 			'accessibility.navigationHint' => 'TabとShift+Tabで操作項目を移動し、EnterまたはSpaceで実行、Escapeまたは戻るボタンで閉じます。本を開いている間は、拡大率や読書設定を変更できます。',
 			'accessibility.textSizeDescription' => 'Pleazyng のスケールインターフェイスのテキストは、デバイスのシステムのテキスタイル設定に加えて。',
@@ -6695,8 +6712,6 @@ extension on TranslationsJa {
 			'tooltips.shufflePlay' => 'シャッフル再生',
 			'tooltips.playTrailer' => '予告編を再生',
 			'tooltips.markAsWatched' => '視聴済みにする',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => '未視聴にする',
 			'audioTracks.track' => ({required Object n}) => '音声トラック${n}',
 			'videoControls.audioLabel' => '音声',
@@ -7202,6 +7217,8 @@ extension on TranslationsJa {
 			'discover.findNext.artworkLoading' => '画像を読み込み中…',
 			'discover.findNext.artworkUnavailable' => '画像を表示できません',
 			'discover.findNext.savedFeedback' => '保存済み候補に追加しました',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'いったんスキップしました',
 			'discover.findNext.releaseToConfirm' => '離して確定',
 			'discover.findNext.remoteHint' => '表紙にフォーカス：← / → で選択・決定で詳細・↑ / ↓ でフォーカス移動',
@@ -7209,8 +7226,6 @@ extension on TranslationsJa {
 			'discover.rating' => '評価',
 			'discover.director' => '監督',
 			'discover.directors' => '監督',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => '映画',
 			'discover.tvShow' => 'テレビ番組',
 			'discover.minutesLeft' => ({required Object minutes}) => '残り${minutes}分',
@@ -7716,6 +7731,8 @@ extension on TranslationsJa {
 			'collections.selectCollection' => 'コレクションを選択',
 			'collections.collectionName' => 'コレクション名',
 			'collections.enterCollectionName' => 'コレクション名を入力',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'コレクションに追加しました',
 			'collections.errorAddingToCollection' => 'コレクションへの追加に失敗しました',
 			'collections.created' => 'コレクションを作成しました',
@@ -7723,8 +7740,6 @@ extension on TranslationsJa {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '「${title}」をこのコレクションから削除しますか？',
 			'collections.removedFromCollection' => 'コレクションから削除しました',
 			'collections.removeFromCollectionFailed' => 'コレクションからの削除に失敗しました',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'コレクションからの削除エラー: ${error}',
 			'collections.searchCollections' => 'コレクションを検索…',
 			'playlists.title' => 'プレイリスト',
@@ -8230,6 +8245,8 @@ extension on TranslationsJa {
 			'performanceOverlay.decoder' => 'デコーダー',
 			'performanceOverlay.rawDecoder' => 'Raw デコーダー',
 			'performanceOverlay.tunneling' => 'トンネリング',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'パススルー',
 			'performanceOverlay.aspect' => 'アスペクト',
 			'performanceOverlay.rotation' => '回転',
@@ -8237,8 +8254,6 @@ extension on TranslationsJa {
 			'performanceOverlay.dvPath' => 'DV パス',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision デコーダー',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision デコーダー（P7→8.1）',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'ベースレイヤー',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ベースレイヤー',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG ベースレイヤー',
@@ -8474,6 +8489,7 @@ extension on TranslationsJa {
 			'seerr.sessionRejectedAfterReauth' => '再サインイン後にセッションが拒否されました',
 			'seerr.permissionDenied' => 'Seerrがこの操作を拒否しました: アカウントに必要な権限がありません',
 			'seerr.permissionRevoked' => 'これをリクエストする権限がなくなりました',
+			'seerr.withdrawRequest' => 'リクエストを取り消す',
 			'services.title' => 'サービス',
 			'services.hubSubtitle' => '視聴の進捗を同期して、新しいタイトルをリクエストします。',
 			'services.integrations' => 'インテグレーション',
@@ -8743,6 +8759,8 @@ extension on TranslationsJa {
 			'homeLayout.managePlexRowsDescription' => 'ホーム 選択のラインを整理するためにオープン',
 			'homeLayout.organizeHomeRows' => 'ホーム ラウンドの整理',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ライン: 移動、 ヒーロー、 自動スライド、 削除',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} ライン',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '続きを見る + ${n} 行: 移動, 図書館, ホーム, ヒーロー, 自動スライド',
 			'homeLayout.renderAsHero' => 'ヒーローカードとしての出張',
@@ -8751,8 +8769,6 @@ extension on TranslationsJa {
 			'homeLayout.autoSlide' => '自動スライド',
 			'homeLayout.autoSlideDescription' => 'ラウンド(PC)とdパッド(TV)は常に動作し、タイマーを再起動します。',
 			'homeLayout.autoSlideEditDescription' => 'スライドは数秒ごとに自体でスライドします。 オフ: 矢をクリックする場合(PC)または遠隔(TV)の左/右を押す場合のみ動きます。',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => '英雄を最初に',
 			'homeLayout.showOnHome' => 'ホームスクリーンで表示',
 			'homeLayout.home' => 'ホーム',
@@ -9257,6 +9273,8 @@ extension on TranslationsJa {
 			'audiobook.customSpeed' => 'Custom Playback スピード',
 			'audiobook.speedHelp' => '0.25×から4×までのスピードを選択します。',
 			'audiobook.apply' => '応募',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'カスタム睡眠時間',
 			'audiobook.sleepMinutes' => '時間(1～1440分)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} 章の後停止',
@@ -9265,8 +9283,6 @@ extension on TranslationsJa {
 			'audiobook.useDefaults' => 'これらの聴覚コントロールを新しい本に使用する',
 			'audiobook.librarySort' => '色の本',
 			'audiobook.sortTitle' => 'タイトル',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => '著者',
 			'audiobook.sortNarrator' => '講演者',
 			'audiobook.sortSeries' => 'シリーズオーダー',
@@ -9771,6 +9787,8 @@ extension on TranslationsJa {
 			'musicExperience.bluetoothDrivingHint' => '運転画面を自動で開く、接続中のBluetooth出力を選択します。',
 			'musicTools.loudnessMissing' => 'ラウドネスデータが返されませんでした',
 			'musicTools.loudnessRequested' => '解析リクエストを送信しました',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'このサーバーバージョンは解析リクエストに対応していません',
 			'musicTools.serverHistory' => 'サーバーの再生履歴',
 			'musicTools.nfcWrite' => 'NFCタグに書き込む',
@@ -9779,8 +9797,6 @@ extension on TranslationsJa {
 			'musicTools.storageBudget' => 'ダウンロード容量の推定上限 (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'ゲストDJ',
 			'musicTools.charts' => '再生ランキング',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => '再発見',
 			'musicTools.stations' => 'ミュージックステーション',
 			'musicTools.prompt' => '説明からプレイリスト',

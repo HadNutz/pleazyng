@@ -898,6 +898,11 @@ class _Translations$settings$hi extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'स्क्रीन सहेजने से पहले इनमें प्रवेश के बिना कई मिनटों का इंतजार करें।';
 	@override String get videoCodecOptionDescription => 'समर्थित होने पर इस कोडेक के लिए सीधे प्लेबैक की अनुमति दें। बिना चेक किए गए कोडेक मीडिया सर्वर द्वारा ट्रांसकोड किए जाते हैं।';
 	@override String streamBufferSizeMiB({required Object size}) => 'बफर आकार: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · देखना जारी रखें';
+	@override String get showTopShelfContentDescription => 'बंद करने पर सभी प्रोफ़ाइल के लिए केवल Pleazyng की तस्वीर दिखाई देगी।';
+	@override String get topShelfUpdateFailed => 'Top Shelf अपडेट नहीं हो सका। फिर से कोशिश करें।';
+	@override String get showFinishTime => 'समाप्ति का समय दिखाएँ';
+	@override String get showFinishTimeDescription => 'बचे हुए समय के पास दिखाएँ कि वीडियो कब समाप्त होगा।';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$hi extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng यह जांच नहीं कर सकता है कि यह कौन से फ़ाइलों को हटा देगा, इसलिए यह ऊपर नामित आइटम से अधिक हटा सकता है. रद्द करें और फिर से कोशिश करें, या किसी भी तरह से हटा दें.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'आपके सर्वर ने इस आइटम के लिए फ़ाइल विवरण प्रदान नहीं किया है, इसलिए Pleazyng यह जांच नहीं कर सकता है कि यह किस फ़ाइल को हटा देगा. यह ऊपर नामित आइटम से अधिक हटा सकता है.';
 	@override String get mediaDeletedSuccessfully => 'मीडिया के आइटम को सफलतापूर्वक हटा दिया गया';
+	@override String get mediaDeletionDisabledOnServer => 'इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।';
 	@override String get mediaFailedToDelete => 'मीडिया आइटम को हटाने में विफलता';
 	@override String get rate => 'दरें';
 	@override String get playFromBeginning => 'शुरुआत से खेलना';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$hi extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'फिर से हस्ताक्षर करने के बाद बैठक को अस्वीकार कर दिया गया';
 	@override String get permissionDenied => 'Seerr ने इस कार्रवाई को अस्वीकार कर दिया: आपके खाते में अब आवश्यक अनुमति नहीं है';
 	@override String get permissionRevoked => 'अब आपके पास यह अनुरोध करने की अनुमति नहीं है';
+	@override String get withdrawRequest => 'अनुरोध वापस लें';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$hi extends Translations$common$mediaKind$en
 	@override String get clip => 'क्लिप';
 	@override String get photo => 'फोटो';
 	@override String get folder => 'फ़ोल्डर';
+	@override String get photoAlbum => 'फ़ोटो एल्बम';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsHi {
 			'common.mediaKind.clip' => 'क्लिप',
 			'common.mediaKind.photo' => 'फोटो',
 			'common.mediaKind.folder' => 'फ़ोल्डर',
+			'common.mediaKind.photoAlbum' => 'फ़ोटो एल्बम',
 			'screens.licenses' => 'अनुमतिएँ',
 			'screens.switchProfile' => 'स्विच प्रोफ़ाइल',
 			'screens.subtitleStyling' => 'Subtitle स्टाइलिंग',
@@ -6185,9 +6194,9 @@ extension on TranslationsHi {
 			'settings.manageLibrariesDescription' => 'पुस्तकालयों को रिकॉर्ड और छिपाना',
 			'settings.companionRemoteServer' => 'रिमोट सर्वर',
 			'settings.companionRemoteServerDescription' => 'अपने नेटवर्क पर मोबाइल उपकरणों को इस ऐप को नियंत्रित करने की अनुमति दें',
-			'settings.companionRemoteServerStartFailed' => 'साथी सर्वर शुरू नहीं किया जा सकता',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'साथी सर्वर शुरू नहीं किया जा सकता',
 			'settings.companionRemoteServerStopFailed' => 'साथी सर्वर को रोक नहीं पाया',
 			'settings.autoPip' => 'Auto Picture-in-Picture के बारे में टिप्पणियाँ',
 			'settings.autoPipDescription' => 'स्वचालित रूप से छवि-इन-चित्र दर्ज करें जब आप प्लेबैक के दौरान ऐप छोड़ देते हैं',
@@ -6401,6 +6410,11 @@ extension on TranslationsHi {
 			'settings.contentScreensaverDelayOptionDescription' => 'स्क्रीन सहेजने से पहले इनमें प्रवेश के बिना कई मिनटों का इंतजार करें।',
 			'settings.videoCodecOptionDescription' => 'समर्थित होने पर इस कोडेक के लिए सीधे प्लेबैक की अनुमति दें। बिना चेक किए गए कोडेक मीडिया सर्वर द्वारा ट्रांसकोड किए जाते हैं।',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'बफर आकार: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · देखना जारी रखें',
+			'settings.showTopShelfContentDescription' => 'बंद करने पर सभी प्रोफ़ाइल के लिए केवल Pleazyng की तस्वीर दिखाई देगी।',
+			'settings.topShelfUpdateFailed' => 'Top Shelf अपडेट नहीं हो सका। फिर से कोशिश करें।',
+			'settings.showFinishTime' => 'समाप्ति का समय दिखाएँ',
+			'settings.showFinishTimeDescription' => 'बचे हुए समय के पास दिखाएँ कि वीडियो कब समाप्त होगा।',
 			'themeEditor.builtIn' => 'इमारत में',
 			'themeEditor.presets' => 'उपन्यास',
 			'themeEditor.custom' => 'कस्टम',
@@ -6634,6 +6648,7 @@ extension on TranslationsHi {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng यह जांच नहीं कर सकता है कि यह कौन से फ़ाइलों को हटा देगा, इसलिए यह ऊपर नामित आइटम से अधिक हटा सकता है. रद्द करें और फिर से कोशिश करें, या किसी भी तरह से हटा दें.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'आपके सर्वर ने इस आइटम के लिए फ़ाइल विवरण प्रदान नहीं किया है, इसलिए Pleazyng यह जांच नहीं कर सकता है कि यह किस फ़ाइल को हटा देगा. यह ऊपर नामित आइटम से अधिक हटा सकता है.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'मीडिया के आइटम को सफलतापूर्वक हटा दिया गया',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'इस सर्वर पर मीडिया हटाना बंद है। सर्वर की लाइब्रेरी सेटिंग में मीडिया हटाने की अनुमति चालू करें।',
 			'mediaMenu.mediaFailedToDelete' => 'मीडिया आइटम को हटाने में विफलता',
 			'mediaMenu.rate' => 'दरें',
 			'mediaMenu.playFromBeginning' => 'शुरुआत से खेलना',
@@ -6693,6 +6708,8 @@ extension on TranslationsHi {
 			'accessibility.reduceMotion' => 'आंदोलन को कम करें',
 			'accessibility.reduceMotionHint' => 'फ़ोकस संकेतक, पृष्ठ परिवर्तन और सजावटी प्रभावों की गति बंद रखें।',
 			'accessibility.largeTargets' => 'अधिक लक्षित लक्ष्य',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'साझा नियंत्रण को स्पर्श और सहायक नेविगेशन के लिए अधिक स्थान दें।',
 			'accessibility.navigationHint' => 'नियंत्रणों के बीच जाने के लिए Tab और Shift+Tab, सक्रिय करने के लिए Enter या Space और बंद करने के लिए Escape या वापस जाने वाले बटन का उपयोग करें। किताब खुली होने पर ज़ूम और पढ़ने की प्राथमिकताएँ उपलब्ध रहती हैं।',
 			'accessibility.textSizeDescription' => 'अपने डिवाइस की सिस्टम टेक्स्ट आकार सेटिंग के अलावा Pleazyng इंटरफ़ेस का टेक्स्ट आकार बदलें।',
@@ -6700,8 +6717,6 @@ extension on TranslationsHi {
 			'tooltips.shufflePlay' => 'शूफ खेल',
 			'tooltips.playTrailer' => 'ट्रेलर खेलना',
 			'tooltips.markAsWatched' => 'मार्क देखने के लिए',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'अनदेखी के रूप में मार्क',
 			'audioTracks.track' => ({required Object n}) => 'ऑडियो ट्रैक ${n}',
 			'videoControls.audioLabel' => 'ऑडियो',
@@ -7207,6 +7222,8 @@ extension on TranslationsHi {
 			'discover.findNext.artworkLoading' => 'चित्र लोड हो रहा है…',
 			'discover.findNext.artworkUnavailable' => 'चित्र उपलब्ध नहीं है',
 			'discover.findNext.savedFeedback' => 'सहेजे गए विकल्पों में जोड़ा गया',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'अभी छोड़ दिया गया',
 			'discover.findNext.releaseToConfirm' => 'पुष्टि के लिए छोड़ें',
 			'discover.findNext.remoteHint' => 'कवर पर फ़ोकस: ← / → चुनें · चयन बटन: जानकारी · ↑ / ↓ फ़ोकस बदलें',
@@ -7214,8 +7231,6 @@ extension on TranslationsHi {
 			'discover.rating' => 'रेटिंग',
 			'discover.director' => 'निर्देशक',
 			'discover.directors' => 'निर्देशक',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'फिल्में',
 			'discover.tvShow' => 'टीवी शो',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} मिनट छोड़ दिया',
@@ -7721,6 +7736,8 @@ extension on TranslationsHi {
 			'collections.selectCollection' => 'चयनित संग्रह',
 			'collections.collectionName' => 'संग्रह का नाम',
 			'collections.enterCollectionName' => 'संग्रह का नाम दर्ज करें',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'संग्रह में जोड़ा',
 			'collections.errorAddingToCollection' => 'संग्रह में जोड़ने में विफल',
 			'collections.created' => 'संग्रह बनाया',
@@ -7728,8 +7745,6 @@ extension on TranslationsHi {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'इस संग्रह से “${title}” हटाएँ?',
 			'collections.removedFromCollection' => 'संग्रह से हटाए गए',
 			'collections.removeFromCollectionFailed' => 'संग्रह से बाहर निकलने में विफलता',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'संग्रह से त्रुटि हटाने: ${error}',
 			'collections.searchCollections' => 'खोज संग्रह...',
 			'playlists.title' => 'प्लेलिस्ट',
@@ -8235,6 +8250,8 @@ extension on TranslationsHi {
 			'performanceOverlay.decoder' => 'डिकोडर',
 			'performanceOverlay.rawDecoder' => 'रेड डिकोडर',
 			'performanceOverlay.tunneling' => 'टनल',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'पश्चाताप',
 			'performanceOverlay.aspect' => 'दृष्टि',
 			'performanceOverlay.rotation' => 'रोटेशन',
@@ -8242,8 +8259,6 @@ extension on TranslationsHi {
 			'performanceOverlay.dvPath' => 'डीवी मार्ग',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision डिकोडर',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision डिकोडर (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'बेस लेयर',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 आधार परत',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG आधार परत',
@@ -8479,6 +8494,7 @@ extension on TranslationsHi {
 			'seerr.sessionRejectedAfterReauth' => 'फिर से हस्ताक्षर करने के बाद बैठक को अस्वीकार कर दिया गया',
 			'seerr.permissionDenied' => 'Seerr ने इस कार्रवाई को अस्वीकार कर दिया: आपके खाते में अब आवश्यक अनुमति नहीं है',
 			'seerr.permissionRevoked' => 'अब आपके पास यह अनुरोध करने की अनुमति नहीं है',
+			'seerr.withdrawRequest' => 'अनुरोध वापस लें',
 			'services.title' => 'सेवाएं',
 			'services.hubSubtitle' => 'सिंक्रनाइज़ेशन प्रगति की निगरानी करता है और नए शीर्षकों की मांग करता है।',
 			'services.integrations' => 'एकीकरण',
@@ -8748,6 +8764,8 @@ extension on TranslationsHi {
 			'homeLayout.managePlexRowsDescription' => 'Home-Selected लाइनों को व्यवस्थित करने के लिए खुला',
 			'homeLayout.organizeHomeRows' => 'Home रैखों का आयोजन',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} पंक्तियां: आंदोलन, नायक, स्वचालित स्लाइड, हटाने',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} पंक्तियों का आयोजन करें',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'जारी रखें + ${n} पंक्तियां: चलना, लाइब्रेरी, होम, नायक, ऑटो-स्लाइड',
 			'homeLayout.renderAsHero' => 'एक नायक कार्ड के रूप में रेंडर',
@@ -8756,8 +8774,6 @@ extension on TranslationsHi {
 			'homeLayout.autoSlide' => 'स्वचालित स्लाइड',
 			'homeLayout.autoSlideDescription' => 'लोड (पीसी) और डी-पैड (टीवी) हमेशा काम करते हैं और टाइमर को पुनरारंभ करते हैं।',
 			'homeLayout.autoSlideEditDescription' => 'इसके अलावा, यह हर कुछ सेकंड में खुद पर स्लाइड करता है. बंद: केवल जब आप एक पंख (पीसी) पर क्लिक करते हैं या दूरस्थ (टीवी) पर बाईं ओर / दाईं ओर दबाते हैं तो चलता है. लहरें और डी-पैड हमेशा किसी भी तरह से काम करते हैं.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'पहले नायक को सक्षम करें',
 			'homeLayout.showOnHome' => 'Home Screen पर दिखाएँ',
 			'homeLayout.home' => 'घर',
@@ -9262,6 +9278,8 @@ extension on TranslationsHi {
 			'audiobook.customSpeed' => 'प्लेबैक की गति',
 			'audiobook.speedHelp' => '0.25× से 4× तक की गति का चयन करें।',
 			'audiobook.apply' => 'आवेदन करें',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'कस्टम नींद टाइमर',
 			'audiobook.sleepMinutes' => 'मिनट (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} अध्याय के बाद रुकें',
@@ -9270,8 +9288,6 @@ extension on TranslationsHi {
 			'audiobook.useDefaults' => 'नई किताबों के लिए इन सुनने नियंत्रण का उपयोग करें',
 			'audiobook.librarySort' => 'विभिन्न किताबें',
 			'audiobook.sortTitle' => 'शीर्षक',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'लेखक',
 			'audiobook.sortNarrator' => 'कथाकार',
 			'audiobook.sortSeries' => 'श्रृंखला आदेश',
@@ -9776,6 +9792,8 @@ extension on TranslationsHi {
 			'musicExperience.bluetoothDrivingHint' => 'वे कनेक्ट किए गए Bluetooth आउटपुट चुनें जो ड्राइविंग दृश्य अपने आप खोलते हैं।',
 			'musicTools.loudnessMissing' => 'ध्वनि की तीव्रता का डेटा नहीं मिला',
 			'musicTools.loudnessRequested' => 'विश्लेषण का अनुरोध भेजा गया',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'सर्वर का यह संस्करण विश्लेषण अनुरोधों का समर्थन नहीं करता',
 			'musicTools.serverHistory' => 'सर्वर का प्लेबैक इतिहास',
 			'musicTools.nfcWrite' => 'NFC टैग लिखें',
@@ -9784,8 +9802,6 @@ extension on TranslationsHi {
 			'musicTools.storageBudget' => 'अनुमानित डाउनलोड सीमा (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'अतिथि डीजे',
 			'musicTools.charts' => 'सुनने की रैंकिंग',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'फिर खोजें',
 			'musicTools.stations' => 'संगीत स्टेशन',
 			'musicTools.prompt' => 'विवरण से प्लेलिस्ट',

@@ -27,6 +27,7 @@ import '../services/watch_actions.dart';
 import '../services/deep_links/item_links.dart';
 import '../services/catalog/library_watchlist_candidates.dart';
 import '../utils/content_utils.dart';
+import '../exceptions/media_server_exceptions.dart';
 import '../utils/delete_impact.dart';
 import '../utils/download_utils.dart';
 import '../utils/download_deletion_confirmation.dart';
@@ -44,6 +45,8 @@ export '../utils/media_collection_actions.dart' show isAdminActionAllowedForMedi
 import '../utils/provider_extensions.dart';
 import '../utils/external_ids.dart';
 import '../utils/app_logger.dart';
+import '../media/library_change_event.dart';
+import '../utils/library_content_notifier.dart';
 import '../utils/library_refresh_notifier.dart';
 import '../utils/media_navigation_helper.dart';
 import '../utils/music_navigation.dart';
@@ -293,8 +296,16 @@ class MediaContextMenuState extends State<MediaContextMenu> {
 
   bool _openedFromKeyboard = false;
   bool _isContextMenuOpen = false;
+  StreamSubscription<LibraryChangeEvent>? _refreshMetadataSubscription;
 
   bool get isContextMenuOpen => _isContextMenuOpen;
+
+  @override
+  void dispose() {
+    unawaited(_refreshMetadataSubscription?.cancel());
+    _refreshMetadataSubscription = null;
+    super.dispose();
+  }
 
   void _notifyRefresh(MediaItem source) {
     if (!mounted) return;
@@ -436,6 +447,13 @@ class MediaContextMenuState extends State<MediaContextMenu> {
 
     final openedFromKeyboard = _openedFromKeyboard;
     _openedFromKeyboard = false;
+
+    // Photos and albums can have nothing to offer. An empty menu would open as
+    // a bare surface.
+    if (menuActions.isEmpty) {
+      _isContextMenuOpen = false;
+      return;
+    }
 
     var position = _tapPosition;
     if (position == null) {
@@ -717,9 +735,9 @@ class MediaContextMenuState extends State<MediaContextMenu> {
       // screens, so surface it here whenever the screen wires up onPlayTrailer.
       if (widget.onPlayTrailer != null)
         _MenuAction(value: 'play_trailer', icon: Symbols.theaters_rounded, label: t.tooltips.playTrailer),
-      if (!mediaItem.isWatched || isPartiallyWatched || hasActiveProgress)
+      if (!mediaKind.isPhotoContent && (!mediaItem.isWatched || isPartiallyWatched || hasActiveProgress))
         _MenuAction(value: 'watch', icon: Symbols.check_circle_outline_rounded, label: t.mediaMenu.markAsWatched),
-      if (mediaItem.isWatched || isPartiallyWatched || hasActiveProgress)
+      if (!mediaKind.isPhotoContent && (mediaItem.isWatched || isPartiallyWatched || hasActiveProgress))
         _MenuAction(value: 'unwatch', icon: Symbols.remove_circle_outline_rounded, label: t.mediaMenu.markAsUnwatched),
       if (widget.isInContinueWatching && menu.canRemoveFromContinueWatching)
         _MenuAction(
@@ -732,12 +750,14 @@ class MediaContextMenuState extends State<MediaContextMenu> {
       if (isVideoKind || mediaKind.isMusic)
         _MenuAction(value: 'rate', icon: Symbols.star_rounded, label: t.mediaMenu.rate),
       // Edit Metadata — admin-only and backend-capability gated.
-      if (menu.canEditMetadata)
+      if (menu.canEditMetadata) ...[
         _MenuAction(value: 'edit_metadata', icon: Symbols.edit_rounded, label: t.metadataEdit.editMetadata),
-      // Quick Tag — same admin/capability gate as Edit Metadata, restricted to
-      // the kinds whose schema carries a 'label' field on both backends.
-      if (menu.canEditMetadata && isMovieOrShow)
-        _MenuAction(value: 'quick_tag', icon: Symbols.label_rounded, label: t.metadataEdit.quickTag),
+        if (mediaItem.backend == MediaBackend.plex && !widget.isOffline)
+          _MenuAction(value: 'refresh_metadata', icon: Symbols.refresh_rounded, label: t.libraries.refreshMetadata),
+        // Quick Tag — same admin/capability gate as Edit Metadata, restricted to
+        // the kinds whose schema carries a 'label' field on both backends.
+        if (isMovieOrShow) _MenuAction(value: 'quick_tag', icon: Symbols.label_rounded, label: t.metadataEdit.quickTag),
+      ],
       // Match / Unmatch — Plex-only (MediaBrowser servers don't expose match agents).
       if (menu.isPlex && menu.isAdmin && isMovieOrShow) ...[
         _MenuAction(
@@ -1043,6 +1063,9 @@ class MediaContextMenuState extends State<MediaContextMenu> {
         break;
       case 'music_collection':
         await _showAddToCollectionDialog(context, menu.collectionScope);
+        break;
+      case 'refresh_metadata':
+        await _refreshMetadata(context, mediaItem);
         break;
       case 'quick_tag':
         if (context.mounted) await _showQuickTagDialog(context, mediaItem);
@@ -2191,6 +2214,76 @@ class MediaContextMenuState extends State<MediaContextMenu> {
     displayTitle: _itemDisplayTitle(),
   );
 
+  /// Handle refresh metadata action.
+  ///
+  /// Plex queues metadata refresh asynchronously and returns 200 immediately,
+  /// so refetching right away would read and re-cache stale metadata. Subscribe
+  /// to the server's websocket push ([LibraryContentNotifier]) and only
+  /// invalidate the cache and refresh once the settled timeline event arrives.
+  Future<void> _refreshMetadata(BuildContext context, MediaItem mediaItem) async {
+    final serverId = serverIdOrNull(mediaItem.serverId);
+    if (serverId == null || widget.isOffline) return;
+    final servers = context.read<MultiServerProvider>();
+    final client = servers.getClientForServer(serverId);
+    if (client is! PlexClient) return;
+    final session = client.authenticationSessionId;
+    bool current() =>
+        mounted &&
+        context.mounted &&
+        identical(servers.getClientForServer(serverId), client) &&
+        identical(client.authenticationSessionId, session) &&
+        isAdminActionAllowedForMediaItem(
+          isOwnerOrAdmin: servers.serverManager.isOwnerOrAdmin(serverId),
+          itemBackend: mediaItem.backend,
+          activeProfile: context.read<ActiveProfileProvider>().active,
+        );
+    if (!current()) return;
+    StreamSubscription<LibraryChangeEvent>? subscription;
+    void cancelSubscription() {
+      unawaited(subscription?.cancel());
+      if (identical(_refreshMetadataSubscription, subscription)) {
+        _refreshMetadataSubscription = null;
+      }
+    }
+
+    unawaited(_refreshMetadataSubscription?.cancel());
+    subscription = LibraryContentNotifier().stream.listen((event) async {
+      if (event.serverId != serverId || !event.updatedItemIds.contains(mediaItem.id)) return;
+      cancelSubscription();
+      if (!current()) return;
+      try {
+        await client.invalidateItemCache(mediaItem.id);
+        if (current()) _notifyRefresh(mediaItem);
+      } catch (e, stack) {
+        appLogger.d('Could not invalidate refreshed metadata', error: e, stackTrace: stack);
+      }
+    });
+    _refreshMetadataSubscription = subscription;
+
+    try {
+      final success = await client.refreshItemMetadata(mediaItem.id);
+      if (!current()) {
+        cancelSubscription();
+        return;
+      }
+      if (success) {
+        if (context.mounted) {
+          showSuccessSnackBar(context, t.messages.metadataRefreshStarted(title: mediaItem.displayTitle));
+        }
+      } else {
+        cancelSubscription();
+        if (context.mounted) {
+          showErrorSnackBar(context, t.messages.metadataRefreshFailed(error: t.errors.reasonUnexpected));
+        }
+      }
+    } catch (e) {
+      cancelSubscription();
+      if (context.mounted) {
+        showErrorSnackBar(context, t.messages.metadataRefreshFailed(error: localizedErrorReason(e)));
+      }
+    }
+  }
+
   /// Handle delete media item action.
   ///
   /// Permanently removes the item and its files from the server. Everything
@@ -2250,6 +2343,8 @@ class MediaContextMenuState extends State<MediaContextMenu> {
           showErrorSnackBar(context, t.mediaMenu.mediaFailedToDelete);
         }
       }
+    } on MediaDeletionRefusedException {
+      if (context.mounted) showErrorSnackBar(context, t.mediaMenu.mediaDeletionDisabledOnServer);
     } catch (e) {
       appLogger.e(t.mediaMenu.mediaFailedToDelete, error: e);
       if (context.mounted) {

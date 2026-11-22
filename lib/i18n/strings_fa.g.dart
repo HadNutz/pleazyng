@@ -898,6 +898,11 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'منتظر این چند دقیقه بدون ورودی قبل از نمایش کار هنری ذخیره صفحه نمایش باشید.';
 	@override String get videoCodecOptionDescription => 'اجازه پخش مستقیم برای این کدک زمانی که پشتیبانی می شود. کدک های غیر چک شده توسط سرور رسانه ها رمزگذاری می شوند.';
 	@override String streamBufferSizeMiB({required Object size}) => 'حجم بوفری: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · ادامه تماشا';
+	@override String get showTopShelfContentDescription => 'با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.';
+	@override String get topShelfUpdateFailed => 'به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.';
+	@override String get showFinishTime => 'نمایش زمان پایان';
+	@override String get showFinishTimeDescription => 'زمان پایان ویدیو را کنار زمان باقی‌مانده نشان می‌دهد.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$fa extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng نتوانست بررسی کند کدام فایل‌ها حذف می‌شوند؛ بنابراین ممکن است مواردی بیش از مورد بالا حذف شوند. لغو کنید و دوباره تلاش کنید، یا در هر صورت حذف کنید.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'سرور شما جزئیات فایل‌های این مورد را ارائه نکرده است، بنابراین Pleazyng نمی‌تواند بررسی کند کدام فایل‌ها حذف می‌شوند. ممکن است مواردی بیش از مورد بالا حذف شوند.';
 	@override String get mediaDeletedSuccessfully => 'موضوع رسانه ها با موفقیت حذف شد';
+	@override String get mediaDeletionDisabledOnServer => 'حذف رسانه در این سرور غیرفعال است. در تنظیمات کتابخانهٔ سرور، اجازهٔ حذف رسانه را فعال کنید.';
 	@override String get mediaFailedToDelete => 'ناپدید شدن حذف رسانه ها';
 	@override String get rate => 'ارزیابی کن';
 	@override String get playFromBeginning => 'از ابتدا اجرا کن';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$fa extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'جلسه پس از امضای مجدد رد شد.';
 	@override String get permissionDenied => 'Seerr این اقدام را رد کرد: حساب شما دیگر مجوز مورد نیاز را ندارد';
 	@override String get permissionRevoked => 'شما دیگر اجازه درخواست این کار را ندارید.';
+	@override String get withdrawRequest => 'پس گرفتن درخواست';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$fa extends Translations$common$mediaKind$en
 	@override String get clip => 'فیلم کوتاه';
 	@override String get photo => 'عکس';
 	@override String get folder => 'پوشه';
+	@override String get photoAlbum => 'آلبوم عکس';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsFa {
 			'common.mediaKind.clip' => 'فیلم کوتاه',
 			'common.mediaKind.photo' => 'عکس',
 			'common.mediaKind.folder' => 'پوشه',
+			'common.mediaKind.photoAlbum' => 'آلبوم عکس',
 			'screens.licenses' => 'مجوز',
 			'screens.switchProfile' => 'سوئیچ پروفایل',
 			'screens.subtitleStyling' => 'زیرنویس سبک',
@@ -6185,9 +6194,9 @@ extension on TranslationsFa {
 			'settings.manageLibrariesDescription' => 'کتابخانه ها را ذخیره و پنهان کنید',
 			'settings.companionRemoteServer' => 'سرورهای از راه دور',
 			'settings.companionRemoteServerDescription' => 'اجازه دهید دستگاه های تلفن همراه در شبکه شما این برنامه را کنترل کنند',
-			'settings.companionRemoteServerStartFailed' => 'نمی توانم سرور همراه را راه اندازی کنم.',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'نمی توانم سرور همراه را راه اندازی کنم.',
 			'settings.companionRemoteServerStopFailed' => 'نمی توانم سرور همراه را متوقف کنم.',
 			'settings.autoPip' => 'عکس های خودکار در تصویر',
 			'settings.autoPipDescription' => 'به طور خودکار تصویر-در-تصویر را وارد کنید هنگامی که برنامه را در طول پخش ترک می کنید',
@@ -6401,6 +6410,11 @@ extension on TranslationsFa {
 			'settings.contentScreensaverDelayOptionDescription' => 'منتظر این چند دقیقه بدون ورودی قبل از نمایش کار هنری ذخیره صفحه نمایش باشید.',
 			'settings.videoCodecOptionDescription' => 'اجازه پخش مستقیم برای این کدک زمانی که پشتیبانی می شود. کدک های غیر چک شده توسط سرور رسانه ها رمزگذاری می شوند.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'حجم بوفری: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · ادامه تماشا',
+			'settings.showTopShelfContentDescription' => 'با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.',
+			'settings.topShelfUpdateFailed' => 'به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.',
+			'settings.showFinishTime' => 'نمایش زمان پایان',
+			'settings.showFinishTimeDescription' => 'زمان پایان ویدیو را کنار زمان باقی‌مانده نشان می‌دهد.',
 			'themeEditor.builtIn' => 'ساخته شده',
 			'themeEditor.presets' => 'پیشگویی',
 			'themeEditor.custom' => 'سفارشی',
@@ -6634,6 +6648,7 @@ extension on TranslationsFa {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng نتوانست بررسی کند کدام فایل‌ها حذف می‌شوند؛ بنابراین ممکن است مواردی بیش از مورد بالا حذف شوند. لغو کنید و دوباره تلاش کنید، یا در هر صورت حذف کنید.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'سرور شما جزئیات فایل‌های این مورد را ارائه نکرده است، بنابراین Pleazyng نمی‌تواند بررسی کند کدام فایل‌ها حذف می‌شوند. ممکن است مواردی بیش از مورد بالا حذف شوند.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'موضوع رسانه ها با موفقیت حذف شد',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'حذف رسانه در این سرور غیرفعال است. در تنظیمات کتابخانهٔ سرور، اجازهٔ حذف رسانه را فعال کنید.',
 			'mediaMenu.mediaFailedToDelete' => 'ناپدید شدن حذف رسانه ها',
 			'mediaMenu.rate' => 'ارزیابی کن',
 			'mediaMenu.playFromBeginning' => 'از ابتدا اجرا کن',
@@ -6693,6 +6708,8 @@ extension on TranslationsFa {
 			'accessibility.reduceMotion' => 'کاهش حرکت',
 			'accessibility.reduceMotionHint' => 'حرکت نشانگر تمرکز، گذارهای صفحه و جلوه‌های تزئینی را متوقف کنید.',
 			'accessibility.largeTargets' => 'هدف های لمسی بزرگتر',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'کنترل های به اشتراک گذاشته شده را برای لمس و ناوبری کمک کننده فضای بیشتری فراهم می کند.',
 			'accessibility.navigationHint' => 'برای جابه‌جایی بین کنترل‌ها از Tab و Shift+Tab، برای فعال‌سازی از Enter یا Space و برای بستن از Escape یا دکمهٔ بازگشت استفاده کنید. وقتی کتاب باز است، بزرگ‌نمایی و تنظیمات خواندن در دسترس‌اند.',
 			'accessibility.textSizeDescription' => 'متن رابط مقیاس در Pleazyng علاوه بر تنظیمات اندازه متن سیستم دستگاه شما.',
@@ -6700,8 +6717,6 @@ extension on TranslationsFa {
 			'tooltips.shufflePlay' => 'بازی شوفلی',
 			'tooltips.playTrailer' => 'بازی تریلر',
 			'tooltips.markAsWatched' => 'مارک به نظر می رسد',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'مارک ناشناخته',
 			'audioTracks.track' => ({required Object n}) => 'ترافیک صوتی ${n}',
 			'videoControls.audioLabel' => 'صدا',
@@ -7207,6 +7222,8 @@ extension on TranslationsFa {
 			'discover.findNext.artworkLoading' => 'در حال بارگیری تصویر…',
 			'discover.findNext.artworkUnavailable' => 'تصویر در دسترس نیست',
 			'discover.findNext.savedFeedback' => 'به انتخاب‌های ذخیره‌شده افزوده شد',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'فعلاً رد شد',
 			'discover.findNext.releaseToConfirm' => 'برای تأیید رها کنید',
 			'discover.findNext.remoteHint' => 'با تمرکز روی جلد: ← / → انتخاب · دکمه انتخاب: جزئیات · ↑ / ↓ جابه‌جایی تمرکز',
@@ -7214,8 +7231,6 @@ extension on TranslationsFa {
 			'discover.rating' => 'رتبه بندی',
 			'discover.director' => 'کارگردان',
 			'discover.directors' => 'کارگردانان',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'فیلم',
 			'discover.tvShow' => 'نمایش تلویزیونی',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} دقیقه باقی مانده',
@@ -7721,6 +7736,8 @@ extension on TranslationsFa {
 			'collections.selectCollection' => 'انتخاب مجموعه',
 			'collections.collectionName' => 'نام جمع آوری',
 			'collections.enterCollectionName' => 'نام مجموعه را وارد کنید',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'اضافه شده به مجموعه',
 			'collections.errorAddingToCollection' => 'عدم اضافه شدن به جمع آوری',
 			'collections.created' => 'جمع آوری ساخته شده',
@@ -7728,8 +7745,6 @@ extension on TranslationsFa {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '«${title}» از این مجموعه حذف شود؟',
 			'collections.removedFromCollection' => 'حذف از جمع آوری',
 			'collections.removeFromCollectionFailed' => 'از جمع آوری خارج نشود',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'خطای حذف از مجموعه: ${error}',
 			'collections.searchCollections' => 'جمع آوری جستجو...',
 			'playlists.title' => 'لیست‌های پخش',
@@ -8235,6 +8250,8 @@ extension on TranslationsFa {
 			'performanceOverlay.decoder' => 'دکوراسیون',
 			'performanceOverlay.rawDecoder' => 'دکوراسیون خام',
 			'performanceOverlay.tunneling' => 'تونل',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'پازل',
 			'performanceOverlay.aspect' => 'دیدگاه',
 			'performanceOverlay.rotation' => 'چرخش',
@@ -8242,8 +8259,6 @@ extension on TranslationsFa {
 			'performanceOverlay.dvPath' => 'راه دو',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision دکوراسیون',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision دکوراسیون (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'لایه پایه',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 لایه پایه',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'لایه پایه HLG',
@@ -8479,6 +8494,7 @@ extension on TranslationsFa {
 			'seerr.sessionRejectedAfterReauth' => 'جلسه پس از امضای مجدد رد شد.',
 			'seerr.permissionDenied' => 'Seerr این اقدام را رد کرد: حساب شما دیگر مجوز مورد نیاز را ندارد',
 			'seerr.permissionRevoked' => 'شما دیگر اجازه درخواست این کار را ندارید.',
+			'seerr.withdrawRequest' => 'پس گرفتن درخواست',
 			'services.title' => 'خدمات',
 			'services.hubSubtitle' => 'Sync پیشرفت را مشاهده می کند و از عنوان های جدید درخواست می کند.',
 			'services.integrations' => 'ادغام',
@@ -8748,6 +8764,8 @@ extension on TranslationsFa {
 			'homeLayout.managePlexRowsDescription' => 'باز برای سازماندهی خطوط انتخاب شده در خانه',
 			'homeLayout.organizeHomeRows' => 'سازماندهی خطوط خانگی',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ردیف: حرکت، قهرمان، اتوماتیک، حذف',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'سازماندهی ${library} خطوط',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'ادامه تماشای + ${n} خطوط: حرکت, کتابخانه, خانه, قهرمان, اسلاید خودکار',
 			'homeLayout.renderAsHero' => 'به عنوان یک کارت قهرمان',
@@ -8756,8 +8774,6 @@ extension on TranslationsFa {
 			'homeLayout.autoSlide' => 'اتومبیل اسلاید',
 			'homeLayout.autoSlideDescription' => 'همچنین هر چند ثانیه به خودی خود اسلاید می کند. Arrows (PC) و d-pad (TV) همیشه کار می کنند و تایمر را دوباره راه اندازی می کنند.',
 			'homeLayout.autoSlideEditDescription' => 'همچنین هر چند ثانیه به خودی خود اسلاید می کند. خاموش: فقط زمانی که بر روی یک شلیک (PC) کلیک کنید یا چپ / راست را روی دوربین (TV) فشار دهید حرکت می کند.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'قهرمانان اول',
 			'homeLayout.showOnHome' => 'نمایش در صفحه اصلی',
 			'homeLayout.home' => 'خانه',
@@ -9262,6 +9278,8 @@ extension on TranslationsFa {
 			'audiobook.customSpeed' => 'سرعت بازی Custom Playback',
 			'audiobook.speedHelp' => 'سرعت را از 0.25× تا 4× انتخاب کنید.',
 			'audiobook.apply' => 'اعمال',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'زمان خواب شخصی',
 			'audiobook.sleepMinutes' => '۱ تا ۱۴۴۰ دقیقه',
 			'audiobook.sleepChapters' => ({required Object count}) => 'دانلود بازی ${count}',
@@ -9270,8 +9288,6 @@ extension on TranslationsFa {
 			'audiobook.useDefaults' => 'از این کنترل های گوش دادن برای کتاب های جدید استفاده کنید',
 			'audiobook.librarySort' => 'انواع کتاب ها',
 			'audiobook.sortTitle' => 'عنوان',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'نویسنده',
 			'audiobook.sortNarrator' => 'سخنران',
 			'audiobook.sortSeries' => 'سری سفارش',
@@ -9776,6 +9792,8 @@ extension on TranslationsFa {
 			'musicExperience.bluetoothDrivingHint' => 'خروجی‌های بلوتوث متصل را انتخاب کنید که نمای رانندگی را خودکار باز می‌کنند.',
 			'musicTools.loudnessMissing' => 'داده‌ای درباره بلندی صدا دریافت نشد',
 			'musicTools.loudnessRequested' => 'درخواست تحلیل ارسال شد',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'این نسخهٔ سرور از درخواست تحلیل پشتیبانی نمی‌کند',
 			'musicTools.serverHistory' => 'سابقهٔ پخش سرور',
 			'musicTools.nfcWrite' => 'نوشتن برچسب NFC',
@@ -9784,8 +9802,6 @@ extension on TranslationsFa {
 			'musicTools.storageBudget' => 'سقف تخمینی دانلود (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'دی‌جی مهمان',
 			'musicTools.charts' => 'آمار شنیدن',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'کشف دوباره',
 			'musicTools.stations' => 'ایستگاه‌های موسیقی',
 			'musicTools.prompt' => 'فهرست پخش از توضیح',

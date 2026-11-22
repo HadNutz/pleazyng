@@ -264,7 +264,9 @@ class MediaServerHttpClient {
         if (await tempFile.exists()) {
           try {
             await tempFile.delete();
-          } catch (_) {}
+          } catch (_) {
+            appLogger.d('Could not remove an incomplete HTTP download.');
+          }
         }
       },
       consume: (streamed, scope) async {

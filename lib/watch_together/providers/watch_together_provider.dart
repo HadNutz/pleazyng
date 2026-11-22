@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:openwatchparty/openwatchparty.dart' as owp;
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../media/media_item.dart';
 import '../../media/media_server_client.dart';
@@ -13,6 +12,7 @@ import '../../media/title_copies.dart';
 import '../../services/data_aggregation_service.dart';
 import '../../services/settings_service.dart';
 import '../../utils/app_logger.dart';
+import '../../utils/app_version.dart';
 import '../../utils/media_server_http_client.dart';
 import '../models/watch_copy.dart';
 import '../models/watch_notice.dart';
@@ -130,10 +130,7 @@ class WatchTogetherProvider extends ChangeNotifier {
   /// Opens the room's file when no player is open; set by the main screen.
   ChoiceOpener? navigatorOpener;
 
-  static Future<String> _plezyNgClientName() async {
-    final info = await PackageInfo.fromPlatform();
-    return 'Pleazyng/${info.version}';
-  }
+  static Future<String> _plezyNgClientName() async => 'Pleazyng/${(await AppVersion.current()).versionOrUnknown}';
 
   static owp.WatchParty<WatchCopy> _defaultParty({
     required owp.Relays relays,
@@ -238,7 +235,7 @@ class WatchTogetherProvider extends ChangeNotifier {
 
   /// Creates a room and joins it as host; returns its code. Throws
   /// [owp.PartyException] with the SDK's code when it fails.
-  Future<String> createRoom() => _enterRoom();
+  Future<String> createRoom() => _logFailure('create', () => _enterRoom());
 
   /// Joins the room with [code] as typed or pasted. With [create], a code
   /// that names no room gets a new room with that code, and this user hosts
@@ -247,7 +244,7 @@ class WatchTogetherProvider extends ChangeNotifier {
   Future<void> joinRoom(String code, {bool create = false}) async {
     final normalized = normalizeRoomCode(code);
     if (normalized == null) throw const owp.PartyException(owp.ErrorCode.invalidCode, 'not a room code');
-    await _enterRoom(code: normalized, create: create);
+    await _logFailure(create ? 'join or create' : 'join', () => _enterRoom(code: normalized, create: create));
   }
 
   // The shell encrypts this payload before it enters a restoration bucket.
@@ -273,7 +270,10 @@ class WatchTogetherProvider extends ChangeNotifier {
       final String token,
     ]) {
       if (owner != profileId || scope != relayScope) return;
-      await _enterRoom(code: code, restore: (relay: relay, peer: peer, token: token), canRestore: current);
+      await _logFailure(
+        'resume',
+        () => _enterRoom(code: code, restore: (relay: relay, peer: peer, token: token), canRestore: current),
+      );
     }
   }
 
@@ -328,15 +328,12 @@ class WatchTogetherProvider extends ChangeNotifier {
     final String roomCode;
     if (restore != null && code != null) {
       roomCode = code;
-      await _logFailure(
-        'resume',
-        party.restoreMembership(code: code, relay: restore.relay, peer: restore.peer, token: restore.token),
-      );
+      await party.restoreMembership(code: code, relay: restore.relay, peer: restore.peer, token: restore.token);
     } else if (code == null) {
-      roomCode = await _logFailure('create', party.create());
+      roomCode = await party.create();
     } else {
       roomCode = code;
-      await _logFailure(create ? 'join or create' : 'join', party.join(roomCode, create: create));
+      await party.join(roomCode, create: create);
     }
     checkCurrent();
     if (restore != null && party.state.connection != owp.Connection.connected) {
@@ -353,10 +350,11 @@ class WatchTogetherProvider extends ChangeNotifier {
     return roomCode;
   }
 
-  /// Logs why a create or join failed: the user sees only the code's text.
-  Future<T> _logFailure<T>(String action, Future<T> attempt) async {
+  /// Logs why a create or join failed, from setting up the party to the
+  /// relay's answer: the user sees only the code's text.
+  Future<T> _logFailure<T>(String action, Future<T> Function() attempt) async {
     try {
-      return await attempt;
+      return await attempt();
     } on owp.PartyException catch (error) {
       if (error.code != owp.ErrorCode.cancelled) {
         final relays = _customRelayBaseUrl() == null ? 'the public relays' : 'the custom relay';

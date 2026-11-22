@@ -898,6 +898,11 @@ class _Translations$settings$hu extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Várjon sok percet bejutás nélkül, mielőtt a screensaver műalkotást mutatja.';
 	@override String get videoCodecOptionDescription => 'Engedje meg a közvetlen lejátszást erre a kódolóra, amikor támogatásra kerül. A nem ellenőrzött kódokat a média szerver átruházza.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer méret: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Folytatás';
+	@override String get showTopShelfContentDescription => 'Kikapcsolva minden profilnál csak a Pleazyng képe jelenik meg.';
+	@override String get topShelfUpdateFailed => 'A Top Shelf frissítése sikertelen. Próbáld újra.';
+	@override String get showFinishTime => 'Befejezési idő megjelenítése';
+	@override String get showFinishTimeDescription => 'A hátralévő idő mellett megjelenik, mikor ér véget a videó.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$hu extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'A Pleazyng nem tudta ellenőrizni, mely fájlokat távolítja el ez, ezért a fent nevezett elemnél többet is törölhet. Szakítsa meg és próbálja újra, vagy töröljön mindenképp.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'A szerver nem szolgáltatott fájladatokat ehhez az elemhez, ezért a Pleazyng nem tudja ellenőrizni, mely fájlokat távolít el. A fent nevezett elemnél többet is törölhet.';
 	@override String get mediaDeletedSuccessfully => 'Médiaelem sikeresen törölve';
+	@override String get mediaDeletionDisabledOnServer => 'A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban.';
 	@override String get mediaFailedToDelete => 'Nem sikerült a médiaelem törlése';
 	@override String get rate => 'Értékelés';
 	@override String get playFromBeginning => 'Lejátszás az elejétől';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$hu extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'A munkamenetet az újbóli bejelentkezés után elutasították';
 	@override String get permissionDenied => 'A Seerr elutasította ezt a műveletet: a fiókod már nem rendelkezik a szükséges jogosultsággal';
 	@override String get permissionRevoked => 'Már nincs jogosultságod ennek az igényléséhez';
+	@override String get withdrawRequest => 'Kérés visszavonása';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$hu extends Translations$common$mediaKind$en
 	@override String get clip => 'Klip';
 	@override String get photo => 'Fénykép';
 	@override String get folder => 'Mappa';
+	@override String get photoAlbum => 'Fotóalbum';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsHu {
 			'common.mediaKind.clip' => 'Klip',
 			'common.mediaKind.photo' => 'Fénykép',
 			'common.mediaKind.folder' => 'Mappa',
+			'common.mediaKind.photoAlbum' => 'Fotóalbum',
 			'screens.licenses' => 'Licencek',
 			'screens.switchProfile' => 'Profilváltás',
 			'screens.subtitleStyling' => 'Feliratok stílusa',
@@ -6185,9 +6194,9 @@ extension on TranslationsHu {
 			'settings.manageLibrariesDescription' => 'Könyvtárak sorrendjének módosítása és elrejtése',
 			'settings.companionRemoteServer' => 'Kísérőtávirányító szervere',
 			'settings.companionRemoteServerDescription' => 'Lehetővé teszi, hogy a hálózaton lévő mobileszközökről vezéreld az alkalmazást',
-			'settings.companionRemoteServerStartFailed' => 'Nem sikerült elindítani a kísérőtávirányító szerverét',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Nem sikerült elindítani a kísérőtávirányító szerverét',
 			'settings.companionRemoteServerStopFailed' => 'Nem sikerült leállítani a kísérőtávirányító szerverét',
 			'settings.autoPip' => 'Automatikus kép a képben (PiP)',
 			'settings.autoPipDescription' => 'Lejátszás közben az alkalmazás elhagyásakor automatikusan kép a képben módra vált',
@@ -6401,6 +6410,11 @@ extension on TranslationsHu {
 			'settings.contentScreensaverDelayOptionDescription' => 'Várjon sok percet bejutás nélkül, mielőtt a screensaver műalkotást mutatja.',
 			'settings.videoCodecOptionDescription' => 'Engedje meg a közvetlen lejátszást erre a kódolóra, amikor támogatásra kerül. A nem ellenőrzött kódokat a média szerver átruházza.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer méret: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Folytatás',
+			'settings.showTopShelfContentDescription' => 'Kikapcsolva minden profilnál csak a Pleazyng képe jelenik meg.',
+			'settings.topShelfUpdateFailed' => 'A Top Shelf frissítése sikertelen. Próbáld újra.',
+			'settings.showFinishTime' => 'Befejezési idő megjelenítése',
+			'settings.showFinishTimeDescription' => 'A hátralévő idő mellett megjelenik, mikor ér véget a videó.',
 			'themeEditor.builtIn' => 'Beépített',
 			'themeEditor.presets' => 'Előre beállított',
 			'themeEditor.custom' => 'Egyéni',
@@ -6634,6 +6648,7 @@ extension on TranslationsHu {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'A Pleazyng nem tudta ellenőrizni, mely fájlokat távolítja el ez, ezért a fent nevezett elemnél többet is törölhet. Szakítsa meg és próbálja újra, vagy töröljön mindenképp.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'A szerver nem szolgáltatott fájladatokat ehhez az elemhez, ezért a Pleazyng nem tudja ellenőrizni, mely fájlokat távolít el. A fent nevezett elemnél többet is törölhet.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Médiaelem sikeresen törölve',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'A médiatartalmak törlése le van tiltva ezen a szerveren. Engedélyezd a törlést a szerver könyvtárbeállításaiban.',
 			'mediaMenu.mediaFailedToDelete' => 'Nem sikerült a médiaelem törlése',
 			'mediaMenu.rate' => 'Értékelés',
 			'mediaMenu.playFromBeginning' => 'Lejátszás az elejétől',
@@ -6693,6 +6708,8 @@ extension on TranslationsHu {
 			'accessibility.reduceMotion' => 'Mozgás csökkentése',
 			'accessibility.reduceMotionHint' => 'Állítsd le a fókuszjelző mozgását, az oldalátmeneteket és a díszítő animációkat.',
 			'accessibility.largeTargets' => 'Nagyabb érintkezési célok',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'A megosztott vezérlők több helyet biztosítanak a hozzáféréshez és a segéd navigációhoz.',
 			'accessibility.navigationHint' => 'A Tab és a Shift+Tab billentyűkkel léphetsz a vezérlők között, az Enter vagy a szóköz aktiválja őket, az Escape vagy a Vissza pedig bezár. Megnyitott könyvnél a nagyítás és az olvasási beállítások is elérhetők.',
 			'accessibility.textSizeDescription' => 'Skála felület szöveg Pleazyng-ben a készülék rendszer szöveges méretének beállítása mellett.',
@@ -6700,8 +6717,6 @@ extension on TranslationsHu {
 			'tooltips.shufflePlay' => 'Véletlenszerű lejátszás',
 			'tooltips.playTrailer' => 'Előzetes lejátszása',
 			'tooltips.markAsWatched' => 'Megjelölés megtekintettként',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Megjelölés nem megtekintettként',
 			'audioTracks.track' => ({required Object n}) => '${n}. hangsáv',
 			'videoControls.audioLabel' => 'Hang',
@@ -7207,6 +7222,8 @@ extension on TranslationsHu {
 			'discover.findNext.artworkLoading' => 'Kép betöltése…',
 			'discover.findNext.artworkUnavailable' => 'A kép nem érhető el',
 			'discover.findNext.savedFeedback' => 'Hozzáadva a mentett ajánlatokhoz',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Most kihagyva',
 			'discover.findNext.releaseToConfirm' => 'Engedd el a megerősítéshez',
 			'discover.findNext.remoteHint' => 'Borító kijelölve: ← / → választás · Kiválasztás: részletek · ↑ / ↓ fókusz mozgatása',
@@ -7214,8 +7231,6 @@ extension on TranslationsHu {
 			'discover.rating' => 'Értékelés',
 			'discover.director' => 'Rendező',
 			'discover.directors' => 'Rendezők',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV-sorozat',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} perc van hátra',
@@ -7721,6 +7736,8 @@ extension on TranslationsHu {
 			'collections.selectCollection' => 'Gyűjtemény kiválasztása',
 			'collections.collectionName' => 'Gyűjtemény neve',
 			'collections.enterCollectionName' => 'Add meg a gyűjtemény nevét',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Hozzáadva a gyűjteményhez',
 			'collections.errorAddingToCollection' => 'Nem sikerült a gyűjteményhez adni',
 			'collections.created' => 'Gyűjtemény létrehozva',
@@ -7728,8 +7745,6 @@ extension on TranslationsHu {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Eltávolítod a következőt: "${title}" ebből a gyűjteményből?',
 			'collections.removedFromCollection' => 'Eltávolítva a gyűjteményből',
 			'collections.removeFromCollectionFailed' => 'Nem sikerült az eltávolítás a gyűjteményből',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Hiba a gyűjteményből való eltávolításkor: ${error}',
 			'collections.searchCollections' => 'Gyűjtemények keresése...',
 			'playlists.title' => 'Lejátszási listák',
@@ -8235,6 +8250,8 @@ extension on TranslationsHu {
 			'performanceOverlay.decoder' => 'Dekóder',
 			'performanceOverlay.rawDecoder' => 'Nyers dekóder',
 			'performanceOverlay.tunneling' => 'Alagutazás',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Passthrough',
 			'performanceOverlay.aspect' => 'Méretarány',
 			'performanceOverlay.rotation' => 'Forgatás',
@@ -8242,8 +8259,6 @@ extension on TranslationsHu {
 			'performanceOverlay.dvPath' => 'DV-útvonal',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekóder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekóder (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Alapréteg',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-alapréteg',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-alapréteg',
@@ -8479,6 +8494,7 @@ extension on TranslationsHu {
 			'seerr.sessionRejectedAfterReauth' => 'A munkamenetet az újbóli bejelentkezés után elutasították',
 			'seerr.permissionDenied' => 'A Seerr elutasította ezt a műveletet: a fiókod már nem rendelkezik a szükséges jogosultsággal',
 			'seerr.permissionRevoked' => 'Már nincs jogosultságod ennek az igényléséhez',
+			'seerr.withdrawRequest' => 'Kérés visszavonása',
 			'services.title' => 'Szolgáltatások',
 			'services.hubSubtitle' => 'Megtekintési haladás szinkronizálása és új tartalmak igénylése.',
 			'services.integrations' => 'Integrációk',
@@ -8748,6 +8764,8 @@ extension on TranslationsHu {
 			'homeLayout.managePlexRowsDescription' => 'Nyitva a házilag kiválasztott sorok megszervezéséhez',
 			'homeLayout.organizeHomeRows' => 'Szervezze a házirendeket',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} sorok: mozog, Hős, Auto-slide, eltávolítása',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Szervezés ${library} sorok',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Folytatás Nézd + ${n} sorok: mozog, Könyvtár, Ház, Hős, Autó-szalag',
 			'homeLayout.renderAsHero' => 'Hősként válogatott kártyát',
@@ -8756,8 +8774,6 @@ extension on TranslationsHu {
 			'homeLayout.autoSlide' => 'Autó Slide',
 			'homeLayout.autoSlideDescription' => 'A bejutások (PC) és a d-pad (TV) mindig működnek és újraindítják a időzítőt.',
 			'homeLayout.autoSlideEditDescription' => 'A csúszás is önmagában néhány másodpercenként. kikapcsolva: csak akkor mozog, ha egy lövedéket (PC) kattintson vagy balra/jobbra nyomja a távoli (TV) oldalon.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Először a hős',
 			'homeLayout.showOnHome' => 'Show on Home képernyőn',
 			'homeLayout.home' => 'Kezdőlap',
@@ -9262,6 +9278,8 @@ extension on TranslationsHu {
 			'audiobook.customSpeed' => 'Custom playback sebesség',
 			'audiobook.speedHelp' => 'Válasszon egy sebességet 0,25× és 4× között.',
 			'audiobook.apply' => 'alkalmazás',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Alvási időszámítás',
 			'audiobook.sleepMinutes' => 'percek (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} fejezetek után',
@@ -9270,8 +9288,6 @@ extension on TranslationsHu {
 			'audiobook.useDefaults' => 'Használja ezeket a hallgatási vezérlőket az új könyvekhez',
 			'audiobook.librarySort' => 'Színes könyvek',
 			'audiobook.sortTitle' => 'címek',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Szerző',
 			'audiobook.sortNarrator' => 'Történész',
 			'audiobook.sortSeries' => 'sorozatrendelés',
@@ -9776,6 +9792,8 @@ extension on TranslationsHu {
 			'musicExperience.bluetoothDrivingHint' => 'Válassza ki azokat a csatlakoztatott Bluetooth-kimeneteket, amelyek automatikusan megnyitják a vezetési nézetet.',
 			'musicTools.loudnessMissing' => 'Nem érkeztek hangerőadatok',
 			'musicTools.loudnessRequested' => 'Az elemzési kérés elküldve',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Ez a kiszolgálóverzió nem támogatja az elemzési kéréseket',
 			'musicTools.serverHistory' => 'Szerver lejátszási előzményei',
 			'musicTools.nfcWrite' => 'NFC-címke írása',
@@ -9784,8 +9802,6 @@ extension on TranslationsHu {
 			'musicTools.storageBudget' => 'Becsült letöltési keret (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Vendég DJ',
 			'musicTools.charts' => 'Hallgatási toplisták',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Újrafelfedezés',
 			'musicTools.stations' => 'Zenei állomások',
 			'musicTools.prompt' => 'Lejátszási lista leírásból',

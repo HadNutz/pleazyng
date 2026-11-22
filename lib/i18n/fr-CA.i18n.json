@@ -58,7 +58,8 @@
       "artist": "Artiste",
       "track": "Piste",
       "playlist": "Liste de lecture",
-      "folder": "Dossier"
+      "folder": "Dossier",
+      "photoAlbum": "Album photo"
     }
   },
   "screens": {
@@ -118,7 +119,12 @@
     "dvOfflineInvalid": "",
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
-    "dvOfflineSdr": ""
+    "dvOfflineSdr": "",
+    "showTopShelfContent": "Apple TV Top Shelf · Continuer à visionner",
+    "showTopShelfContentDescription": "Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.",
+    "topShelfUpdateFailed": "Impossible de mettre à jour Top Shelf. Réessayez.",
+    "showFinishTime": "Afficher l’heure de fin",
+    "showFinishTimeDescription": "Affiche l’heure de fin de la vidéo à côté du temps restant."
   },
   "themeEditor": {
     "custom": "Personnalisation",
@@ -173,7 +179,8 @@
   "mediaMenu": {
     "deleteEpisodeConfirm": "Supprimer l’épisode",
     "rate": "Évaluer",
-    "playFromBeginning": "Lire depuis le début"
+    "playFromBeginning": "Lire depuis le début",
+    "mediaDeletionDisabledOnServer": "La suppression des médias est désactivée sur ce serveur. Autorisez-la dans les paramètres de bibliothèque du serveur."
   },
   "rateSheet": {
     "title": "Évaluer",
@@ -470,7 +477,8 @@
     "director": "Réalisateur",
     "writer": "Scénariste",
     "producer": "Producteur",
-    "imageUploadLimits": "≤ 10 MiB · ≤ 64 MP"
+    "imageUploadLimits": "≤ 10 MiB · ≤ 64 MP",
+    "metadataConflict": "Le même champ a été modifié ailleurs. Rouvrez l’éditeur et vérifiez les dernières valeurs avant d’enregistrer."
   },
   "matchScreen": {
     "titleHint": "Titre",
@@ -488,7 +496,8 @@
     "notificationsOn": "Alerte de disponibilité activée",
     "notificationsEnabled": "Nous vous préviendrons dès que ce sera disponible",
     "notificationsDisabled": "Alerte de disponibilité désactivée",
-    "notificationFailed": "Impossible de mettre à jour l’alerte de disponibilité"
+    "notificationFailed": "Impossible de mettre à jour l’alerte de disponibilité",
+    "withdrawRequest": "Retirer la demande"
   },
   "services": {
     "libraryFilter": {
@@ -951,5 +960,9 @@
     "preferThisVersion": "",
     "clearPreferredVersion": "",
     "preferredVersion": ""
+  },
+  "bookmarkMigration": {
+    "unassigned": "Signets d’une version non identifiée",
+    "assignToVersion": "Attribuer à cette version"
   }
 }

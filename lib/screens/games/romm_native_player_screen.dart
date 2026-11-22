@@ -201,7 +201,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
       try {
         await widget.controller.played(widget.game);
       } catch (_) {
-        /* Playback does not depend on history persistence. */
+        /* best-effort: Playback does not depend on history persistence. */
       }
       if (!mounted || !live) {
         return;
@@ -346,7 +346,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
       try {
         await api.acknowledgeSave(save, source.deviceId, hash);
       } catch (_) {
-        /* Local progress is already durable; a later upload can surface a conflict. */
+        /* best-effort: Local progress is already durable; a later upload can surface a conflict. */
       }
     }
   }
@@ -894,7 +894,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
         durationMs: duration,
       );
     } catch (_) {
-      /* Metadata cannot hold a saved game open. */
+      /* best-effort: Metadata cannot hold a saved game open. */
     }
   }
 

@@ -323,7 +323,7 @@ class _MetadataEditScreenState extends State<MetadataEditScreen> {
         setState(() => adapter.syncReloadedItem(draft, item));
       }
     } catch (_) {
-      // Artwork was already saved by the picker; display will refresh next time.
+      // best-effort: Artwork was already saved by the picker; display will refresh next time.
     }
   }
 

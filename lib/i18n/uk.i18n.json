@@ -224,7 +224,8 @@
       "playlist": "Плейлист",
       "clip": "Кліп",
       "photo": "Фото",
-      "folder": "Тека"
+      "folder": "Тека",
+      "photoAlbum": "Фотоальбом"
     }
   },
   "screens": {
@@ -796,7 +797,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Буффер розмір: ${size} MiB"
+    "streamBufferSizeMiB": "Буффер розмір: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Продовжити перегляд",
+    "showTopShelfContentDescription": "Якщо вимкнути цей параметр, усі профілі бачитимуть лише зображення Pleazyng.",
+    "topShelfUpdateFailed": "Не вдалося оновити Top Shelf. Спробуйте ще раз.",
+    "showFinishTime": "Показувати час завершення",
+    "showFinishTimeDescription": "Поруч із залишком часу показує, коли завершиться відео."
   },
   "themeEditor": {
     "builtIn": "Будівництво",
@@ -1062,6 +1068,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng не вдалося перевірити, які файли буде видалено, тому може бути видалено більше, ніж зазначений вище елемент. Скасуйте дію та спробуйте знову або видаліть попри це.",
     "deleteScopeUnverifiedNoFileInfo": "Сервер не надав відомостей про файли цього елемента, тому Pleazyng не може перевірити, які файли буде видалено. Може бути видалено більше, ніж зазначений вище елемент.",
     "mediaDeletedSuccessfully": "Медіа-елементи успішно видалені",
+    "mediaDeletionDisabledOnServer": "Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.",
     "mediaFailedToDelete": "Не вдалося видалити медіа",
     "rate": "Оцінити",
     "playFromBeginning": "Грати з початку",
@@ -3476,7 +3483,8 @@
     "noUserInformation": "Seerr не повернула інформацію користувача",
     "sessionRejectedAfterReauth": "Засідання було відхилено після повторного підписання.",
     "permissionDenied": "Seerr відмовився від цієї дії: Ваш обліковий запис більше не має необхідного дозволу",
-    "permissionRevoked": "Ви більше не маєте права вимагати цього."
+    "permissionRevoked": "Ви більше не маєте права вимагати цього.",
+    "withdrawRequest": "Відкликати запит"
   },
   "services": {
     "title": "Сервіси",

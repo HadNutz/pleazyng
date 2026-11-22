@@ -59,7 +59,7 @@ Map<String, MediaItem> decodeCachedMediaRows<T>(
         result[decoded.key] = decoded.value;
       }
     } catch (_) {
-      // A malformed cache row does not invalidate its siblings.
+      // best-effort: A malformed cache row does not invalidate its siblings.
     }
   }
   return result;

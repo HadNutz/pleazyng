@@ -648,6 +648,7 @@ class CastMediaService extends ChangeNotifier {
           );
           return true;
         } catch (_) {
+          // best-effort: A failed receiver transition cannot acknowledge the requested cast session.
           return false;
         }
       }

@@ -201,6 +201,28 @@ void main() {
     await response.drain<void>();
   });
 
+  test('retiring a profile revokes both file and direct capabilities already issued to its player', () async {
+    var active = true;
+    final adapter = _GatewayAdapter(SourceTransport(), [1, 2, 3]);
+    final gateway = SourceStreamGateway(valid: () => active);
+    final client = HttpClient();
+    addTearDown(() async {
+      client.close(force: true);
+      await gateway.close();
+      adapter.close();
+    });
+    const file = PublicationFile(id: 'video', name: 'video.mp4', mimeType: 'video/mp4', size: 3);
+    final local = await gateway.register(adapter, file);
+    final remote = await gateway.registerUri(Uri.parse('https://example.com/movie.mp4'));
+    active = false;
+    for (final capability in [local, remote]) {
+      final response = await (await client.getUrl(capability)).close();
+      expect(response.statusCode, HttpStatus.forbidden);
+      expect(await response.isEmpty, isTrue);
+    }
+    await expectLater(gateway.register(adapter, file), throwsA(isA<SourceException>()));
+  });
+
   test('loopback gateway serves and validates byte ranges', () async {
     final adapter = _GatewayAdapter(SourceTransport(), 'abcdef'.codeUnits);
     final gateway = SourceStreamGateway(valid: () => true);

@@ -204,7 +204,8 @@ class _AccountPreferencesBodyState extends State<AccountPreferencesBody> {
     // prepended per build because its label is translated.
     final languageOptions = <DialogOption<String>>[
       DialogOption(value: _noLanguage, title: t.accountPreferences.noPreference),
-      for (final language in LanguageCodes.getAllLanguages()) DialogOption(value: language.code, title: language.name),
+      for (final language in LanguageCodes.getAllLanguages(includeRegional: true))
+        DialogOption(value: language.code, title: language.name),
     ];
 
     return [
@@ -359,9 +360,8 @@ class _AccountPreferencesBodyState extends State<AccountPreferencesBody> {
       icon: icon,
       title: title,
       description: description,
-      subtitleBuilder: (code) => code == null || code == _noLanguage
-          ? t.accountPreferences.noPreference
-          : LanguageCodes.getLanguageName(code) ?? code,
+      subtitleBuilder: (code) =>
+          code == null || code == _noLanguage ? t.accountPreferences.noPreference : LanguageCodes.getDisplayName(code),
       options: options,
       onChanged: (code) => _write(preferenceKey, code == _noLanguage ? null : code),
     );

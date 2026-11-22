@@ -129,7 +129,7 @@ class ExploreProvider extends ChangeNotifier with DisposableChangeNotifierMixin 
       ];
       _rowsEpoch++;
     } catch (_) {
-      // The named failure and its settings/removal action remain available.
+      // best-effort: The named failure and its settings/removal action remain available.
     } finally {
       if (!isDisposed && generation == _generation) {
         _retryingHubs.remove(id);

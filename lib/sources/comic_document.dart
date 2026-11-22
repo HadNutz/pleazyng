@@ -113,7 +113,7 @@ class ComicDocument {
           }
         }
       } catch (_) {
-        /* Fall back to filename order. */
+        /* best-effort: Fall back to filename order. */
       }
     }
     int? dimension(XmlElement? node, String key) {
@@ -246,7 +246,7 @@ class ComicDocument {
       try {
         xml = await File('${directory.path}/$info').readAsString();
       } catch (_) {
-        /* Optional metadata. */
+        /* best-effort: Optional metadata. */
       }
     }
     return fromFiles(files.keys, comicInfo: xml);

@@ -1,0 +1,296 @@
+[
+  [
+    "native/games/romm/retro_proxy.cpp",
+    "bugprone-easily-swappable-parameters",
+    "2 adjacent parameters of 'Request' of convertible types are easily swapped by mistake",
+    "Bytes Request(Command command, const Bytes& body = {}, size_t maximum = 4, int seconds = 2) {"
+  ],
+  [
+    "native/games/romm/retro_proxy.cpp",
+    "bugprone-empty-catch",
+    "empty catch statements hide issues; to handle exceptions appropriately, consider re-throwing, handling, or avoiding catch altogether",
+    "} catch (...) {"
+  ],
+  [
+    "native/games/romm/retro_proxy.cpp",
+    "bugprone-implicit-widening-of-multiplication-result",
+    "performing an implicit widening conversion to type 'size_t' (aka 'unsigned long') of a multiplication performed in type 'uint32_t' (aka 'unsigned int')",
+    "auto audio = reader.Data(samples * 2);"
+  ],
+  [
+    "native/games/romm/retro_proxy.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "return available;"
+  ],
+  [
+    "native/games/romm/retro_proxy.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "return session ? session->height : 0;"
+  ],
+  [
+    "native/games/romm/retro_proxy.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "return session ? session->width : 0;"
+  ],
+  [
+    "native/games/romm/retro_proxy.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "return size;"
+  ],
+  [
+    "native/games/romm/retro_proxy.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "return success;"
+  ],
+  [
+    "native/games/romm/retro_worker.cpp",
+    "bugprone-inc-dec-in-conditions",
+    "incrementing and referencing a variable in a complex condition can cause unintended side-effects due to C++'s order of evaluation, consider moving the modification outside of the condition to avoid misunderstandings",
+    "Check(!(header.command & kReply) && sequence != UINT32_MAX && header.sequence == ++sequence);"
+  ],
+  [
+    "native/games/romm/retro_worker.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "U32(reply, plezy_retro_restore(bytes.data(), size, kind));"
+  ],
+  [
+    "native/games/romm/retro_worker.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "U32(reply, plezy_retro_restore(bytes.data(), size, kind));"
+  ],
+  [
+    "native/games/romm/retro_worker.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "const auto size = plezy_retro_capture(kind);"
+  ],
+  [
+    "native/games/romm/retro_worker.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "plezy_retro_buttons(port, buttons);"
+  ],
+  [
+    "native/games/romm/retro_worker.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "plezy_retro_buttons(port, buttons);"
+  ],
+  [
+    "native/games/romm/retro_worker.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'uint32_t' (aka 'unsigned int') to signed type 'int' is implementation-defined",
+    "plezy_retro_pause_audio(paused);"
+  ],
+  [
+    "native/games/steam/steam_h26x.cpp",
+    "bugprone-easily-swappable-parameters",
+    "2 adjacent parameters of 'nal' of similar type ('bool &') are easily swapped by mistake",
+    "bool H26xParser::nal(const uint8_t* b, size_t n, std::vector<uint8_t>* out, bool& changed, bool& picture) {"
+  ],
+  [
+    "native/games/steam/steam_h26x.cpp",
+    "bugprone-implicit-widening-of-multiplication-result",
+    "performing an implicit widening conversion to type 'const size_t' (aka 'const unsigned long') of a multiplication performed in type 'int'",
+    "constexpr size_t maxUnit = 8 * 1024 * 1024, maxParameter = 65536;"
+  ],
+  [
+    "native/games/steam/steam_h26x.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'size_t' (aka 'unsigned long') to signed type 'difference_type' (aka 'long') is implementation-defined",
+    "output.insert(output.end(), prefixed.begin() + offset, prefixed.begin() + offset + size);"
+  ],
+  [
+    "native/games/steam/steam_h26x.cpp",
+    "bugprone-narrowing-conversions",
+    "narrowing conversion from 'size_t' (aka 'unsigned long') to signed type 'difference_type' (aka 'long') is implementation-defined",
+    "output.insert(output.end(), prefixed.begin() + offset, prefixed.begin() + offset + size);"
+  ],
+  [
+    "native/visualizer/tv_helper.cc",
+    "bugprone-macro-parentheses",
+    "macro argument should be enclosed in parentheses",
+    "#define EGL_API(name) decltype(&::name) name = reinterpret_cast<decltype(&::name)>(Symbol(#name));"
+  ],
+  [
+    "scripts/tv_mpv/ndl_smoke.c",
+    "bugprone-easily-swappable-parameters",
+    "3 adjacent parameters of 'observe_overlay' of similar type ('int') are easily swapped by mistake",
+    "static void observe_overlay(void *ctx, const uint8_t *bgra, int stride, int w, int h) {"
+  ],
+  [
+    "scripts/tv_mpv/ndl_smoke.c",
+    "bugprone-macro-parentheses",
+    "macro argument should be enclosed in parentheses",
+    "#define FN(f) __typeof__(&mpv_##f) f = dlsym(so, \"mpv_\" #f); assert(f)"
+  ],
+  [
+    "scripts/tv_mpv/ndl_smoke.c",
+    "clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling",
+    "Call to function 'fprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'fprintf_s' in case of C11",
+    "fprintf(stderr, \"%s: %s\", log->prefix, log->text);"
+  ],
+  [
+    "scripts/tv_mpv/ndl_smoke.c",
+    "clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling",
+    "Call to function 'fprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'fprintf_s' in case of C11",
+    "if (!so) { fprintf(stderr, \"%s\\n\",dlerror()); return 1; }"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(build_program, \"clBuildProgram\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_buffer, \"clCreateBuffer\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_context, \"clCreateContext\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_kernel, \"clCreateKernel\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_program, \"clCreateProgramWithSource\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(create_queue, \"clCreateCommandQueue\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(enqueue, \"clEnqueueNDRangeKernel\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(finish, \"clFinish\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(get_devices, \"clGetDeviceIDs\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(read_rect, \"clEnqueueReadBufferRect\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_buffer, \"clReleaseMemObject\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_context, \"clReleaseContext\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_kernel, \"clReleaseKernel\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_program, \"clReleaseProgram\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(release_queue, \"clReleaseCommandQueue\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(set_arg, \"clSetKernelArg\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-assignment-in-if-condition",
+    "an assignment within an 'if' condition is bug-prone",
+    "LOAD(write_rect, \"clEnqueueWriteBufferRect\");"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-easily-swappable-parameters",
+    "2 adjacent parameters of 'tv_blend_current_plane' of similar type ('int') are easily swapped by mistake",
+    "TvBlend* b, const uint8_t* a, int a_pitch, const uint8_t* c, int c_pitch, uint8_t* dst, int dst_pitch, int width,"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "bugprone-multi-level-implicit-pointer-conversion",
+    "multilevel pointer conversion from 'void **' to 'const void *', please use explicit cast",
+    "if (!b->buffers[i] || b->set_arg(b->kernel, i, sizeof(void*), &b->buffers[i])) return 0;"
+  ],
+  [
+    "scripts/tv_mpv/opencl_blend.h",
+    "clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling",
+    "Call to function 'memset' is insecure as it does not provide security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'memset_s' in case of C11",
+    "memset(b, 0, sizeof(*b));"
+  ],
+  [
+    "scripts/tv_mpv/render_smoke.c",
+    "bugprone-implicit-widening-of-multiplication-result",
+    "performing an implicit widening conversion to type 'size_t' (aka 'unsigned long') of a multiplication performed in type 'int'",
+    "size_t stride = 160 * 4;"
+  ],
+  [
+    "scripts/tv_mpv/render_smoke.c",
+    "bugprone-implicit-widening-of-multiplication-result",
+    "result of multiplication in type 'int' is used as a pointer offset after an implicit widening conversion to type 'ptrdiff_t'",
+    "const unsigned char *p = pixels + (160 * 45 + 80) * 4;"
+  ],
+  [
+    "scripts/tv_mpv/render_smoke.c",
+    "bugprone-macro-parentheses",
+    "macro argument should be enclosed in parentheses",
+    "#define LOAD(fn) __typeof__(&mpv_##fn) fn = dlsym(lib, \"mpv_\" #fn); assert(fn)"
+  ],
+  [
+    "scripts/tv_mpv/render_smoke.c",
+    "clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling",
+    "Call to function 'fprintf' is insecure as it does not provide bounding of the memory buffer or security checks introduced in the C11 standard. Replace with analogous functions that support length arguments or provides boundary checks such as 'fprintf_s' in case of C11",
+    "if (!lib) { fprintf(stderr, \"%s\\n\", dlerror()); return 1; }"
+  ],
+  [
+    "shared/process/byte_pipe.h",
+    "clang-analyzer-unix.BlockInCriticalSection",
+    "Call to blocking function 'recv' inside of critical section",
+    "count = recv(handle_, data, size, 0);"
+  ]
+]

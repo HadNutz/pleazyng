@@ -92,6 +92,7 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$musicTools$pt_BR musicTools = Translations$musicTools$pt_BR.internal(_root);
 	@override late final Translations$musicExperience$pt_BR musicExperience = Translations$musicExperience$pt_BR.internal(_root);
 	@override late final Translations$subtitleAiUi$pt_BR subtitleAiUi = Translations$subtitleAiUi$pt_BR.internal(_root);
+	@override late final Translations$bookmarkMigration$pt_BR bookmarkMigration = Translations$bookmarkMigration$pt_BR.internal(_root);
 }
 
 // Path: iptv
@@ -274,6 +275,11 @@ class Translations$settings$pt_BR extends Translations$settings$pt {
 		other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos',
 		many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos',
 	);
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar assistindo';
+	@override String get showTopShelfContentDescription => 'Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.';
+	@override String get topShelfUpdateFailed => 'Não foi possível atualizar o Top Shelf. Tente novamente.';
+	@override String get showFinishTime => 'Mostrar horário de término';
+	@override String get showFinishTimeDescription => 'Mostra quando o vídeo vai terminar ao lado do tempo restante.';
 }
 
 // Path: themeEditor
@@ -359,6 +365,7 @@ class Translations$mediaMenu$pt_BR extends Translations$mediaMenu$pt {
 	@override String get deleteEpisodeConfirm => 'Excluir episódio';
 	@override String get rate => 'Avaliação';
 	@override String get playFromBeginning => 'Reproduzir do início';
+	@override String get mediaDeletionDisabledOnServer => 'A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor.';
 }
 
 // Path: rateSheet
@@ -734,6 +741,7 @@ class Translations$metadataEdit$pt_BR extends Translations$metadataEdit$pt {
 	@override String get producer => 'Produtor';
 	@override String get collection => 'Coleção';
 	@override String get imageUploadLimits => '≤ 10 MiB · ≤ 64 MP';
+	@override String get metadataConflict => 'Outra pessoa alterou o mesmo campo. Abra o editor novamente e confira os valores atuais antes de salvar.';
 }
 
 // Path: matchScreen
@@ -766,6 +774,7 @@ class Translations$seerr$pt_BR extends Translations$seerr$pt {
 	@override String get notificationsEnabled => 'Avisaremos quando estiver disponível';
 	@override String get notificationsDisabled => 'Alerta de disponibilidade desativado';
 	@override String get notificationFailed => 'Não foi possível atualizar o alerta de disponibilidade';
+	@override String get withdrawRequest => 'Cancelar solicitação';
 }
 
 // Path: services
@@ -1137,6 +1146,17 @@ class Translations$subtitleAiUi$pt_BR extends Translations$subtitleAiUi$pt {
 	@override String get liveCaptureStop => 'Parar legendas ao vivo';
 }
 
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$pt_BR extends Translations$bookmarkMigration$pt {
+	Translations$bookmarkMigration$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Marcadores de uma versão não identificada';
+	@override String get assignToVersion => 'Atribuir a esta versão';
+}
+
 // Path: common.mediaKind
 class Translations$common$mediaKind$pt_BR extends Translations$common$mediaKind$pt {
 	Translations$common$mediaKind$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
@@ -1155,6 +1175,7 @@ class Translations$common$mediaKind$pt_BR extends Translations$common$mediaKind$
 	@override String get clip => 'Destaque';
 	@override String get photo => 'Fotos';
 	@override String get folder => 'Pasta';
+	@override String get photoAlbum => 'Álbum de fotos';
 }
 
 // Path: themeEditor.slots
@@ -1495,6 +1516,7 @@ extension on TranslationsPtBr {
 			'common.mediaKind.clip' => 'Destaque',
 			'common.mediaKind.photo' => 'Fotos',
 			'common.mediaKind.folder' => 'Pasta',
+			'common.mediaKind.photoAlbum' => 'Álbum de fotos',
 			'screens.subtitleStyling' => 'Estilização da legenda',
 			'screens.logs' => 'Registros',
 			'settings.foldableDisplay' => 'Dobradiça da tela dobrável',
@@ -1536,6 +1558,11 @@ extension on TranslationsPtBr {
 			'settings.scopeAspectRatio' => 'Proporção da tela',
 			'settings.secondsUnit' => ({required num seconds}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(seconds, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundo', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundos', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(seconds)} segundos', ), 
 			'settings.minutesUnit' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('pt'))(minutes, one: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minuto', other: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos', many: '${NumberFormat.decimalPattern(LocalePreferences.formattingLocaleName).format(minutes)} minutos', ), 
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar assistindo',
+			'settings.showTopShelfContentDescription' => 'Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.',
+			'settings.topShelfUpdateFailed' => 'Não foi possível atualizar o Top Shelf. Tente novamente.',
+			'settings.showFinishTime' => 'Mostrar horário de término',
+			'settings.showFinishTimeDescription' => 'Mostra quando o vídeo vai terminar ao lado do tempo restante.',
 			'themeEditor.custom' => 'Personalizado',
 			'themeEditor.preview' => 'Prévia',
 			'themeEditor.slots.text' => 'Texto',
@@ -1578,6 +1605,7 @@ extension on TranslationsPtBr {
 			'mediaMenu.deleteEpisodeConfirm' => 'Excluir episódio',
 			'mediaMenu.rate' => 'Avaliação',
 			'mediaMenu.playFromBeginning' => 'Reproduzir do início',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor.',
 			'rateSheet.title' => 'Avaliação',
 			'rateSheet.server' => 'Servidor',
 			'rateSheet.favorite' => 'Favorito',
@@ -1798,6 +1826,7 @@ extension on TranslationsPtBr {
 			'metadataEdit.producer' => 'Produtor',
 			'metadataEdit.collection' => 'Coleção',
 			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
+			'metadataEdit.metadataConflict' => 'Outra pessoa alterou o mesmo campo. Abra o editor novamente e confira os valores atuais antes de salvar.',
 			'matchScreen.titleHint' => 'Título',
 			'matchScreen.yearHint' => 'Ano',
 			'matchScreen.search' => 'Busca',
@@ -1812,6 +1841,7 @@ extension on TranslationsPtBr {
 			'seerr.notificationsEnabled' => 'Avisaremos quando estiver disponível',
 			'seerr.notificationsDisabled' => 'Alerta de disponibilidade desativado',
 			'seerr.notificationFailed' => 'Não foi possível atualizar o alerta de disponibilidade',
+			'seerr.withdrawRequest' => 'Cancelar solicitação',
 			'services.libraryFilter.modeBlacklist' => 'Lista negra',
 			'services.libraryFilter.modeWhitelist' => 'Lista branca',
 			'services.libraryFilter.libraries' => 'Bibliotecas',
@@ -1927,6 +1957,8 @@ extension on TranslationsPtBr {
 			'romm.download' => 'Keep offline',
 			'romm.offline' => 'Available offline',
 			'romm.downloadProgress' => 'Downloading…',
+			_ => null,
+		} ?? switch (path) {
 			'romm.cancelDownload' => 'Cancel download',
 			'romm.removeOffline' => 'Remove offline copy',
 			'romm.storage' => 'Offline storage',
@@ -1936,8 +1968,6 @@ extension on TranslationsPtBr {
 			'romm.native' => 'On this device',
 			'romm.emulatorJs' => 'EmulatorJS',
 			'romm.ruffle' => 'Ruffle',
-			_ => null,
-		} ?? switch (path) {
 			'romm.jsDos' => 'js-dos',
 			'romm.pico8' => 'PICO-8',
 			'romm.easyRpg' => 'EasyRPG',
@@ -2073,6 +2103,8 @@ extension on TranslationsPtBr {
 			'musicExperience.bluetoothDrivingHint' => 'Escolha as saídas Bluetooth conectadas que abrem automaticamente a visualização de direção.',
 			'subtitleAiUi.liveCaptureStart' => 'Iniciar legendas ao vivo',
 			'subtitleAiUi.liveCaptureStop' => 'Parar legendas ao vivo',
+			'bookmarkMigration.unassigned' => 'Marcadores de uma versão não identificada',
+			'bookmarkMigration.assignToVersion' => 'Atribuir a esta versão',
 			_ => null,
 		};
 	}

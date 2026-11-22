@@ -176,6 +176,7 @@ class MusicRatingJournal {
       if (pending?['revision'] == entry['revision']) await store.deleteDocument('ratingPending', entry['id'] as String);
       return true;
     } catch (_) {
+      // best-effort: Leave the rating journal entry pending when its remote write is unconfirmed.
       return false;
     }
   }

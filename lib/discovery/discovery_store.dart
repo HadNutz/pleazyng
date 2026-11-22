@@ -78,7 +78,7 @@ class DiscoveryState {
       try {
         if (value is Map) saved.add(DiscoveryChoice.fromSnapshot(Map<String, dynamic>.from(value)));
       } catch (_) {
-        // A corrupt historical snapshot is ignored without losing other picks.
+        // best-effort: A corrupt historical snapshot is ignored without losing other picks.
       }
     }
     final history = <DiscoveryDecision>[];
@@ -87,7 +87,7 @@ class DiscoveryState {
       try {
         if (value is Map) history.add(DiscoveryDecision.fromJson(Map<String, dynamic>.from(value)));
       } catch (_) {
-        // Keep the rest of the user's recoverable history.
+        // best-effort: Keep the rest of the user's recoverable history.
       }
     }
     final seen = (json['seen'] is List ? json['seen'] as List : const []).whereType<String>().take(240).toSet();

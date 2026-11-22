@@ -15,15 +15,7 @@ import 'publication_shelf.dart';
 import 'cue_listening.dart';
 import 'source_models.dart';
 
-String _entrySearchText(SourceEntry entry) => [
-  entry.title,
-  entry.displayTitle,
-  entry.onlineTitle,
-  entry.author,
-  entry.narrator,
-  entry.series,
-  ...entry.identifiers.entries.expand((value) => [value.key, value.value]),
-].whereType<String>().join(' ').toLowerCase();
+part 'source_database/entry_search_text.dart';
 
 /// Separate versioned database: installing file sources does not rewrite or
 /// reinterpret the existing server, watched-state or download schemas.

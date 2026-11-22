@@ -24,6 +24,8 @@ import 'base_shared_preferences_service.dart';
 import 'sensitive_prefs.dart';
 import 'device_performance.dart';
 import 'shortcut_action.dart';
+import 'system_shelf_service.dart';
+import 'desktop_screenshot_directory.dart';
 
 export 'base_shared_preferences_service.dart'
     show
@@ -52,6 +54,8 @@ import '../profiles/profile.dart';
 import '../theme/mono_theme.dart' show MonoPalette;
 import '../theme/theme_package.dart';
 import '../watch_together/services/watch_party_relays.dart';
+
+part 'settings/motion_processing_mode_pref.dart';
 
 Map<String, List<MediaBookmark>> _decodeMediaBookmarks(dynamic raw) {
   if (raw is! Map) {
@@ -478,25 +482,6 @@ class LegacyBoolEnumPref<T extends Enum> extends EnumPref<T> {
     }
     return super.readFrom(svc);
   }
-}
-
-/// Reads the pre-release motion smoothing profiles as the single supported
-/// MPV mode, so preferences created during development keep their intent.
-class _MotionProcessingModePref extends EnumPref<MotionProcessingMode> {
-  const _MotionProcessingModePref()
-    : super('motion_smoothing_preset', values: MotionProcessingMode.values, defaultValue: MotionProcessingMode.off);
-
-  @override
-  MotionProcessingMode fromJson(Object? value) => switch (value) {
-    'natural' || 'balanced' || 'smooth' => MotionProcessingMode.mpv,
-    _ => super.fromJson(value),
-  };
-
-  @override
-  MotionProcessingMode readFrom(BaseSharedPreferencesService svc) => switch (svc.readNullableString(key)) {
-    'natural' || 'balanced' || 'smooth' => MotionProcessingMode.mpv,
-    _ => super.readFrom(svc),
-  };
 }
 
 /// Migrates from the legacy `auto_skip_*` booleans: on → [SkipMarkerMode.auto],
@@ -1032,6 +1017,7 @@ class SettingsService extends BaseSharedPreferencesService {
   static const followServerTrackSelections = BoolPref('follow_server_track_selections');
   static const showChapterMarkersOnTimeline = BoolPref('show_chapter_markers_on_timeline', defaultValue: true);
   static const clickVideoTogglesPlayback = BoolPref('click_video_toggles_playback', defaultValue: true);
+  static const showFinishTime = BoolPref('show_finish_time', defaultValue: true);
   static const skipIntroMode = _SkipMarkerModePref('skip_intro_mode', legacyKey: _legacyAutoSkipIntroKey);
   static const skipCreditsMode = _SkipMarkerModePref('skip_credits_mode', legacyKey: _legacyAutoSkipCreditsKey);
   static const skipAdsMode = EnumPref<SkipMarkerMode>(
@@ -1062,6 +1048,9 @@ class SettingsService extends BaseSharedPreferencesService {
   static const introPattern = StringPref('intro_pattern', defaultValue: defaultIntroPattern);
   static const creditsPattern = StringPref('credits_pattern', defaultValue: defaultCreditsPattern);
   static const customDownloadPathType = NullableStringPref('custom_download_path_type');
+
+  /// Custom desktop screenshot directory. Null keeps the existing `~/Pictures` default.
+  static const screenshotDirectory = NullableStringPref('screenshot_directory');
   static const downloadOnWifiOnly = BoolPref('download_on_wifi_only');
   static const autoRemoveWatchedDownloads = BoolPref('auto_remove_watched_downloads');
 
@@ -1357,6 +1346,9 @@ class SettingsService extends BaseSharedPreferencesService {
   static const showNavBarLabels = BoolPref('show_nav_bar_labels', defaultValue: true);
   static const globalShaderPreset = StringPref('global_shader_preset', defaultValue: 'none');
   static const requireProfileSelectionOnOpen = BoolPref('require_profile_selection_on_open');
+
+  /// Device-wide: the Apple TV Home Screen is shared by all profiles.
+  static const showTopShelfContent = BoolPref('show_top_shelf_content', defaultValue: true);
   static const useExternalPlayer = _UseExternalPlayerPref();
   static const forceTvMode = BoolPref('force_tv_mode');
   static const visualEffects = EnumPref<VisualEffectsSetting>(
@@ -1913,6 +1905,7 @@ class SettingsService extends BaseSharedPreferencesService {
     // dropped rather than carried over, and nothing reads the old key.
     await prefs.remove(_legacyUseExoPlayerKey);
     await _resetGlobalsOfKeyedPlayerScopes();
+    await SystemShelfService().setTopShelfEnabled(read(showTopShelfContent));
 
     // The custom relay of Plezy's former Watch Together protocol: no Open
     // Watch Party relay answers there.
@@ -2129,7 +2122,7 @@ class SettingsService extends BaseSharedPreferencesService {
         return HotKey(key: key, modifiers: modifiers.isNotEmpty ? modifiers : null);
       }
     } catch (_) {
-      // Ignore deserialization errors.
+      // best-effort: Ignore deserialization errors.
     }
     return null;
   }
@@ -2295,6 +2288,7 @@ class SettingsService extends BaseSharedPreferencesService {
     subtitleOnMute,
     autoDownloadPreferredSubtitle,
     followServerTrackSelections,
+    showFinishTime,
     downloadOnWifiOnly,
     backgroundDownloadWarningAcknowledged,
     downloadIncludeSpecials,
@@ -2461,7 +2455,9 @@ class SettingsService extends BaseSharedPreferencesService {
     experimentalDolbyVision,
     dvCompatibilityFallback,
     dvExperimentDiagnostics,
+    showTopShelfContent,
     customDownloadPathType,
+    screenshotDirectory,
     mediaVersionPreferences,
     localLastPlayedAt,
     customDownloadPath,
@@ -2497,6 +2493,7 @@ class SettingsService extends BaseSharedPreferencesService {
           pref != globalShaderPreset)
         pref,
     crashReporting,
+    showTopShelfContent,
     mpvConfigText,
     userRelayBaseUrl,
     watchPartyRelayUrl,
@@ -2574,6 +2571,7 @@ class SettingsService extends BaseSharedPreferencesService {
   }
 
   Future<void> resetAllSettings() async {
+    if (read(screenshotDirectory) != null) await DesktopScreenshotDirectory.reset();
     // Materialize an unread legacy choice before retiring its old key, just as
     // if it had already been read — but only where the new preference survives
     // the reset (the portable-only marker modes); the rest are reset anyway.

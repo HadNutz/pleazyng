@@ -224,7 +224,8 @@
       "playlist": "Daftar Putar",
       "clip": "Fitur",
       "photo": "Foto",
-      "folder": "Map"
+      "folder": "Map",
+      "photoAlbum": "Album foto"
     }
   },
   "screens": {
@@ -790,7 +791,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Ukuran Buffer: ${size} MiB"
+    "streamBufferSizeMiB": "Ukuran Buffer: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Lanjutkan menonton",
+    "showTopShelfContentDescription": "Nonaktifkan untuk hanya menampilkan gambar Pleazyng bagi semua profil.",
+    "topShelfUpdateFailed": "Top Shelf tidak dapat diperbarui. Coba lagi.",
+    "showFinishTime": "Tampilkan waktu selesai",
+    "showFinishTimeDescription": "Tampilkan waktu berakhirnya video di samping waktu tersisa."
   },
   "themeEditor": {
     "builtIn": "dibangun",
@@ -1047,6 +1053,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus, sehingga mungkin menghapus lebih dari item yang disebutkan di atas. Batalkan dan coba lagi, atau tetap hapus.",
     "deleteScopeUnverifiedNoFileInfo": "Server tidak memberikan rincian berkas untuk item ini, sehingga Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus. Penghapusan mungkin mencakup lebih dari item yang disebutkan di atas.",
     "mediaDeletedSuccessfully": "Media item dihapus dengan sukses",
+    "mediaDeletionDisabledOnServer": "Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.",
     "mediaFailedToDelete": "gagal menghapus media item",
     "rate": "Rating",
     "playFromBeginning": "Mainkan dari awal",
@@ -3419,7 +3426,8 @@
     "noUserInformation": "Seerr tidak mengembalikan informasi pengguna",
     "sessionRejectedAfterReauth": "Perjanjian itu ditolak setelah ditandatangani lagi.",
     "permissionDenied": "Seerr menolak tindakan ini: akun Anda tidak lagi memiliki izin yang diperlukan",
-    "permissionRevoked": "Anda tidak lagi memiliki izin untuk meminta ini"
+    "permissionRevoked": "Anda tidak lagi memiliki izin untuk meminta ini",
+    "withdrawRequest": "Tarik permintaan"
   },
   "services": {
     "title": "Layanan",

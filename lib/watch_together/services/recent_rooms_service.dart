@@ -58,6 +58,7 @@ class RecentRoomsService {
       rooms.sort((a, b) => b.lastUsed.compareTo(a.lastUsed));
       return rooms;
     } catch (_) {
+      // best-effort: Display an empty history when saved rooms cannot be decoded.
       return [];
     }
   }

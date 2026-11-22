@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -361,7 +362,9 @@ abstract final class SubtitleRevisionService {
       } catch (_) {
         try {
           await file.delete();
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('Could not remove an unreadable subtitle revision.');
+        }
       }
     }
     return List<SubtitleRevision>.unmodifiable(output);

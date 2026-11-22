@@ -531,7 +531,7 @@ class _HeroCastRowState extends State<_HeroCastRow> {
         _cache[item.globalKey] = roles;
         if (mounted && widget.item.globalKey == item.globalKey) setState(() => _roles = roles);
       } catch (_) {
-        // No cast is fine; the banner still shows its info.
+        // best-effort: No cast is fine; the banner still shows its info.
       }
     });
   }

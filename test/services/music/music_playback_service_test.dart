@@ -4314,6 +4314,20 @@ void main() {
       expect(harness.player.openStarts, [null], reason: 'previous discards the resume offset');
     });
 
+    test('moving forward then back after restoring keeps queue order and clears the parked offset', () async {
+      await seedParkedSession(tracks: [t1, t2, t3], cursor: 1, position: const Duration(seconds: 79));
+      final harness = harnessWithStore();
+      await pumpEventQueue();
+      await harness.service.next();
+      await pumpEventQueue();
+      await harness.service.previous();
+      await pumpEventQueue();
+      expect(harness.service.currentIndex, 1);
+      expect(harness.service.queue.map((item) => item.id), ['t1', 't2', 't3']);
+      expect(harness.player.openedUris, [_urlFor(t3), _urlFor(t2)]);
+      expect(harness.player.openStarts, [null, null]);
+    });
+
     test('next while parked advances and plays the following track from the top', () async {
       await seedParkedSession(tracks: [t1, t2], position: const Duration(seconds: 100));
 

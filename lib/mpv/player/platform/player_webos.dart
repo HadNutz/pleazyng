@@ -542,7 +542,7 @@ class PlayerWebOS extends PlayerBase
     try {
       await player?.dispose();
     } catch (_) {
-      // The plugin may have already released its player after a failed load.
+      // best-effort: The plugin may have already released its player after a failed load.
     }
   }
 

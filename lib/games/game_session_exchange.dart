@@ -217,7 +217,7 @@ class GameSessionExchange {
     try {
       send({'version': 1, 'op': 'result', 'request': id, 'status': status.name, 'sessions': ?sessions});
     } catch (_) {
-      /* A retired transport must not escape its async handler. */
+      /* best-effort: A retired transport must not escape its async handler. */
     }
   }
 

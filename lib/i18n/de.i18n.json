@@ -224,7 +224,8 @@
       "playlist": "Wiedergabeliste",
       "clip": "Clip",
       "photo": "Foto",
-      "folder": "Ordner"
+      "folder": "Ordner",
+      "photoAlbum": "Fotoalbum"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer Größe: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer Größe: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Weiterschauen",
+    "showTopShelfContentDescription": "Wenn diese Option deaktiviert ist, sehen alle Profile nur das Pleazyng-Bild.",
+    "topShelfUpdateFailed": "Top Shelf konnte nicht aktualisiert werden. Versuche es erneut.",
+    "showFinishTime": "Endzeit anzeigen",
+    "showFinishTimeDescription": "Zeigt neben der verbleibenden Zeit an, wann das Video endet."
   },
   "themeEditor": {
     "builtIn": "Integriert",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng konnte nicht prüfen, welche Dateien dadurch entfernt werden. Es könnte also mehr gelöscht werden als das oben genannte Element. Brich ab und versuche es erneut, oder lösche trotzdem.",
     "deleteScopeUnverifiedNoFileInfo": "Dein Server hat für dieses Element keine Dateidetails bereitgestellt, daher kann Pleazyng nicht prüfen, welche Dateien entfernt werden. Es könnte mehr gelöscht werden als das oben genannte Element.",
     "mediaDeletedSuccessfully": "Medienelement gelöscht",
+    "mediaDeletionDisabledOnServer": "Das Löschen von Medien ist auf diesem Server deaktiviert. Erlaube das Löschen von Medien in den Bibliothekseinstellungen des Servers.",
     "mediaFailedToDelete": "Medienelement konnte nicht gelöscht werden",
     "rate": "Bewerten",
     "playFromBeginning": "Von Anfang an abspielen",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr hat keine Benutzerinformationen zurückgegeben",
     "sessionRejectedAfterReauth": "Die Sitzung wurde nach der erneuten Anmeldung abgelehnt",
     "permissionDenied": "Seerr hat diese Aktion abgelehnt: Dein Konto hat nicht mehr die erforderliche Berechtigung",
-    "permissionRevoked": "Du hast keine Berechtigung mehr, dies anzufragen"
+    "permissionRevoked": "Du hast keine Berechtigung mehr, dies anzufragen",
+    "withdrawRequest": "Anfrage zurückziehen"
   },
   "services": {
     "title": "Dienste",

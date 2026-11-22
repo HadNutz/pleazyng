@@ -224,7 +224,8 @@
       "playlist": "Ойнату тізімі",
       "clip": "Клип",
       "photo": "Фото",
-      "folder": "Қалта"
+      "folder": "Қалта",
+      "photoAlbum": "Фотоальбом"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Баукерлік: ${size} MiB"
+    "streamBufferSizeMiB": "Баукерлік: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Көруді жалғастыру",
+    "showTopShelfContentDescription": "Өшіргенде барлық профильде тек Pleazyng суреті көрсетіледі.",
+    "topShelfUpdateFailed": "Top Shelf жаңартылмады. Қайталап көріңіз.",
+    "showFinishTime": "Аяқталу уақытын көрсету",
+    "showFinishTimeDescription": "Қалған уақыттың жанында бейненің қашан аяқталатынын көрсету."
   },
   "themeEditor": {
     "builtIn": "Кірістірілген",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng қандай файлдар өшірілетінін тексере алмады, сондықтан ол жоғарыда аталған элементтен артық өшіруі мүмкін. Бас тартып, қайталап көріңіз немесе бәрібір өшіріңіз.",
     "deleteScopeUnverifiedNoFileInfo": "Серверіңіз бұл элемент үшін файл мәліметтерін ұсынбады, сондықтан Pleazyng қандай файлдар өшірілетінін тексере алмайды. Ол жоғарыда аталған элементтен артық өшіруі мүмкін.",
     "mediaDeletedSuccessfully": "Медиа элементі сәтті өшірілді",
+    "mediaDeletionDisabledOnServer": "Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.",
     "mediaFailedToDelete": "Медиа элементін өшіру мүмкін болмады",
     "rate": "Бағалау",
     "playFromBeginning": "Басынан бастап ойнату",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr пайдаланушы туралы мәліметтерді қайтармады",
     "sessionRejectedAfterReauth": "Қайта кіргеннен кейін сеанс қабылданбады",
     "permissionDenied": "Seerr бұл әрекетті қабылдамады: тіркелгіңізде енді қажетті рұқсат жоқ",
-    "permissionRevoked": "Мұны сұрауға енді рұқсатыңыз жоқ"
+    "permissionRevoked": "Мұны сұрауға енді рұқсатыңыз жоқ",
+    "withdrawRequest": "Сұрауды кері қайтару"
   },
   "services": {
     "title": "Қызметтер",

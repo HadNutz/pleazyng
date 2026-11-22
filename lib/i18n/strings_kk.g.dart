@@ -898,6 +898,11 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Қазіргі таңда бүкіл әлемде өте көп айтылады.';
 	@override String get videoCodecOptionDescription => 'Қазіргі уақытта бұл кодектеріне жүктеуге болады.Некеккен кодектер мен медиа сервердер арқылы транскриптуды.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Баукерлік: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Көруді жалғастыру';
+	@override String get showTopShelfContentDescription => 'Өшіргенде барлық профильде тек Pleazyng суреті көрсетіледі.';
+	@override String get topShelfUpdateFailed => 'Top Shelf жаңартылмады. Қайталап көріңіз.';
+	@override String get showFinishTime => 'Аяқталу уақытын көрсету';
+	@override String get showFinishTimeDescription => 'Қалған уақыттың жанында бейненің қашан аяқталатынын көрсету.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$kk extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng қандай файлдар өшірілетінін тексере алмады, сондықтан ол жоғарыда аталған элементтен артық өшіруі мүмкін. Бас тартып, қайталап көріңіз немесе бәрібір өшіріңіз.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Серверіңіз бұл элемент үшін файл мәліметтерін ұсынбады, сондықтан Pleazyng қандай файлдар өшірілетінін тексере алмайды. Ол жоғарыда аталған элементтен артық өшіруі мүмкін.';
 	@override String get mediaDeletedSuccessfully => 'Медиа элементі сәтті өшірілді';
+	@override String get mediaDeletionDisabledOnServer => 'Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.';
 	@override String get mediaFailedToDelete => 'Медиа элементін өшіру мүмкін болмады';
 	@override String get rate => 'Бағалау';
 	@override String get playFromBeginning => 'Басынан бастап ойнату';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$kk extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Қайта кіргеннен кейін сеанс қабылданбады';
 	@override String get permissionDenied => 'Seerr бұл әрекетті қабылдамады: тіркелгіңізде енді қажетті рұқсат жоқ';
 	@override String get permissionRevoked => 'Мұны сұрауға енді рұқсатыңыз жоқ';
+	@override String get withdrawRequest => 'Сұрауды кері қайтару';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$kk extends Translations$common$mediaKind$en
 	@override String get clip => 'Клип';
 	@override String get photo => 'Фото';
 	@override String get folder => 'Қалта';
+	@override String get photoAlbum => 'Фотоальбом';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsKk {
 			'common.mediaKind.clip' => 'Клип',
 			'common.mediaKind.photo' => 'Фото',
 			'common.mediaKind.folder' => 'Қалта',
+			'common.mediaKind.photoAlbum' => 'Фотоальбом',
 			'screens.licenses' => 'Лицензиялар',
 			'screens.switchProfile' => 'Профильді ауыстыру',
 			'screens.subtitleStyling' => 'Субтитр баптаулары',
@@ -6185,9 +6194,9 @@ extension on TranslationsKk {
 			'settings.manageLibrariesDescription' => 'Кітапханаларды қайта реттеу және жасыру',
 			'settings.companionRemoteServer' => 'Көмекші пульт сервері',
 			'settings.companionRemoteServerDescription' => 'Желідегі мобильді құрылғыларға осы қолданбаны басқаруға рұқсат беру',
-			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
 			'settings.companionRemoteServerStopFailed' => 'Көмекші серверді тоқтату мүмкін болмады',
 			'settings.autoPip' => 'Автоматты Суреттегі сурет (PiP)',
 			'settings.autoPipDescription' => 'Видео ойнап жатқанда қолданбадан шыққанда авто-PiP режиміне өту',
@@ -6401,6 +6410,11 @@ extension on TranslationsKk {
 			'settings.contentScreensaverDelayOptionDescription' => 'Қазіргі таңда бүкіл әлемде өте көп айтылады.',
 			'settings.videoCodecOptionDescription' => 'Қазіргі уақытта бұл кодектеріне жүктеуге болады.Некеккен кодектер мен медиа сервердер арқылы транскриптуды.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Баукерлік: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Көруді жалғастыру',
+			'settings.showTopShelfContentDescription' => 'Өшіргенде барлық профильде тек Pleazyng суреті көрсетіледі.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf жаңартылмады. Қайталап көріңіз.',
+			'settings.showFinishTime' => 'Аяқталу уақытын көрсету',
+			'settings.showFinishTimeDescription' => 'Қалған уақыттың жанында бейненің қашан аяқталатынын көрсету.',
 			'themeEditor.builtIn' => 'Кірістірілген',
 			'themeEditor.presets' => 'Дайын тақырыптар',
 			'themeEditor.custom' => 'Жеке',
@@ -6634,6 +6648,7 @@ extension on TranslationsKk {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng қандай файлдар өшірілетінін тексере алмады, сондықтан ол жоғарыда аталған элементтен артық өшіруі мүмкін. Бас тартып, қайталап көріңіз немесе бәрібір өшіріңіз.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Серверіңіз бұл элемент үшін файл мәліметтерін ұсынбады, сондықтан Pleazyng қандай файлдар өшірілетінін тексере алмайды. Ол жоғарыда аталған элементтен артық өшіруі мүмкін.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Медиа элементі сәтті өшірілді',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Бұл серверде медианы жою өшірілген. Сервердің кітапхана баптауларында медианы жоюға рұқсат беріңіз.',
 			'mediaMenu.mediaFailedToDelete' => 'Медиа элементін өшіру мүмкін болмады',
 			'mediaMenu.rate' => 'Бағалау',
 			'mediaMenu.playFromBeginning' => 'Басынан бастап ойнату',
@@ -6693,6 +6708,8 @@ extension on TranslationsKk {
 			'accessibility.reduceMotion' => 'Ақыттық рух',
 			'accessibility.reduceMotionHint' => 'Фокус көрсеткішінің қозғалысын, бет ауысу анимациясын және сәндік әсерлерді тоқтатыңыз.',
 			'accessibility.largeTargets' => 'Өнімдер сенімді',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => '«Жеңіске» және «Жектеу» деген әлі де ұзақ уақытқа дейін ұзақ уақыт бойы жасылып отыр.',
 			'accessibility.navigationHint' => 'Басқару элементтері арасында ауысу үшін Tab және Shift+Tab, іске қосу үшін Enter немесе Бос орын, жабу үшін Escape немесе Артқа түймесін пайдаланыңыз. Кітап ашық кезде масштаб пен оқу параметрлерін өзгертуге болады.',
 			'accessibility.textSizeDescription' => 'Осылайша «Барселона» АҚ-ның «Атлантикалық» және «Текст-Системалық» АҚ қағидаларынан тұрады.',
@@ -6700,8 +6717,6 @@ extension on TranslationsKk {
 			'tooltips.shufflePlay' => 'Араластырып ойнату',
 			'tooltips.playTrailer' => 'Трейлерді ойнату',
 			'tooltips.markAsWatched' => 'Көрілді деп белгілеу',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Көрілмеді деп белгілеу',
 			'audioTracks.track' => ({required Object n}) => 'Аудиожол ${n}',
 			'videoControls.audioLabel' => 'Дыбыс',
@@ -7207,6 +7222,8 @@ extension on TranslationsKk {
 			'discover.findNext.artworkLoading' => 'Сурет жүктелуде…',
 			'discover.findNext.artworkUnavailable' => 'Сурет қолжетімсіз',
 			'discover.findNext.savedFeedback' => 'Сақталған таңдауларға қосылды',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Әзірге өткізіліп жіберілді',
 			'discover.findNext.releaseToConfirm' => 'Растау үшін жіберіңіз',
 			'discover.findNext.remoteHint' => 'Мұқаба таңдалғанда: ← / → таңдау · Таңдау түймесі: мәліметтер · ↑ / ↓ фокусты жылжыту',
@@ -7214,8 +7231,6 @@ extension on TranslationsKk {
 			'discover.rating' => 'Рейтинг',
 			'discover.director' => 'Режиссер',
 			'discover.directors' => 'Режиссерлер',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Фильм',
 			'discover.tvShow' => 'TV Шоу',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} мин қалды',
@@ -7721,6 +7736,8 @@ extension on TranslationsKk {
 			'collections.selectCollection' => 'Топтаманы таңдау',
 			'collections.collectionName' => 'Топтама атауы',
 			'collections.enterCollectionName' => 'Топтама атауын енгізіңіз',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Топтамаға қосылды',
 			'collections.errorAddingToCollection' => 'Топтамаға қосу мүмкін болмады',
 			'collections.created' => 'Топтама жасалды',
@@ -7728,8 +7745,6 @@ extension on TranslationsKk {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" осы топтамадан өшірілсін бе?',
 			'collections.removedFromCollection' => 'Топтамадан өшірілді',
 			'collections.removeFromCollectionFailed' => 'Топтамадан өшіру мүмкін болмады',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Өшіру қатесі: ${error}',
 			'collections.searchCollections' => 'Топтамалардан іздеу...',
 			'playlists.title' => 'Ойнату тізімдері',
@@ -8235,6 +8250,8 @@ extension on TranslationsKk {
 			'performanceOverlay.decoder' => 'Декодер',
 			'performanceOverlay.rawDecoder' => 'Өңделмеген декодер',
 			'performanceOverlay.tunneling' => 'Туннельдеу',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Тікелей өткізу',
 			'performanceOverlay.aspect' => 'Қатынас',
 			'performanceOverlay.rotation' => 'Бұрылыс',
@@ -8242,8 +8259,6 @@ extension on TranslationsKk {
 			'performanceOverlay.dvPath' => 'DV жолы',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision декодері',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодері (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Негізгі қабат',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 негізгі қабаты',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG негізгі қабаты',
@@ -8479,6 +8494,7 @@ extension on TranslationsKk {
 			'seerr.sessionRejectedAfterReauth' => 'Қайта кіргеннен кейін сеанс қабылданбады',
 			'seerr.permissionDenied' => 'Seerr бұл әрекетті қабылдамады: тіркелгіңізде енді қажетті рұқсат жоқ',
 			'seerr.permissionRevoked' => 'Мұны сұрауға енді рұқсатыңыз жоқ',
+			'seerr.withdrawRequest' => 'Сұрауды кері қайтару',
 			'services.title' => 'Қызметтер',
 			'services.hubSubtitle' => 'Көру барысын синхрондаңыз және жаңа мазмұн сұраңыз.',
 			'services.integrations' => 'Интеграциялар',
@@ -8748,6 +8764,8 @@ extension on TranslationsKk {
 			'homeLayout.managePlexRowsDescription' => 'Өнімдермен танымал, бірақ танымал, таңдардан танымал.',
 			'homeLayout.organizeHomeRows' => 'Өнімдермен өңдеу',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} қатар: жылжыту, баннер, автоматты ауысу, жою',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Қаланың тұрақты тұрғындарының саны ${library}',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Өзінің қабырғасы + ${n} қабырғалары: қараша, Библиотека, Доминика, Героя, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Бұл үшін карталық карталық карта',
@@ -8756,8 +8774,6 @@ extension on TranslationsKk {
 			'homeLayout.autoSlide' => 'Авто-Слайд',
 			'homeLayout.autoSlideDescription' => 'Бұл үшін, бұл жерде де ұзақ уақытқа дейін ұзақ уақыт бойы жасылған.',
 			'homeLayout.autoSlideEditDescription' => 'Бұл үшін, бұл жерде де ұзақ уақытқа дейін ұзақ уақыт бойы жасылған.Ап: бұл жерде ұзақ уақыттан дейін ұзақ жылдан дейін ұзақ уақытта ұзақ уақытға дейін ұзақ мерзімде (PC) немесе ұзақ мерзімі (TV) ұзақ мерзі (TV) жасылғанды.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Бұл үшін Герояның',
 			'homeLayout.showOnHome' => 'Home Screen қауымда',
 			'homeLayout.home' => 'Басты бет',
@@ -9262,6 +9278,8 @@ extension on TranslationsKk {
 			'audiobook.customSpeed' => 'Өнімдер Playback Speed',
 			'audiobook.speedHelp' => 'Қазіргі уақытта 0.25× – 4× жылға дейін ұсынады.',
 			'audiobook.apply' => 'Қатысушы',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Сондай-ақ сағат',
 			'audiobook.sleepMinutes' => 'Қазіргі уақытта (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Қазіргі уақытта ${count} қағидалары',
@@ -9270,8 +9288,6 @@ extension on TranslationsKk {
 			'audiobook.useDefaults' => 'Теңіздердің аудармаларын аудармаларын аудармаларын',
 			'audiobook.librarySort' => 'Бібліотекасы',
 			'audiobook.sortTitle' => 'Қатысушылардың',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Алдыңғы',
 			'audiobook.sortNarrator' => 'Жарысқа',
 			'audiobook.sortSeries' => 'Сериялық ордер',
@@ -9776,6 +9792,8 @@ extension on TranslationsKk {
 			'musicExperience.bluetoothDrivingHint' => 'Көлік жүргізу көрінісін автоматты түрде ашатын қосылған Bluetooth шығыстарын таңдаңыз.',
 			'musicTools.loudnessMissing' => 'Дыбыс қаттылығы туралы дерек алынбады',
 			'musicTools.loudnessRequested' => 'Талдау сұрауы жіберілді',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Сервердің бұл нұсқасы талдау сұрауларын қолдамайды',
 			'musicTools.serverHistory' => 'Сервердегі ойнату тарихы',
 			'musicTools.nfcWrite' => 'NFC тегіне жазу',
@@ -9784,8 +9802,6 @@ extension on TranslationsKk {
 			'musicTools.storageBudget' => 'Жүктеп алудың болжалды шегі (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Қонақ диджей',
 			'musicTools.charts' => 'Тыңдау рейтингі',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Қайта ашу',
 			'musicTools.stations' => 'Музыка станциялары',
 			'musicTools.prompt' => 'Сипаттамадан ойнату тізімі',

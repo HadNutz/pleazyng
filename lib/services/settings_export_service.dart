@@ -4,8 +4,6 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +12,7 @@ import '../models/shader_preset.dart';
 import '../i18n/presentation_formats.dart';
 import '../i18n/strings.g.dart';
 import '../utils/app_logger.dart';
+import '../utils/app_version.dart';
 import '../utils/formatters.dart';
 import '../utils/platform_detector.dart';
 import 'file_picker_service.dart';
@@ -387,6 +386,7 @@ class SettingsExportService {
       SettingsService.validateEditableValue(pref, value);
       return true;
     } catch (_) {
+      // best-effort: Reject an import value that its preference type cannot decode.
       return false;
     }
   }
@@ -467,14 +467,7 @@ class SettingsExportService {
   static Future<String?> exportToFile() async {
     final prefs = (await SettingsService.getInstance()).prefs;
     final storage = await StorageService.getInstance();
-    String appVersion = '';
-    try {
-      final info = await PackageInfo.fromPlatform();
-      appVersion = info.version;
-    } on PlatformException {
-      // Best-effort metadata; platforms without PackageInfo still export.
-    }
-
+    final appVersion = (await AppVersion.current()).versionOrUnknown;
     final exportMap = buildExportMap(prefs, currentUserUuid: storage.activeUserScope(), appVersion: appVersion);
     final jsonString = const JsonEncoder.withIndent('  ').convert(exportMap);
     final bytes = Uint8List.fromList(utf8.encode(jsonString));

@@ -224,7 +224,8 @@
       "playlist": "لیست پخش",
       "clip": "فیلم کوتاه",
       "photo": "عکس",
-      "folder": "پوشه"
+      "folder": "پوشه",
+      "photoAlbum": "آلبوم عکس"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "حجم بوفری: ${size} MiB"
+    "streamBufferSizeMiB": "حجم بوفری: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · ادامه تماشا",
+    "showTopShelfContentDescription": "با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.",
+    "topShelfUpdateFailed": "به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.",
+    "showFinishTime": "نمایش زمان پایان",
+    "showFinishTimeDescription": "زمان پایان ویدیو را کنار زمان باقی‌مانده نشان می‌دهد."
   },
   "themeEditor": {
     "builtIn": "ساخته شده",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng نتوانست بررسی کند کدام فایل‌ها حذف می‌شوند؛ بنابراین ممکن است مواردی بیش از مورد بالا حذف شوند. لغو کنید و دوباره تلاش کنید، یا در هر صورت حذف کنید.",
     "deleteScopeUnverifiedNoFileInfo": "سرور شما جزئیات فایل‌های این مورد را ارائه نکرده است، بنابراین Pleazyng نمی‌تواند بررسی کند کدام فایل‌ها حذف می‌شوند. ممکن است مواردی بیش از مورد بالا حذف شوند.",
     "mediaDeletedSuccessfully": "موضوع رسانه ها با موفقیت حذف شد",
+    "mediaDeletionDisabledOnServer": "حذف رسانه در این سرور غیرفعال است. در تنظیمات کتابخانهٔ سرور، اجازهٔ حذف رسانه را فعال کنید.",
     "mediaFailedToDelete": "ناپدید شدن حذف رسانه ها",
     "rate": "ارزیابی کن",
     "playFromBeginning": "از ابتدا اجرا کن",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr اطلاعات کاربر را بازگرداند",
     "sessionRejectedAfterReauth": "جلسه پس از امضای مجدد رد شد.",
     "permissionDenied": "Seerr این اقدام را رد کرد: حساب شما دیگر مجوز مورد نیاز را ندارد",
-    "permissionRevoked": "شما دیگر اجازه درخواست این کار را ندارید."
+    "permissionRevoked": "شما دیگر اجازه درخواست این کار را ندارید.",
+    "withdrawRequest": "پس گرفتن درخواست"
   },
   "services": {
     "title": "خدمات",

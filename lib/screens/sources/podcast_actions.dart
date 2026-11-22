@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +13,8 @@ import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
 import '../../utils/dialogs.dart';
 import '../../utils/snackbar_helper.dart';
-import '../../widgets/dialog_action_button.dart';
 import '../../widgets/app_icon.dart';
+import '../../widgets/dialog_action_button.dart';
 
 Future<void> importPodcastOpml(BuildContext context) async {
   final sources = context.read<SourceController>();
@@ -76,19 +75,19 @@ Future<Set<Uri>?> _reviewHttpFeeds(BuildContext context, List<PodcastSubscriptio
                     final feed = feeds[index];
                     final url = feed.url;
                     final showFull = revealed.contains(url);
-                    final address = url.toString();
+                    final address = url.hasQuery && !showFull ? '${url.toString().split('?').first}?…' : url.toString();
                     return Row(
                       children: [
                         Expanded(
                           child: CheckboxListTile(
                             title: Text(feed.title),
-                            subtitle: Text(url.hasQuery && !showFull ? '${address.split('?').first}?…' : address),
-                            value: selected.contains(feed.url),
+                            subtitle: Text(address),
+                            value: selected.contains(url),
                             onChanged: (checked) => update(() {
                               if (checked == true) {
-                                selected.add(feed.url);
+                                selected.add(url);
                               } else {
-                                selected.remove(feed.url);
+                                selected.remove(url);
                               }
                             }),
                           ),
@@ -133,19 +132,18 @@ Future<void> exportPodcastOpml(BuildContext context) async {
   final subscriptions = await sources.podcastSubscriptions();
   sources.requireSession(epoch);
   if (subscriptions.isEmpty || !context.mounted) return;
-  if (!await showConfirmDialog(
+  final confirmed = await showConfirmDialog(
     context,
     title: t.podcasts.exportOpml,
     message: t.podcasts.exportHelp,
     confirmText: t.podcasts.exportOpml,
-  )) {
-    return;
-  }
+  );
+  if (!confirmed) return;
   sources.requireSession(epoch);
   await FilePickerService.instance.saveFile(
     fileName: 'plezyng-podcasts.opml',
     type: FileType.custom,
     allowedExtensions: const ['opml'],
-    bytes: Uint8List.fromList(utf8.encode(PodcastOpml.write(subscriptions))),
+    bytes: utf8.encode(PodcastOpml.write(subscriptions)),
   );
 }

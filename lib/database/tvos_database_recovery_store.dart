@@ -160,6 +160,7 @@ final class TvosDatabaseRecoveryStore {
         _disableRecovery(error, stackTrace);
         return TvosDatabaseRecoveryOutcome.fresh;
       } catch (_) {
+        // best-effort: Keep recovery required until the new database has a durable snapshot.
         return _markRecoveryRequired();
       }
     }
@@ -427,7 +428,7 @@ final class TvosDatabaseRecoveryStore {
       if (identity == null || pending == null) return null;
       return TvosDatabaseRecoverySnapshot(identity: identity, pending: pending);
     } catch (_) {
-      return null;
+      return null; // best-effort: an unreadable snapshot leaves recovery pending for the next valid image.
     }
   }
 
@@ -454,6 +455,7 @@ final class TvosDatabaseRecoveryStore {
     try {
       return _decodeManifest(_preferences.getString(manifestKey));
     } catch (_) {
+      // best-effort: Manifest repair can continue from the independently validated snapshot.
       return null;
     }
   }
@@ -483,7 +485,7 @@ final class TvosDatabaseRecoveryStore {
       try {
         await _reloadManifestCacheIfNeeded();
       } catch (_) {
-        // The next mutation retries the durable reload before reading state.
+        // best-effort: The next mutation retries the durable reload before reading state.
       }
       throw const TvosDatabaseDurabilityException();
     }

@@ -898,6 +898,11 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'U\'qizga bu mullayni o‘zizga, ekrensaver artwork ko‘shish.';
 	@override String get videoCodecOptionDescription => 'Bu codec\'nin doğrudan playback ko‘dadi. Unchecked codeclar media server tarafından transcodir.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer siz: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Tomoshani davom ettirish';
+	@override String get showTopShelfContentDescription => 'Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.';
+	@override String get topShelfUpdateFailed => 'Top Shelf yangilanmadi. Qayta urinib koʻring.';
+	@override String get showFinishTime => 'Tugash vaqtini koʻrsatish';
+	@override String get showFinishTimeDescription => 'Qolgan vaqt yonida video qachon tugashini koʻrsatadi.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$uz extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng qaysi fayllar olib tashlanishini tekshira olmadi, shuning uchun u yuqorida koʻrsatilgan elementdan koʻproq narsani oʻchirishi mumkin. Bekor qilib qaytadan urining yoki baribir oʻchiring.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Serveringiz ushbu element uchun fayl tafsilotlarini taqdim etmadi, shuning uchun Pleazyng qaysi fayllar olib tashlanishini tekshira olmaydi. U yuqorida koʻrsatilgan elementdan koʻproq narsani oʻchirishi mumkin.';
 	@override String get mediaDeletedSuccessfully => 'Media elementi muvaffaqiyatli oʻchirildi';
+	@override String get mediaDeletionDisabledOnServer => 'Bu serverda media fayllarni oʻchirish oʻchirilgan. Server kutubxonasi sozlamalarida media fayllarni oʻchirishga ruxsat bering.';
 	@override String get mediaFailedToDelete => 'Media elementini oʻchirib boʻlmadi';
 	@override String get rate => 'Baho berish';
 	@override String get playFromBeginning => 'Boshidan ijro etish';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$uz extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Qayta kirilgandan keyin seans rad etildi';
 	@override String get permissionDenied => 'Seerr bu amalni rad etdi: hisobingizda endi kerakli ruxsat yoʻq';
 	@override String get permissionRevoked => 'Buni soʻrash uchun endi ruxsatingiz yoʻq';
+	@override String get withdrawRequest => 'Soʻrovni qaytarib olish';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$uz extends Translations$common$mediaKind$en
 	@override String get clip => 'Klip';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Papka';
+	@override String get photoAlbum => 'Fotoalbom';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsUz {
 			'common.mediaKind.clip' => 'Klip',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Papka',
+			'common.mediaKind.photoAlbum' => 'Fotoalbom',
 			'screens.licenses' => 'Litsenziyalar',
 			'screens.switchProfile' => 'Profilni almashtirish',
 			'screens.subtitleStyling' => 'Subtitr sozlamalari',
@@ -6185,9 +6194,9 @@ extension on TranslationsUz {
 			'settings.manageLibrariesDescription' => 'Kutubxonalarni tartiblash va yashirish',
 			'settings.companionRemoteServer' => 'Yordamchi pult serveri',
 			'settings.companionRemoteServerDescription' => 'Tarmoqdagi mobil qurilmalarga ushbu ilovani boshqarishga ruxsat berish',
-			'settings.companionRemoteServerStartFailed' => 'Yordamchi pult serverini ishga tushirib bo‘lmadi',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Yordamchi pult serverini ishga tushirib bo‘lmadi',
 			'settings.companionRemoteServerStopFailed' => 'Yordamchi pult serverini to‘xtatib bo‘lmadi',
 			'settings.autoPip' => 'Avtomatik Rasm ichida rasm (PiP)',
 			'settings.autoPipDescription' => 'Video ijro etilayotganda ilovadan chiqilganda avto-PiP rejimiga oʻtish',
@@ -6401,6 +6410,11 @@ extension on TranslationsUz {
 			'settings.contentScreensaverDelayOptionDescription' => 'U\'qizga bu mullayni o‘zizga, ekrensaver artwork ko‘shish.',
 			'settings.videoCodecOptionDescription' => 'Bu codec\'nin doğrudan playback ko‘dadi. Unchecked codeclar media server tarafından transcodir.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer siz: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Tomoshani davom ettirish',
+			'settings.showTopShelfContentDescription' => 'Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf yangilanmadi. Qayta urinib koʻring.',
+			'settings.showFinishTime' => 'Tugash vaqtini koʻrsatish',
+			'settings.showFinishTimeDescription' => 'Qolgan vaqt yonida video qachon tugashini koʻrsatadi.',
 			'themeEditor.builtIn' => 'Oʻrnatilgan',
 			'themeEditor.presets' => 'Tayyor mavzular',
 			'themeEditor.custom' => 'Shaxsiy',
@@ -6634,6 +6648,7 @@ extension on TranslationsUz {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng qaysi fayllar olib tashlanishini tekshira olmadi, shuning uchun u yuqorida koʻrsatilgan elementdan koʻproq narsani oʻchirishi mumkin. Bekor qilib qaytadan urining yoki baribir oʻchiring.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Serveringiz ushbu element uchun fayl tafsilotlarini taqdim etmadi, shuning uchun Pleazyng qaysi fayllar olib tashlanishini tekshira olmaydi. U yuqorida koʻrsatilgan elementdan koʻproq narsani oʻchirishi mumkin.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media elementi muvaffaqiyatli oʻchirildi',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Bu serverda media fayllarni oʻchirish oʻchirilgan. Server kutubxonasi sozlamalarida media fayllarni oʻchirishga ruxsat bering.',
 			'mediaMenu.mediaFailedToDelete' => 'Media elementini oʻchirib boʻlmadi',
 			'mediaMenu.rate' => 'Baho berish',
 			'mediaMenu.playFromBeginning' => 'Boshidan ijro etish',
@@ -6693,6 +6708,8 @@ extension on TranslationsUz {
 			'accessibility.reduceMotion' => 'Movsiya ko‘zadi',
 			'accessibility.reduceMotionHint' => 'Fokus ko‘rsatkichi harakatini, sahifa almashish animatsiyasini va bezak effektlarini to‘xtating.',
 			'accessibility.largeTargets' => 'Tadiqni sasni',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'U\'zizga qo‘zlar, touch-i-asistivi navigation üçün daha fazla yer qo‘z.',
 			'accessibility.navigationHint' => 'Boshqaruv elementlari orasida yurish uchun Tab va Shift+Tab, ishga tushirish uchun Enter yoki Bo‘sh joy, yopish uchun Escape yoki Orqaga tugmasidan foydalaning. Kitob ochiq bo‘lsa, masshtab va o‘qish sozlamalarini o‘zgartirish mumkin.',
 			'accessibility.textSizeDescription' => 'Tekstil-Skala interfacing-i Pleazyng-da sistem-size-situasyonun yanı sıra cihazın texta-sized-settings.',
@@ -6700,8 +6717,6 @@ extension on TranslationsUz {
 			'tooltips.shufflePlay' => 'Aralashtirib ijro etish',
 			'tooltips.playTrailer' => 'Treylerni koʻrish',
 			'tooltips.markAsWatched' => 'Koʻrilgan deb belgilash',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Koʻrilmagan deb belgilash',
 			'audioTracks.track' => ({required Object n}) => 'Audio yoʻlak ${n}',
 			'videoControls.audioLabel' => 'Ovoz',
@@ -7207,6 +7222,8 @@ extension on TranslationsUz {
 			'discover.findNext.artworkLoading' => 'Rasm yuklanmoqda…',
 			'discover.findNext.artworkUnavailable' => 'Rasm mavjud emas',
 			'discover.findNext.savedFeedback' => 'Saqlangan tanlovlarga qo‘shildi',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Hozircha o‘tkazib yuborildi',
 			'discover.findNext.releaseToConfirm' => 'Tasdiqlash uchun qo‘yib yuboring',
 			'discover.findNext.remoteHint' => 'Muqova fokusda bo‘lganda: ← / → tanlash · Tanlash tugmasi: tafsilotlar · ↑ / ↓ fokusni ko‘chirish',
@@ -7214,8 +7231,6 @@ extension on TranslationsUz {
 			'discover.rating' => 'Reyting',
 			'discover.director' => 'Rejissyor',
 			'discover.directors' => 'Rejissyorlar',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV Shou',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} daq qoldi',
@@ -7721,6 +7736,8 @@ extension on TranslationsUz {
 			'collections.selectCollection' => 'Toʻplamni tanlash',
 			'collections.collectionName' => 'Toʻplam nomi',
 			'collections.enterCollectionName' => 'Toʻplam nomini kiriting',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Toʻplamga qoʻshildi',
 			'collections.errorAddingToCollection' => 'Toʻplamga qoʻshib boʻlmadi',
 			'collections.created' => 'Toʻplam yaratildi',
@@ -7728,8 +7745,6 @@ extension on TranslationsUz {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" ushbu toʻplamdan oʻchirilsinmi?',
 			'collections.removedFromCollection' => 'Toʻplamdan oʻchirildi',
 			'collections.removeFromCollectionFailed' => 'Toʻplamdan oʻchirib boʻlmadi',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Oʻchirish xatoligi: ${error}',
 			'collections.searchCollections' => 'Toʻplamlardan qidirish...',
 			'playlists.title' => 'Ijro roʻyxatlari',
@@ -8235,6 +8250,8 @@ extension on TranslationsUz {
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Ishlov berilmagan dekoder',
 			'performanceOverlay.tunneling' => 'Tunnellash',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Toʻgʻridan-toʻgʻri oʻtkazish',
 			'performanceOverlay.aspect' => 'Nisbat',
 			'performanceOverlay.rotation' => 'Aylanish',
@@ -8242,8 +8259,6 @@ extension on TranslationsUz {
 			'performanceOverlay.dvPath' => 'DV yoʻli',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision dekoderi',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision dekoderi (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Asosiy qatlam',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 asosiy qatlami',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG asosiy qatlami',
@@ -8479,6 +8494,7 @@ extension on TranslationsUz {
 			'seerr.sessionRejectedAfterReauth' => 'Qayta kirilgandan keyin seans rad etildi',
 			'seerr.permissionDenied' => 'Seerr bu amalni rad etdi: hisobingizda endi kerakli ruxsat yoʻq',
 			'seerr.permissionRevoked' => 'Buni soʻrash uchun endi ruxsatingiz yoʻq',
+			'seerr.withdrawRequest' => 'Soʻrovni qaytarib olish',
 			'services.title' => 'Xizmatlar',
 			'services.hubSubtitle' => 'Koʻrish jarayonini sinxronlang va yangi kontent soʻrang.',
 			'services.integrations' => 'Integratsiyalar',
@@ -8748,6 +8764,8 @@ extension on TranslationsUz {
 			'homeLayout.managePlexRowsDescription' => 'U\'ziziziziz qiziziziyizizizimizizizizimiziziz',
 			'homeLayout.organizeHomeRows' => 'Home Riyadhlar',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ruzlar: Moving, Hero, Auto-slide, xifida',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} qaytlarlar',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '+ ${n} riylar: Moving, Library, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Bir kartatda bir kahraman.',
@@ -8756,8 +8774,6 @@ extension on TranslationsUz {
 			'homeLayout.autoSlide' => 'Avtomatik almashish',
 			'homeLayout.autoSlideDescription' => 'U\'zizga (PC) və d-pad (TV) qotlarga çalışmaygan, timiyarni qaytarmaygan.',
 			'homeLayout.autoSlideEditDescription' => 'O‘shayni o‘shaydi o‘shahdi o‘s. Off: o‘shaya‘ga bir pul (PC) o‘shakla‘ga sol/dishayni o’shayni (TV). Arrows and d-pad always work either way.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Birinci kahramanlar',
 			'homeLayout.showOnHome' => 'Show on Home screen.',
 			'homeLayout.home' => 'Bosh sahifa',
@@ -9262,6 +9278,8 @@ extension on TranslationsUz {
 			'audiobook.customSpeed' => 'Custom playback ritmi.',
 			'audiobook.speedHelp' => 'Siz 0.25 x 4 x o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z',
 			'audiobook.apply' => 'Diggadi',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Custom uyumalar',
 			'audiobook.sleepMinutes' => '1 – 440 min)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} kapitallardan sonra durga',
@@ -9270,8 +9288,6 @@ extension on TranslationsUz {
 			'audiobook.useDefaults' => 'Yeni kitaplar için bu dining kontrollar kullanın.',
 			'audiobook.librarySort' => 'Kitajlar',
 			'audiobook.sortTitle' => 'Tadiya',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Avtor',
 			'audiobook.sortNarrator' => 'Hikmatlar',
 			'audiobook.sortSeries' => 'Seriyadi',
@@ -9776,6 +9792,8 @@ extension on TranslationsUz {
 			'musicExperience.bluetoothDrivingHint' => 'Haydash ko‘rinishini avtomatik ochadigan ulangan Bluetooth chiqishlarini tanlang.',
 			'musicTools.loudnessMissing' => 'Ovoz balandligi ma’lumotlari qaytarilmadi',
 			'musicTools.loudnessRequested' => 'Tahlil so‘rovi yuborildi',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Serverning bu versiyasi tahlil so‘rovlarini qo‘llamaydi',
 			'musicTools.serverHistory' => 'Serverdagi ijro tarixi',
 			'musicTools.nfcWrite' => 'NFC tegiga yozish',
@@ -9784,8 +9802,6 @@ extension on TranslationsUz {
 			'musicTools.storageBudget' => 'Taxminiy yuklab olish chegarasi (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Mehmon DJ',
 			'musicTools.charts' => 'Tinglash reytingi',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Qayta kashf etish',
 			'musicTools.stations' => 'Musiqa stansiyalari',
 			'musicTools.prompt' => 'Tavsifdan pleylist',

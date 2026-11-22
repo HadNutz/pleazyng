@@ -169,7 +169,7 @@ class MultiviewWorkspaceController extends ChangeNotifier {
           }
         }
       } catch (_) {
-        // A retiring owner must not prevent other sessions being checkpointed.
+        // best-effort: A retiring owner must not prevent other sessions being checkpointed.
       }
     }
   }
@@ -194,6 +194,7 @@ class MultiviewWorkspaceController extends ChangeNotifier {
       if (opened) _pendingRecovery.remove(id);
       return opened;
     } catch (_) {
+      // best-effort: Keep the workspace descriptor pending for another recovery attempt.
       return false;
     } finally {
       if (identical(_recoveryOperations[id], token)) _recoveryOperations.remove(id);
@@ -1649,7 +1650,7 @@ class MultiviewWorkspaceController extends ChangeNotifier {
               ),
             );
           } catch (_) {
-            // The profile route owns final player disposal.
+            // best-effort: The profile route owns final player disposal.
           }
         } else {
           await _applyOwnershipSafely(registration.onAudioOwnershipChanged, false);

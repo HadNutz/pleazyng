@@ -60,7 +60,7 @@ class GameArtworkLoader {
         result = bytes;
       }
     } catch (_) {
-      /* A missing cover is not a failed stream. */
+      /* best-effort: A missing cover is not a failed stream. */
     }
     request.result.complete(result);
     unawaited(_pending.remove(request.key));

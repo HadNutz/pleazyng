@@ -283,7 +283,7 @@ class SteamCloudClient {
     try {
       if (grant != null) await _request('/auth/steam/cloud/files', grant, null, method: 'DELETE', retiring: true);
     } catch (_) {
-      /* The server's grant TTL also retires disconnected clients. */
+      /* best-effort: The server's grant TTL also retires disconnected clients. */
     } finally {
       _http.close();
     }

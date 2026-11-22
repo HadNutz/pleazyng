@@ -1655,6 +1655,9 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       // dialog is open, so a second tap cannot launch duplicate expansion.
       await NotificationPermission.ensure();
       if (!_isQueueOwnershipCurrent(ownership)) return 0;
+      // Once per request: a storage stop during this request's expansion
+      // must hold its remaining items, not be lifted by the next one.
+      _downloadManager.beginUserDownloadRequest();
 
       if (metadata.isMovie ||
           metadata.isEpisode ||
@@ -1760,6 +1763,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       throw CellularDownloadBlockedException();
     }
     if (!current()) return 0;
+    _downloadManager.beginUserDownloadRequest();
 
     final unwatchedOnly = filter == DownloadFilter.unwatched;
     final membership = <MediaItem>[];
@@ -1831,6 +1835,9 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
 
   /// Queue a single movie or episode for download.
   /// Returns true if the item was actually queued, false if skipped.
+  ///
+  /// An automatic enqueue (a sync rule) is not admitted while a storage
+  /// failure stops the queue; the failed row keeps its storage error.
   Future<bool> _queueSingleDownload(
     MediaItem metadata,
     MediaServerClient client, {
@@ -1969,6 +1976,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       mediaIndex: resolvedIndex,
       downloadQuality: downloadQuality,
       userInitiated: userInitiated,
+      beginUserRequest: false,
     );
     if (storedMetadata == null) return false;
     if (!userInitiated && identical(_downloads[globalKey], previousProgress)) {
@@ -2155,6 +2163,7 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
       throw Exception('queueMissingEpisodes only supports shows/seasons');
     }
     final ownership = _captureQueueOwnership();
+    _downloadManager.beginUserDownloadRequest();
     final queued = await _expandAndQueue(
       container: metadata,
       client: client,
@@ -2747,6 +2756,9 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     await _database.associateSyncRuleDownload(currentRule, downloadGlobalKey);
   }
 
+  /// Sync rules never lift a storage stop: a failed row counts as missing, so
+  /// re-queueing it would refuse the same file and stop every download on
+  /// each pass. Only a user download, retry or resume (or a restart) does.
   Future<bool> _queueSyncRuleDownload(
     MediaItem item,
     MediaServerClient client, {
@@ -2756,6 +2768,10 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     TranscodeQualityPreset? downloadQuality,
   }) async {
     if (!_isQueueOwnershipCurrent(ownership)) return false;
+    if (_downloadManager.isWaitingForStorageRecovery) {
+      appLogger.d('Not queueing sync-rule download ${item.id}: downloads stopped for storage');
+      return false;
+    }
     return _queueSingleDownload(
       item,
       client,
@@ -3127,6 +3143,12 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     if (profileId == null || profileId.isEmpty) return const [];
     final ownership = _captureQueueOwnership();
     if (_syncRules.isEmpty) return const [];
+    // Skipped before the executor, so a blocked pass spends no server round
+    // trips and does not restart the cooldown.
+    if (_downloadManager.isWaitingForStorageRecovery) {
+      appLogger.d('Skipping sync rules — downloads stopped for storage');
+      return [];
+    }
 
     final relatedContext = _RelatedMetadataDownloadContext();
     return _syncRuleExecutor.executeSyncRules(
@@ -3240,6 +3262,10 @@ class DownloadProvider extends ChangeNotifier with DisposableChangeNotifierMixin
     if (profileId == null || profileId.isEmpty) return null;
     final ownership = _captureQueueOwnership();
     if (!_syncRules.containsKey(globalKey)) return null;
+    if (_downloadManager.isWaitingForStorageRecovery) {
+      appLogger.d('Skipping sync rule $globalKey — downloads stopped for storage');
+      return null;
+    }
 
     final relatedContext = _RelatedMetadataDownloadContext();
     return _syncRuleExecutor.executeSingleRule(

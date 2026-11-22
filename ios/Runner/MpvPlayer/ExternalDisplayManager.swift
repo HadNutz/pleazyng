@@ -10,6 +10,13 @@ final class ExternalDisplayManager {
 
   private init() {}
 
+  #if os(iOS)
+    static func canPresentEDR(on screen: UIScreen?, pictureInPicture: Bool) -> Bool {
+      guard #available(iOS 16.0, *), let screen, !pictureInPicture else { return true }
+      return screen.potentialEDRHeadroom > 1
+    }
+  #endif
+
   static func isExternalDisplayRole(_ role: UISceneSession.Role) -> Bool {
     role.rawValue == "UIWindowSceneSessionRoleExternalDisplay"
       || role.rawValue == "UIWindowSceneSessionRoleExternalDisplayNonInteractive"
@@ -140,6 +147,23 @@ final class ExternalDisplayManager {
     return window
   }
 }
+
+#if compiler(>=6.4)
+  extension ExternalDisplayManager {
+    /// Apps built with the iOS 27 SDK get the non-interactive external-display
+    /// scene only for a registered scene accessory; without one, iOS mirrors
+    /// the device (#2471). The Info.plist scene roles still serve iOS 26 and
+    /// earlier, and builds made with older SDKs.
+    @available(iOS 27.0, *)
+    static func makeSceneAccessoryConfiguration() -> UISceneConfiguration {
+      let configuration = UISceneConfiguration(
+        name: "external-display", sessionRole: .windowExternalDisplayNonInteractive)
+      configuration.sceneClass = UIWindowScene.self
+      configuration.delegateClass = ExternalDisplaySceneDelegate.self
+      return configuration
+    }
+  }
+#endif
 
 class ExternalDisplaySceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?

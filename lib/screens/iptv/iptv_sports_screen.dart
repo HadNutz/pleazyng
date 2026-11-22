@@ -56,6 +56,7 @@ class _IptvSportsScreenState extends State<IptvSportsScreen> {
       if (_owned) setState(() => _followed = next);
     } catch (_) {
       if (mounted && _owned) {
+        // Keep the previous followed teams when saving fails.
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.iptv.genericError)));
       }
     } finally {
@@ -73,7 +74,7 @@ class _IptvSportsScreenState extends State<IptvSportsScreen> {
           IconButton(
             tooltip: t.liveTv.favorites,
             isSelected: _favoritesOnly,
-            selectedIcon: const AppIcon(Symbols.star_rounded),
+            selectedIcon: const AppIcon(Symbols.star_rounded, fill: 1),
             icon: const AppIcon(Symbols.star_border_rounded),
             onPressed: () => setState(() => _favoritesOnly = !_favoritesOnly),
           ),

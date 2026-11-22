@@ -38,6 +38,7 @@ class MusicRelayTarget {
       if (!Uri.parse(url).path.endsWith('/music/connect/relay')) return null;
       return MusicRelayTarget(uri: uri, room: room as String, control: control as String);
     } catch (_) {
+      // best-effort: Disable relay routing when the saved target or its credentials are invalid.
       return null;
     }
   }
@@ -104,6 +105,7 @@ abstract final class MusicRelayStore {
       final clear = await CredentialVault.reveal(value);
       return clear == null ? null : MusicRelayTarget.read(jsonDecode(clear));
     } catch (_) {
+      // best-effort: Disable relay routing when the saved target or its credentials are invalid.
       return null;
     }
   }

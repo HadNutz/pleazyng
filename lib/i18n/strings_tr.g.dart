@@ -898,6 +898,11 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Ekran koruyucu sanat eserini göstermeden önce giriş olmadan bu uzun dakikaları bekleyin.';
 	@override String get videoCodecOptionDescription => 'Desteklendiğinde bu kodek için doğrudan oynatma izin verin. kontrolsüz kodekler medya sunucusu tarafından şifrelenir.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer boyutu: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · İzlemeye Devam Et';
+	@override String get showTopShelfContentDescription => 'Kapatıldığında tüm profillerde yalnızca Pleazyng görseli gösterilir.';
+	@override String get topShelfUpdateFailed => 'Top Shelf güncellenemedi. Tekrar deneyin.';
+	@override String get showFinishTime => 'Bitiş saatini göster';
+	@override String get showFinishTimeDescription => 'Kalan sürenin yanında videonun ne zaman biteceğini gösterir.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$tr extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng bunun hangi dosyaları sileceğini kontrol edemedi, bu yüzden yukarıda adı geçen ögeden daha fazlasını silebilir. İptal edip tekrar deneyin veya yine de silin.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Sunucunuz bu öge için dosya ayrıntıları sağlamadı, bu yüzden Pleazyng bunun hangi dosyaları sileceğini kontrol edemiyor. Yukarıda adı geçen ögeden daha fazlasını silebilir.';
 	@override String get mediaDeletedSuccessfully => 'Medya ögesi başarıyla silindi';
+	@override String get mediaDeletionDisabledOnServer => 'Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.';
 	@override String get mediaFailedToDelete => 'Medya ögesi silinemedi';
 	@override String get rate => 'Oyla';
 	@override String get playFromBeginning => 'Baştan Oynat';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$tr extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Yeniden giriş yapıldıktan sonra oturum reddedildi';
 	@override String get permissionDenied => 'Seerr bu eylemi reddetti: hesabınız artık gerekli izne sahip değil';
 	@override String get permissionRevoked => 'Bunu isteme izniniz artık yok';
+	@override String get withdrawRequest => 'İsteği geri çek';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$tr extends Translations$common$mediaKind$en
 	@override String get clip => 'Klip';
 	@override String get photo => 'Fotoğraf';
 	@override String get folder => 'Klasör';
+	@override String get photoAlbum => 'Fotoğraf albümü';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsTr {
 			'common.mediaKind.clip' => 'Klip',
 			'common.mediaKind.photo' => 'Fotoğraf',
 			'common.mediaKind.folder' => 'Klasör',
+			'common.mediaKind.photoAlbum' => 'Fotoğraf albümü',
 			'screens.licenses' => 'Lisanslar',
 			'screens.switchProfile' => 'Profil Değiştir',
 			'screens.subtitleStyling' => 'Altyazı Biçimlendirmesi',
@@ -6185,9 +6194,9 @@ extension on TranslationsTr {
 			'settings.manageLibrariesDescription' => 'Kitaplıkları yeniden sıralayın ve gizleyin',
 			'settings.companionRemoteServer' => 'Yardımcı Uzaktan Kumanda Sunucusu',
 			'settings.companionRemoteServerDescription' => 'Ağınızdaki mobil cihazların bu uygulamayı kontrol etmesine izin verin',
-			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
 			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
 			'settings.autoPip' => 'Otomatik Pencere İçinde Pencere (PiP)',
 			'settings.autoPipDescription' => 'Oynatma sırasında uygulamadan çıktığınızda otomatik olarak pencere içinde pencere moduna geç',
@@ -6401,6 +6410,11 @@ extension on TranslationsTr {
 			'settings.contentScreensaverDelayOptionDescription' => 'Ekran koruyucu sanat eserini göstermeden önce giriş olmadan bu uzun dakikaları bekleyin.',
 			'settings.videoCodecOptionDescription' => 'Desteklendiğinde bu kodek için doğrudan oynatma izin verin. kontrolsüz kodekler medya sunucusu tarafından şifrelenir.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer boyutu: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · İzlemeye Devam Et',
+			'settings.showTopShelfContentDescription' => 'Kapatıldığında tüm profillerde yalnızca Pleazyng görseli gösterilir.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf güncellenemedi. Tekrar deneyin.',
+			'settings.showFinishTime' => 'Bitiş saatini göster',
+			'settings.showFinishTimeDescription' => 'Kalan sürenin yanında videonun ne zaman biteceğini gösterir.',
 			'themeEditor.builtIn' => 'Yerleşik',
 			'themeEditor.presets' => 'Hazır Temalar',
 			'themeEditor.custom' => 'Özel',
@@ -6634,6 +6648,7 @@ extension on TranslationsTr {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng bunun hangi dosyaları sileceğini kontrol edemedi, bu yüzden yukarıda adı geçen ögeden daha fazlasını silebilir. İptal edip tekrar deneyin veya yine de silin.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Sunucunuz bu öge için dosya ayrıntıları sağlamadı, bu yüzden Pleazyng bunun hangi dosyaları sileceğini kontrol edemiyor. Yukarıda adı geçen ögeden daha fazlasını silebilir.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Medya ögesi başarıyla silindi',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Bu sunucuda medya silme kapalı. Sunucunun kitaplık ayarlarında medya silmeye izin verin.',
 			'mediaMenu.mediaFailedToDelete' => 'Medya ögesi silinemedi',
 			'mediaMenu.rate' => 'Oyla',
 			'mediaMenu.playFromBeginning' => 'Baştan Oynat',
@@ -6693,6 +6708,8 @@ extension on TranslationsTr {
 			'accessibility.reduceMotion' => 'hareketleri azaltmak',
 			'accessibility.reduceMotionHint' => 'Odak göstergesi hareketini, sayfa geçişlerini ve dekoratif efektleri durdurun.',
 			'accessibility.largeTargets' => 'Daha büyük dokunmatik hedefler',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Paylaşılan kontroller dokunmatik ve yardımcı navigasyon için daha fazla yer verir.',
 			'accessibility.navigationHint' => 'Kontroller arasında geçiş yapmak için Tab ve Shift+Tab, etkinleştirmek için Enter veya boşluk tuşu, kapatmak için Escape veya Geri düğmesini kullanın. Kitap açıkken yakınlaştırma ve okuma tercihleri kullanılabilir.',
 			'accessibility.textSizeDescription' => 'Pleazyng\'de ölçekli arayüz metni, cihazınızın sistem metin boyutu ayarına ek olarak.',
@@ -6700,8 +6717,6 @@ extension on TranslationsTr {
 			'tooltips.shufflePlay' => 'Karışık oynat',
 			'tooltips.playTrailer' => 'Fragmanı oynat',
 			'tooltips.markAsWatched' => 'İzlendi olarak işaretle',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'İzlenmedi olarak işaretle',
 			'audioTracks.track' => ({required Object n}) => 'Ses Parçası ${n}',
 			'videoControls.audioLabel' => 'Ses',
@@ -7207,6 +7222,8 @@ extension on TranslationsTr {
 			'discover.findNext.artworkLoading' => 'Görsel yükleniyor…',
 			'discover.findNext.artworkUnavailable' => 'Görsel kullanılamıyor',
 			'discover.findNext.savedFeedback' => 'Kayıtlı seçimlere eklendi',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Şimdilik atlandı',
 			'discover.findNext.releaseToConfirm' => 'Onaylamak için bırakın',
 			'discover.findNext.remoteHint' => 'Kapak odakta: ← / → seç · Seç tuşu: ayrıntılar · ↑ / ↓ odağı taşı',
@@ -7214,8 +7231,6 @@ extension on TranslationsTr {
 			'discover.rating' => 'Derecelendirme',
 			'discover.director' => 'Yönetmen',
 			'discover.directors' => 'Yönetmenler',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV Dizisi',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} dk kaldı',
@@ -7721,6 +7736,8 @@ extension on TranslationsTr {
 			'collections.selectCollection' => 'Koleksiyon Seç',
 			'collections.collectionName' => 'Koleksiyon Adı',
 			'collections.enterCollectionName' => 'Koleksiyon adını girin',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Koleksiyona eklendi',
 			'collections.errorAddingToCollection' => 'Koleksiyona eklenemedi',
 			'collections.created' => 'Koleksiyon oluşturuldu',
@@ -7728,8 +7745,6 @@ extension on TranslationsTr {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" bu koleksiyondan kaldırılsın mı?',
 			'collections.removedFromCollection' => 'Koleksiyondan kaldırıldı',
 			'collections.removeFromCollectionFailed' => 'Koleksiyondan kaldırılamadı',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Koleksiyondan kaldırılırken hata: ${error}',
 			'collections.searchCollections' => 'Koleksiyonlarda ara...',
 			'playlists.title' => 'Oynatma Listeleri',
@@ -8235,6 +8250,8 @@ extension on TranslationsTr {
 			'performanceOverlay.decoder' => 'Çözücü',
 			'performanceOverlay.rawDecoder' => 'Ham Çözücü',
 			'performanceOverlay.tunneling' => 'Tünelleme',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Doğrudan geçiş',
 			'performanceOverlay.aspect' => 'Oran',
 			'performanceOverlay.rotation' => 'Döndürme',
@@ -8242,8 +8259,6 @@ extension on TranslationsTr {
 			'performanceOverlay.dvPath' => 'DV Yolu',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision çözücüsü',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision çözücüsü (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Temel katman',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 temel katmanı',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG temel katmanı',
@@ -8479,6 +8494,7 @@ extension on TranslationsTr {
 			'seerr.sessionRejectedAfterReauth' => 'Yeniden giriş yapıldıktan sonra oturum reddedildi',
 			'seerr.permissionDenied' => 'Seerr bu eylemi reddetti: hesabınız artık gerekli izne sahip değil',
 			'seerr.permissionRevoked' => 'Bunu isteme izniniz artık yok',
+			'seerr.withdrawRequest' => 'İsteği geri çek',
 			'services.title' => 'Servisler',
 			'services.hubSubtitle' => 'İzleme ilerlemesini eşitleyin ve yeni başlıklar isteyin.',
 			'services.integrations' => 'Entegrasyonlar',
@@ -8748,6 +8764,8 @@ extension on TranslationsTr {
 			'homeLayout.managePlexRowsDescription' => 'Ev seçimi için açık düzenleme',
 			'homeLayout.organizeHomeRows' => 'Home Routes düzenlemek',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} satırları: hareket, kahraman, otomatik kaydırma, kaldırma',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} satırları düzenleyin',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Devamını oku + ${n} satırları: hareket, Kütüphane, Ev, Kahraman, Otomatik slide',
 			'homeLayout.renderAsHero' => 'Bir kahraman kartı olarak',
@@ -8756,8 +8774,6 @@ extension on TranslationsTr {
 			'homeLayout.autoSlide' => 'Otomatik Slide',
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) ve d-pad (TV) her zaman çalışır ve zamanlayıcı yeniden başlatılır.',
 			'homeLayout.autoSlideEditDescription' => 'Ayrıca, birkaç saniye boyunca kendi başına kaydırır. kapatır: sadece bir mermi (PC) tıklayarak veya uzaktan (TV) sol/sağ basarak hareket eder.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Önce kahraman yapabilir',
 			'homeLayout.showOnHome' => 'Home ekran görüntüleme',
 			'homeLayout.home' => 'Ana Sayfa',
@@ -9262,6 +9278,8 @@ extension on TranslationsTr {
 			'audiobook.customSpeed' => 'Custom Playback Hızları',
 			'audiobook.speedHelp' => '0.25× ile 4× arasında bir hız seçin.',
 			'audiobook.apply' => 'Uygulama',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Özel uyku saatleri',
 			'audiobook.sleepMinutes' => 'Dakikalar (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} bölümlerinden sonra durun',
@@ -9270,8 +9288,6 @@ extension on TranslationsTr {
 			'audiobook.useDefaults' => 'Yeni kitaplar için bu dinleme kontrollerini kullanın',
 			'audiobook.librarySort' => 'Çeşitli kitaplar',
 			'audiobook.sortTitle' => 'Başlık',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Yazar',
 			'audiobook.sortNarrator' => 'Anlatıcı',
 			'audiobook.sortSeries' => 'Serisi Siparişi',
@@ -9776,6 +9792,8 @@ extension on TranslationsTr {
 			'musicExperience.bluetoothDrivingHint' => 'Sürüş görünümünü otomatik açan bağlı Bluetooth çıkışlarını seçin.',
 			'musicTools.loudnessMissing' => 'Ses yüksekliği verisi alınmadı',
 			'musicTools.loudnessRequested' => 'Analiz isteği gönderildi',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Bu sunucu sürümü analiz isteklerini desteklemiyor',
 			'musicTools.serverHistory' => 'Sunucudaki oynatma geçmişi',
 			'musicTools.nfcWrite' => 'NFC etiketi yaz',
@@ -9784,8 +9802,6 @@ extension on TranslationsTr {
 			'musicTools.storageBudget' => 'Tahmini indirme sınırı (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Konuk DJ',
 			'musicTools.charts' => 'Dinleme listeleri',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Yeniden keşfet',
 			'musicTools.stations' => 'Müzik istasyonları',
 			'musicTools.prompt' => 'Açıklamadan çalma listesi',

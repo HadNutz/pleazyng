@@ -280,6 +280,7 @@ mixin PaginatedItemLoader<T, W extends StatefulWidget> on State<W> {
     try {
       page = await fetchPage(start, size, _cancelToken);
     } catch (_) {
+      // best-effort: A failed replacement page leaves the loaded range available for a later refresh.
       return null;
     }
     if (generation != _requestId || !mounted) return null;

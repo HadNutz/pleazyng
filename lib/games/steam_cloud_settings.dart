@@ -38,6 +38,7 @@ Future<SteamCloudSetting> localSteamCloudSetting(Map<String, dynamic> request, b
         request['steamId'] as String,
       );
     } catch (_) {
+      // best-effort: A failed write has unknown status; a failed read supplies no cloud preference.
       return SteamCloudSetting(request['op'] == 'set' ? 'unknown' : 'unavailable');
     }
   }
@@ -74,6 +75,7 @@ Future<SteamCloudSetting> localSteamCloudSetting(Map<String, dynamic> request, b
       request['steamId'] as String,
     );
   } catch (_) {
+    // best-effort: A failed write has unknown status; a failed read supplies no cloud preference.
     return SteamCloudSetting(request['op'] == 'set' ? 'unknown' : 'unavailable');
   } finally {
     retirement?.cancel();

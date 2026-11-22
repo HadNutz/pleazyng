@@ -64,7 +64,7 @@ class SteamInternetHost {
       _tunnels[context] = tunnel;
       await tunnel.done;
     } catch (_) {
-      // No token, room capability, account identity or endpoint in logs.
+      // best-effort: No token, room capability, account identity or endpoint in logs.
     } finally {
       tunnel?.close();
       tunnel?.path.dispose();

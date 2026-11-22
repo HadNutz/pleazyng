@@ -898,6 +898,11 @@ class _Translations$settings$bg extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Изчакайте много минути без въвеждане, преди да покажете екран за съхранение на изкуството.';
 	@override String get videoCodecOptionDescription => 'Допускайте директна възпроизвеждане на този кодек, когато е поддържан.Непровержените кодове се транскодират от медийния сървър.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Буфер размер: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Продължи гледането';
+	@override String get showTopShelfContentDescription => 'При изключване за всички профили се показва само изображението на Pleazyng.';
+	@override String get topShelfUpdateFailed => 'Top Shelf не можа да се обнови. Опитайте отново.';
+	@override String get showFinishTime => 'Показване на часа на завършване';
+	@override String get showFinishTimeDescription => 'Показва кога завършва видеото до оставащото време.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$bg extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng не успя да провери кои файлове ще бъдат премахнати, така че може да изтрие повече от посочения по-горе елемент. Откажете и опитайте отново, или изтрийте въпреки това.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Сървърът ви не предостави данни за файловете на този елемент, така че Pleazyng не може да провери кои файлове ще бъдат премахнати. Може да изтрие повече от посочения по-горе елемент.';
 	@override String get mediaDeletedSuccessfully => 'Елементът е изтрит успешно';
+	@override String get mediaDeletionDisabledOnServer => 'Изтриването на медия е изключено на този сървър. Включете разрешението за изтриване на медия в настройките на библиотеката на сървъра.';
 	@override String get mediaFailedToDelete => 'Неуспешно изтриване на елемента';
 	@override String get rate => 'Оцени';
 	@override String get playFromBeginning => 'Пусни от началото';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$bg extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Сесията беше отхвърлена след повторния вход';
 	@override String get permissionDenied => 'Seerr отказа това действие: акаунтът ви вече няма необходимото разрешение';
 	@override String get permissionRevoked => 'Вече нямате разрешение да заявявате това';
+	@override String get withdrawRequest => 'Оттегляне на заявката';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$bg extends Translations$common$mediaKind$en
 	@override String get clip => 'Клип';
 	@override String get photo => 'Снимка';
 	@override String get folder => 'Папка';
+	@override String get photoAlbum => 'Фотоалбум';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsBg {
 			'common.mediaKind.clip' => 'Клип',
 			'common.mediaKind.photo' => 'Снимка',
 			'common.mediaKind.folder' => 'Папка',
+			'common.mediaKind.photoAlbum' => 'Фотоалбум',
 			'screens.licenses' => 'Лицензи',
 			'screens.switchProfile' => 'Смяна на профил',
 			'screens.subtitleStyling' => 'Стил на субтитрите',
@@ -6185,9 +6194,9 @@ extension on TranslationsBg {
 			'settings.manageLibrariesDescription' => 'Пренареждай и скривай библиотеки',
 			'settings.companionRemoteServer' => 'Сървър за дистанционно управление',
 			'settings.companionRemoteServerDescription' => 'Позволи на мобилни устройства във вашата мрежа да управляват това приложение',
-			'settings.companionRemoteServerStartFailed' => 'Сървърът за дистанционно управление не можа да бъде стартиран',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Сървърът за дистанционно управление не можа да бъде стартиран',
 			'settings.companionRemoteServerStopFailed' => 'Сървърът за дистанционно управление не можа да бъде спрян',
 			'settings.autoPip' => 'Автоматичен режим картина в картината',
 			'settings.autoPipDescription' => 'Автоматично включвай режима картина в картината при излизане от приложението по време на възпроизвеждане',
@@ -6401,6 +6410,11 @@ extension on TranslationsBg {
 			'settings.contentScreensaverDelayOptionDescription' => 'Изчакайте много минути без въвеждане, преди да покажете екран за съхранение на изкуството.',
 			'settings.videoCodecOptionDescription' => 'Допускайте директна възпроизвеждане на този кодек, когато е поддържан.Непровержените кодове се транскодират от медийния сървър.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Буфер размер: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Продължи гледането',
+			'settings.showTopShelfContentDescription' => 'При изключване за всички профили се показва само изображението на Pleazyng.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf не можа да се обнови. Опитайте отново.',
+			'settings.showFinishTime' => 'Показване на часа на завършване',
+			'settings.showFinishTimeDescription' => 'Показва кога завършва видеото до оставащото време.',
 			'themeEditor.builtIn' => 'Вградени',
 			'themeEditor.presets' => 'Готови теми',
 			'themeEditor.custom' => 'Персонализирана',
@@ -6634,6 +6648,7 @@ extension on TranslationsBg {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng не успя да провери кои файлове ще бъдат премахнати, така че може да изтрие повече от посочения по-горе елемент. Откажете и опитайте отново, или изтрийте въпреки това.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Сървърът ви не предостави данни за файловете на този елемент, така че Pleazyng не може да провери кои файлове ще бъдат премахнати. Може да изтрие повече от посочения по-горе елемент.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Елементът е изтрит успешно',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Изтриването на медия е изключено на този сървър. Включете разрешението за изтриване на медия в настройките на библиотеката на сървъра.',
 			'mediaMenu.mediaFailedToDelete' => 'Неуспешно изтриване на елемента',
 			'mediaMenu.rate' => 'Оцени',
 			'mediaMenu.playFromBeginning' => 'Пусни от началото',
@@ -6693,6 +6708,8 @@ extension on TranslationsBg {
 			'accessibility.reduceMotion' => 'Намаляване на движението',
 			'accessibility.reduceMotionHint' => 'Спиране на анимациите на индикатора за фокус, преходите между страниците и декоративните ефекти.',
 			'accessibility.largeTargets' => 'По-големи цели за докосване',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Дават споделени контрола повече място за докосване и асистирана навигация.',
 			'accessibility.navigationHint' => 'Използвайте Tab и Shift+Tab за преминаване между контролите, Enter или интервал за активиране и Escape или бутона Назад за затваряне. Когато е отворена книга, са достъпни мащабиране и настройки за четене.',
 			'accessibility.textSizeDescription' => 'Скалиране на интерфейса текст в Pleazyng в допълнение към настройката за текстови размери на устройството.',
@@ -6700,8 +6717,6 @@ extension on TranslationsBg {
 			'tooltips.shufflePlay' => 'Разбъркано възпроизвеждане',
 			'tooltips.playTrailer' => 'Пусни трейлър',
 			'tooltips.markAsWatched' => 'Маркирай като гледано',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Маркирай като негледано',
 			'audioTracks.track' => ({required Object n}) => 'Аудиопътечка ${n}',
 			'videoControls.audioLabel' => 'Аудио',
@@ -7207,6 +7222,8 @@ extension on TranslationsBg {
 			'discover.findNext.artworkLoading' => 'Зареждане на изображение…',
 			'discover.findNext.artworkUnavailable' => 'Изображението не е налично',
 			'discover.findNext.savedFeedback' => 'Добавено към запазените предложения',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Пропуснато засега',
 			'discover.findNext.releaseToConfirm' => 'Пуснете, за да потвърдите',
 			'discover.findNext.remoteHint' => 'Когато корицата е на фокус: ← / → избор · Избор: подробности · ↑ / ↓ премества фокуса',
@@ -7214,8 +7231,6 @@ extension on TranslationsBg {
 			'discover.rating' => 'Рейтинг',
 			'discover.director' => 'Режисьор',
 			'discover.directors' => 'Режисьори',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Филм',
 			'discover.tvShow' => 'ТВ сериал',
 			'discover.minutesLeft' => ({required Object minutes}) => 'Остават ${minutes} мин',
@@ -7721,6 +7736,8 @@ extension on TranslationsBg {
 			'collections.selectCollection' => 'Избери колекция',
 			'collections.collectionName' => 'Име на колекция',
 			'collections.enterCollectionName' => 'Въведете име на колекция',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Добавено към колекция',
 			'collections.errorAddingToCollection' => 'Неуспешно добавяне към колекция',
 			'collections.created' => 'Колекцията е създадена',
@@ -7728,8 +7745,6 @@ extension on TranslationsBg {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Да се премахне ли "${title}" от тази колекция?',
 			'collections.removedFromCollection' => 'Премахнато от колекция',
 			'collections.removeFromCollectionFailed' => 'Неуспешно премахване от колекция',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Грешка при премахване от колекция: ${error}',
 			'collections.searchCollections' => 'Търсене на колекции...',
 			'playlists.title' => 'Плейлисти',
@@ -8235,6 +8250,8 @@ extension on TranslationsBg {
 			'performanceOverlay.decoder' => 'Декодер',
 			'performanceOverlay.rawDecoder' => 'Суров декодер',
 			'performanceOverlay.tunneling' => 'Тунелиране',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Директно предаване',
 			'performanceOverlay.aspect' => 'Съотношение',
 			'performanceOverlay.rotation' => 'Завъртане',
@@ -8242,8 +8259,6 @@ extension on TranslationsBg {
 			'performanceOverlay.dvPath' => 'DV път',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision декодер',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодер (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Базов слой',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Базов слой HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Базов слой HLG',
@@ -8479,6 +8494,7 @@ extension on TranslationsBg {
 			'seerr.sessionRejectedAfterReauth' => 'Сесията беше отхвърлена след повторния вход',
 			'seerr.permissionDenied' => 'Seerr отказа това действие: акаунтът ви вече няма необходимото разрешение',
 			'seerr.permissionRevoked' => 'Вече нямате разрешение да заявявате това',
+			'seerr.withdrawRequest' => 'Оттегляне на заявката',
 			'services.title' => 'Услуги',
 			'services.hubSubtitle' => 'Синхронизирай прогреса на гледане и заявявай нови заглавия.',
 			'services.integrations' => 'Интеграции',
@@ -8748,6 +8764,8 @@ extension on TranslationsBg {
 			'homeLayout.managePlexRowsDescription' => 'Отворено да организирате домашните редове',
 			'homeLayout.organizeHomeRows' => 'Организиране на домашни редове',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} редове: движение, герой, Авто-слайд, премахване',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Организирайте ${library} редове',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} реда: движение, Библиотека, Дома, Герой, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Да се изкачи като герой',
@@ -8756,8 +8774,6 @@ extension on TranslationsBg {
 			'homeLayout.autoSlide' => 'Авто-Слайд',
 			'homeLayout.autoSlideDescription' => 'Също така, сваля на себе си на всеки няколко секунди. Притеглянето (PC) и d-pad (TV) винаги работят и рестартират часовича.',
 			'homeLayout.autoSlideEditDescription' => 'Отключва се: се движи само когато кликнете върху стрела (PC) или натиснете ляво/десно на отдалеченото (TV).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Първо да се възползвате от героя',
 			'homeLayout.showOnHome' => 'Показване на домашен екран',
 			'homeLayout.home' => 'Начало',
@@ -9262,6 +9278,8 @@ extension on TranslationsBg {
 			'audiobook.customSpeed' => 'Специална скорост на възпроизвеждане',
 			'audiobook.speedHelp' => 'Изберете скорост от 0.25× до 4×.',
 			'audiobook.apply' => 'Прилагане',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Часовник за сън',
 			'audiobook.sleepMinutes' => 'Минути (1 до 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Прекъсване след ${count} глави',
@@ -9270,8 +9288,6 @@ extension on TranslationsBg {
 			'audiobook.useDefaults' => 'Използвайте тези контроли за слушане за нови книги',
 			'audiobook.librarySort' => 'Сорт книги',
 			'audiobook.sortTitle' => 'Заглавие',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Авторът',
 			'audiobook.sortNarrator' => 'Приказка',
 			'audiobook.sortSeries' => 'Серия на поръчката',
@@ -9776,6 +9792,8 @@ extension on TranslationsBg {
 			'musicExperience.bluetoothDrivingHint' => 'Изберете свързани Bluetooth изходи, които автоматично отварят изгледа за шофиране.',
 			'musicTools.loudnessMissing' => 'Няма получени данни за силата на звука',
 			'musicTools.loudnessRequested' => 'Заявката за анализ е изпратена',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Тази версия на сървъра не поддържа заявки за анализ',
 			'musicTools.serverHistory' => 'История на възпроизвеждане от сървъра',
 			'musicTools.nfcWrite' => 'Запис на NFC етикет',
@@ -9784,8 +9802,6 @@ extension on TranslationsBg {
 			'musicTools.storageBudget' => 'Приблизителен бюджет за изтегляне (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Гостуващ диджей',
 			'musicTools.charts' => 'Класации на слушане',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Преоткрийте',
 			'musicTools.stations' => 'Музикални станции',
 			'musicTools.prompt' => 'Плейлист по описание',

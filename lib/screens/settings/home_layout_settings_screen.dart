@@ -1,3 +1,4 @@
+import '../../utils/app_logger.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -188,7 +189,9 @@ class _HomeLayoutSettingsScreenState extends State<HomeLayoutSettingsScreen> {
         try {
           final client = multiServer.getPlexClientForServer(ServerId(library.serverId!));
           if (client != null) managedRows[library.globalKey] = await client.fetchManagedHubs(library.id);
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('Could not load managed Home rows for a library.');
+        }
       }),
     );
     final normalizedOrder = _normalizeRowOrder(

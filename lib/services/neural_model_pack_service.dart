@@ -200,7 +200,7 @@ abstract final class NeuralModelPackService {
           try {
             await output.close();
           } catch (_) {
-            // Keep the download or validation error as the reported failure.
+            // best-effort: Keep the download or validation error as the reported failure.
           }
         }
         rethrow;

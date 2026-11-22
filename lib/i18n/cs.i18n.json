@@ -224,7 +224,8 @@
       "playlist": "Seznam skladeb",
       "clip": "Filmový klip",
       "photo": "Fotka",
-      "folder": "Složka"
+      "folder": "Složka",
+      "photoAlbum": "Fotoalbum"
     }
   },
   "screens": {
@@ -796,7 +797,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer velikost: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer velikost: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Pokračovat ve sledování",
+    "showTopShelfContentDescription": "Po vypnutí se u všech profilů zobrazí pouze obrázek Pleazyng.",
+    "topShelfUpdateFailed": "Top Shelf se nepodařilo aktualizovat. Zkuste to znovu.",
+    "showFinishTime": "Zobrazit čas konce",
+    "showFinishTimeDescription": "Vedle zbývající doby zobrazí čas konce videa."
   },
   "themeEditor": {
     "builtIn": "stavět-in",
@@ -1062,6 +1068,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng nedokázalo ověřit, které soubory budou odstraněny, takže může smazat více než výše uvedenou položku. Akci zrušte a zkuste to znovu, nebo pokračujte ve smazání.",
     "deleteScopeUnverifiedNoFileInfo": "Server neposkytl podrobnosti o souborech této položky, takže Pleazyng nemůže ověřit, které soubory budou odstraněny. Může být smazáno více než výše uvedená položka.",
     "mediaDeletedSuccessfully": "Media objekt byl úspěšně odstraněn",
+    "mediaDeletionDisabledOnServer": "Na tomto serveru je mazání médií vypnuté. Povolte mazání médií v nastavení knihovny serveru.",
     "mediaFailedToDelete": "Nedokázal odstranit mediální položku",
     "rate": "Hodnocení",
     "playFromBeginning": "Přehrát od začátku",
@@ -3476,7 +3483,8 @@
     "noUserInformation": "Seerr nevrátil uživatelské informace",
     "sessionRejectedAfterReauth": "Zasedání bylo po opětovném podepsání zamítnuto.",
     "permissionDenied": "Seerr tuto akci odmítl: Váš účet již nemá požadované povolení",
-    "permissionRevoked": "Už nemáte právo na to požádat"
+    "permissionRevoked": "Už nemáte právo na to požádat",
+    "withdrawRequest": "Stáhnout požadavek"
   },
   "services": {
     "title": "Služby",

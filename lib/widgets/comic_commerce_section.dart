@@ -169,7 +169,7 @@ class _ComicCommerceSectionState extends State<ComicCommerceSection> {
       try {
         if (await launchUrl(launchUri, mode: LaunchMode.externalApplication)) return;
       } catch (_) {
-        // Keep the app's existing error feedback for missing platform handlers.
+        // best-effort: Keep the app's existing error feedback for missing platform handlers.
       }
       if (mounted) showErrorSnackBar(context, t.common.error);
     } finally {

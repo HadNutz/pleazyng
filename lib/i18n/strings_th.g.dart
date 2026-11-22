@@ -896,6 +896,11 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'รอนี้หลายนาทีโดยไม่มีการเข้าสู่ระบบก่อนที่จะแสดงงานศิลปะ screensaver';
 	@override String get videoCodecOptionDescription => 'ให้การเล่นโดยตรงสําหรับโค้ดนี้เมื่อได้รับการสนับสนุน การเข้ารหัสที่ไม่ได้ตรวจสอบจะถูกรหัสผ่านจากเซิร์ฟเวอร์สื่อ';
 	@override String streamBufferSizeMiB({required Object size}) => 'ขนาด Buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · ดูต่อ';
+	@override String get showTopShelfContentDescription => 'ปิดเพื่อแสดงเฉพาะภาพของ Pleazyng สำหรับทุกโปรไฟล์';
+	@override String get topShelfUpdateFailed => 'อัปเดต Top Shelf ไม่สำเร็จ โปรดลองอีกครั้ง';
+	@override String get showFinishTime => 'แสดงเวลาสิ้นสุด';
+	@override String get showFinishTimeDescription => 'แสดงเวลาที่วิดีโอจะจบถัดจากเวลาที่เหลือ';
 }
 
 // Path: themeEditor
@@ -1141,6 +1146,7 @@ class _Translations$mediaMenu$th extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng ตรวจสอบไม่ได้ว่าจะลบไฟล์ใดบ้าง จึงอาจลบมากกว่ารายการที่ระบุข้างต้น ยกเลิกแล้วลองอีกครั้ง หรือเลือกที่จะลบต่อไป';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'เซิร์ฟเวอร์ของคุณไม่ให้ข้อมูลไฟล์สําหรับรายการนี้ดังนั้น Pleazyng ไม่สามารถตรวจสอบไฟล์ใดที่จะลบได้ มันอาจลบมากกว่ารายการที่ระบุไว้ข้างต้น';
 	@override String get mediaDeletedSuccessfully => 'รายการสื่อลบอย่างประสบความสําเร็จ';
+	@override String get mediaDeletionDisabledOnServer => 'เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์';
 	@override String get mediaFailedToDelete => 'ไม่สามารถลบรายการสื่อ';
 	@override String get rate => 'อัตรา';
 	@override String get playFromBeginning => 'เล่นจากเริ่มต้น';
@@ -2911,6 +2917,7 @@ class _Translations$seerr$th extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'การประชุมถูกปฏิเสธหลังจากการลงทะเบียนอีกครั้ง';
 	@override String get permissionDenied => 'Seerr ไม่ยอมรับการกระทํานี้: บัญชีของคุณไม่ได้รับอนุญาตที่ต้องการ';
 	@override String get permissionRevoked => 'คุณไม่สามารถร้องขอได้อีกต่อไป';
+	@override String get withdrawRequest => 'ถอนคำขอ';
 }
 
 // Path: services
@@ -4609,6 +4616,7 @@ class _Translations$common$mediaKind$th extends Translations$common$mediaKind$en
 	@override String get clip => 'คลิก';
 	@override String get photo => 'ภาพถ่าย';
 	@override String get folder => 'แผง';
+	@override String get photoAlbum => 'อัลบั้มรูปภาพ';
 }
 
 // Path: settings.startupSectionOptions
@@ -5854,6 +5862,7 @@ extension on TranslationsTh {
 			'common.mediaKind.clip' => 'คลิก',
 			'common.mediaKind.photo' => 'ภาพถ่าย',
 			'common.mediaKind.folder' => 'แผง',
+			'common.mediaKind.photoAlbum' => 'อัลบั้มรูปภาพ',
 			'screens.licenses' => 'ใบอนุญาต',
 			'screens.switchProfile' => 'โปรไฟล์สวิทช์',
 			'screens.subtitleStyling' => 'สไตล์ Subtitle',
@@ -6160,9 +6169,9 @@ extension on TranslationsTh {
 			'settings.manageLibrariesDescription' => 'การจัดเก็บและซ่อนห้องสมุด',
 			'settings.companionRemoteServer' => 'เซิร์ฟเวอร์ระยะไกล',
 			'settings.companionRemoteServerDescription' => 'ให้อุปกรณ์มือถือบนเครือข่ายของคุณควบคุมแอปนี้',
-			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
 			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
@@ -6376,6 +6385,11 @@ extension on TranslationsTh {
 			'settings.contentScreensaverDelayOptionDescription' => 'รอนี้หลายนาทีโดยไม่มีการเข้าสู่ระบบก่อนที่จะแสดงงานศิลปะ screensaver',
 			'settings.videoCodecOptionDescription' => 'ให้การเล่นโดยตรงสําหรับโค้ดนี้เมื่อได้รับการสนับสนุน การเข้ารหัสที่ไม่ได้ตรวจสอบจะถูกรหัสผ่านจากเซิร์ฟเวอร์สื่อ',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'ขนาด Buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · ดูต่อ',
+			'settings.showTopShelfContentDescription' => 'ปิดเพื่อแสดงเฉพาะภาพของ Pleazyng สำหรับทุกโปรไฟล์',
+			'settings.topShelfUpdateFailed' => 'อัปเดต Top Shelf ไม่สำเร็จ โปรดลองอีกครั้ง',
+			'settings.showFinishTime' => 'แสดงเวลาสิ้นสุด',
+			'settings.showFinishTimeDescription' => 'แสดงเวลาที่วิดีโอจะจบถัดจากเวลาที่เหลือ',
 			'themeEditor.builtIn' => 'โครงสร้าง',
 			'themeEditor.presets' => 'โพสต์',
 			'themeEditor.custom' => 'คู่มือ',
@@ -6609,6 +6623,7 @@ extension on TranslationsTh {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng ตรวจสอบไม่ได้ว่าจะลบไฟล์ใดบ้าง จึงอาจลบมากกว่ารายการที่ระบุข้างต้น ยกเลิกแล้วลองอีกครั้ง หรือเลือกที่จะลบต่อไป',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'เซิร์ฟเวอร์ของคุณไม่ให้ข้อมูลไฟล์สําหรับรายการนี้ดังนั้น Pleazyng ไม่สามารถตรวจสอบไฟล์ใดที่จะลบได้ มันอาจลบมากกว่ารายการที่ระบุไว้ข้างต้น',
 			'mediaMenu.mediaDeletedSuccessfully' => 'รายการสื่อลบอย่างประสบความสําเร็จ',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์',
 			'mediaMenu.mediaFailedToDelete' => 'ไม่สามารถลบรายการสื่อ',
 			'mediaMenu.rate' => 'อัตรา',
 			'mediaMenu.playFromBeginning' => 'เล่นจากเริ่มต้น',
@@ -6668,6 +6683,8 @@ extension on TranslationsTh {
 			'accessibility.reduceMotion' => 'ลดการเคลื่อนไหว',
 			'accessibility.reduceMotionHint' => 'หยุดการเคลื่อนไหวของตัวบอกโฟกัส การเปลี่ยนหน้า และเอฟเฟกต์ตกแต่ง',
 			'accessibility.largeTargets' => 'เป้าหมายสัมผัสขนาดใหญ่',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'ให้การควบคุมร่วมกันพื้นที่มากขึ้นสําหรับสัมผัสและนิวเวชั่นช่วย',
 			'accessibility.navigationHint' => 'ใช้ Tab และ Shift+Tab เพื่อย้ายระหว่างควบคุม Enter หรือ Space เพื่อเปิดใช้งาน และ Escape หรือ Back เพื่อปิด โปรแกรมอ่าน zoom และเลือกอ่านพร้อมใช้งานในขณะที่หนังสือเปิด',
 			'accessibility.textSizeDescription' => 'หมายเลขอินเตอร์เฟซขนาดใน Pleazyng นอกจากการตั้งค่าขนาดข้อความระบบของอุปกรณ์ของคุณ',
@@ -6675,8 +6692,6 @@ extension on TranslationsTh {
 			'tooltips.shufflePlay' => 'เล่น Shuffle',
 			'tooltips.playTrailer' => 'เล่น Trailer',
 			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
 			'audioTracks.track' => ({required Object n}) => 'ลวดเสียง ${n}',
 			'videoControls.audioLabel' => 'เสียง',
@@ -7182,6 +7197,8 @@ extension on TranslationsTh {
 			'discover.findNext.artworkLoading' => 'กำลังโหลดภาพ…',
 			'discover.findNext.artworkUnavailable' => 'ไม่มีภาพ',
 			'discover.findNext.savedFeedback' => 'เพิ่มในรายการที่บันทึกแล้ว',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'ข้ามไปก่อนแล้ว',
 			'discover.findNext.releaseToConfirm' => 'ปล่อยเพื่อยืนยัน',
 			'discover.findNext.remoteHint' => 'เมื่อโฟกัสภาพปก: ← / → เลือก · ปุ่มเลือก: รายละเอียด · ↑ / ↓ ย้ายโฟกัส',
@@ -7189,8 +7206,6 @@ extension on TranslationsTh {
 			'discover.rating' => 'คะแนน',
 			'discover.director' => 'ผู้กำกับ',
 			'discover.directors' => 'ผู้กำกับ',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'ภาพยนตร์',
 			'discover.tvShow' => 'แสดงทีวี',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} นาที left',
@@ -7696,6 +7711,8 @@ extension on TranslationsTh {
 			'collections.selectCollection' => 'เลือกชุด',
 			'collections.collectionName' => 'ชื่อการเก็บเกี่ยว',
 			'collections.enterCollectionName' => 'ระบุชื่อการเก็บรวบรวม',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'เพิ่มเข้าสู่การเก็บเกี่ยว',
 			'collections.errorAddingToCollection' => 'ไม่สามารถเพิ่มเข้าสู่การเก็บเกี่ยว',
 			'collections.created' => 'การเก็บรวบรวม',
@@ -7703,8 +7720,6 @@ extension on TranslationsTh {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'นำ “${title}” ออกจากคอลเลกชันนี้หรือไม่',
 			'collections.removedFromCollection' => 'การกําจัดจากการเก็บรวบรวม',
 			'collections.removeFromCollectionFailed' => 'ไม่สามารถถอดออกจากการเก็บรวบรวม',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'ความผิดพลาดในการลบจากการเก็บรวบรวม: ${error}',
 			'collections.searchCollections' => 'ค้นหาคอลเลกชัน',
 			'playlists.title' => 'เพลย์ลิสต์',
@@ -8210,6 +8225,8 @@ extension on TranslationsTh {
 			'performanceOverlay.decoder' => 'การตกแต่ง',
 			'performanceOverlay.rawDecoder' => 'วัตถุประสงค์',
 			'performanceOverlay.tunneling' => 'ทนเลอร์',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'โพสต์',
 			'performanceOverlay.aspect' => 'ความเห็น',
 			'performanceOverlay.rotation' => 'การหมุน',
@@ -8217,8 +8234,6 @@ extension on TranslationsTh {
 			'performanceOverlay.dvPath' => 'สองเส้นทาง',
 			'performanceOverlay.dvRouteDecoder' => 'ตัวถอดรหัส Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'ตัวถอดรหัส Dolby Vision (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'ฐานชั้น',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ชั้นฐาน',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG ฐานชั้น',
@@ -8454,6 +8469,7 @@ extension on TranslationsTh {
 			'seerr.sessionRejectedAfterReauth' => 'การประชุมถูกปฏิเสธหลังจากการลงทะเบียนอีกครั้ง',
 			'seerr.permissionDenied' => 'Seerr ไม่ยอมรับการกระทํานี้: บัญชีของคุณไม่ได้รับอนุญาตที่ต้องการ',
 			'seerr.permissionRevoked' => 'คุณไม่สามารถร้องขอได้อีกต่อไป',
+			'seerr.withdrawRequest' => 'ถอนคำขอ',
 			'services.title' => 'บริการ',
 			'services.hubSubtitle' => 'Sync ดูการพัฒนาและขอชื่อใหม่',
 			'services.integrations' => 'การรวมกัน',
@@ -8723,6 +8739,8 @@ extension on TranslationsTh {
 			'homeLayout.managePlexRowsDescription' => 'เปิดเพื่อจัดเตรียมเส้นที่เลือกในบ้าน',
 			'homeLayout.organizeHomeRows' => 'การจัดเรียงสายบ้าน',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} เถว: การเคลื่อนไหว, สัตว์ประหลาด, การลบอัตโนมัติ, ลบ',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'จัดการ ${library} เถว',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} เกรด: การเคลื่อนไหว, ห้องสมุด, บ้าน, พระมหากษัตริย์, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render ในฐานะที่เป็นการ์ดฮีโร่',
@@ -8731,8 +8749,6 @@ extension on TranslationsTh {
 			'homeLayout.autoSlide' => 'อัตโนมัติ Slide',
 			'homeLayout.autoSlideDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที Arrows (PC) และ d-pad (TV) ทํางานเสมอและเปิดตัวใหม่ชั่วโมง',
 			'homeLayout.autoSlideEditDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที ปิด: เท่านั้นเคลื่อนที่เมื่อคุณคลิกปืน (พีซี) หรือกดซ้าย / ขวาบนระยะไกล (ทีวี) สไลด์และ d-pad ทํางานเสมอในทางใด ๆ',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'อนุญาตให้ฮีโร่แรก',
 			'homeLayout.showOnHome' => 'แสดงบนหน้าจอบ้าน',
 			'homeLayout.home' => 'บ้าน',
@@ -9237,6 +9253,8 @@ extension on TranslationsTh {
 			'audiobook.customSpeed' => 'ความเร็วการเล่นแบบกําหนดเอง',
 			'audiobook.speedHelp' => 'เลือกความเร็วจาก 0.25× ถึง 4×',
 			'audiobook.apply' => 'ใบสมัคร',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'ช่วงเวลาการนอนหลับ',
 			'audiobook.sleepMinutes' => 'นาที (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'หยุดหลังจาก ${count} ประเภท',
@@ -9245,8 +9263,6 @@ extension on TranslationsTh {
 			'audiobook.useDefaults' => 'ใช้ตัวควบคุมฟังเหล่านี้สําหรับหนังสือใหม่',
 			'audiobook.librarySort' => 'โคตรหนังสือ',
 			'audiobook.sortTitle' => 'ชื่อ',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'ผู้เขียน',
 			'audiobook.sortNarrator' => 'พูดคุย',
 			'audiobook.sortSeries' => 'ชุดคําสั่ง',
@@ -9751,6 +9767,8 @@ extension on TranslationsTh {
 			'musicExperience.bluetoothDrivingHint' => 'เลือกเอาต์พุต Bluetooth ที่เชื่อมต่อเพื่อเปิดมุมมองการขับรถโดยอัตโนมัติ',
 			'musicTools.loudnessMissing' => 'ไม่ได้รับข้อมูลความดัง',
 			'musicTools.loudnessRequested' => 'ส่งคำขอวิเคราะห์แล้ว',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'เซิร์ฟเวอร์เวอร์ชันนี้ไม่รองรับคำขอวิเคราะห์',
 			'musicTools.serverHistory' => 'ประวัติการเล่นบนเซิร์ฟเวอร์',
 			'musicTools.nfcWrite' => 'เขียนแท็ก NFC',
@@ -9759,8 +9777,6 @@ extension on TranslationsTh {
 			'musicTools.storageBudget' => 'ขีดจำกัดการดาวน์โหลดโดยประมาณ (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'ดีเจรับเชิญ',
 			'musicTools.charts' => 'อันดับการฟัง',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'ค้นพบอีกครั้ง',
 			'musicTools.stations' => 'สถานีเพลง',
 			'musicTools.prompt' => 'เพลย์ลิสต์จากคำอธิบาย',

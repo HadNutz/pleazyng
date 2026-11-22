@@ -104,7 +104,7 @@ class MoonlightGameWorkspaceSession {
       if (_disposed || _channel != channel) return;
       await channel.invokeMethod<void>('setInputEnabled', {'enabled': _inputEnabled});
     } catch (_) {
-      // Native surface creation reports its state independently.
+      // best-effort: Native surface creation reports its state independently.
     }
   }
 
@@ -135,7 +135,7 @@ class MoonlightGameWorkspaceSession {
     try {
       await channel.invokeMethod<void>(method, arguments).timeout(const Duration(seconds: 4));
     } catch (_) {
-      // A disposed PlatformView can race a workspace focus update.
+      // best-effort: A disposed PlatformView can race a workspace focus update.
     }
   }
 

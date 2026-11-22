@@ -82,6 +82,7 @@ class _ExtrasScreenState extends State<ExtrasScreen> {
       final imported = await session.store.transcript(entry.id);
       return imported == null ? entry : entry.withPassages(imported, userSupplied: true);
     } catch (_) {
+      // best-effort: Opening the extra does not require an optional transcript.
       return entry;
     }
   }
@@ -90,6 +91,7 @@ class _ExtrasScreenState extends State<ExtrasScreen> {
     try {
       return await session.store.secret('ai');
     } catch (_) {
+      // best-effort: Disable AI access when its stored credential cannot be read.
       return '';
     }
   }
@@ -667,6 +669,7 @@ class _ExtraTranscriptScreenState extends State<ExtraTranscriptScreen> {
     try {
       return await widget.session.store.secret('ai');
     } catch (_) {
+      // best-effort: Disable AI access when its stored credential cannot be read.
       return '';
     }
   }

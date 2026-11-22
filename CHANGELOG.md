@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+- Repair CI and Apple compile failures after integration: refresh the SwiftLint baseline and localization coverage counts, match concurrency checks to current cancellation policy, and remove duplicate podcast imports and test declarations.
+
+- Update the Android Gradle wrapper and split Apple motion tests to keep native validation passing while reducing the Swift lint baseline.
+
+- Avoid duplicate mpv display refresh-rate writes when concurrent display notifications report the same mode, and update the Android test-only Robolectric dependency to 4.18.1.
+
+- Fix a player-controls startup assertion when reading the active display and hinge before Flutter finishes mounting the controls.
+
+- Preserve the saved per-show audio and subtitle choices when their stored data is unreadable. Playback continues and reports the unsuccessful preference write.
+
 - Use consistent app-symbol icons across IPTV, sports and recording controls.
 
 - Remove obsolete podcast import and motion smoothing localization messages.
@@ -51,6 +61,62 @@
 - Adapt video, music, Steam streaming, browsing and reading to separating folds and physical hinges. Keep the active player and detail view during live window resizing. Add compact cover controls and a Samsung Flex Window music widget.
 - Build iPhone releases with the Duo SDK and validate the SDK inside the IPA. A second iOS app window can browse the active audio catalog and send playback to the existing session.
 
+
+- Open individual Plex and Jellyfin photos full-screen and browse nested photo albums with pagination. The viewer bounds decoded images and uses the profile navigator’s Back handling. [jmtagarro](https://github.com/jmtagarro) proposed [Plezy PR #3020](https://github.com/edde746/plezy/pull/3020).
+
+- Allow the finish clock next to remaining time to be hidden independently on desktop, touch and remote controls. Existing users keep their visible finish clock. [jtlopezdev](https://github.com/jtlopezdev) proposed [Plezy PR #3070](https://github.com/edde746/plezy/pull/3070).
+
+- Give long TV summaries the available width while keeping titles, metadata, actions and the fork’s directional layout in their existing columns. [smee2018](https://github.com/smee2018) proposed [Plezy PR #3087](https://github.com/edde746/plezy/pull/3087).
+
+- Reconcile the macOS video layer with actual window visibility after PiP closes. Preserve explicitly hidden, sleeping and occluded states and restore playback activity only for visible playing video. [wthueb](https://github.com/wthueb) proposed [Plezy PR #3008](https://github.com/edde746/plezy/pull/3008).
+
+- Allow users to withdraw their own pending film or TV request. The client rechecks the request, owner, title and edition before deleting the request record. Library files remain under the server administrator’s control. [wetpas](https://github.com/wetpas) proposed [Plezy PR #3111](https://github.com/edde746/plezy/pull/3111).
+
+- Desktop users can select or reset the screenshot folder. macOS remembers the user-approved folder with a security-scoped bookmark, and mpv retains its Pictures default. [NoahBK](https://github.com/NoahBK) proposed [Plezy PR #3095](https://github.com/edde746/plezy/pull/3095).
+
+- Prefer exact regional audio and subtitle matches before language-only and cross-region fallback, and carry regional preferences through Plex account settings and subtitle search with localized language names. [strata-scribe](https://github.com/strata-scribe) proposed [Plezy PR #3005](https://github.com/edde746/plezy/pull/3005).
+
+- Allow authorized Plex owners to refresh one item. Cache invalidation and detail updates check the selected server, session and settled item ID. [denizt](https://github.com/denizt) proposed [Plezy PR #3118](https://github.com/edde746/plezy/pull/3118).
+
+- Apple TV users can choose static Top Shelf artwork for every profile. The extension and publisher honor the device setting alongside existing PIN and profile restrictions. [veresvit](https://github.com/veresvit) proposed [Plezy PR #3092](https://github.com/edde746/plezy/pull/3092).
+
+- Show a profile-scoped reconnect notice for permanently invalidated tracker sessions. Keep the encrypted vault and ordered credential writes, and clear the warning on sign-in or intentional disconnect. [NoahBK](https://github.com/NoahBK) proposed [Plezy PR #3058](https://github.com/edde746/plezy/pull/3058).
+
+- Play ordered or shuffled video playlists from fork links while retaining server and active profile ownership and the existing music routes. [davidmarcantonio](https://github.com/davidmarcantonio) proposed [Plezy PR #3130](https://github.com/edde746/plezy/pull/3130).
+
+- Applied upstream sentence casing to imported shortcuts and grouped all language variants in the existing fork picker. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/b5144834d19b695cb5e0334e3dfdfb820269b9cd) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Integrated 1,901 applicable European Portuguese translations and CLDR regional routing while preserving fork translations and the separate Brazilian catalog. [luismiguelopes](https://github.com/luismiguelopes) contributed [the original change](https://github.com/edde746/plezy/commit/88bd8467ff4051be3a25794ff95ccb31c8b27a01) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Build hosted iOS release IPAs on the Xcode 27 image and check the effective iOS SDK on both hosted and selected signing runners. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/36f9ae3e31f580c642640dc67e7686215fd054ae) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Use volume-specific reclaimable capacity near the storage floor on iOS and macOS, with bounded sampling and the existing guarded write and staging paths. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/18a6637ce2cf978dff30422252d524dd2c2fda4f) to upstream Plezy. Pleazyng integrated the behavior for this fork. The vendored implementation also adapts [edde746’s downloader commit](https://github.com/edde746/background_downloader/commit/4f361e91f3cb79b7e48486b6397e43974b6e0452).
+
+- Read Plex’s live deletion capability from the server root and reject confirmation when the active authentication session changes during the request. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/ad4518e66efd2609ce2272811af624039d127f84) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Rearm a storage-stopped queue only once per explicit download request, skip blocked sync-rule passes, and keep in-flight retries from clearing the storage error. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/54f135fe46f1aed4edc36a04241152fc9cac7bf5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Constrain long multi-server subtitles inside the compact library picker while preserving full library choices. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/e0a2a8e9f34872920d8a60394cc1bca9827f75d7) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Use a nonthrowing version resolver for room identity and wire metadata, preserving the Pleazyng client name and existing Jellyfin onboarding fallback. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/d78b6d806e3ebf60881999564def7cad969722b5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Rasterize the Discover backdrop gradient while retaining the fork’s responsive artwork and theme stops. [a-j-jones](https://github.com/a-j-jones) contributed [the original change](https://github.com/edde746/plezy/commit/77f11b86f06a3cd7ec73072dfc9c60bb6c985eb5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Avoid starting unused built-in mpv scripts on Android while keeping explicit video-core configuration overrides. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/4c3c25b8233bb887d7224b3844f3763a88b720c5) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Batch demuxer refills only for uncached app-owned downloads, respecting custom mpv options and resetting the property on subsequent opens. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/3bf8c2752739a83cb5038fef9287bd6aac7d1e19) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Prefer precise 50/59.94/60 Hz modes for matching 25/29.97/30 fps video while preserving the existing frame-rate setting and motion-generated output path. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/e883c3ca5e170c2d5810c98d68803c586a97a270) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Register the video-only external display scene on supported iOS 27 SDKs and preserve the older scene-delegate path. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/23778fade45fc046cdd77d274d501dd0a0643e07) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Keep the TV profile menu, Retry and sidebar reachable when Home has no server rows, including the fork’s cloud-only rail. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/8310991fa14f0cbac9c71cfb494d028d4314c7ff) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Prompt on resume when a TV hosts the companion remote, while allowing its connected or reconnecting controller to resume normally. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/5d5f03c00c82da91c86e900dbe931516262b23f9) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Reuse the registered Plex client when a server returns with the same authentication and profile scope, so active playback keeps reporting progress. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/b179440450941150da98623e3a4fe3d2aebe900e) to upstream Plezy. Pleazyng integrated the behavior for this fork.
+
+- Retry sleeping Plex servers after profile binding and resume with bounded, profile-aware backoff. [edde746](https://github.com/edde746) contributed [the original change](https://github.com/edde746/plezy/commit/4640404ce3c79d3a73271392cc6d5d18ca8ebedc) to upstream Plezy. Pleazyng integrated the behavior for this fork.
 - Fix a webOS MPV crash when the Flutter renderer requests a retired video texture. Apply the OLED motion preset to eligible TV MPV sources and retry playback without smoothing if the first filtered frame fails.
 
 - Add hardware-probed motion blending to the LG webOS and Samsung Tizen MPV players, with software fallback and provider diagnostics. Add a libplacebo GPU route for Apple MPV smoothing and for devices without VideoToolbox interpolation support. Try software neural inference after eligible hardware providers on Android, Fire OS, Windows and Linux.

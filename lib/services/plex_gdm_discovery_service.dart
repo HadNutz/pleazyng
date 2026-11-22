@@ -119,6 +119,7 @@ class PlexGdmDiscoveryService {
 
       return DiscoveredPlexServer(address: serverAddress, id: id, name: serverName, version: headers['version']);
     } catch (_) {
+      // best-effort: Ignore a malformed discovery packet and continue listening for other servers.
       return null;
     }
   }

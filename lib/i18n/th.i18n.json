@@ -224,7 +224,8 @@
       "playlist": "เพลย์ลิสต์",
       "clip": "คลิก",
       "photo": "ภาพถ่าย",
-      "folder": "แผง"
+      "folder": "แผง",
+      "photoAlbum": "อัลบั้มรูปภาพ"
     }
   },
   "screens": {
@@ -790,7 +791,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "ขนาด Buffer: ${size} MiB"
+    "streamBufferSizeMiB": "ขนาด Buffer: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · ดูต่อ",
+    "showTopShelfContentDescription": "ปิดเพื่อแสดงเฉพาะภาพของ Pleazyng สำหรับทุกโปรไฟล์",
+    "topShelfUpdateFailed": "อัปเดต Top Shelf ไม่สำเร็จ โปรดลองอีกครั้ง",
+    "showFinishTime": "แสดงเวลาสิ้นสุด",
+    "showFinishTimeDescription": "แสดงเวลาที่วิดีโอจะจบถัดจากเวลาที่เหลือ"
   },
   "themeEditor": {
     "builtIn": "โครงสร้าง",
@@ -1047,6 +1053,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng ตรวจสอบไม่ได้ว่าจะลบไฟล์ใดบ้าง จึงอาจลบมากกว่ารายการที่ระบุข้างต้น ยกเลิกแล้วลองอีกครั้ง หรือเลือกที่จะลบต่อไป",
     "deleteScopeUnverifiedNoFileInfo": "เซิร์ฟเวอร์ของคุณไม่ให้ข้อมูลไฟล์สําหรับรายการนี้ดังนั้น Pleazyng ไม่สามารถตรวจสอบไฟล์ใดที่จะลบได้ มันอาจลบมากกว่ารายการที่ระบุไว้ข้างต้น",
     "mediaDeletedSuccessfully": "รายการสื่อลบอย่างประสบความสําเร็จ",
+    "mediaDeletionDisabledOnServer": "เซิร์ฟเวอร์นี้ปิดการลบสื่อไว้ โปรดอนุญาตให้ลบสื่อในการตั้งค่าคลังของเซิร์ฟเวอร์",
     "mediaFailedToDelete": "ไม่สามารถลบรายการสื่อ",
     "rate": "อัตรา",
     "playFromBeginning": "เล่นจากเริ่มต้น",
@@ -3419,7 +3426,8 @@
     "noUserInformation": "Seerr ไม่ได้คืนข้อมูลผู้ใช้",
     "sessionRejectedAfterReauth": "การประชุมถูกปฏิเสธหลังจากการลงทะเบียนอีกครั้ง",
     "permissionDenied": "Seerr ไม่ยอมรับการกระทํานี้: บัญชีของคุณไม่ได้รับอนุญาตที่ต้องการ",
-    "permissionRevoked": "คุณไม่สามารถร้องขอได้อีกต่อไป"
+    "permissionRevoked": "คุณไม่สามารถร้องขอได้อีกต่อไป",
+    "withdrawRequest": "ถอนคำขอ"
   },
   "services": {
     "title": "บริการ",

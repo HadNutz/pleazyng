@@ -44,9 +44,10 @@ Also run the vendored `shared_preferences_linux`, `shared_preferences_windows`,
 `universal_gamepad` and `wakelock_plus` package tests from their package roots.
 Wakelock's browser suite uses `--platform chrome --dart-define=WEB_PLUGIN_TESTS=true`.
 
-The default Flutter run deliberately skips TV build flags, the real browser
-reader and the real Watch Together relay. Run those explicitly before claiming
-coverage. The six Windows/macOS external-app discovery cases require their native
+Local Flutter runs skip the TV build flags, browser reader and Watch Together
+relay unless their prerequisites are available. The pull-request shard that owns
+the Watch Together provider tests builds [the upstream 1.1.0 relay](https://github.com/edde746/openwatchparty/commit/d2579d7c7e9fce1bf3844f04379d6bc009b219c0)
+and exercises both relay scenarios on loopback. The six Windows/macOS external-app discovery cases require their native
 OS; changing the platform flag on Linux does not qualify OS discovery APIs.
 
 For the real relay test, use the Open Watch Party source tag matching the locked

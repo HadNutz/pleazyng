@@ -67,6 +67,7 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
     try {
       saved = json.decode(savedSnapshot) as Map<String, dynamic>;
     } catch (_) {
+      // best-effort: A comparison failure must leave the local layout eligible for synchronization.
       return true;
     }
     for (final entry in saved.entries) {
@@ -130,7 +131,9 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
         );
         if (await file.exists() && await file.length() > 256 * 1024) await file.writeAsString('');
         await file.writeAsString('${now.toIso8601String()} $message\n', mode: FileMode.append, flush: true);
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not write the Home layout diagnostic log.');
+      }
     }());
   }
 
@@ -250,6 +253,7 @@ class HomeLayoutSyncService with WidgetsBindingObserver {
       final map = json.decode(raw) as Map<String, dynamic>;
       return (appliedAt: (map['appliedAt'] as num?)?.toInt() ?? 0, snapshot: map['snapshot'] as String? ?? '');
     } catch (_) {
+      // best-effort: Reconcile from an empty snapshot when the previous layout state is unreadable.
       return (appliedAt: 0, snapshot: '');
     }
   }

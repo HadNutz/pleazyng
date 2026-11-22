@@ -155,7 +155,7 @@ class LiveSeekAccumulator {
         await seek(target);
       }
     } catch (_) {
-      // The source owns any remaining clock uncertainty. A failed re-open
+      // best-effort: The source owns any remaining clock uncertainty. A failed re-open
       // must still hand off to newer input or release this burst's target.
     } finally {
       if (operationGeneration == _operationGeneration) {

@@ -224,7 +224,8 @@
       "playlist": "قائمة التشغيل",
       "clip": "مقطع",
       "photo": "صورة",
-      "folder": "مجلد"
+      "folder": "مجلد",
+      "photoAlbum": "ألبوم صور"
     }
   },
   "screens": {
@@ -800,7 +801,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "حجم البوفر: ${size} MiB"
+    "streamBufferSizeMiB": "حجم البوفر: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · متابعة المشاهدة",
+    "showTopShelfContentDescription": "عند إيقاف هذا الخيار، تظهر صورة Pleazyng فقط لجميع الملفات الشخصية.",
+    "topShelfUpdateFailed": "تعذّر تحديث Top Shelf. حاول مرة أخرى.",
+    "showFinishTime": "عرض وقت الانتهاء",
+    "showFinishTimeDescription": "عرض وقت انتهاء الفيديو بجوار الوقت المتبقي."
   },
   "themeEditor": {
     "builtIn": "بناء في",
@@ -1072,6 +1078,7 @@
     "deleteScopeUnverifiedProbeFailed": "تعذّر على Pleazyng التحقق من الملفات التي سيحذفها هذا الإجراء، لذلك قد يحذف أكثر من العنصر المذكور أعلاه. ألغِ الإجراء وحاول مجددًا، أو اختر الحذف على أي حال.",
     "deleteScopeUnverifiedNoFileInfo": "لم يقدّم خادمك تفاصيل ملفات هذا العنصر، لذلك لا يستطيع Pleazyng التحقق من الملفات التي سيحذفها هذا الإجراء. قد تُحذف ملفات تتجاوز العنصر المذكور أعلاه.",
     "mediaDeletedSuccessfully": "تم حذف منتجات وسائل الإعلام بنجاح",
+    "mediaDeletionDisabledOnServer": "حذف الوسائط معطّل على هذا الخادم. فعّل «السماح بحذف الوسائط» في إعدادات مكتبة الخادم.",
     "mediaFailedToDelete": "فشل في حذف موضوع وسائل الإعلام",
     "rate": "المعدل",
     "playFromBeginning": "تشغيل من البداية",
@@ -3524,7 +3531,8 @@
     "noUserInformation": "لم تعيد شركة Seerr معلومات المستخدم",
     "sessionRejectedAfterReauth": "تم رفض الجلسة بعد التوقيع مرة أخرى",
     "permissionDenied": "رفضت شركة Seerr هذا الإجراء: لم يعد حسابك لديه إذن مطلوب",
-    "permissionRevoked": "لم يعد لديك إذن لطلب هذا"
+    "permissionRevoked": "لم يعد لديك إذن لطلب هذا",
+    "withdrawRequest": "سحب الطلب"
   },
   "services": {
     "title": "الخدمات",

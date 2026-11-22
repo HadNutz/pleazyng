@@ -306,7 +306,7 @@ List<PlexMetadataDto> _hubItemsFromJson(Object? raw) {
     try {
       items.add(PlexMetadataDto.fromJsonWithImages(item as Map<String, dynamic>));
     } catch (_) {
-      // Skip hub entries that fail to parse; Plex hubs can mix item shapes.
+      // best-effort: Skip hub entries that fail to parse; Plex hubs can mix item shapes.
     }
   }
   return items;
@@ -1118,9 +1118,17 @@ class PlexMappers {
     return DiscographyGroupKind.albums;
   }
 
+  /// Plex sends photo albums and single photos with the same `type="photo"`.
+  /// An album's key lists its children, where a photo's names the photo itself.
+  static MediaKind _itemKind(PlexMetadataDto dto) {
+    final kind = MediaKind.fromString(dto.type);
+    if (kind == MediaKind.photo && (dto.key?.endsWith('/children') ?? false)) return MediaKind.photoAlbum;
+    return kind;
+  }
+
   /// Map a parsed [PlexMetadataDto] into a [PlexMediaItem].
   static PlexMediaItem mediaItem(PlexMetadataDto dto) {
-    final kind = MediaKind.fromString(dto.type);
+    final kind = _itemKind(dto);
     return PlexMediaItem(
       id: dto.ratingKey,
       kind: kind,

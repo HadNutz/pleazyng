@@ -559,7 +559,7 @@ class _ExternalAccessScreenState extends State<ExternalAccessScreen> {
     try {
       if (await launchUrl(launchUri, mode: LaunchMode.externalApplication)) return;
     } catch (_) {
-      // Report the same recovery state for platform handlers and launch errors.
+      // best-effort: Report the same recovery state for platform handlers and launch errors.
     }
     if (context.mounted) showErrorSnackBar(context, t.common.error);
   }

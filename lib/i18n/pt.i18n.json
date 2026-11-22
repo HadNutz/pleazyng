@@ -224,7 +224,8 @@
       "playlist": "Playlist",
       "clip": "Clipe",
       "photo": "Foto",
-      "folder": "Pasta"
+      "folder": "Pasta",
+      "photoAlbum": "Álbum de fotos"
     }
   },
   "screens": {
@@ -794,7 +795,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Baixão de tamanho: ${size} MiB"
+    "streamBufferSizeMiB": "Baixão de tamanho: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Continuar Assistindo",
+    "showTopShelfContentDescription": "Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.",
+    "topShelfUpdateFailed": "Não foi possível atualizar o Top Shelf. Tente novamente.",
+    "showFinishTime": "Mostrar horário de término",
+    "showFinishTimeDescription": "Mostra quando o vídeo vai terminar ao lado do tempo restante."
   },
   "themeEditor": {
     "builtIn": "Integrados",
@@ -1054,6 +1060,7 @@
     "deleteScopeUnverifiedProbeFailed": "O Pleazyng não conseguiu verificar quais arquivos serão removidos, então pode excluir mais do que o item acima. Cancele e tente novamente, ou exclua mesmo assim.",
     "deleteScopeUnverifiedNoFileInfo": "Seu servidor não forneceu detalhes do arquivo para este item, então o Pleazyng não pode verificar quais arquivos serão removidos. Pode excluir mais do que o item acima.",
     "mediaDeletedSuccessfully": "Item de mídia excluído com sucesso",
+    "mediaDeletionDisabledOnServer": "A exclusão de mídia está desativada neste servidor. Permita a exclusão de mídia nas configurações de biblioteca do servidor.",
     "mediaFailedToDelete": "Falha ao excluir item de mídia",
     "rate": "Avaliar",
     "playFromBeginning": "Reproduzir do início",
@@ -3443,7 +3450,8 @@
     "noUserInformation": "O Seerr não retornou informações do usuário",
     "sessionRejectedAfterReauth": "A sessão foi rejeitada após entrar novamente",
     "permissionDenied": "O Seerr negou esta ação: sua conta não tem mais a permissão necessária",
-    "permissionRevoked": "Você não tem mais permissão para solicitar isso"
+    "permissionRevoked": "Você não tem mais permissão para solicitar isso",
+    "withdrawRequest": "Cancelar solicitação"
   },
   "services": {
     "title": "Serviços",

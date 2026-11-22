@@ -224,7 +224,9 @@ class PerformanceStatsService {
     int? appMemory;
     try {
       appMemory = ProcessInfo.currentRss;
-    } catch (_) {}
+    } catch (_) {
+      appLogger.d('The platform could not report resident memory for the performance overlay.');
+    }
 
     if (playerType == 'mpv') {
       // Parse MPV stats format (returned when in fallback mode)
@@ -544,7 +546,7 @@ class PerformanceStatsService {
     try {
       appMemory = ProcessInfo.currentRss;
     } catch (_) {
-      // ProcessInfo not available on all platforms
+      // best-effort: ProcessInfo not available on all platforms
     }
 
     final audio = _resolveAudioDisplay(
@@ -751,6 +753,7 @@ class PerformanceStatsService {
     try {
       return await player.getProperty(name);
     } catch (_) {
+      // best-effort: Optional player telemetry can be absent on the active backend.
       return null;
     }
   }
@@ -889,6 +892,7 @@ class PerformanceStatsService {
       if (fwBytes is num) return fwBytes.toInt();
       return null;
     } catch (_) {
+      // best-effort: Omit the buffer statistic when the player supplies an unreadable cache report.
       return null;
     }
   }

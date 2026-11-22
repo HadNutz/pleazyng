@@ -97,6 +97,7 @@ class JellyfinApiCache extends ApiCache {
         dialect: ctx.dialect,
       );
     } catch (_) {
+      // best-effort: Treat unreadable cached metadata as a cache miss.
       return null;
     }
   }
@@ -171,7 +172,7 @@ class JellyfinApiCache extends ApiCache {
           database.apiCache,
         )..where((t) => t.cacheKey.equals(row.cacheKey))).write(ApiCacheCompanion(data: Value(encoded)));
       } catch (_) {
-        // Skip malformed entries.
+        // best-effort: Skip malformed entries.
       }
     }
   }
@@ -262,7 +263,7 @@ class JellyfinApiCache extends ApiCache {
       baseUrl = config['baseUrl'] as String? ?? '';
       accessToken = config['accessToken'] as String? ?? '';
     } catch (_) {
-      // Fall through with the values defaulted above.
+      // best-effort: Fall through with the values defaulted above.
     }
     if (baseUrl.isEmpty) return null;
     configMachineId ??= machineId;

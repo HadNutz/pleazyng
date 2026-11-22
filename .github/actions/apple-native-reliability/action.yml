@@ -4,6 +4,10 @@ inputs:
   platform:
     description: iOS, macOS or tvOS.
     required: true
+  build-only:
+    description: Compile the app and XCTest targets without launching a simulator.
+    required: false
+    default: 'false'
   motion-test-only:
     description: Run the iPhone live motion XCTest on its own.
     default: 'false'
@@ -23,9 +27,21 @@ runs:
           macOS) project=macos; sdk='';               runtime='';   destination='platform=macOS' ;;
           *) echo "::error::Unsupported Apple platform $PLATFORM"; exit 1 ;;
         esac
-        if [[ "$RUNNER_ENVIRONMENT" == self-hosted && "$PLATFORM" != iOS ]]; then
-          xcodebuild -version | grep -Fx 'Xcode 27.0'
-          test "$(xcrun --sdk "${sdk:-macosx}" --show-sdk-version)" = '27.0'
+        if [[ "$RUNNER_ENVIRONMENT" == self-hosted ]]; then
+          if [[ "$PLATFORM" == iOS ]]; then
+            xcode_version="$(xcodebuild -version | sed -n '1s/^Xcode //p')"
+            sdk_version="$(xcrun --sdk "$sdk" --show-sdk-version)"
+            for version in "$xcode_version" "$sdk_version"; do
+              if ! [[ "$version" =~ ^([0-9]+)\.([0-9]+)(\.[0-9]+)?$ ]] ||
+                 ! (( 10#${BASH_REMATCH[1]} > 27 || (10#${BASH_REMATCH[1]} == 27 && 10#${BASH_REMATCH[2]} >= 1) )); then
+                echo "::error::iOS reliability requires Xcode and simulator SDK 27.1 or newer (Xcode $xcode_version, SDK $sdk_version)"
+                exit 1
+              fi
+            done
+          else
+            xcodebuild -version | grep -Fx 'Xcode 27.0'
+            test "$(xcrun --sdk "${sdk:-macosx}" --show-sdk-version)" = '27.0'
+          fi
         fi
         [[ "$PUB_CACHE" == "$RUNNER_TEMP/apple-native-pub-$project" ]]
         [[ ! -e "$PUB_CACHE" && ! -L "$PUB_CACHE" ]]
@@ -327,6 +343,7 @@ runs:
           --resolved-package tvos/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
     - name: Select Apple test destination
+      if: inputs.build-only != 'true'
       id: destination
       env:
         PREFERRED_SIMULATOR_TYPE: ${{ inputs.platform == 'iOS' && 'com.apple.CoreSimulator.SimDeviceType.iPhone-Duo' || '' }}
@@ -366,7 +383,7 @@ runs:
         }
 
     - name: Run Apple native reliability tests
-      if: inputs.platform != 'macOS'
+      if: inputs.platform != 'macOS' && inputs.build-only != 'true'
       env:
         APPLE_LOCAL_BUILD_DIR: ${{ steps.scratch.outputs.APPLE_LOCAL_BUILD_DIR }}
         APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
@@ -383,7 +400,7 @@ runs:
         test_log="$APPLE_LOCAL_BUILD_DIR/native-test-output.log"
         test_selection=()
         if [[ "$MOTION_TEST_ONLY" == true ]]; then
-          test_selection=(-only-testing:RunnerTests/MpvPlayerContractTests/testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream)
+          test_selection=(-only-testing:RunnerTests/AVFoundationMotionPlaybackTests/testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream)
         fi
         set -o pipefail
         set +e
@@ -416,23 +433,32 @@ runs:
         exit "$test_status"
 
     - name: Launch the same iOS app on an older phone runtime
-      if: inputs.platform == 'iOS' && runner.environment == 'github-hosted' && inputs.motion-test-only != 'true'
+      if: inputs.platform == 'iOS' && inputs.build-only != 'true' && inputs.motion-test-only != 'true' && runner.environment == 'github-hosted'
       env:
         PRODUCTS: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}/Build/Products/Debug-iphonesimulator
       shell: bash
       working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
       run: python3 scripts/apple/smoke_older_iphone.py "$PRODUCTS"
 
-    - name: Build macOS application and XCTest bundle
-      if: inputs.platform == 'macOS'
+    - name: Build application and XCTest bundle
+      if: inputs.platform == 'macOS' || inputs.build-only == 'true'
       env:
         APPLE_DERIVED_DATA_PATH: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}
         APPLE_SOURCE_PACKAGES_DIR: ${{ steps.scratch.outputs.APPLE_SOURCE_PACKAGES_DIR }}
         NATIVE_WORKSPACE: ${{ steps.scratch.outputs.project }}/Runner.xcworkspace
-        APPLE_TEST_DESTINATION: ${{ steps.destination.outputs.APPLE_TEST_DESTINATION }}
+        APPLE_TEST_DESTINATION: ${{ steps.destination.outputs.APPLE_TEST_DESTINATION || steps.scratch.outputs.destination || format('generic/platform={0} Simulator', inputs.platform) }}
       shell: bash
       working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
       run: |
+        compiler_settings=()
+        if [[ -n "${PLEAZYNG_APPLE_TIDY:-}" ]]; then
+          mkdir -p "$RUNNER_TEMP/pleazyng-clang-database"
+          compiler_settings+=(
+            "PLEAZYNG_CLANG_DB_DIR=$RUNNER_TEMP/pleazyng-clang-database"
+            'OTHER_CFLAGS=$(inherited) -gen-cdb-fragment-path "$(PLEAZYNG_CLANG_DB_DIR)"'
+            'OTHER_CPLUSPLUSFLAGS=$(inherited) -gen-cdb-fragment-path "$(PLEAZYNG_CLANG_DB_DIR)"'
+          )
+        fi
         xcodebuild build-for-testing \
           -workspace "$NATIVE_WORKSPACE" \
           -scheme Runner \
@@ -443,7 +469,13 @@ runs:
           -disableAutomaticPackageResolution \
           CODE_SIGNING_ALLOWED=NO \
           COMPILER_INDEX_STORE_ENABLE=NO \
-          ARCHS=arm64
+          ARCHS=arm64 "${compiler_settings[@]}"
+        if [[ -n "${PLEAZYNG_APPLE_TIDY:-}" ]]; then
+          database="$RUNNER_TEMP/pleazyng-clang-database"
+          python3 "$GITHUB_WORKSPACE/scripts/checks/clang_compilation_fragments.py" "$database"
+          python3 "$GITHUB_WORKSPACE/scripts/checks/native_lint.py" clang --tool "$PLEAZYNG_APPLE_TIDY" \
+            --database "$database" --compiled-root "$PWD" --changed-lines "$PLEAZYNG_APPLE_TIDY_BASE"
+        fi
 
     - name: Retain failed Apple native test results
       if: failure() && inputs.platform != 'macOS' && steps.scratch.outcome == 'success'
@@ -457,7 +489,7 @@ runs:
         if-no-files-found: warn
 
     - name: Remove job-owned Apple test simulator
-      if: always() && steps.scratch.outcome == 'success' && inputs.platform != 'macOS'
+      if: always() && steps.scratch.outcome == 'success' && inputs.platform != 'macOS' && inputs.build-only != 'true'
       shell: bash
       env:
         SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}

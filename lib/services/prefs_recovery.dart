@@ -566,6 +566,7 @@ abstract final class PrefsRecovery {
     try {
       return base64Decode(value).length == 32;
     } catch (_) {
+      // best-effort: Reject invalid recovery credentials before registering a session.
       return false;
     }
   }
@@ -613,6 +614,7 @@ abstract final class PrefsRecovery {
       LogRedactionManager.registerToken(session.refreshToken);
       return true;
     } catch (_) {
+      // best-effort: Reject invalid recovery credentials before registering a session.
       return false;
     }
   }
@@ -621,6 +623,7 @@ abstract final class PrefsRecovery {
     try {
       return jsonDecode('"$rawInner"') as String;
     } catch (_) {
+      // best-effort: Skip a preference fragment whose quoted value cannot be decoded.
       return null;
     }
   }

@@ -69,6 +69,19 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final direction in TextDirection.values) {
+    testWidgets('long spotlight summary uses the full width in ${direction.name}', (tester) async {
+      final summary = List.filled(40, 'A deliberately long summary for a television.').join(' ');
+      await _pumpSpotlight(
+        tester,
+        MediaItem.plex(id: 'wide', kind: MediaKind.movie, title: 'Movie', summary: summary),
+        direction: direction,
+      );
+      expect(tester.getSize(find.text(summary)).width, greaterThan(1920 * 0.75));
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('dashboard spotlight badges every rating the listing carried', (tester) async {
     await _pumpSpotlight(
       tester,

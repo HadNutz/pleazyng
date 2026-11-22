@@ -86,6 +86,7 @@ class MusicDeviceController extends ChangeNotifier {
       _activate(target);
       return accepted?['ok'] == true ? MusicDeviceMoveResult.completed : MusicDeviceMoveResult.uncertain;
     } catch (_) {
+      // best-effort: Expose an unsuccessful player move to the initiating device.
       return MusicDeviceMoveResult.rejected;
     } finally {
       source?.release();

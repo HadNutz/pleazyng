@@ -224,7 +224,8 @@
       "playlist": "Danh sách phát",
       "clip": "Video ngắn",
       "photo": "Hình Ảnh",
-      "folder": "Thư mục"
+      "folder": "Thư mục",
+      "photoAlbum": "Album ảnh"
     }
   },
   "screens": {
@@ -790,7 +791,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer kích thước: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer kích thước: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Tiếp tục xem",
+    "showTopShelfContentDescription": "Tắt để chỉ hiển thị hình ảnh Pleazyng cho tất cả hồ sơ.",
+    "topShelfUpdateFailed": "Không thể cập nhật Top Shelf. Hãy thử lại.",
+    "showFinishTime": "Hiện giờ kết thúc",
+    "showFinishTimeDescription": "Hiển thị giờ video kết thúc bên cạnh thời lượng còn lại."
   },
   "themeEditor": {
     "builtIn": "xây dựng",
@@ -1047,6 +1053,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng không thể xác định những tệp sẽ bị xóa, nên có thể xóa nhiều hơn mục nêu trên. Hãy hủy và thử lại, hoặc vẫn xóa.",
     "deleteScopeUnverifiedNoFileInfo": "Máy chủ không cung cấp thông tin tệp cho mục này, nên Pleazyng không thể xác định những tệp sẽ bị xóa. Có thể xóa nhiều hơn mục nêu trên.",
     "mediaDeletedSuccessfully": "Media item đã bị xóa thành công",
+    "mediaDeletionDisabledOnServer": "Tính năng xóa nội dung đã tắt trên máy chủ này. Hãy cho phép xóa nội dung trong phần cài đặt thư viện của máy chủ.",
     "mediaFailedToDelete": "Không xóa các mục phương tiện truyền thông",
     "rate": "Đánh giá",
     "playFromBeginning": "Phát từ đầu",
@@ -3419,7 +3426,8 @@
     "noUserInformation": "Seerr không trả lại thông tin người dùng",
     "sessionRejectedAfterReauth": "Cuộc họp đã bị từ chối sau khi ký lại",
     "permissionDenied": "Seerr từ chối hành động này: Tài khoản của bạn không còn được phép yêu cầu",
-    "permissionRevoked": "Bạn không còn được phép yêu cầu điều này"
+    "permissionRevoked": "Bạn không còn được phép yêu cầu điều này",
+    "withdrawRequest": "Rút lại yêu cầu"
   },
   "services": {
     "title": "Dịch vụ",

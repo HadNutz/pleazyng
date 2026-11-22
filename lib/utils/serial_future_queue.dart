@@ -19,7 +19,7 @@ class SerialFutureQueue {
     try {
       await operation;
     } catch (_) {
-      // The returned operation future carries the error to its caller. The
+      // best-effort: The returned operation future carries the error to its caller. The
       // internal tail only represents when the queue may start its next item.
     }
   }

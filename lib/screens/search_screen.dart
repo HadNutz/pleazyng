@@ -624,6 +624,7 @@ class _SearchScreenState extends State<SearchScreen>
     MediaKind.collection ||
     MediaKind.playlist ||
     MediaKind.clip ||
+    MediaKind.photoAlbum ||
     MediaKind.photo ||
     MediaKind.folder ||
     MediaKind.unknown => null,
@@ -687,6 +688,7 @@ class _SearchScreenState extends State<SearchScreen>
     } on SourceException catch (error) {
       return (entries: const <SourceEntry>[], available: false, failed: error.reason != SourceFailure.cancelled);
     } catch (_) {
+      // best-effort: Mark the index unavailable so callers can distinguish failure from an empty search.
       return (entries: const <SourceEntry>[], available: false, failed: true);
     }
   }
@@ -1211,7 +1213,7 @@ class _SearchScreenState extends State<SearchScreen>
     MediaKind.collection => t.libraries.tabs.collections,
     MediaKind.playlist => t.libraries.tabs.playlists,
     // Unreachable: excluded from _kindFilterOrder.
-    MediaKind.clip || MediaKind.photo || MediaKind.folder || MediaKind.unknown => kind.id,
+    MediaKind.clip || MediaKind.photo || MediaKind.photoAlbum || MediaKind.folder || MediaKind.unknown => kind.id,
   };
 
   String _catalogSourceName(CatalogSourceId id) {

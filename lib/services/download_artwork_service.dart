@@ -131,6 +131,7 @@ class DownloadArtworkService {
         await raf.close();
       }
     } catch (_) {
+      // best-effort: An unreadable artwork file cannot serve as a cached image.
       return false;
     }
   }

@@ -896,6 +896,11 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => '스크린 저장 예술 작품을 보여주기 전에 입력없이 많은 분을 기다리십시오.';
 	@override String get videoCodecOptionDescription => '이 코덱을 지원할 때 직접 재생할 수 있습니다.Unchecked codecs are transcoded by the media server.';
 	@override String streamBufferSizeMiB({required Object size}) => '부퍼 크기: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · 계속 시청';
+	@override String get showTopShelfContentDescription => '끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.';
+	@override String get topShelfUpdateFailed => 'Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요.';
+	@override String get showFinishTime => '종료 시각 표시';
+	@override String get showFinishTimeDescription => '남은 시간 옆에 동영상이 끝나는 시각을 표시합니다.';
 }
 
 // Path: themeEditor
@@ -1144,6 +1149,7 @@ class _Translations$mediaMenu$ko extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Plezy가 어떤 파일이 삭제될지 확인하지 못해 위 항목보다 더 많은 파일이 삭제될 수 있습니다. 취소하고 다시 시도하거나 그래도 삭제하세요.';
 	@override String get deleteScopeUnverifiedNoFileInfo => '서버가 이 항목의 파일 정보를 제공하지 않아 Plezy가 어떤 파일이 삭제될지 확인할 수 없습니다. 위 항목보다 더 많은 파일이 삭제될 수 있습니다.';
 	@override String get mediaDeletedSuccessfully => '미디어 항목이 성공적으로 삭제되었습니다';
+	@override String get mediaDeletionDisabledOnServer => '이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요.';
 	@override String get mediaFailedToDelete => '미디어 항목 삭제 실패';
 	@override String get rate => '평가';
 	@override String get playFromBeginning => '처음부터 재생';
@@ -2926,6 +2932,7 @@ class _Translations$seerr$ko extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => '다시 로그인한 후 세션이 거부되었습니다';
 	@override String get permissionDenied => 'Seerr가 이 작업을 거부했습니다: 계정에 필요한 권한이 더 이상 없습니다';
 	@override String get permissionRevoked => '이 항목을 요청할 권한이 더 이상 없습니다';
+	@override String get withdrawRequest => '요청 철회';
 }
 
 // Path: services
@@ -4627,6 +4634,7 @@ class _Translations$common$mediaKind$ko extends Translations$common$mediaKind$en
 	@override String get clip => '클립';
 	@override String get photo => '사진';
 	@override String get folder => '폴더';
+	@override String get photoAlbum => '사진 앨범';
 }
 
 // Path: settings.startupSectionOptions
@@ -5874,6 +5882,7 @@ extension on TranslationsKo {
 			'common.mediaKind.clip' => '클립',
 			'common.mediaKind.photo' => '사진',
 			'common.mediaKind.folder' => '폴더',
+			'common.mediaKind.photoAlbum' => '사진 앨범',
 			'screens.licenses' => '라이선스',
 			'screens.switchProfile' => '프로필 전환',
 			'screens.subtitleStyling' => '자막 스타일 설정',
@@ -6180,9 +6189,9 @@ extension on TranslationsKo {
 			'settings.manageLibrariesDescription' => '라이브러리 순서를 변경하거나 숨깁니다',
 			'settings.companionRemoteServer' => '컴패니언 리모트 서버',
 			'settings.companionRemoteServerDescription' => '네트워크의 모바일 기기가 이 앱을 제어할 수 있도록 허용',
-			'settings.companionRemoteServerStartFailed' => '컴패니언 리모트 서버를 시작할 수 없습니다',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => '컴패니언 리모트 서버를 시작할 수 없습니다',
 			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
 			'settings.autoPip' => '자동 PIP 모드',
 			'settings.autoPipDescription' => '재생 중 앱을 떠나면 자동으로 화면 속 화면 모드로 전환합니다',
@@ -6396,6 +6405,11 @@ extension on TranslationsKo {
 			'settings.contentScreensaverDelayOptionDescription' => '스크린 저장 예술 작품을 보여주기 전에 입력없이 많은 분을 기다리십시오.',
 			'settings.videoCodecOptionDescription' => '이 코덱을 지원할 때 직접 재생할 수 있습니다.Unchecked codecs are transcoded by the media server.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => '부퍼 크기: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 계속 시청',
+			'settings.showTopShelfContentDescription' => '끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요.',
+			'settings.showFinishTime' => '종료 시각 표시',
+			'settings.showFinishTimeDescription' => '남은 시간 옆에 동영상이 끝나는 시각을 표시합니다.',
 			'themeEditor.builtIn' => '기본 제공',
 			'themeEditor.presets' => '프리셋',
 			'themeEditor.custom' => '사용자 지정',
@@ -6629,6 +6643,7 @@ extension on TranslationsKo {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Plezy가 어떤 파일이 삭제될지 확인하지 못해 위 항목보다 더 많은 파일이 삭제될 수 있습니다. 취소하고 다시 시도하거나 그래도 삭제하세요.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => '서버가 이 항목의 파일 정보를 제공하지 않아 Plezy가 어떤 파일이 삭제될지 확인할 수 없습니다. 위 항목보다 더 많은 파일이 삭제될 수 있습니다.',
 			'mediaMenu.mediaDeletedSuccessfully' => '미디어 항목이 성공적으로 삭제되었습니다',
+			'mediaMenu.mediaDeletionDisabledOnServer' => '이 서버에서는 미디어 삭제가 비활성화되어 있습니다. 서버의 라이브러리 설정에서 미디어 삭제를 허용하세요.',
 			'mediaMenu.mediaFailedToDelete' => '미디어 항목 삭제 실패',
 			'mediaMenu.rate' => '평가',
 			'mediaMenu.playFromBeginning' => '처음부터 재생',
@@ -6688,6 +6703,8 @@ extension on TranslationsKo {
 			'accessibility.reduceMotion' => '움직임을 줄이기',
 			'accessibility.reduceMotionHint' => '포커스 표시, 페이지 전환 및 장식 효과의 움직임을 멈춥니다.',
 			'accessibility.largeTargets' => '더 큰 터치 목표',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => '공통 컨트롤의 영역을 넓혀 터치와 보조 기술을 통한 탐색을 쉽게 합니다.',
 			'accessibility.navigationHint' => 'Tab과 Shift+Tab으로 컨트롤 사이를 이동하고, Enter 또는 Space로 실행하고, Escape 또는 뒤로 버튼으로 닫으세요. 책을 열면 확대/축소와 읽기 설정을 사용할 수 있습니다.',
 			'accessibility.textSizeDescription' => 'Pleazyng에서 스케일 인터페이스 텍스트는 장치의 시스템 텍스트 크기 설정 외에도.',
@@ -6695,8 +6712,6 @@ extension on TranslationsKo {
 			'tooltips.shufflePlay' => '무작위 재생',
 			'tooltips.playTrailer' => '예고편 재생',
 			'tooltips.markAsWatched' => '시청 완료로 표시',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => '미시청으로 표시',
 			'audioTracks.track' => ({required Object n}) => '오디오 트랙 ${n}',
 			'videoControls.audioLabel' => '오디오',
@@ -7202,6 +7217,8 @@ extension on TranslationsKo {
 			'discover.findNext.artworkLoading' => '이미지 불러오는 중…',
 			'discover.findNext.artworkUnavailable' => '이미지를 표시할 수 없음',
 			'discover.findNext.savedFeedback' => '저장된 추천에 추가됨',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => '지금은 건너뜀',
 			'discover.findNext.releaseToConfirm' => '놓아서 확인',
 			'discover.findNext.remoteHint' => '표지에 초점: ← / → 선택 · 선택 버튼: 상세 정보 · ↑ / ↓ 초점 이동',
@@ -7209,8 +7226,6 @@ extension on TranslationsKo {
 			'discover.rating' => '연령 등급',
 			'discover.director' => '감독',
 			'discover.directors' => '감독',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => '영화',
 			'discover.tvShow' => 'TV 시리즈',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes}분 남음',
@@ -7716,6 +7731,8 @@ extension on TranslationsKo {
 			'collections.selectCollection' => '컬렉션 선택',
 			'collections.collectionName' => '컬렉션 이름',
 			'collections.enterCollectionName' => '컬렉션 이름 입력',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => '컬렉션에 추가됨',
 			'collections.errorAddingToCollection' => '컬렉션에 추가 실패',
 			'collections.created' => '컬렉션 생성됨',
@@ -7723,8 +7740,6 @@ extension on TranslationsKo {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '${title}을(를) 이 컬렉션에서 제거하시겠습니까?',
 			'collections.removedFromCollection' => '컬렉션에서 제거됨',
 			'collections.removeFromCollectionFailed' => '컬렉션에서 제거 실패',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => '컬렉션에서 제거 중 오류 발생: ${error}',
 			'collections.searchCollections' => '컬렉션 검색...',
 			'playlists.title' => '플레이리스트',
@@ -8230,6 +8245,8 @@ extension on TranslationsKo {
 			'performanceOverlay.decoder' => '디코더',
 			'performanceOverlay.rawDecoder' => '원본 디코더',
 			'performanceOverlay.tunneling' => '터널링',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => '패스스루',
 			'performanceOverlay.aspect' => '화면비',
 			'performanceOverlay.rotation' => '회전',
@@ -8237,8 +8254,6 @@ extension on TranslationsKo {
 			'performanceOverlay.dvPath' => 'DV 경로',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision 디코더',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision 디코더 (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => '베이스 레이어',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 베이스 레이어',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG 베이스 레이어',
@@ -8474,6 +8489,7 @@ extension on TranslationsKo {
 			'seerr.sessionRejectedAfterReauth' => '다시 로그인한 후 세션이 거부되었습니다',
 			'seerr.permissionDenied' => 'Seerr가 이 작업을 거부했습니다: 계정에 필요한 권한이 더 이상 없습니다',
 			'seerr.permissionRevoked' => '이 항목을 요청할 권한이 더 이상 없습니다',
+			'seerr.withdrawRequest' => '요청 철회',
 			'services.title' => '서비스',
 			'services.hubSubtitle' => '시청 진행률을 동기화하고 새 작품을 요청하세요.',
 			'services.integrations' => '연동',
@@ -8743,6 +8759,8 @@ extension on TranslationsKo {
 			'homeLayout.managePlexRowsDescription' => '홈 선택된 라인을 조직하기 위해 열려 있습니다.',
 			'homeLayout.organizeHomeRows' => '홈 라인 조직',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 라인: 이동, 영웅, 자동 슬라이드, 제거',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} 라인을 조직',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '계속 보기 + ${n} 라인: 이동, 도서관, 홈, 영웅, 자동 슬라이드',
 			'homeLayout.renderAsHero' => '영웅 카드로 렌더',
@@ -8751,8 +8769,6 @@ extension on TranslationsKo {
 			'homeLayout.autoSlide' => '자동 슬라이드',
 			'homeLayout.autoSlideDescription' => '또한 몇 초마다 스스로 슬라이드합니다. 링 (PC) 및 d-pad (TV)는 항상 작동하고 타이머를 다시 시작합니다.',
 			'homeLayout.autoSlideEditDescription' => '또한 몇 초마다 스스로 슬라이드합니다. 끄기 : 펜 (PC)을 클릭하거나 원격 (TV)에서 왼쪽/오른쪽을 누르면 움직입니다.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => '영웅을 먼저 할 수 있습니다.',
 			'homeLayout.showOnHome' => 'Home 스크린에 표시',
 			'homeLayout.home' => '홈',
@@ -9257,6 +9273,8 @@ extension on TranslationsKo {
 			'audiobook.customSpeed' => 'Custom Playback 속도',
 			'audiobook.speedHelp' => '0.25×에서 4×까지의 속도를 선택합니다.',
 			'audiobook.apply' => '응용',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => '사용자 지정 수면 시간',
 			'audiobook.sleepMinutes' => '1 분 (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} 장 후 중지',
@@ -9265,8 +9283,6 @@ extension on TranslationsKo {
 			'audiobook.useDefaults' => '새로운 책을 위해 이러한 듣기 컨트롤을 사용하십시오.',
 			'audiobook.librarySort' => '다양한 책들',
 			'audiobook.sortTitle' => '제목',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => '작가',
 			'audiobook.sortNarrator' => '연설자',
 			'audiobook.sortSeries' => '시리즈 명령',
@@ -9771,6 +9787,8 @@ extension on TranslationsKo {
 			'musicExperience.bluetoothDrivingHint' => '운전 화면을 자동으로 열 연결된 Bluetooth 출력을 선택하세요.',
 			'musicTools.loudnessMissing' => '음량 데이터가 반환되지 않았습니다',
 			'musicTools.loudnessRequested' => '분석 요청을 보냈습니다',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => '이 서버 버전은 분석 요청을 지원하지 않습니다',
 			'musicTools.serverHistory' => '서버 재생 기록',
 			'musicTools.nfcWrite' => 'NFC 태그 쓰기',
@@ -9779,8 +9797,6 @@ extension on TranslationsKo {
 			'musicTools.storageBudget' => '예상 다운로드 용량 한도 (MiB; 0 = ∞)',
 			'musicTools.guestDj' => '게스트 DJ',
 			'musicTools.charts' => '청취 순위',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => '다시 발견',
 			'musicTools.stations' => '음악 스테이션',
 			'musicTools.prompt' => '설명으로 재생목록 만들기',

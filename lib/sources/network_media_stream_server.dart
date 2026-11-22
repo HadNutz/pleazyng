@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -137,7 +138,9 @@ class NetworkMediaStreamServer {
           _handle(request).catchError((Object _) async {
             try {
               await request.response.close();
-            } catch (_) {}
+            } catch (_) {
+              appLogger.d('Could not close the failed media stream response.');
+            }
           }),
         );
       }, onError: (_) {});

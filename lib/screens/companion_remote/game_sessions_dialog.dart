@@ -26,6 +26,7 @@ class _GameSessionsDialogState extends State<GameSessionsDialog> {
     try {
       return await widget.request(action, target: target);
     } catch (_) {
+      // best-effort: Expose the failed game-session request as unavailable.
       return const GameSessionControlReply(GameSessionControlStatus.unavailable);
     }
   }

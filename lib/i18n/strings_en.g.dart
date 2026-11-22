@@ -2383,6 +2383,21 @@ class Translations$settings$en {
 
 	/// en: 'Buffer Size: ${size} MiB'
 	String streamBufferSizeMiB({required Object size}) => 'Buffer Size: ${size} MiB';
+
+	/// en: 'Apple TV Top Shelf · Continue Watching'
+	String get showTopShelfContent => 'Apple TV Top Shelf · Continue Watching';
+
+	/// en: 'Turn off to show only Pleazyng artwork for all profiles.'
+	String get showTopShelfContentDescription => 'Turn off to show only Pleazyng artwork for all profiles.';
+
+	/// en: 'Could not update Apple TV Top Shelf. Try again.'
+	String get topShelfUpdateFailed => 'Could not update Apple TV Top Shelf. Try again.';
+
+	/// en: 'Show finish time'
+	String get showFinishTime => 'Show finish time';
+
+	/// en: 'Show when the current video will end next to the remaining time.'
+	String get showFinishTimeDescription => 'Show when the current video will end next to the remaining time.';
 }
 
 // Path: themeEditor
@@ -3016,6 +3031,9 @@ class Translations$mediaMenu$en {
 
 	/// en: 'Media item deleted successfully'
 	String get mediaDeletedSuccessfully => 'Media item deleted successfully';
+
+	/// en: 'Media deletion is turned off on this server. Turn on "Allow media deletion" in the server's Library settings.'
+	String get mediaDeletionDisabledOnServer => 'Media deletion is turned off on this server. Turn on "Allow media deletion" in the server\'s Library settings.';
 
 	/// en: 'Failed to delete media item'
 	String get mediaFailedToDelete => 'Failed to delete media item';
@@ -8353,6 +8371,9 @@ class Translations$seerr$en {
 
 	/// en: 'You no longer have permission to request this'
 	String get permissionRevoked => 'You no longer have permission to request this';
+
+	/// en: 'Withdraw request'
+	String get withdrawRequest => 'Withdraw request';
 }
 
 // Path: services
@@ -15885,6 +15906,9 @@ class Translations$common$mediaKind$en {
 
 	/// en: 'Folder'
 	String get folder => 'Folder';
+
+	/// en: 'Photo album'
+	String get photoAlbum => 'Photo album';
 }
 
 // Path: settings.startupSectionOptions
@@ -18528,6 +18552,7 @@ extension on Translations {
 			'common.mediaKind.clip' => 'Clip',
 			'common.mediaKind.photo' => 'Photo',
 			'common.mediaKind.folder' => 'Folder',
+			'common.mediaKind.photoAlbum' => 'Photo album',
 			'screens.licenses' => 'Licenses',
 			'screens.switchProfile' => 'Switch Profile',
 			'screens.subtitleStyling' => 'Subtitle Styling',
@@ -18824,9 +18849,9 @@ extension on Translations {
 			'settings.askDownloadQualityEachTime' => 'Choose quality for each download',
 			'settings.askDownloadQualityEachTimeDescription' => 'Show the quality picker before queueing each video download',
 			'settings.cellularDownloadBlocked' => 'Downloads are blocked on cellular. Use Wi-Fi or change the setting.',
-			'settings.maxVolume' => 'Maximum Volume',
 			_ => null,
 		} ?? switch (path) {
+			'settings.maxVolume' => 'Maximum Volume',
 			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
 			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
 			'settings.discordRichPresence' => 'Discord Rich Presence',
@@ -19083,6 +19108,11 @@ extension on Translations {
 			'settings.dvOfflineHdr10' => 'HDR10 · 10-bit HEVC',
 			'settings.dvOfflineSdr' => 'SDR · H.264',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer Size: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continue Watching',
+			'settings.showTopShelfContentDescription' => 'Turn off to show only Pleazyng artwork for all profiles.',
+			'settings.topShelfUpdateFailed' => 'Could not update Apple TV Top Shelf. Try again.',
+			'settings.showFinishTime' => 'Show finish time',
+			'settings.showFinishTimeDescription' => 'Show when the current video will end next to the remaining time.',
 			'themeEditor.builtIn' => 'Built-in',
 			'themeEditor.presets' => 'Presets',
 			'themeEditor.custom' => 'Custom',
@@ -19317,6 +19347,7 @@ extension on Translations {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng could not check which files this will remove, so it may delete more than the item named above. Cancel and try again, or delete anyway.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Your server did not provide file details for this item, so Pleazyng cannot check which files this will remove. It may delete more than the item named above.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media item deleted successfully',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Media deletion is turned off on this server. Turn on "Allow media deletion" in the server\'s Library settings.',
 			'mediaMenu.mediaFailedToDelete' => 'Failed to delete media item',
 			'mediaMenu.rate' => 'Rate',
 			'mediaMenu.playFromBeginning' => 'Play from Beginning',
@@ -19332,6 +19363,8 @@ extension on Translations {
 			'accessibility.mediaCardShow' => ({required Object title}) => '${title}, TV show',
 			'accessibility.mediaCardEpisode' => ({required Object title, required Object episodeInfo}) => '${title}, ${episodeInfo}',
 			'accessibility.mediaCardSeason' => ({required Object title, required Object seasonInfo}) => '${title}, ${seasonInfo}',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.mediaCardWatched' => 'watched',
 			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
 			'accessibility.mediaCardUnwatched' => 'unwatched',
@@ -19339,8 +19372,6 @@ extension on Translations {
 			'accessibility.decrease' => 'Decrease',
 			'accessibility.increase' => 'Increase',
 			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
-			_ => null,
-		} ?? switch (path) {
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
 			'accessibility.hue' => 'Hue',
 			'accessibility.saturation' => 'Saturation',
@@ -19846,6 +19877,8 @@ extension on Translations {
 			'iptv.allCategories' => 'All categories',
 			'iptv.noVodItems' => 'No titles in this category.',
 			'iptv.vodUnavailable' => 'This source could not load its catalogue. Check the provider credentials and retry.',
+			_ => null,
+		} ?? switch (path) {
 			'iptv.vodPlaybackFailed' => 'Could not start this title. Check the provider connection and try again.',
 			'iptv.play' => 'Play',
 			'iptv.noEpisodes' => 'No episodes are available for this series.',
@@ -19853,8 +19886,6 @@ extension on Translations {
 			'iptv.specials' => 'Specials',
 			'iptv.localRecordings' => 'Local recordings',
 			'iptv.recordingInProgressLocal' => 'Recording',
-			_ => null,
-		} ?? switch (path) {
 			'iptv.recordingInterrupted' => 'Interrupted',
 			'iptv.recordingMissed' => 'Missed',
 			'iptv.recordingAppClosed' => 'Pleazyng closed before recording started or finished.',
@@ -20360,6 +20391,8 @@ extension on Translations {
 			'explore.mdblistShelves.accountChanged' => 'The account or profile changed. Reopen these settings.',
 			'explore.mdblistShelves.settingsUnreadable' => 'Saved shelves could not be read. Select your lists again to replace these settings.',
 			'explore.title' => 'Explore',
+			_ => null,
+		} ?? switch (path) {
 			'explore.selectSource' => 'Select source',
 			'explore.rows.watchlist' => 'Watchlist',
 			'explore.rows.recommendedMovies' => 'Recommended Movies',
@@ -20367,8 +20400,6 @@ extension on Translations {
 			'explore.rows.trendingMovies' => 'Trending Movies',
 			'explore.rows.trendingShows' => 'Trending Shows',
 			'explore.rows.popularMovies' => 'Popular Movies',
-			_ => null,
-		} ?? switch (path) {
 			'explore.rows.popularShows' => 'Popular Shows',
 			'explore.rows.trendingAnime' => 'Trending Anime',
 			'explore.rows.suggestedAnime' => 'Suggested Anime',
@@ -20874,6 +20905,8 @@ extension on Translations {
 			'downloads.partialDownloadClickToComplete' => 'Partially downloaded - Click to complete',
 			'downloads.deleting' => 'Deleting...',
 			'downloads.deletingWithProgress' => ({required Object title, required Object current, required Object total}) => 'Deleting ${title}... (${current} of ${total})',
+			_ => null,
+		} ?? switch (path) {
 			'downloads.queuedTooltip' => 'Queued',
 			'downloads.queuedFilesTooltip' => ({required Object files}) => 'Queued ${files}',
 			'downloads.downloadingTooltip' => 'Downloading...',
@@ -20881,8 +20914,6 @@ extension on Translations {
 			'downloads.noDownloadsTree' => 'No downloads',
 			'downloads.pauseAll' => 'Pause all',
 			'downloads.resumeAll' => 'Resume all',
-			_ => null,
-		} ?? switch (path) {
 			'downloads.retryAll' => 'Retry all',
 			'downloads.retryFailed' => 'Retry failed downloads',
 			'downloads.deleteAll' => 'Delete all',
@@ -21388,6 +21419,8 @@ extension on Translations {
 			'metadataEdit.tags' => 'Tags',
 			'metadataEdit.addTag' => 'Add tag',
 			'metadataEdit.genre' => 'Genre',
+			_ => null,
+		} ?? switch (path) {
 			'metadataEdit.director' => 'Director',
 			'metadataEdit.writer' => 'Writer',
 			'metadataEdit.producer' => 'Producer',
@@ -21395,8 +21428,6 @@ extension on Translations {
 			'metadataEdit.collection' => 'Collection',
 			'metadataEdit.label' => 'Label',
 			'metadataEdit.quickTag' => 'Quick Tag...',
-			_ => null,
-		} ?? switch (path) {
 			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
 			'matchScreen.match' => 'Match...',
 			'matchScreen.fixMatch' => 'Fix Match...',
@@ -21510,6 +21541,7 @@ extension on Translations {
 			'seerr.sessionRejectedAfterReauth' => 'The session was rejected after signing in again',
 			'seerr.permissionDenied' => 'Seerr denied this action: your account no longer has the required permission',
 			'seerr.permissionRevoked' => 'You no longer have permission to request this',
+			'seerr.withdrawRequest' => 'Withdraw request',
 			'services.title' => 'Services',
 			'services.hubSubtitle' => 'Sync watch progress and request new titles.',
 			'services.integrations' => 'Integrations',
@@ -21901,6 +21933,8 @@ extension on Translations {
 			'homeLayout.reorderingUnlocked' => 'Reordering unlocked',
 			'homeLayout.reorderingLocked' => 'Reordering locked',
 			'homeLayout.rowsCanBeDragged' => 'Rows can be dragged — tap the lock to prevent that',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.tapLockToDrag' => 'Tap the lock to drag rows',
 			'homeLayout.customRowLabel' => ({required Object title}) => 'Custom: ${title}',
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
@@ -21909,8 +21943,6 @@ extension on Translations {
 			'homeLayout.libraryResumeRow' => 'This library\'s resume row',
 			'homeLayout.pressAgainToDelete' => 'Press again to delete',
 			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.on' => 'On',
 			'homeLayout.resetHeroButtonDescription' => 'Turns off every row\'s hero setting and brings back the single rotating banner at the top, like before hero rows existed. Row order is kept.',
 			'homeLayout.tapHeroCardDescription' => 'Choose whether tapping or selecting a Hero card starts playback or opens its details.',
@@ -22415,6 +22447,8 @@ extension on Translations {
 			'sourceSetup.nfsEncryptionHelp' => 'Require TLS 1.3 for NFS and the mount service. Connections fail closed if the NAS does not support it.',
 			'sourceSetup.nfsTrustCertificate' => 'Custom NFS CA or server certificate (PEM, optional)',
 			'sourceSetup.nfsTrustHelp' => 'Leave blank for certificates trusted by this device. Add a private CA or self-signed server certificate when needed; its names must match the NFS URL host.',
+			_ => null,
+		} ?? switch (path) {
 			'sourceSetup.nfsTrustInvalid' => 'Use a CA or server certificate in PEM format. Do not include a private key.',
 			'sourceSetup.addTrustCertificate' => 'Add custom trust certificate',
 			'sourceSetup.replaceTrustCertificate' => 'Replace saved custom certificate',
@@ -22423,8 +22457,6 @@ extension on Translations {
 			'sourceSetup.clientCertificateHelp' => 'Lets the NAS authenticate this client; AUTH_SYS IDs still depend on NAS export policy.',
 			'sourceSetup.savedIdentity' => 'A saved client identity will be used.',
 			'sourceSetup.replaceIdentity' => 'Replace saved client identity',
-			_ => null,
-		} ?? switch (path) {
 			'sourceSetup.chooseIdentity' => 'Choose PKCS#12 client identity',
 			'sourceSetup.identityPassphrase' => 'Client identity passphrase',
 			'sourceSetup.identityPassphraseHelp' => 'Leave blank if the file has no passphrase.',
@@ -22929,6 +22961,8 @@ extension on Translations {
 			'podcasts.searchHint' => 'Search shows or paste an Apple Podcasts or Podcast Index link',
 			'podcasts.searchHelp' => 'Choose a directory to search. Add private RSS links with Add feed.',
 			'podcasts.addFeed' => 'Add feed',
+			_ => null,
+		} ?? switch (path) {
 			'podcasts.addFeedHelp' => 'Paste a publisher RSS/Atom URL, including a private Patreon or other member feed. Use source setup for HTTP or password-protected feeds.',
 			'podcasts.subscribe' => 'Subscribe',
 			'podcasts.subscribed' => 'Subscribed',
@@ -22937,8 +22971,6 @@ extension on Translations {
 			'podcasts.noResults' => 'No matching podcasts.',
 			'podcasts.newest' => 'Newest first',
 			'podcasts.oldest' => 'Oldest first',
-			_ => null,
-		} ?? switch (path) {
 			'podcasts.explicit' => 'Explicit',
 			'podcasts.trending' => 'Trending',
 			'podcasts.indexSetup' => 'Podcast Index settings',
@@ -23443,6 +23475,8 @@ extension on Translations {
 			'subtitleCapture.transcribingProgress' => ({required Object percent}) => 'Transcribing audio locally (${percent}%)…',
 			'subtitleCapture.translating' => 'Translating speech to English locally…',
 			'subtitleCapture.translatingProgress' => ({required Object percent}) => 'Translating speech to English locally (${percent}%)…',
+			_ => null,
+		} ?? switch (path) {
 			'subtitleCapture.processingAudio' => 'Processing audio locally…',
 			'subtitleCapture.processingAudioProgress' => ({required Object percent}) => 'Processing audio locally (${percent}%)…',
 			'subtitleCapture.cpuFallback' => 'GPU speech processing failed. Retrying on CPU…',
@@ -23451,8 +23485,6 @@ extension on Translations {
 			'karaokeUi.pitchFeedbackAndDryRecordingUseYourSelectedMicrophone' => 'Pitch feedback and dry recording use your selected microphone. Use an external mixer for amplification.',
 			'karaokeUi.tvMicrophoneCaptureUnavailable' => 'Microphone capture is unavailable in this TV build. Use the karaoke phone companion for mic capture, or connect a microphone to an external mixer for stage amplification.',
 			'karaokeUi.enableMicrophone' => 'Enable microphone',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.muteMicrophone' => 'Mute microphone',
 			'karaokeUi.recordPrivateTake' => 'Record private take',
 			'karaokeUi.savePrivateTake' => 'Save private take',

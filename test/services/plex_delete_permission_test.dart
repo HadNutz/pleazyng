@@ -3,7 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:drift/native.dart';
+import 'package:plezy/exceptions/media_server_exceptions.dart';
 import 'package:plezy/database/app_database.dart';
+import 'package:plezy/media/ids.dart';
+import 'package:plezy/utils/active_client_scope.dart';
 import 'package:plezy/services/plex_api_cache.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,14 +25,10 @@ void main() {
     test('live deletion permission handles $value', () async {
       final client = testPlexClient(
         handler: (request) async {
-          expect(request.url.path, '/:/prefs');
+          expect(request.url.path, '/');
           return http.Response(
             jsonEncode({
-              'MediaContainer': {
-                'Setting': [
-                  if (value != null) {'id': 'allowMediaDeletion', 'value': value},
-                ],
-              },
+              'MediaContainer': {'allowMediaDeletion': ?value},
             }),
             200,
             headers: {'content-type': 'application/json'},
@@ -39,7 +38,7 @@ void main() {
       addTearDown(client.close);
       expect(await client.fetchDeletePermission(testMediaItem()), switch (value) {
         true || 1 || '1' || 'true' => true,
-        false || 0 || '0' || 'false' => false,
+        false || 0 || '0' || 'false' || null => false,
         _ => null,
       });
     });
@@ -56,11 +55,7 @@ void main() {
         }
         return http.Response(
           jsonEncode({
-            'MediaContainer': {
-              'Setting': [
-                {'id': 'allowMediaDeletion', 'value': enabled},
-              ],
-            },
+            'MediaContainer': {'allowMediaDeletion': enabled},
           }),
           200,
           headers: {'content-type': 'application/json'},
@@ -71,7 +66,7 @@ void main() {
     final item = testMediaItem();
     expect(await client.fetchDeletePermission(item), isTrue);
     enabled = false;
-    expect(await client.deleteMediaItem(item), isFalse);
+    await expectLater(client.deleteMediaItem(item), throwsA(isA<MediaDeletionRefusedException>()));
     expect(deleted, isEmpty);
     enabled = true;
     expect(await client.deleteMediaItem(item), isTrue);
@@ -84,6 +79,46 @@ void main() {
       expect(await client.deleteMediaItem(testMediaItem()), isFalse);
       client.close();
     }
+  });
+
+  test('a profile change during the permission probe cancels the pending delete', () async {
+    final arrived = Completer<void>();
+    final release = Completer<void>();
+    final deleted = <String>[];
+    final server = ServerId('server-id');
+    final client = testPlexClient(
+      serverId: server,
+      handler: (request) async {
+        if (request.method == 'DELETE') deleted.add(request.url.path);
+        if (request.url.path == '/' && request.headers['X-Plex-Token'] != 'home-token') {
+          arrived.complete();
+          await release.future;
+        }
+        return http.Response(
+          jsonEncode({
+            'MediaContainer': {'machineIdentifier': 'server-id', 'allowMediaDeletion': true},
+          }),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+      },
+    );
+    addTearDown(client.close);
+    final deletion = client.deleteMediaItem(testMediaItem());
+    await arrived.future;
+    try {
+      expect(
+        await client.applyProfileUpdate(
+          newToken: 'home-token',
+          newProfileScopeId: buildPlexProfileScopeId(serverId: server, profileId: 'home-user'),
+        ),
+        isTrue,
+      );
+    } finally {
+      release.complete();
+    }
+    expect(await deletion, isFalse);
+    expect(deleted, isEmpty);
   });
 
   test('a hung preference probe has one bounded attempt', () async {

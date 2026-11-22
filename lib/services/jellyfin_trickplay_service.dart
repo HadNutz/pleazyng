@@ -169,7 +169,7 @@ class JellyfinTrickplayService implements ScrubPreviewSource {
     try {
       await warmer(url);
     } catch (_) {
-      // Adjacent-sheet prefetch is opportunistic; rendering retries normally.
+      // best-effort: Adjacent-sheet prefetch is opportunistic; rendering retries normally.
     }
   }
 

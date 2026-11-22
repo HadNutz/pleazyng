@@ -210,7 +210,7 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
         changed: safeNotifyListeners,
       );
     } catch (_) {
-      // LAN receiving remains available if optional relay configuration fails.
+      // best-effort: LAN receiving remains available if optional relay configuration fails.
     } finally {
       safeNotifyListeners();
     }
@@ -559,7 +559,7 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
         unawaited(tunnel.done.then((_) => _steamInternetReceivers.remove(tunnel)));
         return tunnel;
       } catch (_) {
-        /* A different profile identity may own this pairing. */
+        /* best-effort: A different profile identity may own this pairing. */
       }
     }
     throw StateError('Steam internet unavailable');
@@ -645,6 +645,12 @@ class CompanionRemoteProvider with ChangeNotifier, DisposableChangeNotifierMixin
   bool get isInSession => _session != null && _session!.status != RemoteSessionStatus.disconnected;
   bool get isHost => _session?.isHost ?? false;
   bool get isRemote => _session?.isRemote ?? false;
+
+  /// This device is the remote driving another device's session (live or
+  /// reconnecting). A host serving remotes is not driving anything: its
+  /// session reads as in session from server start to stop, phone or not.
+  bool get isDrivingRemoteSession => isRemote && isInSession;
+
   bool get isConnected => _session?.isConnected ?? false;
   bool get supportsMusicTransfer =>
       isConnected && _musicTransferVersion > 0 && _musicTransfer != null && _musicSession != null;

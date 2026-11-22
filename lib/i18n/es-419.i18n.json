@@ -60,7 +60,8 @@
       "collection": "Colección",
       "playlist": "Lista de reproducción",
       "photo": "Foto",
-      "folder": "Carpeta"
+      "folder": "Carpeta",
+      "photoAlbum": "Álbum de fotos"
     }
   },
   "screens": {
@@ -120,7 +121,12 @@
     "dvOfflineInvalid": "",
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
-    "dvOfflineSdr": ""
+    "dvOfflineSdr": "",
+    "showTopShelfContent": "Apple TV Top Shelf · Continuar viendo",
+    "showTopShelfContentDescription": "Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.",
+    "topShelfUpdateFailed": "No se pudo actualizar Top Shelf. Vuelve a intentarlo.",
+    "showFinishTime": "Mostrar hora de finalización",
+    "showFinishTimeDescription": "Muestra cuándo terminará el vídeo junto al tiempo restante."
   },
   "themeEditor": {
     "custom": "Personalizado",
@@ -177,7 +183,8 @@
   "mediaMenu": {
     "deleteEpisodeConfirm": "Borrar episodio",
     "rate": "Calificación",
-    "playFromBeginning": "Reproducir desde el inicio"
+    "playFromBeginning": "Reproducir desde el inicio",
+    "mediaDeletionDisabledOnServer": "La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor."
   },
   "rateSheet": {
     "title": "Calificación",
@@ -488,7 +495,8 @@
     "writer": "Escritor",
     "producer": "Productor",
     "collection": "Colección",
-    "imageUploadLimits": "≤ 10 MiB · ≤ 64 MP"
+    "imageUploadLimits": "≤ 10 MiB · ≤ 64 MP",
+    "metadataConflict": "Otra persona ha cambiado el mismo campo. Vuelve a abrir el editor y revisa los valores actuales antes de guardar."
   },
   "matchScreen": {
     "titleHint": "Título",
@@ -506,7 +514,8 @@
     "notificationsOn": "Aviso de disponibilidad activado",
     "notificationsEnabled": "Te avisaremos cuando esté disponible",
     "notificationsDisabled": "Aviso de disponibilidad desactivado",
-    "notificationFailed": "No se pudo actualizar el aviso de disponibilidad"
+    "notificationFailed": "No se pudo actualizar el aviso de disponibilidad",
+    "withdrawRequest": "Retirar solicitud"
   },
   "services": {
     "libraryFilter": {
@@ -972,5 +981,9 @@
     "preferThisVersion": "",
     "clearPreferredVersion": "",
     "preferredVersion": ""
+  },
+  "bookmarkMigration": {
+    "unassigned": "Marcadores de una versión sin identificar",
+    "assignToVersion": "Asignar a esta versión"
   }
 }

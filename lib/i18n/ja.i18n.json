@@ -224,7 +224,8 @@
       "playlist": "プレイリスト",
       "clip": "クリップ",
       "photo": "写真",
-      "folder": "フォルダ"
+      "folder": "フォルダ",
+      "photoAlbum": "フォトアルバム"
     }
   },
   "screens": {
@@ -790,7 +791,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "バッファーサイズ: ${size} MiB"
+    "streamBufferSizeMiB": "バッファーサイズ: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · 視聴を続ける",
+    "showTopShelfContentDescription": "オフにすると、すべてのプロフィールで Pleazyng の画像のみが表示されます。",
+    "topShelfUpdateFailed": "Top Shelf を更新できませんでした。もう一度お試しください。",
+    "showFinishTime": "終了時刻を表示",
+    "showFinishTimeDescription": "残り時間の横に動画の終了予定時刻を表示します。"
   },
   "themeEditor": {
     "builtIn": "標準",
@@ -1050,6 +1056,7 @@
     "deleteScopeUnverifiedProbeFailed": "Plezyは削除対象のファイルを確認できなかったため、上記のアイテム以上に削除される可能性があります。キャンセルして再試行するか、それでも削除してください。",
     "deleteScopeUnverifiedNoFileInfo": "サーバーがこのアイテムのファイル情報を提供しなかったため、Plezyは削除対象のファイルを確認できません。上記のアイテム以上に削除される可能性があります。",
     "mediaDeletedSuccessfully": "メディアアイテムを正常に削除しました",
+    "mediaDeletionDisabledOnServer": "このサーバーではメディアの削除が無効です。サーバーのライブラリ設定でメディアの削除を許可してください。",
     "mediaFailedToDelete": "メディアアイテムの削除に失敗しました",
     "rate": "評価",
     "playFromBeginning": "最初から再生",
@@ -3436,7 +3443,8 @@
     "noUserInformation": "Seerrからユーザー情報が返されませんでした",
     "sessionRejectedAfterReauth": "再サインイン後にセッションが拒否されました",
     "permissionDenied": "Seerrがこの操作を拒否しました: アカウントに必要な権限がありません",
-    "permissionRevoked": "これをリクエストする権限がなくなりました"
+    "permissionRevoked": "これをリクエストする権限がなくなりました",
+    "withdrawRequest": "リクエストを取り消す"
   },
   "services": {
     "title": "サービス",

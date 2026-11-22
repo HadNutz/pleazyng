@@ -16,6 +16,7 @@ import 'package:plezy/focus/focusable_wrapper.dart';
 import 'package:plezy/i18n/strings.g.dart';
 import 'package:plezy/navigation/profile_navigation_scope.dart';
 import 'package:plezy/media/ids.dart';
+import 'package:plezy/media/library_change_event.dart';
 import 'package:plezy/media/library_query.dart';
 import 'package:plezy/media/media_backend.dart';
 import 'package:plezy/media/media_file_info.dart';
@@ -56,6 +57,7 @@ import 'package:plezy/models/seerr/seerr_session.dart';
 import 'package:plezy/utils/deletion_notifier.dart';
 import 'package:plezy/utils/formatters.dart';
 import 'package:plezy/utils/external_ids.dart';
+import 'package:plezy/utils/library_content_notifier.dart';
 import 'package:plezy/theme/mono_theme.dart';
 import 'package:plezy/utils/media_server_http_client.dart';
 import 'package:plezy/utils/media_server_timeouts.dart';
@@ -818,6 +820,99 @@ void main() {
     });
   });
 
+  group('MediaContextMenu watched entries', () {
+    Future<void> openPlexMenu(WidgetTester tester, MediaKind kind) async {
+      final item = testMediaItem(id: 'item-1', backend: MediaBackend.plex, kind: kind, serverId: 'plex-1');
+      final menuKey = await _pumpPlexMovieMenu(tester, const [], item: item);
+      menuKey.currentState!.showContextMenu(tester.element(find.text('picker target')));
+      await tester.pumpAndSettle();
+    }
+
+    for (final kind in [MediaKind.photo, MediaKind.photoAlbum]) {
+      testWidgets('are not offered on a ${kind.name}', (tester) async {
+        await openPlexMenu(tester, kind);
+
+        expect(find.text(t.mediaMenu.markAsWatched), findsNothing);
+        expect(find.text(t.mediaMenu.markAsUnwatched), findsNothing);
+      });
+    }
+
+    for (final kind in [MediaKind.movie, MediaKind.clip]) {
+      testWidgets('are still offered on a ${kind.name}', (tester) async {
+        await openPlexMenu(tester, kind);
+
+        expect(find.text(t.mediaMenu.markAsWatched), findsOneWidget);
+      });
+    }
+  });
+
+  group('MediaContextMenu with no actions', () {
+    const platforms = TargetPlatformVariant({TargetPlatform.linux, TargetPlatform.android});
+
+    bool menuIsOpen(WidgetTester tester) => !ModalRoute.of(tester.element(find.text('picker target')))!.isCurrent;
+
+    MediaItem plexItem(MediaKind kind) =>
+        testMediaItem(id: 'item-1', backend: MediaBackend.plex, kind: kind, serverId: 'plex-1');
+
+    Future<void> open(WidgetTester tester, GlobalKey<MediaContextMenuState> menuKey, {Offset? position}) async {
+      menuKey.currentState!.showContextMenu(tester.element(find.text('picker target')), position: position);
+      await tester.pumpAndSettle();
+    }
+
+    for (final kind in [MediaKind.photo, MediaKind.photoAlbum]) {
+      testWidgets('opens nothing for a ${kind.name}', (tester) async {
+        final menuKey = await _pumpPlexMovieMenu(tester, const [], item: plexItem(kind));
+
+        await open(tester, menuKey, position: const Offset(10, 10));
+
+        expect(menuIsOpen(tester), isFalse);
+        expect(tester.takeException(), isNull);
+      }, variant: platforms);
+
+      testWidgets('opens nothing for a ${kind.name} from the keyboard', (tester) async {
+        final menuKey = await _pumpPlexMovieMenu(tester, const [], item: plexItem(kind));
+
+        await open(tester, menuKey);
+
+        expect(menuIsOpen(tester), isFalse);
+      }, variant: platforms);
+    }
+
+    testWidgets('still opens for an item with actions', (tester) async {
+      final menuKey = await _pumpPlexMovieMenu(tester, const [], item: plexItem(MediaKind.movie));
+
+      await open(tester, menuKey, position: const Offset(10, 10));
+
+      expect(menuIsOpen(tester), isTrue);
+    }, variant: platforms);
+
+    testWidgets('opens once the same card gains an action', (tester) async {
+      final extraEntries = ValueNotifier<List<MediaMenuExtraEntry>>(const []);
+      addTearDown(extraEntries.dispose);
+      final menuKey = await _pumpPlexMovieMenu(
+        tester,
+        const [],
+        item: plexItem(MediaKind.photo),
+        wrapMenu: (menu) {
+          final base = menu as MediaContextMenu;
+          return ValueListenableBuilder(
+            valueListenable: extraEntries,
+            builder: (_, entries, _) =>
+                MediaContextMenu(key: base.key, item: base.item, extraEntries: entries, child: base.child),
+          );
+        },
+      );
+      await open(tester, menuKey, position: const Offset(10, 10));
+      expect(menuIsOpen(tester), isFalse);
+
+      extraEntries.value = [MediaMenuExtraEntry(icon: Symbols.star_rounded, label: 'Extra', onSelected: () {})];
+      await tester.pump();
+      await open(tester, menuKey, position: const Offset(10, 10));
+
+      expect(find.text('Extra'), findsOneWidget);
+    });
+  });
+
   group('MediaContextMenu show link', () {
     Future<void> openPlexMenu(WidgetTester tester, MediaKind kind, {String? guid}) async {
       final item = testMediaItem(id: 'item-1', backend: MediaBackend.plex, kind: kind, guid: guid, serverId: 'plex-1');
@@ -967,6 +1062,119 @@ void main() {
       // Episodes still get the full editor (director/writer), just not tags.
       expect(find.text(t.metadataEdit.editMetadata), findsOneWidget);
       expect(find.text(t.metadataEdit.quickTag), findsNothing);
+    });
+  });
+
+  group('MediaContextMenu refresh metadata', () {
+    testWidgets(
+      'triggers PUT /library/metadata/{id}/refresh and waits for settled library event before invalidating cache and refreshing',
+      (tester) async {
+        final cacheScope = ServerId('plex-1/~plex-profile/test-profile');
+        final refreshRequests = <http.Request>[];
+        final refreshedItems = <MediaItem>[];
+        final menuKey = await _pumpPlexMovieMenu(
+          tester,
+          const [],
+          owned: true,
+          onRefresh: refreshedItems.add,
+          handler: (request) async {
+            if (request.method == 'PUT' && request.url.path == '/library/metadata/movie-1/refresh') {
+              refreshRequests.add(request);
+              return http.Response('', 200);
+            }
+            return null;
+          },
+        );
+
+        await tester.runAsync(() async {
+          await PlexApiCache.instance.put(cacheScope, '/library/metadata/movie-1', {
+            'MediaContainer': {
+              'Metadata': [
+                {'ratingKey': 'movie-1', 'type': 'movie', 'title': 'Stale Cached Movie'},
+              ],
+            },
+          });
+        });
+
+        menuKey.currentState!.showContextMenu(tester.element(find.text('picker target')));
+        await tester.pumpAndSettle();
+
+        expect(find.text(t.libraries.refreshMetadata), findsOneWidget);
+        await tester.tap(find.text(t.libraries.refreshMetadata));
+        await tester.pumpAndSettle();
+        await tester.pump();
+
+        expect(refreshRequests, hasLength(1));
+        expect(find.text(t.messages.metadataRefreshStarted(title: 'Movie')), findsOneWidget);
+        // Must not refresh or clear cache until the server's websocket signals completion.
+        expect(refreshedItems, isEmpty);
+        expect(
+          await tester.runAsync(() => PlexApiCache.instance.get(cacheScope, '/library/metadata/movie-1')),
+          isNotNull,
+        );
+
+        // Unrelated server or item events are ignored.
+        LibraryContentNotifier().notifyChanged(
+          LibraryChangeEvent(serverId: ServerId('other-server'), itemsUpdated: true, updatedItemIds: const {'movie-1'}),
+        );
+        LibraryContentNotifier().notifyChanged(
+          LibraryChangeEvent(serverId: ServerId('plex-1'), itemsUpdated: true, updatedItemIds: const {'other-movie'}),
+        );
+        await tester.pumpAndSettle();
+        expect(refreshedItems, isEmpty);
+        expect(
+          await tester.runAsync(() => PlexApiCache.instance.get(cacheScope, '/library/metadata/movie-1')),
+          isNotNull,
+        );
+
+        // Once the target item settles on the server, cache is invalidated and onRefresh fires.
+        LibraryContentNotifier().notifyChanged(
+          LibraryChangeEvent(serverId: ServerId('plex-1'), itemsUpdated: true, updatedItemIds: const {'movie-1'}),
+        );
+        await tester.pumpAndSettle();
+
+        expect(await tester.runAsync(() => PlexApiCache.instance.get(cacheScope, '/library/metadata/movie-1')), isNull);
+        expect(refreshedItems.map((i) => i.id), ['movie-1']);
+      },
+    );
+
+    testWidgets('cancels pending listener and surfaces error when refresh request fails', (tester) async {
+      final refreshedItems = <MediaItem>[];
+      final menuKey = await _pumpPlexMovieMenu(
+        tester,
+        const [],
+        owned: true,
+        onRefresh: refreshedItems.add,
+        handler: (request) async {
+          if (request.method == 'PUT' && request.url.path == '/library/metadata/movie-1/refresh') {
+            return http.Response('server error', 500);
+          }
+          return null;
+        },
+      );
+
+      menuKey.currentState!.showContextMenu(tester.element(find.text('picker target')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.libraries.refreshMetadata));
+      await tester.pumpAndSettle();
+      await tester.pump();
+
+      expect(find.text(t.messages.metadataRefreshFailed(error: t.errors.reasonServerError)), findsOneWidget);
+
+      LibraryContentNotifier().notifyChanged(
+        LibraryChangeEvent(serverId: ServerId('plex-1'), itemsUpdated: true, updatedItemIds: const {'movie-1'}),
+      );
+      await tester.pumpAndSettle();
+      expect(refreshedItems, isEmpty);
+    });
+
+    testWidgets('hides Refresh Metadata for a non-admin', (tester) async {
+      final menuKey = await _pumpPlexMovieMenu(tester, const [], owned: false);
+
+      menuKey.currentState!.showContextMenu(tester.element(find.text('picker target')));
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.libraries.refreshMetadata), findsNothing);
     });
   });
 
@@ -1864,6 +2072,9 @@ Future<GlobalKey<MediaContextMenuState>> _pumpPlexMovieMenu(
   List<({String id, String title})> playlists, {
   Widget Function(Widget menu)? wrapMenu,
   MediaItem? item,
+  bool owned = false,
+  void Function(MediaItem)? onRefresh,
+  Future<http.Response?> Function(http.Request request)? handler,
 }) async {
   LocaleSettings.setLocaleSync(AppLocale.en);
   TvDetectionService.debugSetAppleTVOverride(true);
@@ -1881,6 +2092,8 @@ Future<GlobalKey<MediaContextMenuState>> _pumpPlexMovieMenu(
     ),
     serverId: ServerId('plex-1'),
     httpClient: MockClient((request) async {
+      final custom = await handler?.call(request);
+      if (custom != null) return custom;
       if (request.url.path != '/playlists') return http.Response('not found', 404);
       return http.Response(
         jsonEncode({
@@ -1905,19 +2118,20 @@ Future<GlobalKey<MediaContextMenuState>> _pumpPlexMovieMenu(
       );
     }),
   );
-  final manager = MultiServerManager()..debugRegisterClientForTesting(client);
+  final manager = MultiServerManager()..debugRegisterClientForTesting(client, owned: owned);
   final multiServerProvider = testMultiServerProvider(manager);
   final stack = await ProfileStack.create(db: db, withStorage: false);
   addTearDown(() async {
     await stack.dispose();
     multiServerProvider.dispose();
     manager.dispose();
-    await db.close();
+    await tester.runAsync(db.close);
   });
 
   final menuKey = GlobalKey<MediaContextMenuState>();
   final menu = MediaContextMenu(
     key: menuKey,
+    onRefresh: onRefresh,
     item:
         item ??
         testMediaItem(

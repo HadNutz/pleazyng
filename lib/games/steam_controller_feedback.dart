@@ -1,3 +1,4 @@
+import '../utils/app_logger.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -149,7 +150,9 @@ class SteamControllerFeedbackSession {
   Future<void> _release(String token) async {
     try {
       await _devices.invokeMethod<void>('plezyReleaseEffects', {'owner': token});
-    } catch (_) {}
+    } catch (_) {
+      appLogger.d('Could not release the native controller effects.');
+    }
   }
 
   void stop() {

@@ -900,6 +900,11 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'לחכות הרבה דקות ללא כניסה לפני הצגת מסך אחסון אמנות.';
 	@override String get videoCodecOptionDescription => 'תאפשר שידור ישיר עבור קודק זה כאשר תומך. codecs Unchecked are transcoded by the media server.';
 	@override String streamBufferSizeMiB({required Object size}) => 'גודל בופר: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · המשך צפייה';
+	@override String get showTopShelfContentDescription => 'כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.';
+	@override String get topShelfUpdateFailed => 'עדכון Top Shelf נכשל. אפשר לנסות שוב.';
+	@override String get showFinishTime => 'הצגת שעת הסיום';
+	@override String get showFinishTimeDescription => 'שעת סיום הסרטון תוצג ליד הזמן שנותר.';
 }
 
 // Path: themeEditor
@@ -1148,6 +1153,7 @@ class _Translations$mediaMenu$he extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng לא הצליח לבדוק אילו קבצים יימחקו, ולכן ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה. אפשר לבטל ולנסות שוב, או למחוק בכל זאת.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'השרת לא סיפק פרטי קבצים עבור הפריט הזה, ולכן Pleazyng לא יכול לבדוק אילו קבצים יימחקו. ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה.';
 	@override String get mediaDeletedSuccessfully => 'התקשורת הוסרה בהצלחה';
+	@override String get mediaDeletionDisabledOnServer => 'מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.';
 	@override String get mediaFailedToDelete => 'לא הצלחתי למחוק את התקשורת';
 	@override String get rate => 'דירוג';
 	@override String get playFromBeginning => 'נגן מהתחלה';
@@ -2934,6 +2940,7 @@ class _Translations$seerr$he extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'ההרשמה נדחתה לאחר חתימה נוספת.';
 	@override String get permissionDenied => 'Seerr הכחישה את הפעולה הזאת: החשבון שלך כבר אין את הרשאה הנדרשת';
 	@override String get permissionRevoked => 'אין לך יותר רשות לבקש זאת.';
+	@override String get withdrawRequest => 'ביטול הבקשה';
 }
 
 // Path: services
@@ -4640,6 +4647,7 @@ class _Translations$common$mediaKind$he extends Translations$common$mediaKind$en
 	@override String get clip => 'קליפ';
 	@override String get photo => 'תמונה';
 	@override String get folder => 'תיקייה';
+	@override String get photoAlbum => 'אלבום תמונות';
 }
 
 // Path: settings.startupSectionOptions
@@ -5887,6 +5895,7 @@ extension on TranslationsHe {
 			'common.mediaKind.clip' => 'קליפ',
 			'common.mediaKind.photo' => 'תמונה',
 			'common.mediaKind.folder' => 'תיקייה',
+			'common.mediaKind.photoAlbum' => 'אלבום תמונות',
 			'screens.licenses' => 'רישיונות',
 			'screens.switchProfile' => 'פרופיל Switch',
 			'screens.subtitleStyling' => 'עיצוב כתוביות',
@@ -6193,9 +6202,9 @@ extension on TranslationsHe {
 			'settings.manageLibrariesDescription' => 'מחזירים ומסתירים ספרייה',
 			'settings.companionRemoteServer' => 'שרת מרחוק',
 			'settings.companionRemoteServerDescription' => 'תאפשר למכשירים ניידים ברשת שלך לשלוט באפליקציה זו',
-			'settings.companionRemoteServerStartFailed' => 'לא יכולתי להתחיל את שרת החברות',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'לא יכולתי להתחיל את שרת החברות',
 			'settings.companionRemoteServerStopFailed' => 'לא יכולתי לעצור את שרת החברות.',
 			'settings.autoPip' => 'צילום: Auto Picture in Picture',
 			'settings.autoPipDescription' => 'כניסת תמונה בתמונה באופן אוטומטי כאשר אתה עוזב את האפליקציה במהלך הצגת',
@@ -6409,6 +6418,11 @@ extension on TranslationsHe {
 			'settings.contentScreensaverDelayOptionDescription' => 'לחכות הרבה דקות ללא כניסה לפני הצגת מסך אחסון אמנות.',
 			'settings.videoCodecOptionDescription' => 'תאפשר שידור ישיר עבור קודק זה כאשר תומך. codecs Unchecked are transcoded by the media server.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'גודל בופר: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · המשך צפייה',
+			'settings.showTopShelfContentDescription' => 'כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.',
+			'settings.topShelfUpdateFailed' => 'עדכון Top Shelf נכשל. אפשר לנסות שוב.',
+			'settings.showFinishTime' => 'הצגת שעת הסיום',
+			'settings.showFinishTimeDescription' => 'שעת סיום הסרטון תוצג ליד הזמן שנותר.',
 			'themeEditor.builtIn' => 'בנוי',
 			'themeEditor.presets' => 'נציגים',
 			'themeEditor.custom' => 'מותאם אישית',
@@ -6642,6 +6656,7 @@ extension on TranslationsHe {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng לא הצליח לבדוק אילו קבצים יימחקו, ולכן ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה. אפשר לבטל ולנסות שוב, או למחוק בכל זאת.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'השרת לא סיפק פרטי קבצים עבור הפריט הזה, ולכן Pleazyng לא יכול לבדוק אילו קבצים יימחקו. ייתכן שיימחקו קבצים נוספים מעבר לפריט שצוין למעלה.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'התקשורת הוסרה בהצלחה',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'מחיקת מדיה מושבתת בשרת הזה. יש לאפשר מחיקת מדיה בהגדרות הספרייה של השרת.',
 			'mediaMenu.mediaFailedToDelete' => 'לא הצלחתי למחוק את התקשורת',
 			'mediaMenu.rate' => 'דירוג',
 			'mediaMenu.playFromBeginning' => 'נגן מהתחלה',
@@ -6701,6 +6716,8 @@ extension on TranslationsHe {
 			'accessibility.reduceMotion' => 'הפחתת התנועה',
 			'accessibility.reduceMotionHint' => 'להפסיק את התנועה של סימון המיקוד, מעברי העמודים והאפקטים הדקורטיביים.',
 			'accessibility.largeTargets' => 'מטרות מגע גדולות',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'להגדיל את השטח של הפקדים המשותפים כדי להקל על מגע ועל ניווט בעזרת טכנולוגיות מסייעות.',
 			'accessibility.navigationHint' => 'אפשר להשתמש ב-Tab וב-Shift+Tab כדי לעבור בין הפקדים, ב-Enter או ב-Space כדי להפעיל, וב-Escape או בכפתור החזרה כדי לסגור. כשספר פתוח, אפשר לשנות את הזום ואת העדפות הקריאה.',
 			'accessibility.textSizeDescription' => 'טקסט אינטראקציה בקנה מידה ב- Pleazyng מלבד הגדרת גודל הטקסט של המערכת במכשיר שלך.',
@@ -6708,8 +6725,6 @@ extension on TranslationsHe {
 			'tooltips.shufflePlay' => 'שושן משחק',
 			'tooltips.playTrailer' => 'משחק טריילר',
 			'tooltips.markAsWatched' => 'מארק כפי שנצפה',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'מארק כבלתי צפוי',
 			'audioTracks.track' => ({required Object n}) => 'אודיו טרק ${n}',
 			'videoControls.audioLabel' => 'שמע',
@@ -7215,6 +7230,8 @@ extension on TranslationsHe {
 			'discover.findNext.artworkLoading' => 'טוען תמונה…',
 			'discover.findNext.artworkUnavailable' => 'התמונה אינה זמינה',
 			'discover.findNext.savedFeedback' => 'נוסף לבחירות השמורות',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'דולג לעת עתה',
 			'discover.findNext.releaseToConfirm' => 'שחררו לאישור',
 			'discover.findNext.remoteHint' => 'כשהעטיפה במיקוד: ← / → בחירה · לחצן בחירה: פרטים · ↑ / ↓ העברת מיקוד',
@@ -7222,8 +7239,6 @@ extension on TranslationsHe {
 			'discover.rating' => 'דירוג',
 			'discover.director' => 'במאי',
 			'discover.directors' => 'במאים',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'סרט',
 			'discover.tvShow' => 'תוכנית טלוויזיה',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} דקות נותרה',
@@ -7729,6 +7744,8 @@ extension on TranslationsHe {
 			'collections.selectCollection' => 'בחר אוסף',
 			'collections.collectionName' => 'שם האוסף',
 			'collections.enterCollectionName' => 'כניסת שם האוסף',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'הוספת לקהילה',
 			'collections.errorAddingToCollection' => 'לא הצלחתי להוסיף לאוסף',
 			'collections.created' => 'אוסף שנוצר',
@@ -7736,8 +7753,6 @@ extension on TranslationsHe {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'להסיר את „${title}” מהאוסף הזה?',
 			'collections.removedFromCollection' => 'הוסר מהאוסף',
 			'collections.removeFromCollectionFailed' => 'לא הצליחו להסיר מהאוסף',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'שגיאה להסרת מתוך הקולקציה: ${error}',
 			'collections.searchCollections' => 'חיפוש אוסף...',
 			'playlists.title' => 'רשימות נגינה',
@@ -8243,6 +8258,8 @@ extension on TranslationsHe {
 			'performanceOverlay.decoder' => 'דקורטיבי',
 			'performanceOverlay.rawDecoder' => 'דקורטיבי Raw',
 			'performanceOverlay.tunneling' => 'טונל',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'פסטהרו',
 			'performanceOverlay.aspect' => 'מבט',
 			'performanceOverlay.rotation' => 'סיבוב',
@@ -8250,8 +8267,6 @@ extension on TranslationsHe {
 			'performanceOverlay.dvPath' => 'דרכים DV',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision דקודר',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision דקודר (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'מבנה בסיס',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 שכבת בסיס',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'מדרגות בסיס HLG',
@@ -8487,6 +8502,7 @@ extension on TranslationsHe {
 			'seerr.sessionRejectedAfterReauth' => 'ההרשמה נדחתה לאחר חתימה נוספת.',
 			'seerr.permissionDenied' => 'Seerr הכחישה את הפעולה הזאת: החשבון שלך כבר אין את הרשאה הנדרשת',
 			'seerr.permissionRevoked' => 'אין לך יותר רשות לבקש זאת.',
+			'seerr.withdrawRequest' => 'ביטול הבקשה',
 			'services.title' => 'שירותים',
 			'services.hubSubtitle' => 'סינכרון עוקב אחר ההתקדמות ולבקש כותרות חדשות.',
 			'services.integrations' => 'אינטגרציה',
@@ -8756,6 +8772,8 @@ extension on TranslationsHe {
 			'homeLayout.managePlexRowsDescription' => 'פתוח לארגן את השורות שנבחרו בבית',
 			'homeLayout.organizeHomeRows' => 'ארגון שורות בית',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} שורות: זז, גיבור, אוטומטית, להסיר',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'ארגון ${library} שורות',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'המשך צפייה + ${n} שורות: תנועה, ספרייה, בית, גיבור, אוטומטית',
 			'homeLayout.renderAsHero' => 'רנדה ככרטיס גיבור',
@@ -8764,8 +8782,6 @@ extension on TranslationsHe {
 			'homeLayout.autoSlide' => 'אוטומטי Slide',
 			'homeLayout.autoSlideDescription' => 'גם סליטה על עצמה בכל כמה שניות.Arrows (PC) ו-d-pad (TV) תמיד עובדים ומתחילים מחדש את השעון.',
 			'homeLayout.autoSlideEditDescription' => 'הוא גם זורם בעצמו כל כמה שניות. off: זורם רק כאשר אתה לוחץ על אקדח (מחשב) או לחץ שמאל / ימין על הרחוק (טלוויזיה).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'תנו לגיבור ראשון',
 			'homeLayout.showOnHome' => 'הצג על המסך הבית',
 			'homeLayout.home' => 'בית',
@@ -9270,6 +9286,8 @@ extension on TranslationsHe {
 			'audiobook.customSpeed' => 'מהירות Playback Custom',
 			'audiobook.speedHelp' => 'בחר מהירות של 0.25× עד 4×.',
 			'audiobook.apply' => 'יישום',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'שעות שינה מותאמות אישית',
 			'audiobook.sleepMinutes' => 'דקות (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'עקבו אחרי ${count}',
@@ -9278,8 +9296,6 @@ extension on TranslationsHe {
 			'audiobook.useDefaults' => 'השתמש בקונסולות האזנה אלה עבור ספרים חדשים',
 			'audiobook.librarySort' => 'ספרים מגוונים',
 			'audiobook.sortTitle' => 'כותרת',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'סופר',
 			'audiobook.sortNarrator' => 'סיפורי',
 			'audiobook.sortSeries' => 'סדרת הוראות',
@@ -9784,6 +9800,8 @@ extension on TranslationsHe {
 			'musicExperience.bluetoothDrivingHint' => 'בחרו יציאות Bluetooth מחוברות שיפתחו אוטומטית את תצוגת הנהיגה.',
 			'musicTools.loudnessMissing' => 'לא התקבלו נתוני עוצמת קול',
 			'musicTools.loudnessRequested' => 'בקשת ניתוח נשלחה',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'גרסת השרת הזו אינה תומכת בבקשות ניתוח',
 			'musicTools.serverHistory' => 'היסטוריית ניגון בשרת',
 			'musicTools.nfcWrite' => 'כתיבה לתג NFC',
@@ -9792,8 +9810,6 @@ extension on TranslationsHe {
 			'musicTools.storageBudget' => 'תקציב הורדה משוער (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'תקליטן אורח',
 			'musicTools.charts' => 'דירוגי האזנה',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'לגלות מחדש',
 			'musicTools.stations' => 'תחנות מוזיקה',
 			'musicTools.prompt' => 'רשימה מתיאור',

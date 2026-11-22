@@ -224,7 +224,8 @@
       "playlist": "播放列表",
       "clip": "短片",
       "photo": "照片",
-      "folder": "文件夹"
+      "folder": "文件夹",
+      "photoAlbum": "相册"
     }
   },
   "screens": {
@@ -790,7 +791,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "布格大小: ${size} MiB"
+    "streamBufferSizeMiB": "布格大小: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · 继续观看",
+    "showTopShelfContentDescription": "关闭后，所有个人资料都只会显示 Pleazyng 图片。",
+    "topShelfUpdateFailed": "无法更新 Top Shelf。请重试。",
+    "showFinishTime": "显示结束时间",
+    "showFinishTimeDescription": "在剩余时长旁显示视频预计结束的时间。"
   },
   "themeEditor": {
     "builtIn": "内置",
@@ -1050,6 +1056,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng 无法确认此操作会删除哪些文件，因此删除范围可能超出上面提到的项目。请取消后重试，或仍然删除。",
     "deleteScopeUnverifiedNoFileInfo": "你的服务器没有提供此项目的文件详情，因此 Pleazyng 无法确认此操作会删除哪些文件。删除范围可能超出上面提到的项目。",
     "mediaDeletedSuccessfully": "媒体项已成功删除",
+    "mediaDeletionDisabledOnServer": "此服务器已关闭媒体删除功能。请在服务器的媒体库设置中允许删除媒体。",
     "mediaFailedToDelete": "删除媒体项失败",
     "rate": "评分",
     "playFromBeginning": "从头播放",
@@ -3436,7 +3443,8 @@
     "noUserInformation": "Seerr 未返回用户信息",
     "sessionRejectedAfterReauth": "重新登录后会话被拒绝",
     "permissionDenied": "Seerr 拒绝了此操作：你的账户不再拥有所需权限",
-    "permissionRevoked": "你不再拥有请求此内容的权限"
+    "permissionRevoked": "你不再拥有请求此内容的权限",
+    "withdrawRequest": "撤回请求"
   },
   "services": {
     "title": "服务",

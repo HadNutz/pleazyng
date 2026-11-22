@@ -231,7 +231,8 @@
       "playlist": "Playlist",
       "clip": "Clip",
       "photo": "Photo",
-      "folder": "Folder"
+      "folder": "Folder",
+      "photoAlbum": "Photo album"
     }
   },
   "screens": {
@@ -799,7 +800,12 @@
     "dvOfflineNewOutput": "Choose a new .mkv filename. Existing media and reports are preserved.",
     "dvOfflineHdr10": "HDR10 · 10-bit HEVC",
     "dvOfflineSdr": "SDR · H.264",
-    "streamBufferSizeMiB": "Buffer Size: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer Size: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Continue Watching",
+    "showTopShelfContentDescription": "Turn off to show only Pleazyng artwork for all profiles.",
+    "topShelfUpdateFailed": "Could not update Apple TV Top Shelf. Try again.",
+    "showFinishTime": "Show finish time",
+    "showFinishTimeDescription": "Show when the current video will end next to the remaining time."
   },
   "themeEditor": {
     "builtIn": "Built-in",
@@ -1059,6 +1065,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng could not check which files this will remove, so it may delete more than the item named above. Cancel and try again, or delete anyway.",
     "deleteScopeUnverifiedNoFileInfo": "Your server did not provide file details for this item, so Pleazyng cannot check which files this will remove. It may delete more than the item named above.",
     "mediaDeletedSuccessfully": "Media item deleted successfully",
+    "mediaDeletionDisabledOnServer": "Media deletion is turned off on this server. Turn on \"Allow media deletion\" in the server's Library settings.",
     "mediaFailedToDelete": "Failed to delete media item",
     "rate": "Rate",
     "playFromBeginning": "Play from Beginning",
@@ -3448,7 +3455,8 @@
     "noUserInformation": "Seerr did not return user information",
     "sessionRejectedAfterReauth": "The session was rejected after signing in again",
     "permissionDenied": "Seerr denied this action: your account no longer has the required permission",
-    "permissionRevoked": "You no longer have permission to request this"
+    "permissionRevoked": "You no longer have permission to request this",
+    "withdrawRequest": "Withdraw request"
   },
   "services": {
     "title": "Services",

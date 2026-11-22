@@ -30,6 +30,16 @@ void main() {
       }
     });
 
+    test('resolves Portuguese regions while preserving exact, bare and higher-priority locales', () {
+      for (final region in ['PT', 'AO', 'MZ', 'CV', 'GW', 'ST', 'TL', 'MO', 'GQ', 'LU', 'CH']) {
+        expect(resolvePreferredAppLocale([Locale('pt', region)]), AppLocale.ptPt, reason: region);
+      }
+      expect(resolvePreferredAppLocale(const [Locale('pt', 'BR')]), AppLocale.ptBr);
+      expect(resolvePreferredAppLocale(const [Locale('pt')]), AppLocale.pt);
+      expect(resolvePreferredAppLocale(const [Locale('fr'), Locale('pt', 'MZ')]), AppLocale.fr);
+      expect(AppLocale.ptPt.intlLocaleName, 'pt_PT');
+    });
+
     test('preserves device preference order', () {
       expect(
         resolvePreferredAppLocale(const [
@@ -47,6 +57,15 @@ void main() {
         AppLocale.zh,
       );
     });
+  });
+
+  test('picker groups every regional and script variant with its base language', () {
+    expect(languagePickerLocales, unorderedEquals(AppLocale.values));
+    for (final first in AppLocale.values) {
+      final siblings = languagePickerLocales.where((locale) => locale.languageCode == first.languageCode).toList();
+      final start = languagePickerLocales.indexOf(siblings.first);
+      expect(languagePickerLocales.sublist(start, start + siblings.length), siblings);
+    }
   });
 
   group('localizationsLocale', () {

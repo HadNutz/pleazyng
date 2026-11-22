@@ -898,6 +898,11 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Vänta på detta många minuter utan inmatning innan du visar skärmskydd konstverk.';
 	@override String get videoCodecOptionDescription => 'Tillåta direktspelning för denna codec när den stöds.Ocheckade codecs transcoderas av media-servern.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer storlek: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Fortsätt titta';
+	@override String get showTopShelfContentDescription => 'Stäng av för att endast visa Pleazyng-bilden för alla profiler.';
+	@override String get topShelfUpdateFailed => 'Det gick inte att uppdatera Top Shelf. Försök igen.';
+	@override String get showFinishTime => 'Visa sluttid';
+	@override String get showFinishTimeDescription => 'Visa när videon slutar bredvid återstående tid.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$sv extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng kunde inte kontrollera vilka filer detta tar bort, så det kan ta bort mer än objektet ovan. Avbryt och försök igen, eller ta bort ändå.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Din server tillhandahöll inte filinformation för detta objekt, så Pleazyng kan inte kontrollera vilka filer detta tar bort. Det kan ta bort mer än objektet ovan.';
 	@override String get mediaDeletedSuccessfully => 'Medieobjektet har tagits bort';
+	@override String get mediaDeletionDisabledOnServer => 'Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.';
 	@override String get mediaFailedToDelete => 'Det gick inte att ta bort medieobjektet';
 	@override String get rate => 'Betygsätt';
 	@override String get playFromBeginning => 'Spela från början';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$sv extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Sessionen avvisades efter den nya inloggningen';
 	@override String get permissionDenied => 'Seerr nekade åtgärden: ditt konto har inte längre den behörighet som krävs';
 	@override String get permissionRevoked => 'Du har inte längre behörighet att begära detta';
+	@override String get withdrawRequest => 'Dra tillbaka begäran';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$sv extends Translations$common$mediaKind$en
 	@override String get clip => 'Klipp';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Mapp';
+	@override String get photoAlbum => 'Fotoalbum';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsSv {
 			'common.mediaKind.clip' => 'Klipp',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Mapp',
+			'common.mediaKind.photoAlbum' => 'Fotoalbum',
 			'screens.licenses' => 'Licenser',
 			'screens.switchProfile' => 'Byt profil',
 			'screens.subtitleStyling' => 'Utseende för undertexter',
@@ -6185,9 +6194,9 @@ extension on TranslationsSv {
 			'settings.manageLibrariesDescription' => 'Ordna om och dölj bibliotek',
 			'settings.companionRemoteServer' => 'Server för fjärrkontroll',
 			'settings.companionRemoteServerDescription' => 'Tillåt att mobila enheter i nätverket styr appen',
-			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
 			'settings.autoPip' => 'Automatisk bild-i-bild',
 			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
@@ -6401,6 +6410,11 @@ extension on TranslationsSv {
 			'settings.contentScreensaverDelayOptionDescription' => 'Vänta på detta många minuter utan inmatning innan du visar skärmskydd konstverk.',
 			'settings.videoCodecOptionDescription' => 'Tillåta direktspelning för denna codec när den stöds.Ocheckade codecs transcoderas av media-servern.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer storlek: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Fortsätt titta',
+			'settings.showTopShelfContentDescription' => 'Stäng av för att endast visa Pleazyng-bilden för alla profiler.',
+			'settings.topShelfUpdateFailed' => 'Det gick inte att uppdatera Top Shelf. Försök igen.',
+			'settings.showFinishTime' => 'Visa sluttid',
+			'settings.showFinishTimeDescription' => 'Visa när videon slutar bredvid återstående tid.',
 			'themeEditor.builtIn' => 'Inbyggda',
 			'themeEditor.presets' => 'Förinställda',
 			'themeEditor.custom' => 'Anpassat',
@@ -6634,6 +6648,7 @@ extension on TranslationsSv {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng kunde inte kontrollera vilka filer detta tar bort, så det kan ta bort mer än objektet ovan. Avbryt och försök igen, eller ta bort ändå.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Din server tillhandahöll inte filinformation för detta objekt, så Pleazyng kan inte kontrollera vilka filer detta tar bort. Det kan ta bort mer än objektet ovan.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Medieobjektet har tagits bort',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.',
 			'mediaMenu.mediaFailedToDelete' => 'Det gick inte att ta bort medieobjektet',
 			'mediaMenu.rate' => 'Betygsätt',
 			'mediaMenu.playFromBeginning' => 'Spela från början',
@@ -6693,6 +6708,8 @@ extension on TranslationsSv {
 			'accessibility.reduceMotion' => 'Sänk rörelse',
 			'accessibility.reduceMotionHint' => 'Stoppa rörelser i fokusmarkeringar, sidövergångar och dekorativa effekter.',
 			'accessibility.largeTargets' => 'Större touchmål',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Ge delade kontroller mer utrymme för beröring och assistent navigering.',
 			'accessibility.navigationHint' => 'Använd Tab och Shift+Tab för att flytta mellan kontroller, Enter eller mellanslag för att aktivera och Escape eller Tillbaka för att stänga. Zoom och läsinställningar är tillgängliga när en bok är öppen.',
 			'accessibility.textSizeDescription' => 'Skala gränssnittet text i Pleazyng utöver enhetens systemtextstorlek inställning.',
@@ -6700,8 +6717,6 @@ extension on TranslationsSv {
 			'tooltips.shufflePlay' => 'Blanda uppspelning',
 			'tooltips.playTrailer' => 'Spela trailer',
 			'tooltips.markAsWatched' => 'Markera som sedd',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Markera som osedd',
 			'audioTracks.track' => ({required Object n}) => 'Ljudspår ${n}',
 			'videoControls.audioLabel' => 'Ljud',
@@ -7207,6 +7222,8 @@ extension on TranslationsSv {
 			'discover.findNext.artworkLoading' => 'Läser in bild…',
 			'discover.findNext.artworkUnavailable' => 'Bild saknas',
 			'discover.findNext.savedFeedback' => 'Tillagd bland sparade val',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Överhoppad för tillfället',
 			'discover.findNext.releaseToConfirm' => 'Släpp för att bekräfta',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → välj · Välj: detaljer · ↑ / ↓ flytta fokus',
@@ -7214,8 +7231,6 @@ extension on TranslationsSv {
 			'discover.rating' => 'Betyg',
 			'discover.director' => 'Regissör',
 			'discover.directors' => 'Regissörer',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min kvar',
@@ -7721,6 +7736,8 @@ extension on TranslationsSv {
 			'collections.selectCollection' => 'Välj samling',
 			'collections.collectionName' => 'Samlingsnamn',
 			'collections.enterCollectionName' => 'Ange samlingsnamn',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Objektet har lagts till i samlingen',
 			'collections.errorAddingToCollection' => 'Det gick inte att lägga till objektet i samlingen',
 			'collections.created' => 'Samlingen har skapats',
@@ -7728,8 +7745,6 @@ extension on TranslationsSv {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Ta bort "${title}" från den här samlingen?',
 			'collections.removedFromCollection' => 'Objektet har tagits bort från samlingen',
 			'collections.removeFromCollectionFailed' => 'Det gick inte att ta bort objektet från samlingen',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Fel när objektet skulle tas bort från samlingen: ${error}',
 			'collections.searchCollections' => 'Sök samlingar...',
 			'playlists.title' => 'Spellistor',
@@ -8235,6 +8250,8 @@ extension on TranslationsSv {
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
 			'performanceOverlay.tunneling' => 'Tunnling',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Genomströmning',
 			'performanceOverlay.aspect' => 'Bildformat',
 			'performanceOverlay.rotation' => 'Rotation',
@@ -8242,8 +8259,6 @@ extension on TranslationsSv {
 			'performanceOverlay.dvPath' => 'DV-sökväg',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekoder (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Baslager',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-baslager',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-baslager',
@@ -8479,6 +8494,7 @@ extension on TranslationsSv {
 			'seerr.sessionRejectedAfterReauth' => 'Sessionen avvisades efter den nya inloggningen',
 			'seerr.permissionDenied' => 'Seerr nekade åtgärden: ditt konto har inte längre den behörighet som krävs',
 			'seerr.permissionRevoked' => 'Du har inte längre behörighet att begära detta',
+			'seerr.withdrawRequest' => 'Dra tillbaka begäran',
 			'services.title' => 'Tjänster',
 			'services.hubSubtitle' => 'Synkronisera visningsstatus och begär nya titlar.',
 			'services.integrations' => 'Integrationer',
@@ -8748,6 +8764,8 @@ extension on TranslationsSv {
 			'homeLayout.managePlexRowsDescription' => 'Öppna för att organisera de hemvalda raderna',
 			'homeLayout.organizeHomeRows' => 'Organisera hemrutor',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: flytta, Hero, Auto-slide, ta bort',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisera ${library} rader',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsätt Se + ${n} rader: rörelse, bibliotek, hem, hjälte, Auto-slide',
 			'homeLayout.renderAsHero' => 'Renderar som hjälte kort',
@@ -8756,8 +8774,6 @@ extension on TranslationsSv {
 			'homeLayout.autoSlide' => 'Auto-slida',
 			'homeLayout.autoSlideDescription' => 'Låtar (PC) och d-pad (TV) fungerar alltid och startar timern om.',
 			'homeLayout.autoSlideEditDescription' => 'Slides också på egen hand varje några sekunder. Off: rör sig endast när du klickar på en pil (PC) eller trycker vänster/rät mot fjärr (TV).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Hjälten först',
 			'homeLayout.showOnHome' => 'Visa på hemskärmen',
 			'homeLayout.home' => 'Hem',
@@ -9262,6 +9278,8 @@ extension on TranslationsSv {
 			'audiobook.customSpeed' => 'Custom playback hastighet',
 			'audiobook.speedHelp' => 'Välj en hastighet från 0,25× till 4×.',
 			'audiobook.apply' => 'Applicera',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Anpassad sömntimmar',
 			'audiobook.sleepMinutes' => 'Minuter (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Sluta efter ${count} kapitel',
@@ -9270,8 +9288,6 @@ extension on TranslationsSv {
 			'audiobook.useDefaults' => 'Använd dessa lyssningskontroller för nya böcker',
 			'audiobook.librarySort' => 'Sorterade böcker',
 			'audiobook.sortTitle' => 'Titeln',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Författare',
 			'audiobook.sortNarrator' => 'berättare',
 			'audiobook.sortSeries' => 'Serien order',
@@ -9776,6 +9792,8 @@ extension on TranslationsSv {
 			'musicExperience.bluetoothDrivingHint' => 'Välj anslutna Bluetooth-utgångar som automatiskt öppnar körvyn.',
 			'musicTools.loudnessMissing' => 'Inga ljudstyrkedata returnerades',
 			'musicTools.loudnessRequested' => 'Analysbegäran skickad',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Den här serverversionen stöder inte analysbegäranden',
 			'musicTools.serverHistory' => 'Serverns uppspelningshistorik',
 			'musicTools.nfcWrite' => 'Skriv NFC-tagg',
@@ -9784,8 +9802,6 @@ extension on TranslationsSv {
 			'musicTools.storageBudget' => 'Uppskattad nedladdningsgräns (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Gäst-DJ',
 			'musicTools.charts' => 'Lyssningslistor',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Återupptäck',
 			'musicTools.stations' => 'Musikstationer',
 			'musicTools.prompt' => 'Spellista från beskrivning',

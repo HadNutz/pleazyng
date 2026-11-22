@@ -52,6 +52,7 @@ class MusicConnectChannel {
       }
       return true;
     } catch (_) {
+      // best-effort: A partial frame sequence cannot acknowledge delivery of a music message.
       return false;
     }
   }

@@ -262,6 +262,38 @@ class _RequestDetailState extends State<_RequestDetail> {
     }
   }
 
+  Future<void> _withdraw() async {
+    if (_busy || !_current || !widget.client.canWithdrawRequest(widget.item)) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialog) => AlertDialog(
+        title: Text(t.seerr.withdrawRequest),
+        content: Text(widget.item.title),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(t.common.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(t.seerr.withdrawRequest)),
+        ],
+      ),
+    );
+    if (!mounted || !_current || confirmed != true || _busy) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await widget.client.withdrawRequest(widget.item);
+      if (mounted && _current) Navigator.pop(context);
+    } catch (error) {
+      appLogger.w('Could not withdraw pending request', error: error);
+      if (mounted && _current) {
+        setState(() {
+          _busy = false;
+          _error = t.seerr.requestsLoadFailed;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<SeerrAccountProvider>();
@@ -322,6 +354,8 @@ class _RequestDetailState extends State<_RequestDetail> {
                 },
           child: Text(t.common.viewAll),
         ),
+        if (widget.client.canWithdrawRequest(item))
+          TextButton(onPressed: _busy ? null : _withdraw, child: Text(t.seerr.withdrawRequest)),
         if (canRequest && requestable && !item.is4k)
           FilledButton(onPressed: _busy || _submitted ? null : _request, child: Text(t.seerr.request)),
       ],

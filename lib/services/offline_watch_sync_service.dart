@@ -807,7 +807,7 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
       try {
         item = await client.fetchItem(action.ratingKey);
       } catch (_) {
-        // Fall through to the synthetic item below.
+        // best-effort: Fall through to the synthetic item below.
       }
     }
     item ??= MediaItem(

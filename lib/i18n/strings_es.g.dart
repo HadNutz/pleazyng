@@ -904,6 +904,11 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Esperar estos muchos minutos sin entrada antes de mostrar la pantalla de almacenamiento artwork.';
 	@override String get videoCodecOptionDescription => 'Permite reproducción directa para este codec cuando se apoya. los codecs no verificados son transcodados por el servidor de medios.';
 	@override String streamBufferSizeMiB({required Object size}) => 'El tamaño de buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Seguir viendo';
+	@override String get showTopShelfContentDescription => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.';
+	@override String get topShelfUpdateFailed => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.';
+	@override String get showFinishTime => 'Mostrar hora de finalización';
+	@override String get showFinishTimeDescription => 'Muestra cuándo terminará el vídeo junto al tiempo restante.';
 }
 
 // Path: themeEditor
@@ -1152,6 +1157,7 @@ class Translations$mediaMenu$es extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng no pudo comprobar qué archivos se eliminarán, por lo que podría borrar más de lo indicado arriba. Cancela y vuelve a intentarlo, o elimina de todos modos.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Tu servidor no proporcionó los detalles del archivo de este elemento, por lo que Pleazyng no puede comprobar qué archivos se eliminarán. Podría borrar más de lo indicado arriba.';
 	@override String get mediaDeletedSuccessfully => 'Elemento multimedia eliminado con éxito';
+	@override String get mediaDeletionDisabledOnServer => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.';
 	@override String get mediaFailedToDelete => 'Error al eliminar el elemento multimedia';
 	@override String get rate => 'Calificar';
 	@override String get playFromBeginning => 'Reproducir desde el inicio';
@@ -2938,6 +2944,7 @@ class Translations$seerr$es extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'La sesión fue rechazada después de volver a iniciar sesión';
 	@override String get permissionDenied => 'Seerr denegó esta acción: tu cuenta ya no tiene el permiso necesario';
 	@override String get permissionRevoked => 'Ya no tienes permiso para solicitar esto';
+	@override String get withdrawRequest => 'Retirar solicitud';
 }
 
 // Path: services
@@ -4722,6 +4729,7 @@ class Translations$common$mediaKind$es extends Translations$common$mediaKind$en 
 	@override String get clip => 'Clip';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Carpeta';
+	@override String get photoAlbum => 'Álbum de fotos';
 }
 
 // Path: settings.startupSectionOptions
@@ -6006,6 +6014,7 @@ extension on TranslationsEs {
 			'common.mediaKind.clip' => 'Clip',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Carpeta',
+			'common.mediaKind.photoAlbum' => 'Álbum de fotos',
 			'screens.licenses' => 'Licencias',
 			'screens.switchProfile' => 'Cambiar perfil',
 			'screens.subtitleStyling' => 'Estilo de subtítulos',
@@ -6309,9 +6318,9 @@ extension on TranslationsEs {
 			'settings.discordRichPresenceDescription' => 'Mostrar lo que estás viendo en Discord',
 			'settings.services' => 'Servicios',
 			'settings.servicesDescription' => 'Conecta Trakt, MyAnimeList, Seerr y más',
-			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
 			_ => null,
 		} ?? switch (path) {
+			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
 			'settings.companionRemoteServer' => 'Servidor de control remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
 			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
@@ -6528,6 +6537,11 @@ extension on TranslationsEs {
 			'settings.contentScreensaverDelayOptionDescription' => 'Esperar estos muchos minutos sin entrada antes de mostrar la pantalla de almacenamiento artwork.',
 			'settings.videoCodecOptionDescription' => 'Permite reproducción directa para este codec cuando se apoya. los codecs no verificados son transcodados por el servidor de medios.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'El tamaño de buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Seguir viendo',
+			'settings.showTopShelfContentDescription' => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.',
+			'settings.topShelfUpdateFailed' => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.',
+			'settings.showFinishTime' => 'Mostrar hora de finalización',
+			'settings.showFinishTimeDescription' => 'Muestra cuándo terminará el vídeo junto al tiempo restante.',
 			'themeEditor.builtIn' => 'Integrados',
 			'themeEditor.presets' => 'Predefinidos',
 			'themeEditor.custom' => 'Personalizado',
@@ -6761,6 +6775,7 @@ extension on TranslationsEs {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng no pudo comprobar qué archivos se eliminarán, por lo que podría borrar más de lo indicado arriba. Cancela y vuelve a intentarlo, o elimina de todos modos.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Tu servidor no proporcionó los detalles del archivo de este elemento, por lo que Pleazyng no puede comprobar qué archivos se eliminarán. Podría borrar más de lo indicado arriba.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Elemento multimedia eliminado con éxito',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'La eliminación de contenido está desactivada en este servidor. Permítela en los ajustes de biblioteca del servidor.',
 			'mediaMenu.mediaFailedToDelete' => 'Error al eliminar el elemento multimedia',
 			'mediaMenu.rate' => 'Calificar',
 			'mediaMenu.playFromBeginning' => 'Reproducir desde el inicio',
@@ -6817,6 +6832,8 @@ extension on TranslationsEs {
 			'accessibility.highContrast' => 'El alto contraste',
 			'accessibility.highContrastHint' => 'Texto más fuerte, etiquetas y indicadores de foco en superficies de luz o oscuridad.',
 			'accessibility.interaction' => 'Movimiento y interacción',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.reduceMotion' => 'Reducir movimiento',
 			'accessibility.reduceMotionHint' => 'Detener el movimiento del indicador de foco, las transiciones de página y los efectos decorativos.',
 			'accessibility.largeTargets' => 'Objetivos de mayor toque',
@@ -6824,8 +6841,6 @@ extension on TranslationsEs {
 			'accessibility.navigationHint' => 'Usa Tab y Shift+Tab para moverte entre los controles, Enter o la barra espaciadora para activarlos y Escape o Atrás para cerrar. El zoom y las preferencias de lectura están disponibles cuando hay un libro abierto.',
 			'accessibility.textSizeDescription' => 'Escala el texto de la interfaz en Pleazyng además de la configuración de tamaño del texto del sistema de su dispositivo.',
 			'accessibility.boldTextHint' => 'Utilice un peso más pesado para las etiquetas de interfaz y los mensajes para que sean más fáciles de distinguir.',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.shufflePlay' => 'Reproducción aleatoria',
 			'tooltips.playTrailer' => 'Reproducir tráiler',
 			'tooltips.markAsWatched' => 'Marcar como visto',
@@ -7331,6 +7346,8 @@ extension on TranslationsEs {
 			'discover.findNext.watchLive' => 'Ver en directo',
 			'discover.findNext.filterAnything' => 'Cualquier tipo',
 			'discover.findNext.filterWatch' => 'Ver',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.filterListen' => 'Escuchar',
 			'discover.findNext.filterRead' => 'Leer',
 			'discover.findNext.twentyMinutes' => '20 min',
@@ -7338,8 +7355,6 @@ extension on TranslationsEs {
 			'discover.findNext.ninetyMinutes' => '90 min',
 			'discover.findNext.apply' => 'Aplicar',
 			'discover.findNext.openFailed' => 'Esta opción ya no está disponible. Actualiza para comprobarlo de nuevo.',
-			_ => null,
-		} ?? switch (path) {
 			'discover.findNext.changeFailed' => 'No se pudo guardar el cambio. Inténtalo de nuevo.',
 			'discover.findNext.savedLimit' => 'La lista de sugerencias guardadas está llena. Quita una para guardar otra.',
 			'discover.findNext.chooseHint' => 'Abre un título, guárdalo para después o pasa al siguiente.',
@@ -7845,6 +7860,8 @@ extension on TranslationsEs {
 			'liveTv.recordSettings.anyTime' => 'Grabar a cualquier hora',
 			'liveTv.recordSettings.skipInLibrary' => 'Omitir episodios que ya están en la biblioteca',
 			'liveTv.recordSettings.keepUpTo' => 'Episodios que conservar',
+			_ => null,
+		} ?? switch (path) {
 			'liveTv.recordSettings.keepUpToHint' => '0 conserva todos los episodios',
 			'liveTv.startingInMinutes' => ({required Object minutes}) => 'Empieza en ${minutes} min',
 			'liveTv.dayAtTime' => ({required Object day, required Object time}) => '${day} a las ${time}',
@@ -7852,8 +7869,6 @@ extension on TranslationsEs {
 			'liveTv.failedToStartChannel' => 'No se pudo iniciar el canal en vivo',
 			'liveTv.failedToBuildStreamUrl' => 'No se pudo generar la URL de transmisión',
 			'liveTv.playbackStartFailed' => ({required Object reason}) => 'No se pudo iniciar el canal: ${reason}',
-			_ => null,
-		} ?? switch (path) {
 			'liveTv.channelSwitchFailed' => ({required Object reason}) => 'No se pudo cambiar de canal: ${reason}',
 			'collections.title' => 'Colecciones',
 			'collections.collection' => 'Colección',
@@ -8359,6 +8374,8 @@ extension on TranslationsEs {
 			'videoSettings.audioEqualizerDescription' => 'El equalizador de 10 bandas para MPVLos filtros de audio utilizan audio decodido y desactivan passthrough.',
 			'videoSettings.audioEqualizerFlat' => 'Plano',
 			'videoSettings.audioEqualizerActive' => 'Personalizado',
+			_ => null,
+		} ?? switch (path) {
 			'videoSettings.audioEqualizerSaveFailed' => 'No podría salvar la configuración de audio equalizer.',
 			'videoSettings.audioEffectsDescription' => 'Los efectos utilizan audio descifrado, por lo que los ajustes se vuelven. el ambiente de la habitación y la ampliación estereó depende del MPV Construir y rastrear.',
 			'videoSettings.audioStereoWidth' => 'Stereo extendido',
@@ -8366,8 +8383,6 @@ extension on TranslationsEs {
 			'videoSettings.audioSpatializerDescription' => 'Añade reflexiones de la sala tranquila.',
 			'videoSettings.audioPitch' => 'Cambios de Pitch',
 			'videoSettings.audioPitchDescription' => 'Cambiar la pista sin cambiar la velocidad. MPV La construcción debe incluir Rubber Band.',
-			_ => null,
-		} ?? switch (path) {
 			'videoSettings.audioEffectUnavailable' => 'Este efecto no está disponible para esta pista o MPV La construcción.',
 			'videoSettings.backgroundVideoAudio' => 'Video Audio de fondo',
 			'videoSettings.backgroundVideoAudioDescription' => 'Mantenga el audio de video cuando abandona el reproductor; la imagen está oculta hasta que vuelva. Android utiliza una notificación de reproducción de medios.',
@@ -8622,6 +8637,7 @@ extension on TranslationsEs {
 			'seerr.sessionRejectedAfterReauth' => 'La sesión fue rechazada después de volver a iniciar sesión',
 			'seerr.permissionDenied' => 'Seerr denegó esta acción: tu cuenta ya no tiene el permiso necesario',
 			'seerr.permissionRevoked' => 'Ya no tienes permiso para solicitar esto',
+			'seerr.withdrawRequest' => 'Retirar solicitud',
 			'services.title' => 'Servicios',
 			'services.hubSubtitle' => 'Sincroniza tu progreso de visualización y solicita nuevos títulos.',
 			'services.integrations' => 'Integraciones',
@@ -8872,6 +8888,8 @@ extension on TranslationsEs {
 			'detail.endsAt' => ({required Object time}) => 'Termina a las ${time}',
 			'watchLink.serverUnavailable' => 'No podía llegar a un servidor Plex para este enlace.',
 			'watchLink.notFound' => 'No podría encontrar este espectáculo o película en sus servidores Plex.',
+			_ => null,
+		} ?? switch (path) {
 			'watchLink.ambiguous' => 'Este enlace se ajusta a los elementos en más de un servidor.Añadir un servidor al enlace.',
 			'watchLink.plexOnly' => 'Los enlaces de seguimiento actualmente solo soportan los servidores Plex.',
 			'watchLink.unsupportedItem' => 'Las ligazones de visualización sólo pueden abrir un espectáculo o una película.',
@@ -8880,8 +8898,6 @@ extension on TranslationsEs {
 			'watchLink.dialogShowHint' => 'Abriendo este enlace se juega el siguiente episodio.Añadir &mode=shuffle al final para jugar el espectáculo en shuffle.',
 			'watchLink.dialogMovieHint' => 'Abriendo este enlace juega la película.',
 			'watchLink.copy' => 'Copia',
-			_ => null,
-		} ?? switch (path) {
 			'watchLink.copied' => 'Link copiado',
 			'homeLayout.title' => 'Home Layout',
 			'homeLayout.resetToast' => 'Home Reset a la versión original de la versión Pleazyng',
@@ -9386,6 +9402,8 @@ extension on TranslationsEs {
 			'audiobook.addSyncSource' => 'Añadir Google Drive, OneDrive, Dropbox, WebDAV o S3 en los archivos y libros primero.',
 			'audiobook.syncDestination' => 'Conta de almacenamiento de sincronización',
 			'audiobook.syncFolder' => 'Sincronización de la pasta o prefixo',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.syncFolderHelp' => 'Elige una carpeta WebDAV existente y separada o un prefijo S3 exclusivo para los archivos de estado de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan.',
 			'audiobook.syncCode' => 'Código de sincronización privada',
 			'audiobook.syncCodeHelp' => 'Crea un código en tu primer dispositivo, luego introduzca ese código en tus otros dispositivos. Mantiene una copia privada: es la clave para tu estado cifrado. Utilice un código diferente para cada persona.',
@@ -9394,8 +9412,6 @@ extension on TranslationsEs {
 			'audiobook.saveSync' => 'Salvando y sincronizando',
 			'audiobook.disableSync' => 'Desactivar la sincronización en este dispositivo',
 			'audiobook.syncSourceDisconnect' => 'Eliminar esta fuente dejará de leer y escuchar la sincronización aquí. los archivos de sincronización encriptados permanecerán en el proveedor.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.syncReconnect' => 'Reconectar la cuenta de almacenamiento',
 			'audiobook.lastSynced' => ({required Object time}) => 'Última sincronización en ${time}',
 			'audiobook.syncPrivacy' => 'La sincronización en la nube guarda datos cifrados de progreso, finalización, marcadores y notas en archivos de sincronización de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan. Los tokens de cuenta y las contraseñas no se suben. Google Drive y OneDrive usan el almacenamiento de la aplicación; Dropbox usa Pleazyng Sync; WebDAV y S3 usan la carpeta o el prefijo elegidos. Activar la sincronización puede requerir permiso de escritura del proveedor, pero la aplicación solo escribe esos archivos de estado. La sincronización en la nube y la sincronización compatible de progreso y marcadores con el servidor funcionan de forma independiente, con reintentos separados. Los conflictos se muestran para que los resuelvas. Desactivar la sincronización conserva el historial local y el estado remoto.',
@@ -9900,6 +9916,8 @@ extension on TranslationsEs {
 			'bonusExtras.providerNotice' => 'La reproducción se abre en el reproductor del proveedor y puede incluir sus recomendaciones.',
 			'bonusExtras.external' => 'En línea',
 			'bonusExtras.library' => 'En tu biblioteca',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.personal' => 'Enlace personal',
 			'bonusExtras.unknownLanguage' => 'Idioma no especificado',
 			'bonusExtras.spoilers' => 'Mostrar extras que pueden contener spoilers',
@@ -9908,8 +9926,6 @@ extension on TranslationsEs {
 			'bonusExtras.includeAnalysis' => 'Incluir análisis cinematográficos revisados',
 			'bonusExtras.serviceUrl' => 'Dirección del servidor de descubrimiento',
 			'bonusExtras.serviceToken' => 'Token de acceso al servicio de descubrimiento',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.aiMode' => 'Asistencia con IA',
 			'bonusExtras.aiOff' => 'Desactivada',
 			'bonusExtras.aiDevice' => 'En este dispositivo',

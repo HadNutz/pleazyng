@@ -224,7 +224,8 @@
       "playlist": "প্লেলিস্ট",
       "clip": "ক্লিপ",
       "photo": "ছবি",
-      "folder": "ফোল্ডার"
+      "folder": "ফোল্ডার",
+      "photoAlbum": "ছবির অ্যালবাম"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "বাফার আকার: ${size} MiB"
+    "streamBufferSizeMiB": "বাফার আকার: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · দেখা অব্যাহত রাখুন",
+    "showTopShelfContentDescription": "বন্ধ করলে সব প্রোফাইলে শুধু Pleazyng-এর ছবি দেখানো হবে।",
+    "topShelfUpdateFailed": "Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।",
+    "showFinishTime": "শেষ হওয়ার সময় দেখান",
+    "showFinishTimeDescription": "বাকি সময়ের পাশে ভিডিওটি কখন শেষ হবে তা দেখান।"
   },
   "themeEditor": {
     "builtIn": "ভিত্তিতে",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng কোন ফাইলটি মুছে ফেলবে তা নিশ্চিত করতে পারেন না, তাই এটি উপরে নামিত পণ্যের চেয়ে বেশি মুছে ফেলতে পারে. বাতিল করুন এবং আবারও চেষ্টা করুন, অথবা কোনওভাবে মুছে ফেলুন।",
     "deleteScopeUnverifiedNoFileInfo": "আপনার সার্ভার এই আইটেমের ফাইলের বিবরণ দেয়নি, তাই Pleazyng কোন ফাইলগুলি মুছে যাবে তা পরীক্ষা করতে পারছে না। উপরে উল্লেখ করা আইটেম ছাড়াও আরও কিছু মুছে যেতে পারে।",
     "mediaDeletedSuccessfully": "সফলভাবে মুছে ফেলেন মিডিয়া",
+    "mediaDeletionDisabledOnServer": "এই সার্ভারে মিডিয়া মুছে ফেলা বন্ধ আছে। সার্ভারের লাইব্রেরি সেটিংসে মিডিয়া মুছে ফেলার অনুমতি চালু করুন।",
     "mediaFailedToDelete": "মিডিয়া পণ্য মুছে ফেলে না",
     "rate": "রাত",
     "playFromBeginning": "শুরু থেকে খেলা",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr ব্যবহারকারীর তথ্য ফিরিয়ে দেয়নি",
     "sessionRejectedAfterReauth": "পুনরাবৃত্তি পরে চিঠি বাতিল করা হয়।",
     "permissionDenied": "Seerr এই পদক্ষেপটি প্রত্যাখ্যান করেছে: আপনার অ্যাকাউন্টের প্রয়োজনীয় অনুমতি নেই",
-    "permissionRevoked": "আপনি এখন আর এ ব্যাপারে অনুরোধ করার অনুমতি নেই।"
+    "permissionRevoked": "আপনি এখন আর এ ব্যাপারে অনুরোধ করার অনুমতি নেই।",
+    "withdrawRequest": "অনুরোধ প্রত্যাহার করুন"
   },
   "services": {
     "title": "পরিষেবা",

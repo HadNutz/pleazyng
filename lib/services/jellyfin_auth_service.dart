@@ -184,6 +184,7 @@ class JellyfinConnectionAuthService {
       // The endpoint returns a bare JSON `true`/`false`, not an object.
       return data is bool ? data : false;
     } catch (_) {
+      // best-effort: Offer Quick Connect only after the server confirms availability.
       return false;
     } finally {
       client.close();

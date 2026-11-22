@@ -898,6 +898,11 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'স্ক্রিন সার্ভার শিল্প প্রদর্শন করার আগে এই অনেক মিনিট অন্তর্ভুক্ত অপেক্ষা করুন।';
 	@override String get videoCodecOptionDescription => 'সমর্থিত হলে এই কোডেক সরাসরি চালাতে দিন। চেক না করা কোডেকগুলো মিডিয়া সার্ভার ট্রান্সকোড করবে।';
 	@override String streamBufferSizeMiB({required Object size}) => 'বাফার আকার: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · দেখা অব্যাহত রাখুন';
+	@override String get showTopShelfContentDescription => 'বন্ধ করলে সব প্রোফাইলে শুধু Pleazyng-এর ছবি দেখানো হবে।';
+	@override String get topShelfUpdateFailed => 'Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।';
+	@override String get showFinishTime => 'শেষ হওয়ার সময় দেখান';
+	@override String get showFinishTimeDescription => 'বাকি সময়ের পাশে ভিডিওটি কখন শেষ হবে তা দেখান।';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$bn extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng কোন ফাইলটি মুছে ফেলবে তা নিশ্চিত করতে পারেন না, তাই এটি উপরে নামিত পণ্যের চেয়ে বেশি মুছে ফেলতে পারে. বাতিল করুন এবং আবারও চেষ্টা করুন, অথবা কোনওভাবে মুছে ফেলুন।';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'আপনার সার্ভার এই আইটেমের ফাইলের বিবরণ দেয়নি, তাই Pleazyng কোন ফাইলগুলি মুছে যাবে তা পরীক্ষা করতে পারছে না। উপরে উল্লেখ করা আইটেম ছাড়াও আরও কিছু মুছে যেতে পারে।';
 	@override String get mediaDeletedSuccessfully => 'সফলভাবে মুছে ফেলেন মিডিয়া';
+	@override String get mediaDeletionDisabledOnServer => 'এই সার্ভারে মিডিয়া মুছে ফেলা বন্ধ আছে। সার্ভারের লাইব্রেরি সেটিংসে মিডিয়া মুছে ফেলার অনুমতি চালু করুন।';
 	@override String get mediaFailedToDelete => 'মিডিয়া পণ্য মুছে ফেলে না';
 	@override String get rate => 'রাত';
 	@override String get playFromBeginning => 'শুরু থেকে খেলা';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$bn extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'পুনরাবৃত্তি পরে চিঠি বাতিল করা হয়।';
 	@override String get permissionDenied => 'Seerr এই পদক্ষেপটি প্রত্যাখ্যান করেছে: আপনার অ্যাকাউন্টের প্রয়োজনীয় অনুমতি নেই';
 	@override String get permissionRevoked => 'আপনি এখন আর এ ব্যাপারে অনুরোধ করার অনুমতি নেই।';
+	@override String get withdrawRequest => 'অনুরোধ প্রত্যাহার করুন';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$bn extends Translations$common$mediaKind$en
 	@override String get clip => 'ক্লিপ';
 	@override String get photo => 'ছবি';
 	@override String get folder => 'ফোল্ডার';
+	@override String get photoAlbum => 'ছবির অ্যালবাম';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsBn {
 			'common.mediaKind.clip' => 'ক্লিপ',
 			'common.mediaKind.photo' => 'ছবি',
 			'common.mediaKind.folder' => 'ফোল্ডার',
+			'common.mediaKind.photoAlbum' => 'ছবির অ্যালবাম',
 			'screens.licenses' => 'লাইসেন্স',
 			'screens.switchProfile' => 'সুইচ প্রোফাইল',
 			'screens.subtitleStyling' => 'Subtitle স্টাইলিং',
@@ -6185,9 +6194,9 @@ extension on TranslationsBn {
 			'settings.manageLibrariesDescription' => 'লাইব্রেরি রেকর্ড করুন এবং লুকিয়ে রাখুন',
 			'settings.companionRemoteServer' => 'Remote সার্ভার',
 			'settings.companionRemoteServerDescription' => 'আপনার নেটওয়ার্কের মোবাইল ডিভাইসগুলি এই অ্যাপটি নিয়ন্ত্রণ করার অনুমতি দেয়',
-			'settings.companionRemoteServerStartFailed' => 'সার্ভার সার্ভার শুরু করতে পারেনি।',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'সার্ভার সার্ভার শুরু করতে পারেনি।',
 			'settings.companionRemoteServerStopFailed' => 'সার্ভার বন্ধ করতে পারত না।',
 			'settings.autoPip' => 'Auto Picture-in-Picture গাড়ি',
 			'settings.autoPipDescription' => 'আপনি Playback সময় অ্যাপটি ছেড়ে যখন স্বয়ংক্রিয়ভাবে ছবি-এ-ফটো প্রবেশ করুন',
@@ -6401,6 +6410,11 @@ extension on TranslationsBn {
 			'settings.contentScreensaverDelayOptionDescription' => 'স্ক্রিন সার্ভার শিল্প প্রদর্শন করার আগে এই অনেক মিনিট অন্তর্ভুক্ত অপেক্ষা করুন।',
 			'settings.videoCodecOptionDescription' => 'সমর্থিত হলে এই কোডেক সরাসরি চালাতে দিন। চেক না করা কোডেকগুলো মিডিয়া সার্ভার ট্রান্সকোড করবে।',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'বাফার আকার: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · দেখা অব্যাহত রাখুন',
+			'settings.showTopShelfContentDescription' => 'বন্ধ করলে সব প্রোফাইলে শুধু Pleazyng-এর ছবি দেখানো হবে।',
+			'settings.topShelfUpdateFailed' => 'Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।',
+			'settings.showFinishTime' => 'শেষ হওয়ার সময় দেখান',
+			'settings.showFinishTimeDescription' => 'বাকি সময়ের পাশে ভিডিওটি কখন শেষ হবে তা দেখান।',
 			'themeEditor.builtIn' => 'ভিত্তিতে',
 			'themeEditor.presets' => 'প্রজাতন',
 			'themeEditor.custom' => 'কাস্টম',
@@ -6634,6 +6648,7 @@ extension on TranslationsBn {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng কোন ফাইলটি মুছে ফেলবে তা নিশ্চিত করতে পারেন না, তাই এটি উপরে নামিত পণ্যের চেয়ে বেশি মুছে ফেলতে পারে. বাতিল করুন এবং আবারও চেষ্টা করুন, অথবা কোনওভাবে মুছে ফেলুন।',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'আপনার সার্ভার এই আইটেমের ফাইলের বিবরণ দেয়নি, তাই Pleazyng কোন ফাইলগুলি মুছে যাবে তা পরীক্ষা করতে পারছে না। উপরে উল্লেখ করা আইটেম ছাড়াও আরও কিছু মুছে যেতে পারে।',
 			'mediaMenu.mediaDeletedSuccessfully' => 'সফলভাবে মুছে ফেলেন মিডিয়া',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'এই সার্ভারে মিডিয়া মুছে ফেলা বন্ধ আছে। সার্ভারের লাইব্রেরি সেটিংসে মিডিয়া মুছে ফেলার অনুমতি চালু করুন।',
 			'mediaMenu.mediaFailedToDelete' => 'মিডিয়া পণ্য মুছে ফেলে না',
 			'mediaMenu.rate' => 'রাত',
 			'mediaMenu.playFromBeginning' => 'শুরু থেকে খেলা',
@@ -6693,6 +6708,8 @@ extension on TranslationsBn {
 			'accessibility.reduceMotion' => 'মোটর কমাতে',
 			'accessibility.reduceMotionHint' => 'ফোকাসের নির্দেশক, পৃষ্ঠা পরিবর্তন ও সাজসজ্জার প্রভাবগুলির নড়াচড়া বন্ধ রাখুন।',
 			'accessibility.largeTargets' => 'বড় ট্যাক্স টার্গেট',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'স্পর্শ ও সহায়ক প্রযুক্তির মাধ্যমে চলাচল সহজ করতে সাধারণ নিয়ন্ত্রণগুলির জায়গা বড় করুন।',
 			'accessibility.navigationHint' => 'নিয়ন্ত্রণগুলির মধ্যে যেতে Tab ও Shift+Tab, সক্রিয় করতে Enter বা Space এবং বন্ধ করতে Escape বা ফিরে যাওয়ার বোতাম ব্যবহার করুন। বই খোলা থাকলে জুম ও পড়ার পছন্দগুলি বদলানো যায়।',
 			'accessibility.textSizeDescription' => 'আপনার ডিভাইসের সিস্টেম টেক্সটের আকারের সেটিংয়ের পাশাপাশি Pleazyng ইন্টারফেসের লেখার আকারও পরিবর্তন করুন।',
@@ -6700,8 +6717,6 @@ extension on TranslationsBn {
 			'tooltips.shufflePlay' => 'শফল খেলা',
 			'tooltips.playTrailer' => 'ট্র্যালার খেলুন',
 			'tooltips.markAsWatched' => 'মার্ক দেখে',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'মার্ক অবিশ্বাসিত',
 			'audioTracks.track' => ({required Object n}) => 'অডিও ট্র্যাক ${n}',
 			'videoControls.audioLabel' => 'অডিও',
@@ -7207,6 +7222,8 @@ extension on TranslationsBn {
 			'discover.findNext.artworkLoading' => 'ছবি লোড হচ্ছে…',
 			'discover.findNext.artworkUnavailable' => 'ছবি উপলব্ধ নয়',
 			'discover.findNext.savedFeedback' => 'সংরক্ষিত পছন্দে যোগ করা হয়েছে',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'আপাতত এড়িয়ে যাওয়া হয়েছে',
 			'discover.findNext.releaseToConfirm' => 'নিশ্চিত করতে ছেড়ে দিন',
 			'discover.findNext.remoteHint' => 'প্রচ্ছদে ফোকাস: ← / → বেছে নিন · নির্বাচন বোতাম: বিস্তারিত · ↑ / ↓ ফোকাস বদলান',
@@ -7214,8 +7231,6 @@ extension on TranslationsBn {
 			'discover.rating' => 'রেটিং',
 			'discover.director' => 'পরিচালক',
 			'discover.directors' => 'পরিচালকবৃন্দ',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'চলচ্চিত্র',
 			'discover.tvShow' => 'টেলিভিশন প্রদর্শন',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} মিনিট left',
@@ -7721,6 +7736,8 @@ extension on TranslationsBn {
 			'collections.selectCollection' => 'ক্যালেকশন নির্বাচন',
 			'collections.collectionName' => 'সংগ্রহ নাম',
 			'collections.enterCollectionName' => 'সংগ্রহ নাম লিখুন',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'সংগ্রহে যোগ করা',
 			'collections.errorAddingToCollection' => 'সংগ্রহে যোগ করতে পারিনি',
 			'collections.created' => 'সংগ্রহ তৈরি',
@@ -7728,8 +7745,6 @@ extension on TranslationsBn {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'এই সংগ্রহ থেকে "${title}" মুছে ফেলুন?',
 			'collections.removedFromCollection' => 'সংগ্রহ থেকে বের করা',
 			'collections.removeFromCollectionFailed' => 'সংগ্রহ থেকে বের করা যায়নি',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'সংগ্রহ থেকে তুলনা ভুল: ${error}',
 			'collections.searchCollections' => 'খুঁজে পাওয়া সংগ্রহ...',
 			'playlists.title' => 'খেলোয়াড়',
@@ -8235,6 +8250,8 @@ extension on TranslationsBn {
 			'performanceOverlay.decoder' => 'ডকোডার',
 			'performanceOverlay.rawDecoder' => 'ডেকডার',
 			'performanceOverlay.tunneling' => 'টুইটার',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'পাস্টরো',
 			'performanceOverlay.aspect' => 'দৃষ্টি',
 			'performanceOverlay.rotation' => 'রোটেশন',
@@ -8242,8 +8259,6 @@ extension on TranslationsBn {
 			'performanceOverlay.dvPath' => 'ডি পথ',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision ডকোডার',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision ডকোডার (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Base স্তর',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ভিত্তিক স্তর',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG Base ল্যাগ',
@@ -8479,6 +8494,7 @@ extension on TranslationsBn {
 			'seerr.sessionRejectedAfterReauth' => 'পুনরাবৃত্তি পরে চিঠি বাতিল করা হয়।',
 			'seerr.permissionDenied' => 'Seerr এই পদক্ষেপটি প্রত্যাখ্যান করেছে: আপনার অ্যাকাউন্টের প্রয়োজনীয় অনুমতি নেই',
 			'seerr.permissionRevoked' => 'আপনি এখন আর এ ব্যাপারে অনুরোধ করার অনুমতি নেই।',
+			'seerr.withdrawRequest' => 'অনুরোধ প্রত্যাহার করুন',
 			'services.title' => 'পরিষেবা',
 			'services.hubSubtitle' => 'সিনক উন্নয়ন দেখুন এবং নতুন টাইমের জন্য অনুরোধ করুন।',
 			'services.integrations' => 'ইন্টারফেস',
@@ -8748,6 +8764,8 @@ extension on TranslationsBn {
 			'homeLayout.managePlexRowsDescription' => 'Home-Selected রানগুলি সংগঠন করার জন্য খোলা',
 			'homeLayout.organizeHomeRows' => 'Home রানার সংগঠন',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} লাইন: গাড়ি, হেরো, অটো-স্লাইড, মুছে ফেলুন',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'সংগঠন ${library} লাইন',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} লাইন: গাড়ি, লাইব্রেরি, বাড়ি, হেরো, অটো-স্লাইড',
 			'homeLayout.renderAsHero' => 'কার্ডের হেয়ার হিসাবে রেন্ডার',
@@ -8756,8 +8774,6 @@ extension on TranslationsBn {
 			'homeLayout.autoSlide' => 'অটো-স্লাইড',
 			'homeLayout.autoSlideDescription' => 'এছাড়াও প্রতি কয়েক সেকেন্ডে নিজেদের সাথে স্লাইড করে. লোড (PC) এবং ড-প্যাড (TV) সবসময় কাজ করে এবং টাইমারটি পুনরায় চালু করে।',
 			'homeLayout.autoSlideEditDescription' => 'এছাড়াও প্রতি কয়েক সেকেন্ডে নিজে থেকে স্লাইড করে. অটো: শুধুমাত্র একটি প্লাইড (PC) ক্লিক করে বা দূরে (TV) বাম / ডান চাপ করে যখন移動 করে. প্লাইড এবং d-প্যাড সবসময় উভয়ভাবে কাজ করে।',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'প্রথমে হেরো',
 			'homeLayout.showOnHome' => 'Home Screen দেখুন',
 			'homeLayout.home' => 'বাড়ি',
@@ -9262,6 +9278,8 @@ extension on TranslationsBn {
 			'audiobook.customSpeed' => 'কাস্টম Playback গতি',
 			'audiobook.speedHelp' => '0.25× থেকে 4× পর্যন্ত গতি নির্বাচন করুন।',
 			'audiobook.apply' => 'প্রয়োগ করুন',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'কাস্টম Sleep Timer',
 			'audiobook.sleepMinutes' => 'মিনিট (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} বিভাগের পর বন্ধ',
@@ -9270,8 +9288,6 @@ extension on TranslationsBn {
 			'audiobook.useDefaults' => 'নতুন বইয়ের জন্য এই শোনা নিয়ন্ত্রণগুলি ব্যবহার করুন',
 			'audiobook.librarySort' => 'কঠিন বই',
 			'audiobook.sortTitle' => 'Title নাম',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'লেখক',
 			'audiobook.sortNarrator' => 'ন্যায়ক',
 			'audiobook.sortSeries' => 'সিরিজ আদেশ',
@@ -9776,6 +9792,8 @@ extension on TranslationsBn {
 			'musicExperience.bluetoothDrivingHint' => 'ড্রাইভিং ভিউ স্বয়ংক্রিয়ভাবে খোলার জন্য সংযুক্ত Bluetooth আউটপুট বেছে নিন।',
 			'musicTools.loudnessMissing' => 'শব্দের মাত্রার তথ্য ফেরত আসেনি',
 			'musicTools.loudnessRequested' => 'বিশ্লেষণের অনুরোধ পাঠানো হয়েছে',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'সার্ভারের এই সংস্করণ বিশ্লেষণের অনুরোধ সমর্থন করে না',
 			'musicTools.serverHistory' => 'সার্ভারের প্লেব্যাক ইতিহাস',
 			'musicTools.nfcWrite' => 'NFC ট্যাগে লিখুন',
@@ -9784,8 +9802,6 @@ extension on TranslationsBn {
 			'musicTools.storageBudget' => 'আনুমানিক ডাউনলোডের সীমা (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'অতিথি ডিজে',
 			'musicTools.charts' => 'শোনার তালিকা',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'আবার আবিষ্কার করুন',
 			'musicTools.stations' => 'মিউজিক স্টেশন',
 			'musicTools.prompt' => 'বর্ণনা থেকে প্লেলিস্ট',

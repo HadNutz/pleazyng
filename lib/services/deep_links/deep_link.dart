@@ -131,13 +131,14 @@ final class LegacyAutomationLink extends DeepLink {
   Uri toUri() => uri;
 }
 
-/// How a link to a show or season picks what to play.
+/// How a link to a show, season or video playlist picks what to play.
 enum PlayMode {
   /// The episode the viewer is on: the On Deck/Next Up episode, otherwise
-  /// the first episode.
+  /// the first episode. A playlist plays from its first item.
   next,
 
-  /// Every episode of the show in random order.
+  /// Every episode of the show, or every item of the playlist, in random
+  /// order.
   shuffle,
 }
 
@@ -149,7 +150,8 @@ final class PlayLink extends DeepLink {
 
   final PlayTarget target;
 
-  /// Used when the target is a show or season; movies and episodes ignore it.
+  /// Used when the target is a show, season or playlist; movies and episodes
+  /// ignore it.
   final PlayMode mode;
 
   static PlayLink? _parse(Map<String, String> params, String? profile) {

@@ -131,6 +131,8 @@ import '../utils/error_message_utils.dart';
 part 'media_detail/action_buttons.dart';
 part 'media_detail/playback_tracks_status.dart';
 
+part 'media_detail/curated_extras.dart';
+
 /// Ceiling for the detail hero's backdrop box, as a fraction of the window
 /// height. Roughly the natural height of a 16:9 backdrop on a 16:10 desktop
 /// window, so it does not bite there; it only kicks in on short/wide windows,
@@ -485,73 +487,12 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
   List<MediaItem>? _extras;
   ExtrasSession? _curatedExtras;
   int _extrasLoadGeneration = 0;
-  List<MediaItem>? get _extraPreviews => _curatedExtras?.preview.map(extraDisplayItem).toList();
-  ExtraEntry? _extraForDisplay(MediaItem item) =>
-      _curatedExtras?.entries.where((e) => 'extra:${e.id}' == item.id).firstOrNull;
+
   void _extrasChanged() {
     if (!_canUseDetail) return;
     setState(() {
       _focusedExtraIndex = _focusedExtraIndex.clamp(0, math.max(0, (_extraPreviews?.length ?? 0) - 1));
     });
-  }
-
-  Future<void> _syncCuratedExtras() async {
-    final generation = ++_extrasLoadGeneration;
-    bool currentGeneration() => _canUseDetail && generation == _extrasLoadGeneration;
-    if (!_canUseDetail || (!_metadata.isMovie && !_metadata.isShow)) return;
-    final locale = WidgetsBinding.instance.platformDispatcher.locale;
-    final subject = extrasSubjectForMedia(
-      _fullMetadata ?? _metadata,
-      restricted: extrasRestricted(context),
-      offline: widget.isOffline,
-      language: LocaleSettings.currentLocale.languageCode,
-      region: locale.countryCode ?? 'US',
-    );
-    final session = _curatedExtras;
-    if (session == null) {
-      _curatedExtras = createExtrasSession(
-        context,
-        subject,
-        library: _extras ?? const [],
-        isCurrent: () => _canUseDetail,
-      )..addListener(_extrasChanged);
-    } else {
-      session.subject = subject;
-      session.library = _extras ?? const [];
-    }
-    final current = _curatedExtras!;
-    try {
-      if (widget.isOffline) {
-        final downloads = context.read<DownloadProvider>();
-        final restored = <MediaItem>[];
-        for (final ref in await current.store.libraryReferences(subject.key)) {
-          if (!current.active || !currentGeneration()) return;
-          final cached = await downloads.lookupOfflineMetadata(ServerId(ref.serverId), ref.id);
-          final item = cached?.copyWith(serverId: ref.serverId);
-          if (item != null && downloads.isDownloaded(item.globalKey)) restored.add(item);
-        }
-        if (!current.active || !currentGeneration()) return;
-        current.library = restored;
-      } else if (_hasLoadedExtras && _extras != null) {
-        await current.store.saveLibraryReferences(subject.key, [
-          for (final item in _extras!)
-            if (item.serverId != null) (serverId: item.serverId!, id: item.id),
-        ]);
-      }
-    } catch (_) {
-      /* Missing offline metadata leaves an empty native selection. */
-    }
-    if (current.active && currentGeneration()) await current.refresh();
-  }
-
-  void _browseExtras() {
-    final session = _curatedExtras;
-    if (session != null && session.active) unawaited(openExtras(context, session));
-  }
-
-  void _activateExtraPreview(MediaItem item) {
-    final entry = _extraForDisplay(item), session = _curatedExtras;
-    if (entry != null && session != null) unawaited(playExtra(context, session, entry));
   }
 
   List<MediaHub> _relatedHubs = [];
@@ -833,7 +774,24 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
     if (!_canUseDetail || widget.isOffline || event.serverId != serverBoundServerId) return;
     // Exact ids are authoritative even when the producer omits its per-item
     // fanout. Advisory flags alone do not prove this detail was removed.
-    if (_terminalDeletionIds.any(event.removedItemIds.contains)) _markDetailDeleted();
+    if (_terminalDeletionIds.any(event.removedItemIds.contains)) {
+      _markDetailDeleted();
+      return;
+    }
+    if (event.updatedItemIds.isEmpty) return;
+    if (event.updatedItemIds.contains(_metadata.id) || event.updatedItemIds.contains(widget.metadata.id)) {
+      unawaited(_refreshItemInPlace(_metadata));
+    }
+    for (final season in _seasons) {
+      if (event.updatedItemIds.contains(season.id)) {
+        unawaited(_refreshItemInPlace(season));
+      }
+    }
+    for (final episode in _episodes) {
+      if (event.updatedItemIds.contains(episode.id)) {
+        unawaited(_refreshItemInPlace(episode));
+      }
+    }
   }
 
   @override
@@ -932,21 +890,33 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
     return changed ? updatedHubs : hubs;
   }
 
+  final Set<String> _inFlightItemRefreshes = {};
+
   Future<void> _refreshItemInPlace(MediaItem source) async {
     if (!_canUseDetail) return;
     final serverId = source.serverId;
     if (serverId == null) return;
     final client = context.tryGetMediaClientForServer(ServerId(serverId));
     if (client == null) return;
+    if (!_inFlightItemRefreshes.add(source.globalKey)) return;
 
+    final session = client.authenticationSessionId;
     try {
       final refreshed = await client.fetchItem(source.id);
-      if (refreshed == null || !_canUseDetail) return;
+      if (refreshed == null ||
+          !_canUseDetail ||
+          !mounted ||
+          !identical(client.authenticationSessionId, session) ||
+          !identical(context.tryGetMediaClientForServer(ServerId(serverId)), client)) {
+        return;
+      }
       setStateIfMounted(() {
         _patchItemEverywhere(source.globalKey, refreshed);
       });
     } catch (e) {
       appLogger.d('Item refresh failed for ${source.globalKey}', error: e);
+    } finally {
+      _inFlightItemRefreshes.remove(source.globalKey);
     }
   }
 
@@ -4081,14 +4051,21 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
       children: [
         Positioned(
           left: spotlightLeft,
-          right: size.width * 0.40,
+          // The summary spans the full width; the logo, metadata and actions
+          // keep the hero's 60% text column via columnWidth (#3069).
+          right: spotlightLeft,
           top: spotlightTop,
           bottom: foregroundBottom,
           child: buildHiddenContent
               ? ListenableBuilder(
                   listenable: _tvDetailForegroundListenable,
-                  builder: (context, _) =>
-                      _buildTvDetailForeground(context, metadata, hideSpoilers: hideSpoilers, scale: detailScale),
+                  builder: (context, _) => _buildTvDetailForeground(
+                    context,
+                    metadata,
+                    hideSpoilers: hideSpoilers,
+                    scale: detailScale,
+                    columnWidth: size.width * 0.60 - spotlightLeft,
+                  ),
                 )
               : const SizedBox.shrink(),
         ),
@@ -4210,6 +4187,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
     MediaItem metadata, {
     required bool hideSpoilers,
     required double scale,
+    required double columnWidth,
   }) {
     final theme = Theme.of(context);
     final description = _tvDetailDescription(metadata, hideSpoilers: hideSpoilers);
@@ -4223,6 +4201,8 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxHeight <= 0 || constraints.maxWidth <= 0) return const SizedBox.shrink();
+
+        final columnMaxWidth = math.max(0.0, math.min(columnWidth, constraints.maxWidth));
 
         final availableHeight = constraints.maxHeight.isFinite ? constraints.maxHeight : 264.0;
         final desiredLogoHeight = 220 * scale;
@@ -4272,7 +4252,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
             descriptionHeight +
             actionGap +
             actionHeight;
-        final logoWidth = desiredLogoWidth < constraints.maxWidth ? desiredLogoWidth : constraints.maxWidth;
+        final logoWidth = desiredLogoWidth < columnMaxWidth ? desiredLogoWidth : columnMaxWidth;
 
         void openDetails() => _openTvDetailsSheet(context, metadata, hideSpoilers: hideSpoilers);
 
@@ -4309,7 +4289,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
                                 metadata,
                                 width: logoWidth,
                                 height: logoHeight,
-                                availableWidth: constraints.maxWidth,
+                                availableWidth: columnMaxWidth,
                                 titleBuilder: (context, title) => _buildDetailTitle(
                                   context,
                                   title,
@@ -4345,6 +4325,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
                                   children: [
                                     if (hasEpisodeTitle) ...[
                                       SizedBox(
+                                        width: columnMaxWidth,
                                         height: episodeTitleLineHeight,
                                         child: Align(
                                           alignment: .centerLeft,
@@ -4365,6 +4346,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
                                       SizedBox(height: episodeTitleGap),
                                     ],
                                     SizedBox(
+                                      width: columnMaxWidth,
                                       height: metadataLineHeight,
                                       child: Align(
                                         alignment: .centerLeft,
@@ -4396,7 +4378,7 @@ class _MediaDetailScreenState extends State<MediaDetailScreen>
                       ),
                     ),
                     SizedBox(height: actionGap),
-                    SizedBox(height: actionHeight, child: _buildActionButtons(metadata)),
+                    SizedBox(width: columnMaxWidth, height: actionHeight, child: _buildActionButtons(metadata)),
                   ],
                 ),
               ),

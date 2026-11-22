@@ -151,3 +151,8 @@ class PlaybackSessionTerminatedException extends MediaServerException {
   PlaybackSessionTerminatedException({required this.code, this.reason})
     : super('Server terminated playback session (code $code)${reason == null ? '' : ': $reason'}');
 }
+
+/// The server explicitly disabled deletion, including while confirmation was open.
+class MediaDeletionRefusedException extends MediaServerException {
+  const MediaDeletionRefusedException(super.message);
+}

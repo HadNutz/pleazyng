@@ -53,6 +53,7 @@ abstract final class SubtitleRejectionService {
       final age = now - timestamp;
       return age >= 0 && age <= retention.inMilliseconds;
     } catch (_) {
+      // best-effort: An unavailable rejection record supplies no matching rejection.
       return false;
     }
   }

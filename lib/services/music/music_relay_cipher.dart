@@ -112,6 +112,7 @@ class MusicRelayCipher {
       final bytes = base64Decode(value);
       return bytes.length == 32 ? bytes : null;
     } catch (_) {
+      // best-effort: A malformed nonce must be rejected before relay authentication.
       return null;
     }
   }

@@ -902,6 +902,11 @@ class _Translations$settings$ru extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Чекайте на это много минут без ввода, прежде чем показывать экран-защитник искусства.';
 	@override String get videoCodecOptionDescription => 'Дозвольте прямое воспроизведение этого кодек, когда он поддерживается.Непроверженные кодек перешифровываются медиа-сервером.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Буфер размер: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Продолжить просмотр';
+	@override String get showTopShelfContentDescription => 'Если выключить этот параметр, для всех профилей будет показано только изображение Pleazyng.';
+	@override String get topShelfUpdateFailed => 'Не удалось обновить Top Shelf. Попробуйте ещё раз.';
+	@override String get showFinishTime => 'Показывать время окончания';
+	@override String get showFinishTimeDescription => 'Показывать рядом с оставшимся временем, когда закончится видео.';
 }
 
 // Path: themeEditor
@@ -1156,6 +1161,7 @@ class _Translations$mediaMenu$ru extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng не смог проверить, какие файлы будут удалены, поэтому может быть удалено больше, чем указанный выше элемент. Отмените и попробуйте снова либо удалите в любом случае.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Ваш сервер не предоставил сведения о файлах для этого элемента, поэтому Pleazyng не может проверить, какие файлы будут удалены. Может быть удалено больше, чем указанный выше элемент.';
 	@override String get mediaDeletedSuccessfully => 'Медиаэлемент успешно удалён';
+	@override String get mediaDeletionDisabledOnServer => 'Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.';
 	@override String get mediaFailedToDelete => 'Не удалось удалить медиаэлемент';
 	@override String get rate => 'Оценить';
 	@override String get playFromBeginning => 'Воспроизвести сначала';
@@ -2968,6 +2974,7 @@ class _Translations$seerr$ru extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Сеанс был отклонён после повторного входа';
 	@override String get permissionDenied => 'Seerr отклонил это действие: у вашей учётной записи больше нет необходимого разрешения';
 	@override String get permissionRevoked => 'У вас больше нет разрешения запрашивать это';
+	@override String get withdrawRequest => 'Отозвать запрос';
 }
 
 // Path: services
@@ -4678,6 +4685,7 @@ class _Translations$common$mediaKind$ru extends Translations$common$mediaKind$en
 	@override String get clip => 'Клип';
 	@override String get photo => 'Фото';
 	@override String get folder => 'Папка';
+	@override String get photoAlbum => 'Фотоальбом';
 }
 
 // Path: settings.startupSectionOptions
@@ -5929,6 +5937,7 @@ extension on TranslationsRu {
 			'common.mediaKind.clip' => 'Клип',
 			'common.mediaKind.photo' => 'Фото',
 			'common.mediaKind.folder' => 'Папка',
+			'common.mediaKind.photoAlbum' => 'Фотоальбом',
 			'screens.licenses' => 'Лицензии',
 			'screens.switchProfile' => 'Сменить профиль',
 			'screens.subtitleStyling' => 'Стиль субтитров',
@@ -6235,9 +6244,9 @@ extension on TranslationsRu {
 			'settings.manageLibrariesDescription' => 'Изменять порядок и скрывать библиотеки',
 			'settings.companionRemoteServer' => 'Сервер удалённого управления',
 			'settings.companionRemoteServerDescription' => 'Разрешить мобильным устройствам в сети управлять этим приложением',
-			'settings.companionRemoteServerStartFailed' => 'Не удалось запустить сервер удалённого управления',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Не удалось запустить сервер удалённого управления',
 			'settings.companionRemoteServerStopFailed' => 'Не удалось остановить сервер удалённого управления',
 			'settings.autoPip' => 'Автоматический режим «картинка в картинке»',
 			'settings.autoPipDescription' => 'Автоматически включать режим «картинка в картинке» при выходе из приложения во время воспроизведения',
@@ -6451,6 +6460,11 @@ extension on TranslationsRu {
 			'settings.contentScreensaverDelayOptionDescription' => 'Чекайте на это много минут без ввода, прежде чем показывать экран-защитник искусства.',
 			'settings.videoCodecOptionDescription' => 'Дозвольте прямое воспроизведение этого кодек, когда он поддерживается.Непроверженные кодек перешифровываются медиа-сервером.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Буфер размер: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Продолжить просмотр',
+			'settings.showTopShelfContentDescription' => 'Если выключить этот параметр, для всех профилей будет показано только изображение Pleazyng.',
+			'settings.topShelfUpdateFailed' => 'Не удалось обновить Top Shelf. Попробуйте ещё раз.',
+			'settings.showFinishTime' => 'Показывать время окончания',
+			'settings.showFinishTimeDescription' => 'Показывать рядом с оставшимся временем, когда закончится видео.',
 			'themeEditor.builtIn' => 'Встроенные',
 			'themeEditor.presets' => 'Готовые',
 			'themeEditor.custom' => 'Своя',
@@ -6684,6 +6698,7 @@ extension on TranslationsRu {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng не смог проверить, какие файлы будут удалены, поэтому может быть удалено больше, чем указанный выше элемент. Отмените и попробуйте снова либо удалите в любом случае.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Ваш сервер не предоставил сведения о файлах для этого элемента, поэтому Pleazyng не может проверить, какие файлы будут удалены. Может быть удалено больше, чем указанный выше элемент.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Медиаэлемент успешно удалён',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Удаление медиафайлов на этом сервере отключено. Разрешите удаление медиафайлов в настройках библиотеки сервера.',
 			'mediaMenu.mediaFailedToDelete' => 'Не удалось удалить медиаэлемент',
 			'mediaMenu.rate' => 'Оценить',
 			'mediaMenu.playFromBeginning' => 'Воспроизвести сначала',
@@ -6743,6 +6758,8 @@ extension on TranslationsRu {
 			'accessibility.reduceMotion' => 'Снижение движения',
 			'accessibility.reduceMotionHint' => 'Остановить анимацию индикатора фокуса, переходы страниц и декоративные эффекты.',
 			'accessibility.largeTargets' => 'Большие цели доступа',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Давайте совместным контролям больше места для дотика и ассистивной навигации.',
 			'accessibility.navigationHint' => 'Используйте Tab и Shift+Tab для перехода между элементами управления, Enter или пробел для активации, Escape или кнопку «Назад» для закрытия. Когда книга открыта, доступны масштабирование и настройки чтения.',
 			'accessibility.textSizeDescription' => 'Скалируйте текст интерфейса в Pleazyng, помимо настройки размеров текста системы вашего устройства.',
@@ -6750,8 +6767,6 @@ extension on TranslationsRu {
 			'tooltips.shufflePlay' => 'Случайное воспроизведение',
 			'tooltips.playTrailer' => 'Воспроизвести трейлер',
 			'tooltips.markAsWatched' => 'Отметить как просмотренное',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Отметить как непросмотренное',
 			'audioTracks.track' => ({required Object n}) => 'Аудиодорожка ${n}',
 			'videoControls.audioLabel' => 'Аудио',
@@ -7257,6 +7272,8 @@ extension on TranslationsRu {
 			'discover.findNext.artworkLoading' => 'Загрузка обложки…',
 			'discover.findNext.artworkUnavailable' => 'Обложка недоступна',
 			'discover.findNext.savedFeedback' => 'Добавлено в сохранённые подборки',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Пока пропущено',
 			'discover.findNext.releaseToConfirm' => 'Отпустите для подтверждения',
 			'discover.findNext.remoteHint' => 'Фокус на обложке: ← / → выбор · Кнопка выбора: подробности · ↑ / ↓ перемещение фокуса',
@@ -7264,8 +7281,6 @@ extension on TranslationsRu {
 			'discover.rating' => 'Рейтинг',
 			'discover.director' => 'Режиссёр',
 			'discover.directors' => 'Режиссёры',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Фильм',
 			'discover.tvShow' => 'Сериал',
 			'discover.minutesLeft' => ({required Object minutes}) => 'Осталось ${minutes} мин',
@@ -7771,6 +7786,8 @@ extension on TranslationsRu {
 			'collections.selectCollection' => 'Выбрать коллекцию',
 			'collections.collectionName' => 'Название коллекции',
 			'collections.enterCollectionName' => 'Введите название коллекции',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Добавлено в коллекцию',
 			'collections.errorAddingToCollection' => 'Не удалось добавить в коллекцию',
 			'collections.created' => 'Коллекция создана',
@@ -7778,8 +7795,6 @@ extension on TranslationsRu {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Удалить "${title}" из этой коллекции?',
 			'collections.removedFromCollection' => 'Удалено из коллекции',
 			'collections.removeFromCollectionFailed' => 'Не удалось удалить из коллекции',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Ошибка удаления из коллекции: ${error}',
 			'collections.searchCollections' => 'Поиск коллекций...',
 			'playlists.title' => 'Плейлисты',
@@ -8285,6 +8300,8 @@ extension on TranslationsRu {
 			'performanceOverlay.decoder' => 'Декодер',
 			'performanceOverlay.rawDecoder' => 'Raw-декодер',
 			'performanceOverlay.tunneling' => 'Туннелирование',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Сквозной вывод',
 			'performanceOverlay.aspect' => 'Соотношение',
 			'performanceOverlay.rotation' => 'Поворот',
@@ -8292,8 +8309,6 @@ extension on TranslationsRu {
 			'performanceOverlay.dvPath' => 'Путь DV',
 			'performanceOverlay.dvRouteDecoder' => 'Декодер Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'Декодер Dolby Vision (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Базовый слой',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Базовый слой HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Базовый слой HLG',
@@ -8529,6 +8544,7 @@ extension on TranslationsRu {
 			'seerr.sessionRejectedAfterReauth' => 'Сеанс был отклонён после повторного входа',
 			'seerr.permissionDenied' => 'Seerr отклонил это действие: у вашей учётной записи больше нет необходимого разрешения',
 			'seerr.permissionRevoked' => 'У вас больше нет разрешения запрашивать это',
+			'seerr.withdrawRequest' => 'Отозвать запрос',
 			'services.title' => 'Сервисы',
 			'services.hubSubtitle' => 'Синхронизируйте прогресс просмотра и запрашивайте новые фильмы и сериалы.',
 			'services.integrations' => 'Интеграции',
@@ -8798,6 +8814,8 @@ extension on TranslationsRu {
 			'homeLayout.managePlexRowsDescription' => 'Открыто для организации домашних подборных строк',
 			'homeLayout.organizeHomeRows' => 'Организуйте домашние рельефы',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} строки: перемещение, Герой, Авто-слайд, удаление',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Организация ${library} рядов',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продолжайте смотреть + ${n} строки: движение, Библиотека, Дома, Герой, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Уход как герой карты',
@@ -8806,8 +8824,6 @@ extension on TranslationsRu {
 			'homeLayout.autoSlide' => 'Авто-Слайд',
 			'homeLayout.autoSlideDescription' => 'Привод (PC) и d-pad (TV) всегда работают и перезапускают часовой режим.',
 			'homeLayout.autoSlideEditDescription' => 'Также слайд на себе каждую секунду. отключается: только перемещается, когда вы нажмите стрелку (ПК) или нажмите левую/право на удаленную (ТВ).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Первый герой',
 			'homeLayout.showOnHome' => 'Показать на домашнем экране',
 			'homeLayout.home' => 'Главная',
@@ -9312,6 +9328,8 @@ extension on TranslationsRu {
 			'audiobook.customSpeed' => 'Скорость приспособления',
 			'audiobook.speedHelp' => 'Выберите скорость от 0,25× до 4×.',
 			'audiobook.apply' => 'Применить',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Часовник спящего',
 			'audiobook.sleepMinutes' => 'Минуты (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Остановиться после ${count} главы',
@@ -9320,8 +9338,6 @@ extension on TranslationsRu {
 			'audiobook.useDefaults' => 'Используйте эти контрольные системы для новых книг',
 			'audiobook.librarySort' => 'Сорт книг',
 			'audiobook.sortTitle' => 'Название',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Автор',
 			'audiobook.sortNarrator' => 'Притча',
 			'audiobook.sortSeries' => 'Серийный порядок',
@@ -9826,6 +9842,8 @@ extension on TranslationsRu {
 			'musicExperience.bluetoothDrivingHint' => 'Выберите подключённые выходы Bluetooth, которые автоматически открывают режим вождения.',
 			'musicTools.loudnessMissing' => 'Данные о громкости не получены',
 			'musicTools.loudnessRequested' => 'Запрос на анализ отправлен',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Эта версия сервера не поддерживает запросы на анализ',
 			'musicTools.serverHistory' => 'История воспроизведения на сервере',
 			'musicTools.nfcWrite' => 'Записать NFC-метку',
@@ -9834,8 +9852,6 @@ extension on TranslationsRu {
 			'musicTools.storageBudget' => 'Расчётный лимит загрузки (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Приглашённый диджей',
 			'musicTools.charts' => 'Статистика прослушиваний',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Открыть заново',
 			'musicTools.stations' => 'Музыкальные станции',
 			'musicTools.prompt' => 'Плейлист по описанию',

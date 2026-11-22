@@ -423,7 +423,7 @@ class _LocalMediaConverterScreenState extends State<LocalMediaConverterScreen> {
         try {
           await backup.delete();
         } catch (_) {
-          // A completed conversion is successful even if backup cleanup is deferred.
+          // best-effort: A completed conversion is successful even if backup cleanup is deferred.
         }
       }
       if (mounted) setState(() => _status = t.universalMedia.converterComplete);

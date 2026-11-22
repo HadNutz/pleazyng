@@ -210,6 +210,7 @@ Future<MediaVersionPreference?> savedMediaVersionPreferenceFor(MediaItem metadat
     final prefs = settingsService.read(SettingsService.mediaVersionPreferences);
     return prefs[_mediaVersionPreferenceKey(metadata)] ?? prefs[_legacyMediaVersionPreferenceKey(metadata)];
   } catch (_) {
+    // best-effort: Keep default version selection when the saved preference is unavailable.
     return null;
   }
 }

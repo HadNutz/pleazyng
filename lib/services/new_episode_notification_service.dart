@@ -382,6 +382,7 @@ class NewEpisodeNotificationService {
         showIds: (decoded['showIds'] as List? ?? const []).whereType<String>().toSet(),
       );
     } catch (_) {
+      // best-effort: Rebuild the episode snapshot when the previous value is unreadable.
       return null;
     }
   }

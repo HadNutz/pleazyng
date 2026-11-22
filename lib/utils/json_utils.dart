@@ -79,7 +79,7 @@ List<T> parseFlexibleJsonList<T>(Object? value, T Function(Map<String, dynamic> 
     try {
       result.add(parse(json));
     } catch (_) {
-      // A malformed row does not invalidate its siblings.
+      // best-effort: A malformed row does not invalidate its siblings.
     }
   }
   return result;
@@ -92,6 +92,7 @@ T? parseFlexibleJsonObject<T>(Object? value, T Function(Map<String, dynamic> jso
   try {
     return parse(json);
   } catch (_) {
+    // best-effort: A malformed JSON value cannot yield a usable object.
     return null;
   }
 }

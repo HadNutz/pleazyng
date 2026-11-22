@@ -322,6 +322,7 @@ class _CatalogItemDetailScreenState extends State<CatalogItemDetailScreen> {
             final path = await downloads.getVideoFilePath(copy.globalKey).timeout(const Duration(seconds: 2));
             return path == null ? null : copy.globalKey;
           } catch (_) {
+            // best-effort: An unreadable download cannot be offered as a playable local copy.
             return null;
           }
         }),

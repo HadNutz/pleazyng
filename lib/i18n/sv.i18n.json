@@ -224,7 +224,8 @@
       "playlist": "Spellista",
       "clip": "Klipp",
       "photo": "Foto",
-      "folder": "Mapp"
+      "folder": "Mapp",
+      "photoAlbum": "Fotoalbum"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Buffer storlek: ${size} MiB"
+    "streamBufferSizeMiB": "Buffer storlek: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Fortsätt titta",
+    "showTopShelfContentDescription": "Stäng av för att endast visa Pleazyng-bilden för alla profiler.",
+    "topShelfUpdateFailed": "Det gick inte att uppdatera Top Shelf. Försök igen.",
+    "showFinishTime": "Visa sluttid",
+    "showFinishTimeDescription": "Visa när videon slutar bredvid återstående tid."
   },
   "themeEditor": {
     "builtIn": "Inbyggda",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng kunde inte kontrollera vilka filer detta tar bort, så det kan ta bort mer än objektet ovan. Avbryt och försök igen, eller ta bort ändå.",
     "deleteScopeUnverifiedNoFileInfo": "Din server tillhandahöll inte filinformation för detta objekt, så Pleazyng kan inte kontrollera vilka filer detta tar bort. Det kan ta bort mer än objektet ovan.",
     "mediaDeletedSuccessfully": "Medieobjektet har tagits bort",
+    "mediaDeletionDisabledOnServer": "Radering av medier är avstängd på den här servern. Tillåt radering av medier i serverns biblioteksinställningar.",
     "mediaFailedToDelete": "Det gick inte att ta bort medieobjektet",
     "rate": "Betygsätt",
     "playFromBeginning": "Spela från början",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr returnerade ingen användarinformation",
     "sessionRejectedAfterReauth": "Sessionen avvisades efter den nya inloggningen",
     "permissionDenied": "Seerr nekade åtgärden: ditt konto har inte längre den behörighet som krävs",
-    "permissionRevoked": "Du har inte längre behörighet att begära detta"
+    "permissionRevoked": "Du har inte längre behörighet att begära detta",
+    "withdrawRequest": "Dra tillbaka begäran"
   },
   "services": {
     "title": "Tjänster",

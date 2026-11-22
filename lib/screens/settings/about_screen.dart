@@ -2,7 +2,6 @@ import 'package:plezy/widgets/app_brand.dart';
 import 'package:flutter/material.dart';
 import 'package:plezy/widgets/app_icon.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/focused_scroll_scaffold.dart';
@@ -10,6 +9,7 @@ import '../../widgets/focusable_list_tile.dart';
 import '../../widgets/settings_section.dart';
 import '../../i18n/strings.g.dart';
 import '../../theme/mono_tokens.dart';
+import '../../utils/app_version.dart';
 import '../iptv/iptv_picker_credit.dart';
 import 'licenses_screen.dart';
 import 'privacy_screen.dart';
@@ -17,14 +17,14 @@ import 'privacy_screen.dart';
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
-  static final Future<PackageInfo> _packageInfoFuture = PackageInfo.fromPlatform();
+  static final Future<AppVersion> _appVersionFuture = AppVersion.current();
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<PackageInfo>(
-      future: _packageInfoFuture,
+    return FutureBuilder<AppVersion>(
+      future: _appVersionFuture,
       builder: (context, snapshot) {
-        final appVersion = snapshot.data?.version ?? '';
+        final appVersion = snapshot.data?.version;
         return FocusedScrollScaffold(
           title: Text(t.about.title),
           slivers: [
@@ -41,7 +41,8 @@ class AboutScreen extends StatelessWidget {
                         const AppBrandWordmark(),
                         const SizedBox(height: 8),
                         Text(
-                          t.about.versionLabel(version: appVersion),
+                          // Blank while loading or when the platform can't report it; the line keeps its height.
+                          appVersion == null ? '' : t.about.versionLabel(version: appVersion),
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: tokens(context).textMuted),
                         ),
                         const SizedBox(height: 24),

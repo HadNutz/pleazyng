@@ -232,6 +232,7 @@ Future<bool> _launchAndroidIntent(String url, {required String package, bool fal
   try {
     return await launchUrl(intentUri, mode: LaunchMode.externalApplication);
   } catch (_) {
+    // best-effort: Fall back to the URL only when this launch request allows it.
     return fallbackToUrl ? _launchWithUrl(url) : false;
   }
 }
@@ -603,6 +604,7 @@ class KnownPlayers {
     try {
       return _allPlayers.firstWhere((p) => p.id == id);
     } catch (_) {
+      // best-effort: A removed or unknown player has no matching preference.
       return null;
     }
   }

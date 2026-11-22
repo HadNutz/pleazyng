@@ -902,6 +902,11 @@ class _Translations$settings$uk extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Чекайте на це багато хвилин без входу, перш ніж показати екран-захисник художньої роботи.';
 	@override String get videoCodecOptionDescription => 'Дозвольте безпосередній відтворення цього кодек, коли він підтримується.Неперевірені кодек перешифруються медіа-сервером.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Буффер розмір: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Продовжити перегляд';
+	@override String get showTopShelfContentDescription => 'Якщо вимкнути цей параметр, усі профілі бачитимуть лише зображення Pleazyng.';
+	@override String get topShelfUpdateFailed => 'Не вдалося оновити Top Shelf. Спробуйте ще раз.';
+	@override String get showFinishTime => 'Показувати час завершення';
+	@override String get showFinishTimeDescription => 'Поруч із залишком часу показує, коли завершиться відео.';
 }
 
 // Path: themeEditor
@@ -1156,6 +1161,7 @@ class _Translations$mediaMenu$uk extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng не вдалося перевірити, які файли буде видалено, тому може бути видалено більше, ніж зазначений вище елемент. Скасуйте дію та спробуйте знову або видаліть попри це.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Сервер не надав відомостей про файли цього елемента, тому Pleazyng не може перевірити, які файли буде видалено. Може бути видалено більше, ніж зазначений вище елемент.';
 	@override String get mediaDeletedSuccessfully => 'Медіа-елементи успішно видалені';
+	@override String get mediaDeletionDisabledOnServer => 'Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.';
 	@override String get mediaFailedToDelete => 'Не вдалося видалити медіа';
 	@override String get rate => 'Оцінити';
 	@override String get playFromBeginning => 'Грати з початку';
@@ -2964,6 +2970,7 @@ class _Translations$seerr$uk extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Засідання було відхилено після повторного підписання.';
 	@override String get permissionDenied => 'Seerr відмовився від цієї дії: Ваш обліковий запис більше не має необхідного дозволу';
 	@override String get permissionRevoked => 'Ви більше не маєте права вимагати цього.';
+	@override String get withdrawRequest => 'Відкликати запит';
 }
 
 // Path: services
@@ -4674,6 +4681,7 @@ class _Translations$common$mediaKind$uk extends Translations$common$mediaKind$en
 	@override String get clip => 'Кліп';
 	@override String get photo => 'Фото';
 	@override String get folder => 'Тека';
+	@override String get photoAlbum => 'Фотоальбом';
 }
 
 // Path: settings.startupSectionOptions
@@ -5923,6 +5931,7 @@ extension on TranslationsUk {
 			'common.mediaKind.clip' => 'Кліп',
 			'common.mediaKind.photo' => 'Фото',
 			'common.mediaKind.folder' => 'Тека',
+			'common.mediaKind.photoAlbum' => 'Фотоальбом',
 			'screens.licenses' => 'ліцензії',
 			'screens.switchProfile' => 'Профіль перемикача',
 			'screens.subtitleStyling' => 'Стилізація субтитрів',
@@ -6229,9 +6238,9 @@ extension on TranslationsUk {
 			'settings.manageLibrariesDescription' => 'Завантажити та приховати бібліотеки',
 			'settings.companionRemoteServer' => 'Віддалені сервери',
 			'settings.companionRemoteServerDescription' => 'Дозвольте мобільним пристроям у вашій мережі контролювати цю програму',
-			'settings.companionRemoteServerStartFailed' => 'Не можна було запустити сервер товаришів',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Не можна було запустити сервер товаришів',
 			'settings.companionRemoteServerStopFailed' => 'Не можна було зупинити сервер товаришів',
 			'settings.autoPip' => 'Створення Auto Picture-in-Picture',
 			'settings.autoPipDescription' => 'Автоматично введіть зображення в зображення, коли ви покидаєте додаток під час відтворення',
@@ -6445,6 +6454,11 @@ extension on TranslationsUk {
 			'settings.contentScreensaverDelayOptionDescription' => 'Чекайте на це багато хвилин без входу, перш ніж показати екран-захисник художньої роботи.',
 			'settings.videoCodecOptionDescription' => 'Дозвольте безпосередній відтворення цього кодек, коли він підтримується.Неперевірені кодек перешифруються медіа-сервером.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Буффер розмір: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Продовжити перегляд',
+			'settings.showTopShelfContentDescription' => 'Якщо вимкнути цей параметр, усі профілі бачитимуть лише зображення Pleazyng.',
+			'settings.topShelfUpdateFailed' => 'Не вдалося оновити Top Shelf. Спробуйте ще раз.',
+			'settings.showFinishTime' => 'Показувати час завершення',
+			'settings.showFinishTimeDescription' => 'Поруч із залишком часу показує, коли завершиться відео.',
 			'themeEditor.builtIn' => 'Будівництво',
 			'themeEditor.presets' => 'Президи',
 			'themeEditor.custom' => 'Користувацький',
@@ -6678,6 +6692,7 @@ extension on TranslationsUk {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng не вдалося перевірити, які файли буде видалено, тому може бути видалено більше, ніж зазначений вище елемент. Скасуйте дію та спробуйте знову або видаліть попри це.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Сервер не надав відомостей про файли цього елемента, тому Pleazyng не може перевірити, які файли буде видалено. Може бути видалено більше, ніж зазначений вище елемент.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Медіа-елементи успішно видалені',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Видалення медіафайлів на цьому сервері вимкнено. Дозвольте видалення медіафайлів у налаштуваннях бібліотеки сервера.',
 			'mediaMenu.mediaFailedToDelete' => 'Не вдалося видалити медіа',
 			'mediaMenu.rate' => 'Оцінити',
 			'mediaMenu.playFromBeginning' => 'Грати з початку',
@@ -6737,6 +6752,8 @@ extension on TranslationsUk {
 			'accessibility.reduceMotion' => 'Зменшення руху',
 			'accessibility.reduceMotionHint' => 'Зупиняє анімацію індикатора фокусу, переходи сторінок і декоративні ефекти.',
 			'accessibility.largeTargets' => 'Більшість цілей',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Дайте спільним контролям більше місця для дотику і асистентської навігації.',
 			'accessibility.navigationHint' => 'Використовуйте Tab і Shift+Tab для переходу між елементами керування, Enter або пробіл для активації, а Escape або кнопку «Назад» для закриття. Коли книгу відкрито, доступні масштабування й налаштування читання.',
 			'accessibility.textSizeDescription' => 'Розмір інтерфейсу тексту в Pleazyng, а також налаштування розміру тексту системи вашого пристрою.',
@@ -6744,8 +6761,6 @@ extension on TranslationsUk {
 			'tooltips.shufflePlay' => 'Шуффлей грає',
 			'tooltips.playTrailer' => 'Грати в трейлер',
 			'tooltips.markAsWatched' => 'Марк як спостерігається',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Марк як невідомий',
 			'audioTracks.track' => ({required Object n}) => 'Анонс звуку ${n}',
 			'videoControls.audioLabel' => 'Аудіо',
@@ -7251,6 +7266,8 @@ extension on TranslationsUk {
 			'discover.findNext.artworkLoading' => 'Завантаження обкладинки…',
 			'discover.findNext.artworkUnavailable' => 'Обкладинка недоступна',
 			'discover.findNext.savedFeedback' => 'Додано до збережених добірок',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Наразі пропущено',
 			'discover.findNext.releaseToConfirm' => 'Відпустіть для підтвердження',
 			'discover.findNext.remoteHint' => 'Фокус на обкладинці: ← / → вибір · Кнопка вибору: подробиці · ↑ / ↓ переміщення фокусу',
@@ -7258,8 +7275,6 @@ extension on TranslationsUk {
 			'discover.rating' => 'Рейтинг',
 			'discover.director' => 'Режисер',
 			'discover.directors' => 'Режисери',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Фільми',
 			'discover.tvShow' => 'Телевізійне шоу',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} хвилини',
@@ -7765,6 +7780,8 @@ extension on TranslationsUk {
 			'collections.selectCollection' => 'Вибір колекції',
 			'collections.collectionName' => 'Колекційне ім\'я',
 			'collections.enterCollectionName' => 'Введіть колекційне ім\'я',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Додано до колекції',
 			'collections.errorAddingToCollection' => 'Не вдалося додати до колекції',
 			'collections.created' => 'Колекція створена',
@@ -7772,8 +7789,6 @@ extension on TranslationsUk {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Вилучити «${title}» із цієї колекції?',
 			'collections.removedFromCollection' => 'Вилучено з колекції',
 			'collections.removeFromCollectionFailed' => 'Не вдалося зняти з колекції',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Помилка у видаленні з колекції: ${error}',
 			'collections.searchCollections' => 'Пошук колекцій...',
 			'playlists.title' => 'Плейлисти',
@@ -8279,6 +8294,8 @@ extension on TranslationsUk {
 			'performanceOverlay.decoder' => 'Декорація',
 			'performanceOverlay.rawDecoder' => 'РОЙ ДЕКОДЕР',
 			'performanceOverlay.tunneling' => 'тунелі',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Пастирський',
 			'performanceOverlay.aspect' => 'Погляд',
 			'performanceOverlay.rotation' => 'Обертання',
@@ -8286,8 +8303,6 @@ extension on TranslationsUk {
 			'performanceOverlay.dvPath' => 'ДВ ПУТ',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision Декодер',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодер (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Базовий шар',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 базовий шар',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG базовий шар',
@@ -8523,6 +8538,7 @@ extension on TranslationsUk {
 			'seerr.sessionRejectedAfterReauth' => 'Засідання було відхилено після повторного підписання.',
 			'seerr.permissionDenied' => 'Seerr відмовився від цієї дії: Ваш обліковий запис більше не має необхідного дозволу',
 			'seerr.permissionRevoked' => 'Ви більше не маєте права вимагати цього.',
+			'seerr.withdrawRequest' => 'Відкликати запит',
 			'services.title' => 'Сервіси',
 			'services.hubSubtitle' => 'Sync спостерігає за прогресом і запитує нові заголовки.',
 			'services.integrations' => 'Інтеграції',
@@ -8792,6 +8808,8 @@ extension on TranslationsUk {
 			'homeLayout.managePlexRowsDescription' => 'Відкрито для організації домашньо вибраних рядків',
 			'homeLayout.organizeHomeRows' => 'Організуйте домашній ряд',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} рядки: переміщення, Герої, Авто-Слайд, видалення',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Організуйте ${library} рядки',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продовжуйте дивитися + ${n} рядки: переміщення, Бібліотека, Домашній, Герої, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Повернення як героїчна картка',
@@ -8800,8 +8818,6 @@ extension on TranslationsUk {
 			'homeLayout.autoSlide' => 'Автомобільний слайд',
 			'homeLayout.autoSlideDescription' => 'Пристрій (PC) і d-pad (TV) завжди працюють і відновлюють час.',
 			'homeLayout.autoSlideEditDescription' => 'Вимкніть: рухається тільки тоді, коли натискаєте стрілку (ПК) або натискаєте ліво/право на віддаленому (ТВ).',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Перший герой',
 			'homeLayout.showOnHome' => 'Показати на домашньому екрані',
 			'homeLayout.home' => 'Головна',
@@ -9306,6 +9322,8 @@ extension on TranslationsUk {
 			'audiobook.customSpeed' => 'Швидкість відтворення',
 			'audiobook.speedHelp' => 'Виберіть швидкість від 0,25× до 4×.',
 			'audiobook.apply' => 'Заявка',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Кваліфікований час сну',
 			'audiobook.sleepMinutes' => '1 хвилини (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Залишився після розділів ${count}',
@@ -9314,8 +9332,6 @@ extension on TranslationsUk {
 			'audiobook.useDefaults' => 'Використовуйте ці контрольні системи для нових книг',
 			'audiobook.librarySort' => 'Сорт книг',
 			'audiobook.sortTitle' => 'Заголовок',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Автор',
 			'audiobook.sortNarrator' => 'Назавжди',
 			'audiobook.sortSeries' => 'Серія замовлення',
@@ -9820,6 +9836,8 @@ extension on TranslationsUk {
 			'musicExperience.bluetoothDrivingHint' => 'Виберіть підключені виходи Bluetooth, які автоматично відкривають режим водіння.',
 			'musicTools.loudnessMissing' => 'Дані про гучність не отримано',
 			'musicTools.loudnessRequested' => 'Запит на аналіз надіслано',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Ця версія сервера не підтримує запити на аналіз',
 			'musicTools.serverHistory' => 'Історія відтворення на сервері',
 			'musicTools.nfcWrite' => 'Записати NFC-мітку',
@@ -9828,8 +9846,6 @@ extension on TranslationsUk {
 			'musicTools.storageBudget' => 'Орієнтовний ліміт завантаження (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Запрошений діджей',
 			'musicTools.charts' => 'Статистика прослуховувань',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Відкрити знову',
 			'musicTools.stations' => 'Музичні станції',
 			'musicTools.prompt' => 'Плейлист за описом',

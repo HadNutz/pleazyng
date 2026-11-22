@@ -484,7 +484,7 @@ DiscoveryChoiceType? discoveryTypeForMediaKind(MediaKind kind) => switch (kind) 
   // These are navigation containers rather than individual playable works,
   // but Plezy has real detail routes for them.
   MediaKind.collection || MediaKind.playlist => DiscoveryChoiceType.video,
-  MediaKind.photo || MediaKind.folder || MediaKind.unknown => null,
+  MediaKind.photoAlbum || MediaKind.photo || MediaKind.folder || MediaKind.unknown => null,
 };
 
 DiscoveryChoiceType? discoveryTypeForSourceKind(SourceItemKind kind) => switch (kind) {

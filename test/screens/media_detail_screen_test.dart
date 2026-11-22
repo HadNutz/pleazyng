@@ -3378,6 +3378,36 @@ void main() {
       expect(find.byType(FocusableActionBar), findsOneWidget);
     });
 
+    testWidgets('online detail refreshes matching item in place when updatedItemIds settles', (tester) async {
+      final client = _FakeMediaServerClient(show: movie, childrenByParent: {});
+      await pumpProfileNavigator(tester, (_) => mediaDetailRoute(metadata: movie), client: client);
+      expect(find.text(movie.displayTitle), findsOneWidget);
+      final readsBefore = client.itemReads;
+
+      // Unrelated updatedItemIds must not trigger a refetch.
+      LibraryContentNotifier().notifyChanged(
+        LibraryChangeEvent(serverId: ServerId('server_1'), itemsUpdated: true, updatedItemIds: {'unrelated_movie'}),
+      );
+      await settleDetail(tester);
+      expect(client.itemReads, readsBefore);
+
+      LibraryContentNotifier().notifyChanged(
+        LibraryChangeEvent(serverId: ServerId('other_server'), itemsUpdated: true, updatedItemIds: {movie.id}),
+      );
+      await settleDetail(tester);
+      expect(client.itemReads, readsBefore, reason: 'two servers may issue the same item ID');
+
+      // Matching updatedItemIds refreshes the displayed item in place.
+      client.show = movie.copyWith(title: 'Refreshed Movie Title');
+      LibraryContentNotifier().notifyChanged(
+        LibraryChangeEvent(serverId: ServerId('server_1'), itemsUpdated: true, updatedItemIds: {movie.id}),
+      );
+      await settleDetail(tester);
+
+      expect(client.itemReads, readsBefore + 1);
+      expect(find.text('Refreshed Movie Title'), findsOneWidget);
+    });
+
     testWidgets('offline detail ignores server removals but accepts a matching download ancestor deletion', (
       tester,
     ) async {
@@ -3630,7 +3660,10 @@ Map<String, dynamic> _previewItem(
 }
 
 class _FakeMediaServerClient implements MediaServerClient {
-  final MediaItem show;
+  @override
+  final Object authenticationSessionId = Object();
+
+  MediaItem show;
   final Map<String, List<MediaItem>> childrenByParent;
   final Map<String, Future<List<MediaItem>>> childrenPageFutures;
 

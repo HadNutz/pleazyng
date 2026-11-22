@@ -896,6 +896,11 @@ class _Translations$settings$id extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Tunggu ini beberapa menit tanpa input sebelum menunjukkan karya seni screensaver.';
 	@override String get videoCodecOptionDescription => 'Memungkinkan playback langsung untuk codec ini ketika didukung. codec yang tidak disemak dikodifikasi oleh server media.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Ukuran Buffer: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Lanjutkan menonton';
+	@override String get showTopShelfContentDescription => 'Nonaktifkan untuk hanya menampilkan gambar Pleazyng bagi semua profil.';
+	@override String get topShelfUpdateFailed => 'Top Shelf tidak dapat diperbarui. Coba lagi.';
+	@override String get showFinishTime => 'Tampilkan waktu selesai';
+	@override String get showFinishTimeDescription => 'Tampilkan waktu berakhirnya video di samping waktu tersisa.';
 }
 
 // Path: themeEditor
@@ -1141,6 +1146,7 @@ class _Translations$mediaMenu$id extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus, sehingga mungkin menghapus lebih dari item yang disebutkan di atas. Batalkan dan coba lagi, atau tetap hapus.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Server tidak memberikan rincian berkas untuk item ini, sehingga Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus. Penghapusan mungkin mencakup lebih dari item yang disebutkan di atas.';
 	@override String get mediaDeletedSuccessfully => 'Media item dihapus dengan sukses';
+	@override String get mediaDeletionDisabledOnServer => 'Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.';
 	@override String get mediaFailedToDelete => 'gagal menghapus media item';
 	@override String get rate => 'Rating';
 	@override String get playFromBeginning => 'Mainkan dari awal';
@@ -2911,6 +2917,7 @@ class _Translations$seerr$id extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'Perjanjian itu ditolak setelah ditandatangani lagi.';
 	@override String get permissionDenied => 'Seerr menolak tindakan ini: akun Anda tidak lagi memiliki izin yang diperlukan';
 	@override String get permissionRevoked => 'Anda tidak lagi memiliki izin untuk meminta ini';
+	@override String get withdrawRequest => 'Tarik permintaan';
 }
 
 // Path: services
@@ -4609,6 +4616,7 @@ class _Translations$common$mediaKind$id extends Translations$common$mediaKind$en
 	@override String get clip => 'Fitur';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Map';
+	@override String get photoAlbum => 'Album foto';
 }
 
 // Path: settings.startupSectionOptions
@@ -5854,6 +5862,7 @@ extension on TranslationsId {
 			'common.mediaKind.clip' => 'Fitur',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Map',
+			'common.mediaKind.photoAlbum' => 'Album foto',
 			'screens.licenses' => 'Lisensi',
 			'screens.switchProfile' => 'Profil Switch',
 			'screens.subtitleStyling' => 'Subtitle gaya',
@@ -6160,9 +6169,9 @@ extension on TranslationsId {
 			'settings.manageLibrariesDescription' => 'Membuka dan menyembunyikan perpustakaan',
 			'settings.companionRemoteServer' => 'Layanan Remote Server',
 			'settings.companionRemoteServerDescription' => 'Memungkinkan perangkat mobile di jaringan Anda untuk mengontrol aplikasi ini',
-			'settings.companionRemoteServerStartFailed' => 'Tidak bisa memulai server',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Tidak bisa memulai server',
 			'settings.companionRemoteServerStopFailed' => 'Tidak bisa menghentikan server',
 			'settings.autoPip' => 'Foto-foto dalam gambar',
 			'settings.autoPipDescription' => 'Secara otomatis masuk gambar-in-gambar ketika Anda meninggalkan aplikasi selama pemutaran',
@@ -6376,6 +6385,11 @@ extension on TranslationsId {
 			'settings.contentScreensaverDelayOptionDescription' => 'Tunggu ini beberapa menit tanpa input sebelum menunjukkan karya seni screensaver.',
 			'settings.videoCodecOptionDescription' => 'Memungkinkan playback langsung untuk codec ini ketika didukung. codec yang tidak disemak dikodifikasi oleh server media.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Ukuran Buffer: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Lanjutkan menonton',
+			'settings.showTopShelfContentDescription' => 'Nonaktifkan untuk hanya menampilkan gambar Pleazyng bagi semua profil.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf tidak dapat diperbarui. Coba lagi.',
+			'settings.showFinishTime' => 'Tampilkan waktu selesai',
+			'settings.showFinishTimeDescription' => 'Tampilkan waktu berakhirnya video di samping waktu tersisa.',
 			'themeEditor.builtIn' => 'dibangun',
 			'themeEditor.presets' => 'Preset',
 			'themeEditor.custom' => 'Kustom',
@@ -6609,6 +6623,7 @@ extension on TranslationsId {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus, sehingga mungkin menghapus lebih dari item yang disebutkan di atas. Batalkan dan coba lagi, atau tetap hapus.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Server tidak memberikan rincian berkas untuk item ini, sehingga Pleazyng tidak dapat memeriksa berkas mana yang akan dihapus. Penghapusan mungkin mencakup lebih dari item yang disebutkan di atas.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media item dihapus dengan sukses',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Penghapusan media dinonaktifkan di server ini. Izinkan penghapusan media di pengaturan pustaka server.',
 			'mediaMenu.mediaFailedToDelete' => 'gagal menghapus media item',
 			'mediaMenu.rate' => 'Rating',
 			'mediaMenu.playFromBeginning' => 'Mainkan dari awal',
@@ -6668,6 +6683,8 @@ extension on TranslationsId {
 			'accessibility.reduceMotion' => 'Mengurangi gerakan',
 			'accessibility.reduceMotionHint' => 'Hentikan animasi indikator fokus, transisi halaman, dan efek dekoratif.',
 			'accessibility.largeTargets' => 'Target Touch yang lebih besar',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Memberi kontrol yang dikongsi lebih banyak ruang untuk sentuhan dan navigasi asisten.',
 			'accessibility.navigationHint' => 'Gunakan Tab dan Shift+Tab untuk berpindah antar kontrol, Enter atau Space untuk mengaktifkan, dan Escape atau tombol Kembali untuk menutup. Zoom dan preferensi membaca tersedia saat buku terbuka.',
 			'accessibility.textSizeDescription' => 'Skala antara muka teks dalam Pleazyng ditambah dengan pengaturan ukuran teks sistem perangkat Anda.',
@@ -6675,8 +6692,6 @@ extension on TranslationsId {
 			'tooltips.shufflePlay' => 'Permainan Shuffle',
 			'tooltips.playTrailer' => 'Bermain Trailer',
 			'tooltips.markAsWatched' => 'Mark yang ditonton',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Mark yang tidak diperhatikan',
 			'audioTracks.track' => ({required Object n}) => 'Trek audio ${n}',
 			'videoControls.audioLabel' => 'Audio yang',
@@ -7182,6 +7197,8 @@ extension on TranslationsId {
 			'discover.findNext.artworkLoading' => 'Memuat gambar…',
 			'discover.findNext.artworkUnavailable' => 'Gambar tidak tersedia',
 			'discover.findNext.savedFeedback' => 'Ditambahkan ke pilihan tersimpan',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Dilewati untuk saat ini',
 			'discover.findNext.releaseToConfirm' => 'Lepaskan untuk mengonfirmasi',
 			'discover.findNext.remoteHint' => 'Saat sampul terfokus: ← / → memilih · Pilih: detail · ↑ / ↓ pindah fokus',
@@ -7189,8 +7206,6 @@ extension on TranslationsId {
 			'discover.rating' => 'Peringkat',
 			'discover.director' => 'Direktur',
 			'discover.directors' => 'Direktur',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'televisi show',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min dibatasi',
@@ -7696,6 +7711,8 @@ extension on TranslationsId {
 			'collections.selectCollection' => 'Seleksi Seleksi',
 			'collections.collectionName' => 'Nama Koleksi',
 			'collections.enterCollectionName' => 'Masukkan nama koleksi',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Ditambahkan ke Koleksi',
 			'collections.errorAddingToCollection' => 'gagal menambahkan ke koleksi',
 			'collections.created' => 'Koleksi yang diciptakan',
@@ -7703,8 +7720,6 @@ extension on TranslationsId {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Hapus “${title}” dari koleksi ini?',
 			'collections.removedFromCollection' => 'Menghapus dari Koleksi',
 			'collections.removeFromCollectionFailed' => 'Tidak berhasil keluar dari koleksi',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Kesalahan penghapusan dari koleksi: ${error}',
 			'collections.searchCollections' => 'Koleksi pencarian...',
 			'playlists.title' => 'Daftar putar',
@@ -8210,6 +8225,8 @@ extension on TranslationsId {
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Kekuatan Decoder',
 			'performanceOverlay.tunneling' => 'tunel',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Pasangan',
 			'performanceOverlay.aspect' => 'Aspek',
 			'performanceOverlay.rotation' => 'Rotasi',
@@ -8217,8 +8234,6 @@ extension on TranslationsId {
 			'performanceOverlay.dvPath' => 'Jalan Dwi',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision penghapusan',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision decoder (P7 → 8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Lantai dasar',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lapisan dasar',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Lantai dasar HLG',
@@ -8454,6 +8469,7 @@ extension on TranslationsId {
 			'seerr.sessionRejectedAfterReauth' => 'Perjanjian itu ditolak setelah ditandatangani lagi.',
 			'seerr.permissionDenied' => 'Seerr menolak tindakan ini: akun Anda tidak lagi memiliki izin yang diperlukan',
 			'seerr.permissionRevoked' => 'Anda tidak lagi memiliki izin untuk meminta ini',
+			'seerr.withdrawRequest' => 'Tarik permintaan',
 			'services.title' => 'Layanan',
 			'services.hubSubtitle' => 'Sync menonton kemajuan dan meminta judul baru.',
 			'services.integrations' => 'Integrasi',
@@ -8723,6 +8739,8 @@ extension on TranslationsId {
 			'homeLayout.managePlexRowsDescription' => 'Terbuka untuk mengatur rangkaian yang dipilih di rumah',
 			'homeLayout.organizeHomeRows' => 'Mengatur rangkaian rumah',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} baris: bergerak, Hero, Auto-slide, menghapus',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Mengatur ${library} baris',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Selanjutnya Menonton + ${n} baris: bergerak, Perpustakaan, Rumah, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render sebagai kartu pahlawan',
@@ -8731,8 +8749,6 @@ extension on TranslationsId {
 			'homeLayout.autoSlide' => 'Seluruh Slide',
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) dan d-pad (TV) selalu bekerja dan memulai kembali timer.',
 			'homeLayout.autoSlideEditDescription' => 'Selain itu, ia juga meluncur sendiri setiap beberapa detik. Off: hanya bergerak ketika Anda mengklik pistol (PC) atau tekan kiri/kanan pada remote (TV). Arrow dan d-pad selalu bekerja sama.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Memungkinkan Hero Pertama',
 			'homeLayout.showOnHome' => 'Tampilkan pada Home Screen',
 			'homeLayout.home' => 'rumah',
@@ -9237,6 +9253,8 @@ extension on TranslationsId {
 			'audiobook.customSpeed' => 'Kecepatan playback yang disesuaikan',
 			'audiobook.speedHelp' => 'Pilih kecepatan dari 0.25× hingga 4×.',
 			'audiobook.apply' => 'Mengaplikasikan',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Waktu Tidur Custom',
 			'audiobook.sleepMinutes' => '1 menit (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Berhenti setelah ${count} bab',
@@ -9245,8 +9263,6 @@ extension on TranslationsId {
 			'audiobook.useDefaults' => 'Gunakan kontrol pendengaran ini untuk buku baru',
 			'audiobook.librarySort' => 'Berbagai Buku',
 			'audiobook.sortTitle' => 'Judul',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Penulis',
 			'audiobook.sortNarrator' => 'narator',
 			'audiobook.sortSeries' => 'Serangkaian perintah',
@@ -9751,6 +9767,8 @@ extension on TranslationsId {
 			'musicExperience.bluetoothDrivingHint' => 'Pilih output Bluetooth terhubung yang otomatis membuka tampilan berkendara.',
 			'musicTools.loudnessMissing' => 'Tidak ada data kenyaringan yang dikembalikan',
 			'musicTools.loudnessRequested' => 'Permintaan analisis dikirim',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Versi server ini tidak mendukung permintaan analisis',
 			'musicTools.serverHistory' => 'Riwayat pemutaran server',
 			'musicTools.nfcWrite' => 'Tulis tag NFC',
@@ -9759,8 +9777,6 @@ extension on TranslationsId {
 			'musicTools.storageBudget' => 'Perkiraan batas unduhan (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'DJ tamu',
 			'musicTools.charts' => 'Peringkat pendengaran',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Temukan kembali',
 			'musicTools.stations' => 'Stasiun musik',
 			'musicTools.prompt' => 'Daftar putar dari deskripsi',

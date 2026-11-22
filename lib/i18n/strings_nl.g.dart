@@ -898,6 +898,11 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String get contentScreensaverDelayOptionDescription => 'Wacht dit vele minuten zonder input voordat u screensaver kunstwerk toont.';
 	@override String get videoCodecOptionDescription => 'Toegeeft direct afspelen voor deze codec wanneer ondersteund. Unchecked codecs worden gecodeerd door de media server.';
 	@override String streamBufferSizeMiB({required Object size}) => 'Buffer grootte: ${size} MiB';
+	@override String get showTopShelfContent => 'Apple TV Top Shelf · Verder kijken';
+	@override String get showTopShelfContentDescription => 'Schakel dit uit om voor alle profielen alleen de Pleazyng-afbeelding te tonen.';
+	@override String get topShelfUpdateFailed => 'Top Shelf kon niet worden bijgewerkt. Probeer het opnieuw.';
+	@override String get showFinishTime => 'Eindtijd tonen';
+	@override String get showFinishTimeDescription => 'Toon naast de resterende tijd hoe laat de video eindigt.';
 }
 
 // Path: themeEditor
@@ -1146,6 +1151,7 @@ class _Translations$mediaMenu$nl extends Translations$mediaMenu$en {
 	@override String get deleteScopeUnverifiedProbeFailed => 'Pleazyng kon niet controleren welke bestanden hiermee worden verwijderd, dus het kan meer verwijderen dan het hierboven genoemde item. Annuleer en probeer het opnieuw, of verwijder toch.';
 	@override String get deleteScopeUnverifiedNoFileInfo => 'Je server heeft geen bestandsgegevens voor dit item verstrekt, dus Pleazyng kan niet controleren welke bestanden hiermee worden verwijderd. Het kan meer verwijderen dan het hierboven genoemde item.';
 	@override String get mediaDeletedSuccessfully => 'Media-item succesvol verwijderd';
+	@override String get mediaDeletionDisabledOnServer => 'Het verwijderen van media is op deze server uitgeschakeld. Sta het verwijderen van media toe in de bibliotheekinstellingen van de server.';
 	@override String get mediaFailedToDelete => 'Verwijderen van media-item mislukt';
 	@override String get rate => 'Beoordelen';
 	@override String get playFromBeginning => 'Afspelen vanaf het begin';
@@ -2930,6 +2936,7 @@ class _Translations$seerr$nl extends Translations$seerr$en {
 	@override String get sessionRejectedAfterReauth => 'De sessie is na het opnieuw inloggen geweigerd';
 	@override String get permissionDenied => 'Seerr heeft deze actie geweigerd: je account heeft niet langer de vereiste machtiging';
 	@override String get permissionRevoked => 'Je hebt geen toestemming meer om dit aan te vragen';
+	@override String get withdrawRequest => 'Verzoek intrekken';
 }
 
 // Path: services
@@ -4632,6 +4639,7 @@ class _Translations$common$mediaKind$nl extends Translations$common$mediaKind$en
 	@override String get clip => 'Clip';
 	@override String get photo => 'Foto';
 	@override String get folder => 'Map';
+	@override String get photoAlbum => 'Fotoalbum';
 }
 
 // Path: settings.startupSectionOptions
@@ -5879,6 +5887,7 @@ extension on TranslationsNl {
 			'common.mediaKind.clip' => 'Clip',
 			'common.mediaKind.photo' => 'Foto',
 			'common.mediaKind.folder' => 'Map',
+			'common.mediaKind.photoAlbum' => 'Fotoalbum',
 			'screens.licenses' => 'Licenties',
 			'screens.switchProfile' => 'Wissel van profiel',
 			'screens.subtitleStyling' => 'Ondertitelopmaak',
@@ -6185,9 +6194,9 @@ extension on TranslationsNl {
 			'settings.manageLibrariesDescription' => 'Bibliotheken herordenen en verbergen',
 			'settings.companionRemoteServer' => 'Companion Remote-server',
 			'settings.companionRemoteServerDescription' => 'Sta mobiele apparaten op je netwerk toe om deze app te bedienen',
-			'settings.companionRemoteServerStartFailed' => 'Kan de Companion Remote-server niet starten',
 			_ => null,
 		} ?? switch (path) {
+			'settings.companionRemoteServerStartFailed' => 'Kan de Companion Remote-server niet starten',
 			'settings.companionRemoteServerStopFailed' => 'Kan de Companion Remote-server niet stoppen',
 			'settings.autoPip' => 'Automatische beeld-in-beeld',
 			'settings.autoPipDescription' => 'Schakel over naar beeld-in-beeld als je tijdens het afspelen de app verlaat',
@@ -6401,6 +6410,11 @@ extension on TranslationsNl {
 			'settings.contentScreensaverDelayOptionDescription' => 'Wacht dit vele minuten zonder input voordat u screensaver kunstwerk toont.',
 			'settings.videoCodecOptionDescription' => 'Toegeeft direct afspelen voor deze codec wanneer ondersteund. Unchecked codecs worden gecodeerd door de media server.',
 			'settings.streamBufferSizeMiB' => ({required Object size}) => 'Buffer grootte: ${size} MiB',
+			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Verder kijken',
+			'settings.showTopShelfContentDescription' => 'Schakel dit uit om voor alle profielen alleen de Pleazyng-afbeelding te tonen.',
+			'settings.topShelfUpdateFailed' => 'Top Shelf kon niet worden bijgewerkt. Probeer het opnieuw.',
+			'settings.showFinishTime' => 'Eindtijd tonen',
+			'settings.showFinishTimeDescription' => 'Toon naast de resterende tijd hoe laat de video eindigt.',
 			'themeEditor.builtIn' => 'Ingebouwd',
 			'themeEditor.presets' => 'Voorinstellingen',
 			'themeEditor.custom' => 'Aangepast',
@@ -6634,6 +6648,7 @@ extension on TranslationsNl {
 			'mediaMenu.deleteScopeUnverifiedProbeFailed' => 'Pleazyng kon niet controleren welke bestanden hiermee worden verwijderd, dus het kan meer verwijderen dan het hierboven genoemde item. Annuleer en probeer het opnieuw, of verwijder toch.',
 			'mediaMenu.deleteScopeUnverifiedNoFileInfo' => 'Je server heeft geen bestandsgegevens voor dit item verstrekt, dus Pleazyng kan niet controleren welke bestanden hiermee worden verwijderd. Het kan meer verwijderen dan het hierboven genoemde item.',
 			'mediaMenu.mediaDeletedSuccessfully' => 'Media-item succesvol verwijderd',
+			'mediaMenu.mediaDeletionDisabledOnServer' => 'Het verwijderen van media is op deze server uitgeschakeld. Sta het verwijderen van media toe in de bibliotheekinstellingen van de server.',
 			'mediaMenu.mediaFailedToDelete' => 'Verwijderen van media-item mislukt',
 			'mediaMenu.rate' => 'Beoordelen',
 			'mediaMenu.playFromBeginning' => 'Afspelen vanaf het begin',
@@ -6693,6 +6708,8 @@ extension on TranslationsNl {
 			'accessibility.reduceMotion' => 'Verminderde beweging',
 			'accessibility.reduceMotionHint' => 'Animaties van de focusindicator, paginaovergangen en decoratieve effecten stilzetten.',
 			'accessibility.largeTargets' => 'Grotere touch doelen',
+			_ => null,
+		} ?? switch (path) {
 			'accessibility.largeTargetsHint' => 'Geef gedeelde controles meer ruimte voor touch en assistieve navigatie.',
 			'accessibility.navigationHint' => 'Gebruik Tab en Shift+Tab om tussen bedieningselementen te bewegen, Enter of de spatiebalk om ze te activeren en Escape of Terug om te sluiten. Als een boek geopend is, zijn zoom en leesvoorkeuren beschikbaar.',
 			'accessibility.textSizeDescription' => 'Scale interface tekst in Pleazyng naast de systeem-text-size instelling van uw apparaat.',
@@ -6700,8 +6717,6 @@ extension on TranslationsNl {
 			'tooltips.shufflePlay' => 'Willekeurig afspelen',
 			'tooltips.playTrailer' => 'Trailer afspelen',
 			'tooltips.markAsWatched' => 'Als bekeken markeren',
-			_ => null,
-		} ?? switch (path) {
 			'tooltips.markAsUnwatched' => 'Als ongekeken markeren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospoor ${n}',
 			'videoControls.audioLabel' => 'Audio',
@@ -7207,6 +7222,8 @@ extension on TranslationsNl {
 			'discover.findNext.artworkLoading' => 'Afbeelding laden…',
 			'discover.findNext.artworkUnavailable' => 'Afbeelding niet beschikbaar',
 			'discover.findNext.savedFeedback' => 'Toegevoegd aan opgeslagen keuzes',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.skippedFeedback' => 'Voorlopig overgeslagen',
 			'discover.findNext.releaseToConfirm' => 'Laat los om te bevestigen',
 			'discover.findNext.remoteHint' => 'Omslag geselecteerd: ← / → kiezen · Selecteren: details · ↑ / ↓ focus verplaatsen',
@@ -7214,8 +7231,6 @@ extension on TranslationsNl {
 			'discover.rating' => 'Beoordeling',
 			'discover.director' => 'Regisseur',
 			'discover.directors' => 'Regisseurs',
-			_ => null,
-		} ?? switch (path) {
 			'discover.movie' => 'Film',
 			'discover.tvShow' => 'Tv-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => 'nog ${minutes} min',
@@ -7721,6 +7736,8 @@ extension on TranslationsNl {
 			'collections.selectCollection' => 'Collectie selecteren',
 			'collections.collectionName' => 'Collectienaam',
 			'collections.enterCollectionName' => 'Voer een collectienaam in',
+			_ => null,
+		} ?? switch (path) {
 			'collections.addedToCollection' => 'Toegevoegd aan collectie',
 			'collections.errorAddingToCollection' => 'Fout bij toevoegen aan collectie',
 			'collections.created' => 'Collectie gemaakt',
@@ -7728,8 +7745,6 @@ extension on TranslationsNl {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" uit deze collectie verwijderen?',
 			'collections.removedFromCollection' => 'Uit collectie verwijderd',
 			'collections.removeFromCollectionFailed' => 'Verwijderen uit collectie mislukt',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Fout bij verwijderen uit collectie: ${error}',
 			'collections.searchCollections' => 'Collecties zoeken...',
 			'playlists.title' => 'Afspeellijsten',
@@ -8235,6 +8250,8 @@ extension on TranslationsNl {
 			'performanceOverlay.decoder' => 'Decoder',
 			'performanceOverlay.rawDecoder' => 'Raw-decoder',
 			'performanceOverlay.tunneling' => 'Tunneling',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.passthrough' => 'Doorvoer',
 			'performanceOverlay.aspect' => 'Verhouding',
 			'performanceOverlay.rotation' => 'Rotatie',
@@ -8242,8 +8259,6 @@ extension on TranslationsNl {
 			'performanceOverlay.dvPath' => 'DV-pad',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-decoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-decoder (P7→8.1)',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayer' => 'Basislaag',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislaag',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-basislaag',
@@ -8479,6 +8494,7 @@ extension on TranslationsNl {
 			'seerr.sessionRejectedAfterReauth' => 'De sessie is na het opnieuw inloggen geweigerd',
 			'seerr.permissionDenied' => 'Seerr heeft deze actie geweigerd: je account heeft niet langer de vereiste machtiging',
 			'seerr.permissionRevoked' => 'Je hebt geen toestemming meer om dit aan te vragen',
+			'seerr.withdrawRequest' => 'Verzoek intrekken',
 			'services.title' => 'Diensten',
 			'services.hubSubtitle' => 'Synchroniseer kijkvoortgang en vraag nieuwe titels aan.',
 			'services.integrations' => 'Integraties',
@@ -8748,6 +8764,8 @@ extension on TranslationsNl {
 			'homeLayout.managePlexRowsDescription' => 'Open om de Home-selecteerde rijen te organiseren',
 			'homeLayout.organizeHomeRows' => 'Home Ronden organiseren',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rijen: bewegen, Hero, Auto-slide, verwijderen',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organiseren ${library} rijen',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} rijen: beweging, bibliotheek, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render als een heldkaart',
@@ -8756,8 +8774,6 @@ extension on TranslationsNl {
 			'homeLayout.autoSlide' => 'Automatisch wisselen',
 			'homeLayout.autoSlideDescription' => 'Ook slides op zichzelf elke paar seconden. Arrows (PC) en d-pad (TV) werken altijd en herstarten de timer.',
 			'homeLayout.autoSlideEditDescription' => 'Ook slides op zichzelf elke paar seconden. Off: bewegt alleen wanneer u een pijl (PC) klikt of links/rijk op de afstand (TV) druk.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.enableHeroFirst' => 'Helden eerst mogelijk maken',
 			'homeLayout.showOnHome' => 'Show op Home Screen',
 			'homeLayout.home' => 'Home →',
@@ -9262,6 +9278,8 @@ extension on TranslationsNl {
 			'audiobook.customSpeed' => 'Custom playback snelheid',
 			'audiobook.speedHelp' => 'Kies een snelheid van 0,25× tot 4×.',
 			'audiobook.apply' => 'Aanvragen',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.customSleep' => 'Custom slaaptijd',
 			'audiobook.sleepMinutes' => 'Minuten (1 tot 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stop na ${count} hoofdstukken',
@@ -9270,8 +9288,6 @@ extension on TranslationsNl {
 			'audiobook.useDefaults' => 'Gebruik deze luisteren controles voor nieuwe boeken',
 			'audiobook.librarySort' => 'Sorte boeken',
 			'audiobook.sortTitle' => 'Titel',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.sortAuthor' => 'Schrijver',
 			'audiobook.sortNarrator' => 'De narrator',
 			'audiobook.sortSeries' => 'Serie bevel',
@@ -9776,6 +9792,8 @@ extension on TranslationsNl {
 			'musicExperience.bluetoothDrivingHint' => 'Kies verbonden Bluetooth-uitgangen die de rijweergave automatisch openen.',
 			'musicTools.loudnessMissing' => 'Geen luidheidsgegevens ontvangen',
 			'musicTools.loudnessRequested' => 'Analyseverzoek verzonden',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.loudnessUnsupported' => 'Deze serverversie ondersteunt geen analyseverzoeken',
 			'musicTools.serverHistory' => 'Afspeelgeschiedenis van de server',
 			'musicTools.nfcWrite' => 'NFC-tag schrijven',
@@ -9784,8 +9802,6 @@ extension on TranslationsNl {
 			'musicTools.storageBudget' => 'Geschat downloadbudget (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Gast-dj',
 			'musicTools.charts' => 'Luisterlijsten',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rediscover' => 'Herontdekken',
 			'musicTools.stations' => 'Muziekstations',
 			'musicTools.prompt' => 'Afspeellijst uit beschrijving',

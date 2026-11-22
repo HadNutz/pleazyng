@@ -72,6 +72,19 @@ class GeneralSettingsScreen extends StatelessWidget {
           ],
         ),
 
+        if (PlatformDetector.isAppleTV())
+          SettingsGroup(
+            title: t.settings.homeScreen,
+            children: [
+              SettingSwitchTile(
+                pref: SettingsService.showTopShelfContent,
+                icon: Symbols.tv_rounded,
+                title: t.settings.showTopShelfContent,
+                subtitle: t.settings.showTopShelfContentDescription,
+              ),
+            ],
+          ),
+
         SettingsGroup(
           children: [
             FocusableListTile(
@@ -128,7 +141,7 @@ class GeneralSettingsScreen extends StatelessWidget {
           searchable: true,
           options: [
             DialogOption(value: '', title: t.settings.followSystem),
-            for (final locale in AppLocale.values)
+            for (final locale in languagePickerLocales)
               DialogOption(
                 value: locale.name,
                 title: locale.nativeName,

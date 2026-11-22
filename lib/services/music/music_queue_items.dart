@@ -770,12 +770,12 @@ class _EntryIndex {
     try {
       file.closeSync();
     } catch (_) {
-      // Scratch cleanup cannot replace a playback result.
+      // best-effort: Scratch cleanup cannot replace a playback result.
     }
     try {
       directory.deleteSync(recursive: true);
     } catch (_) {
-      // The OS also reclaims abandoned process scratch.
+      // best-effort: The OS also reclaims abandoned process scratch.
     }
   }
 }
@@ -856,12 +856,12 @@ class _Spool {
     try {
       file.closeSync();
     } catch (_) {
-      // Scratch cleanup cannot replace a playback result.
+      // best-effort: Scratch cleanup cannot replace a playback result.
     }
     try {
       directory.deleteSync(recursive: true);
     } catch (_) {
-      // OS temporary-storage cleanup also owns abandoned process scratch.
+      // best-effort: OS temporary-storage cleanup also owns abandoned process scratch.
     }
   }
 }

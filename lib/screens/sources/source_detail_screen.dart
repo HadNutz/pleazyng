@@ -97,7 +97,7 @@ class _SourceDetailScreenState extends State<SourceDetailScreen> {
         try {
           _entry = await sources.hydrate(_entry);
         } catch (_) {
-          /* Cached details are usable offline. */
+          /* best-effort: Cached details are usable offline. */
         }
       }
       final seeds = [
@@ -482,7 +482,7 @@ class _SourceDetailScreenState extends State<SourceDetailScreen> {
             .take(12)
             .toList(growable: false);
       } catch (_) {
-        /* Catalog metadata remains useful when Trakt has no people credits. */
+        /* best-effort: Catalog metadata remains useful when Trakt has no people credits. */
       }
       final identifiers = <String, String>{
         'trakt': traktId.toString(),

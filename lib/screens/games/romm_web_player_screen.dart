@@ -178,7 +178,7 @@ class _RommWebPlayerScreenState extends State<RommWebPlayerScreen> with WidgetsB
         try {
           await widget.controller.played(widget.game);
         } catch (_) {
-          /* Metadata persistence does not stop the player. */
+          /* best-effort: Metadata persistence does not stop the player. */
         }
       }
     } catch (error) {

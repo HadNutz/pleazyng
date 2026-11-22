@@ -149,6 +149,7 @@ class ExtrasRepository {
         if (!_closed && !partial) await store.saveCache(cacheKey, entries);
         return ExtrasResult(entries, serviceUnavailable: partial);
       } catch (_) {
+        // best-effort: Show cached extras and tell the caller discovery is unavailable.
         return ExtrasResult(cached?.entries ?? const [], serviceUnavailable: true, cached: cached != null);
       }
     }();

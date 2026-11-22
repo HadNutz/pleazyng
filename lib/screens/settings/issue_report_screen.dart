@@ -37,6 +37,7 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
     try {
       return await PackageInfo.fromPlatform();
     } catch (_) {
+      // best-effort: The About screen can render without platform package information.
       return null;
     }
   }
@@ -77,7 +78,7 @@ class _IssueReportScreenState extends State<IssueReportScreen> {
     try {
       if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return;
     } catch (_) {
-      // The QR and copy actions remain available when this platform cannot
+      // best-effort: The QR and copy actions remain available when this platform cannot
       // hand the draft to an external browser.
     }
     if (mounted) showErrorSnackBar(context, t.common.error);

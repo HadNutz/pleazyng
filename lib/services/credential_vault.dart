@@ -165,6 +165,7 @@ class CredentialVault {
         mac: Mac(base64Decode(payload['m'] as String)),
       );
     } catch (_) {
+      // best-effort: Treat unreadable credential data as unavailable to the caller.
       return null;
     }
     // Keep platform I/O outside the corruption/MAC catch. A temporary keychain

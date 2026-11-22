@@ -149,6 +149,9 @@ void ProcessCases() {
     Reject([&] { client->Capture(1, 1, std::numeric_limits<double>::quiet_NaN(), frame); }, "Invalid render clock accepted");
     Reject([&] { client->SetMouseState(true, 1.1, 0, 0, 0); }, "Invalid pointer position accepted");
     Reject([&] { client->Load("healthy", "fixture", 10.1); }, "Unbounded transition accepted");
+    client->Capture(2, 1, 0, frame);
+    Require(frame.size() == 8 && frame.front() == 79 && frame.back() == 79,
+            "Rejecting an invalid command changed the current render session");
     client->Reset(); client->Load("healthy", "fixture"); client->Capture(2, 2, 0, frame);
     Require(frame.size() == 16, "Generation reset lost the helper");
   }

@@ -1631,7 +1631,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
         sourceFps = parsedRate;
       }
     } catch (_) {
-      // Container frame-rate metadata is optional and unavailable on some streams.
+      // best-effort: Container frame-rate metadata is optional and unavailable on some streams.
     }
     if (mounted) {
       setState(() {
@@ -1746,7 +1746,9 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
         } catch (_) {
           try {
             await ScopedPlayerPrefs.write(ScopedPlayerPrefs.motionClarityKernel, _state.metadata, oldKernel);
-          } catch (_) {}
+          } catch (_) {
+            appLogger.d('Could not restore the previous motion interpolation kernel.');
+          }
           await _motionService.configure(
             preset: oldPreset,
             kernel: oldKernel,
@@ -1802,7 +1804,9 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     } catch (error, stackTrace) {
       try {
         await ScopedPlayerPrefs.write(ScopedPlayerPrefs.motionClarityThreshold, _state.metadata, oldThreshold);
-      } catch (_) {}
+      } catch (_) {
+        appLogger.d('Could not restore the previous motion threshold.');
+      }
       await _motionService.configure(
         preset: oldPreset,
         kernel: oldKernel,
@@ -2269,7 +2273,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
       final session = context.read<WatchTogetherProvider>();
       if (session.syncOwnsRate) return session.roomRate ?? playerRate;
     } catch (_) {
-      // No session provider above this sheet.
+      // best-effort: No session provider above this sheet.
     }
     return playerRate;
   }

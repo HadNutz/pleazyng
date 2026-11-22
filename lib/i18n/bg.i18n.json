@@ -224,7 +224,8 @@
       "playlist": "Плейлист",
       "clip": "Клип",
       "photo": "Снимка",
-      "folder": "Папка"
+      "folder": "Папка",
+      "photoAlbum": "Фотоалбум"
     }
   },
   "screens": {
@@ -792,7 +793,12 @@
     "dvOfflineNewOutput": "",
     "dvOfflineHdr10": "",
     "dvOfflineSdr": "",
-    "streamBufferSizeMiB": "Буфер размер: ${size} MiB"
+    "streamBufferSizeMiB": "Буфер размер: ${size} MiB",
+    "showTopShelfContent": "Apple TV Top Shelf · Продължи гледането",
+    "showTopShelfContentDescription": "При изключване за всички профили се показва само изображението на Pleazyng.",
+    "topShelfUpdateFailed": "Top Shelf не можа да се обнови. Опитайте отново.",
+    "showFinishTime": "Показване на часа на завършване",
+    "showFinishTimeDescription": "Показва кога завършва видеото до оставащото време."
   },
   "themeEditor": {
     "builtIn": "Вградени",
@@ -1052,6 +1058,7 @@
     "deleteScopeUnverifiedProbeFailed": "Pleazyng не успя да провери кои файлове ще бъдат премахнати, така че може да изтрие повече от посочения по-горе елемент. Откажете и опитайте отново, или изтрийте въпреки това.",
     "deleteScopeUnverifiedNoFileInfo": "Сървърът ви не предостави данни за файловете на този елемент, така че Pleazyng не може да провери кои файлове ще бъдат премахнати. Може да изтрие повече от посочения по-горе елемент.",
     "mediaDeletedSuccessfully": "Елементът е изтрит успешно",
+    "mediaDeletionDisabledOnServer": "Изтриването на медия е изключено на този сървър. Включете разрешението за изтриване на медия в настройките на библиотеката на сървъра.",
     "mediaFailedToDelete": "Неуспешно изтриване на елемента",
     "rate": "Оцени",
     "playFromBeginning": "Пусни от началото",
@@ -3440,7 +3447,8 @@
     "noUserInformation": "Seerr не върна информация за потребителя",
     "sessionRejectedAfterReauth": "Сесията беше отхвърлена след повторния вход",
     "permissionDenied": "Seerr отказа това действие: акаунтът ви вече няма необходимото разрешение",
-    "permissionRevoked": "Вече нямате разрешение да заявявате това"
+    "permissionRevoked": "Вече нямате разрешение да заявявате това",
+    "withdrawRequest": "Оттегляне на заявката"
   },
   "services": {
     "title": "Услуги",

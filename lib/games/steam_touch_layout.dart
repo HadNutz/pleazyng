@@ -146,6 +146,7 @@ class SteamTouchLayout {
 
       return SteamTouchLayout(wide: read(data['wide']), compact: read(data['compact']));
     } catch (_) {
+      // best-effort: Keep touch controls usable with the built-in layout.
       return SteamTouchLayout();
     }
   }

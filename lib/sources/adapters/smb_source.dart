@@ -1,3 +1,4 @@
+import '../../utils/app_logger.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
@@ -363,7 +364,9 @@ class SmbSourceAdapter extends SourceAdapter {
         if (waiting != null && !waiting.isCompleted) waiting.complete();
         try {
           await pumping;
-        } catch (_) {}
+        } catch (_) {
+          appLogger.d('The SMB range stream ended with an error during cancellation.');
+        }
       },
     );
     return controller.stream;

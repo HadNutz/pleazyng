@@ -5,6 +5,7 @@ class MainFlutterWindow: NSWindow {
   private var workspaceViews: WorkspaceDesktopWindows?
   private var primaryViewPluginRegistry: PrimaryViewPluginRegistry?
 
+  private var screenshotDirectory: ScreenshotDirectory?
   private var downloadStorageChannel: FlutterMethodChannel?
 
   override func awakeFromNib() {
@@ -18,6 +19,7 @@ class MainFlutterWindow: NSWindow {
     let supportsMultiView = engine.responds(to: enableMultiView)
     if supportsMultiView { _ = engine.perform(enableMultiView) }
     workspaceViews = WorkspaceDesktopWindows(engine: engine, parent: self, available: supportsMultiView)
+    screenshotDirectory = ScreenshotDirectory(messenger: engine.binaryMessenger)
     DownloadBackupPolicy.refreshExistingRoots()
     let storageChannel = FlutterMethodChannel(
       name: "com.pleazyng/download_storage", binaryMessenger: engine.binaryMessenger)
@@ -229,5 +231,80 @@ private final class WorkspaceDesktopWindow: NSWindow, NSWindowDelegate {
     requestClose = nil
     contentViewController = nil
     close()
+  }
+}
+
+/// Holds a user-selected directory grant while mpv writes screenshots.
+private final class ScreenshotDirectory {
+  private let key = "desktopScreenshotDirectoryBookmark"
+  private let channel: FlutterMethodChannel
+  private var active: URL?
+
+  init(messenger: FlutterBinaryMessenger) {
+    channel = FlutterMethodChannel(name: "com.pleazyng/screenshot_directory", binaryMessenger: messenger)
+    channel.setMethodCallHandler { [weak self] call, result in
+      guard let self else {
+        result(nil)
+        return
+      }
+      do {
+        switch call.method {
+        case "choose":
+          let panel = NSOpenPanel()
+          panel.canChooseDirectories = true
+          panel.canChooseFiles = false
+          panel.allowsMultipleSelection = false
+          panel.prompt = call.arguments as? String
+          guard panel.runModal() == .OK, let url = panel.url else {
+            result(nil)
+            return
+          }
+          try self.save(url)
+          result(try self.resolve())
+        case "resolve":
+          result(try self.resolve())
+        case "reset":
+          UserDefaults.standard.removeObject(forKey: self.key)
+          self.releaseAccess()
+          result(nil)
+        default:
+          result(FlutterMethodNotImplemented)
+        }
+      } catch {
+        result(
+          FlutterError(code: "screenshot_directory", message: "Could not access the screenshot folder", details: nil))
+      }
+    }
+  }
+
+  private func save(_ url: URL) throws {
+    let bookmark = try url.bookmarkData(
+      options: [.withSecurityScope], includingResourceValuesForKeys: nil, relativeTo: nil)
+    UserDefaults.standard.set(bookmark, forKey: key)
+  }
+
+  private func resolve() throws -> String? {
+    guard let bookmark = UserDefaults.standard.data(forKey: key) else { return nil }
+    var stale = false
+    let url = try URL(
+      resolvingBookmarkData: bookmark, options: [.withSecurityScope, .withoutUI],
+      relativeTo: nil, bookmarkDataIsStale: &stale)
+    if active != url {
+      let scoped = url.startAccessingSecurityScopedResource()
+      guard scoped || FileManager.default.isWritableFile(atPath: url.path) else { return nil }
+      releaseAccess()
+      if scoped { active = url }
+    }
+    if stale { try save(url) }
+    return url.path
+  }
+
+  private func releaseAccess() {
+    active?.stopAccessingSecurityScopedResource()
+    active = nil
+  }
+
+  deinit {
+    active?.stopAccessingSecurityScopedResource()
   }
 }
