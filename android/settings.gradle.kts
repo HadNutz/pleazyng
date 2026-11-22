@@ -11,8 +11,8 @@ pluginManagement {
 
   repositories {
     google()
-    // Central is rate limiting the shared private JIT egress. Use Google's
-    // Cloud Storage Maven Central mirror through the existing exact-host proxy route.
+    // Central can rate-limit shared CI egress. Use Google's Cloud Storage
+    // Maven Central mirror before falling back to the canonical repository.
     maven { url = uri("https://storage.googleapis.com/maven-central/maven2") }
     gradlePluginPortal()
   }

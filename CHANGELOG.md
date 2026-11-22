@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Prefer Google's Maven Central mirror in Android emulator integration checks to avoid transient CI failures when Maven Central rate-limits requests.
+
 - Fix TV MPV patch ordering so the source tree exists before shared subtitle and webOS NDL patches run, install ImageMagick for Flatpak icon generation, and keep iOS Simulator motion playback tests off the simulator's crashing MoltenVK shared-memory path.
 
 - Stage the checksum-pinned Android mpv AAR through the authenticated GitHub asset API and verify it before Gradle consumes it, avoiding the public release redirect that returned HTTP 403 in the automotive bundle job.

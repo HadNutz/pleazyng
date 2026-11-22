@@ -5,8 +5,8 @@ val robolectricMavenRepository = "https://storage.googleapis.com/maven-central/m
 allprojects {
     repositories {
         google()
-        // Central is rate limiting shared private JIT egress; use Google's
-        // Cloud Storage Maven Central mirror instead.
+        // Central can rate-limit shared CI egress; use Google's Cloud Storage
+        // Maven Central mirror before falling back to the canonical repository.
         maven { url = uri(robolectricMavenRepository) }
         exclusiveContent {
             forRepository {
