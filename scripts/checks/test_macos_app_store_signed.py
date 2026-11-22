@@ -150,6 +150,17 @@ class MacAppStoreProfileTests(unittest.TestCase):
         self.assertIn("APPLE_API_PRIVATE_KEY", public_job)
         self.assertNotIn("APPLE_CERTIFICATE_PASSWORD", public_job)
 
+    def test_keychain_migration_is_main_only_and_cannot_build_or_upload(self):
+        workflow = (ROOT / ".github/workflows/macos-app-store-signed.yml").read_text(encoding="utf-8")
+        private_job = workflow.split("  build-upload:", 1)[1].split("\n  inspect-profiles:", 1)[0]
+        self.assertIn("github.ref == 'refs/heads/main'", private_job.split("\n    runs-on:", 1)[0])
+        self.assertIn("inputs.keychain_migration_only == true", private_job)
+        self.assertIn("security set-keychain-password", private_job)
+        self.assertIn("security find-identity", private_job)
+        self.assertIn("inputs.keychain_migration_only != true", private_job)
+        self.assertIn("APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}", private_job)
+        self.assertNotIn("legacy_keychain_password", (ROOT / "scripts/build_macos_app_store_signed.py").read_text())
+
 
 class MacAppStoreSigningGuardTests(unittest.TestCase):
     def test_keychain_password_uses_stable_slow_kdf(self):
@@ -166,19 +177,13 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
             f"PleazyngMacAppStore:{TEAM}{secret}".encode()
         ).hexdigest())
 
-    def test_legacy_keychain_password_is_rotated_after_unlock(self):
+    def test_persistent_keychain_uses_only_the_current_password(self):
         keychain = Path("/tmp/existing.keychain-db")
-        with patch.dict(store.os.environ, {
-            store.CERTIFICATE_PASSWORD_SECRET: "certificate-password-test-value",
-            store.TEAM_SECRET: TEAM,
-        }), patch.object(
-            store, "signing_run",
-            side_effect=[RuntimeError("new password rejected"), b"", b"", b""],
-        ) as run:
+        with patch.object(store, "signing_run", return_value=b"") as run:
             store._unlock_keychain(keychain, "new-derived-password")
-        self.assertEqual(run.call_count, 4)
-        self.assertEqual(run.call_args_list[1].args[0][1], "unlock-keychain")
-        self.assertEqual(run.call_args_list[2].args[0][1], "set-keychain-password")
+        run.assert_called_once_with([
+            "security", "unlock-keychain", "-p", "new-derived-password", str(keychain),
+        ])
 
     def test_capacity_preflight_deduplicates_filesystem_and_rejects_low_space(self):
         with tempfile.TemporaryDirectory() as temporary:

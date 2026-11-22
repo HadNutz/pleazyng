@@ -1,5 +1,5 @@
 name: Signed macOS App Store release
-run-name: macos-app-store:${{ inputs.profile_inspection_only == true && 'profile-inspection' || inputs.preflight_only == true && 'signing-preflight' || 'signed-upload' }}:${{ inputs.release_tag }}
+run-name: macos-app-store:${{ inputs.keychain_migration_only == true && 'keychain-migration' || inputs.profile_inspection_only == true && 'profile-inspection' || inputs.preflight_only == true && 'signing-preflight' || 'signed-upload' }}:${{ inputs.release_tag }}
 
 on:
   workflow_dispatch:
@@ -16,6 +16,11 @@ on:
         default: false
       profile_inspection_only:
         description: Read current App Store provisioning profile metadata without creating profiles or accessing keychains
+        required: false
+        type: boolean
+        default: false
+      keychain_migration_only:
+        description: Rotate existing App Store signing keychain passwords to the current PBKDF2 derivation without building or uploading
         required: false
         type: boolean
         default: false
@@ -51,6 +56,7 @@ jobs:
           persist-credentials: false
 
       - name: Check out the immutable product release source
+        if: inputs.keychain_migration_only != true
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.release_tag }}
@@ -59,6 +65,7 @@ jobs:
           persist-credentials: false
 
       - name: Validate immutable release source before running tagged code
+        if: inputs.keychain_migration_only != true
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
@@ -73,19 +80,109 @@ jobs:
         env:
           PREFLIGHT_ONLY: ${{ inputs.preflight_only }}
           PROFILE_INSPECTION_ONLY: ${{ inputs.profile_inspection_only }}
+          KEYCHAIN_MIGRATION_ONLY: ${{ inputs.keychain_migration_only }}
         run: |
           set -euo pipefail
-          if [[ "$PREFLIGHT_ONLY" == true && "$PROFILE_INSPECTION_ONLY" == true ]]; then
-            echo "Choose either signing preflight or profile inspection." >&2
+          mode_count=0
+          [[ "$PREFLIGHT_ONLY" != true ]] || ((mode_count+=1))
+          [[ "$PROFILE_INSPECTION_ONLY" != true ]] || ((mode_count+=1))
+          [[ "$KEYCHAIN_MIGRATION_ONLY" != true ]] || ((mode_count+=1))
+          if ((mode_count > 1)); then
+            echo "Choose one of signing preflight, profile inspection, or keychain migration." >&2
             exit 1
           fi
 
+      - name: Migrate persistent App Store keychains to the slow password derivation
+        if: inputs.keychain_migration_only == true
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          if [[ ! "$APPLE_TEAM_ID" =~ ^[A-Z0-9]{10}$ || -z "$APPLE_CERTIFICATE_PASSWORD" ]]; then
+            echo "Required Apple signing credentials are unavailable." >&2
+            exit 1
+          fi
+          new_password="$(python3 - <<'PY'
+          import hashlib
+          import os
+          material = f"{os.environ['APPLE_TEAM_ID']}\0{os.environ['APPLE_CERTIFICATE_PASSWORD']}".encode()
+          salt = b"PleazyngMacAppStore:keychain-password:v2"
+          print(hashlib.pbkdf2_hmac("sha256", material, salt, 600_000).hex())
+          PY
+          )"
+          old_password="$(printf 'PleazyngMacAppStore:%s%s' "$APPLE_TEAM_ID" "$APPLE_CERTIFICATE_PASSWORD" | shasum -a 256 | awk '{print $1}')"
+          keychain_dir="$HOME/Library/Keychains"
+          app_keychain="$keychain_dir/Pleazyng-Mac-App-Store.keychain-db"
+          installer_keychain="$keychain_dir/Pleazyng-Mac-App-Store-Installer-v2.keychain-db"
+          [[ -f "$app_keychain" && ! -L "$app_keychain" ]] || {
+            echo "The persistent App Store App signing keychain is unavailable or unsafe." >&2
+            exit 1
+          }
+          lock_keychains() {
+            /usr/bin/security lock-keychain "$app_keychain" >/dev/null 2>&1 || true
+            if [[ -f "$installer_keychain" && ! -L "$installer_keychain" ]]; then
+              /usr/bin/security lock-keychain "$installer_keychain" >/dev/null 2>&1 || true
+            fi
+          }
+          trap lock_keychains EXIT
+          identity_state() {
+            local output count digest
+            output="$(/usr/bin/security find-identity -v -p codesigning "$1" 2>/dev/null)" || return 1
+            count="$(printf '%s\n' "$output" | sed -nE 's/^([0-9]+) valid identities found$/\1/p')"
+            [[ "$count" =~ ^[1-9][0-9]*$ ]] || return 1
+            digest="$(printf '%s\n' "$output" | shasum -a 256 | awk '{print $1}')"
+            printf '%s:%s\n' "$count" "$digest"
+          }
+          migrate_keychain() {
+            local keychain="$1"
+            local before after
+            if ! /usr/bin/security unlock-keychain -p "$new_password" "$keychain" >/dev/null 2>&1; then
+              /usr/bin/security unlock-keychain -p "$old_password" "$keychain" >/dev/null 2>&1 || {
+                echo "An existing App Store keychain could not be opened with configured signing credentials." >&2
+                return 1
+              }
+              before="$(identity_state "$keychain")" || {
+                echo "An existing App Store keychain has no verifiable signing identity." >&2
+                return 1
+              }
+              /usr/bin/security set-keychain-password -o "$old_password" -p "$new_password" "$keychain" >/dev/null 2>&1 || {
+                echo "Could not rotate an existing App Store keychain password." >&2
+                return 1
+              }
+              /usr/bin/security unlock-keychain -p "$new_password" "$keychain" >/dev/null 2>&1 || {
+                echo "Rotated App Store keychain did not unlock with the new password." >&2
+                return 1
+              }
+            fi
+            after="$(identity_state "$keychain")" || {
+              echo "App Store keychain signing identities could not be verified." >&2
+              return 1
+            }
+            if [[ -n "$before" && "$before" != "$after" ]]; then
+              echo "Signing identities changed during keychain password rotation." >&2
+              return 1
+            fi
+          }
+          /usr/bin/security unlock-keychain -p "$new_password" "$app_keychain" >/dev/null 2>&1 || migrate_keychain "$app_keychain"
+          if [[ -L "$installer_keychain" ]]; then
+            echo "The persistent App Store Installer keychain path is unsafe." >&2
+            exit 1
+          elif [[ -f "$installer_keychain" ]]; then
+            /usr/bin/security unlock-keychain -p "$new_password" "$installer_keychain" >/dev/null 2>&1 || migrate_keychain "$installer_keychain"
+          fi
+          unset APPLE_CERTIFICATE_PASSWORD old_password new_password
+          echo "Persistent App Store signing keychains now use the slow password derivation; identities were preserved."
+
       - name: Configure isolated Ruby bundle path
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         shell: bash
         run: echo "BUNDLE_PATH=$RUNNER_TEMP/fastlane-bundle" >> "$GITHUB_ENV"
 
       - name: Preflight macOS build disk capacity
+        if: inputs.keychain_migration_only != true
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
@@ -114,25 +211,25 @@ jobs:
             --output-dir "$RUNNER_TEMP/macos-app-store-output"
 
       - name: Load Flutter version pinned by release source
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         working-directory: source
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
 
       - name: Setup Flutter
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         uses: ./.github/actions/setup-flutter-apple
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Cache Pub dependencies
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ${{ env.PUB_CACHE }}
           key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-${{ runner.os }}-${{ runner.arch }}-pub-v2-${{ hashFiles('source/pubspec.yaml', 'source/pubspec.lock') }}
 
       - name: Install native build tools
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         shell: bash
         run: |
           set -euo pipefail
@@ -143,7 +240,7 @@ jobs:
           cmake --version
 
       - name: Install CocoaPods
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         shell: bash
         run: |
           set -euo pipefail
@@ -164,23 +261,23 @@ jobs:
           pod --version
 
       - name: Install locked Flutter dependencies
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         working-directory: source
         run: flutter pub get --enforce-lockfile --no-example
 
       - name: Prefetch checksum-pinned macOS native downloads
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         working-directory: source
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/prepare_native_downloads.py --sqlite-platform macos
 
       - name: Prepare run-local Swift package checkout
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         run: mkdir -p "$GITHUB_WORKSPACE/source/build/macos/SourcePackages"
 
       - name: Refresh pinned mpv Swift packages
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
@@ -191,7 +288,7 @@ jobs:
             --main-commit "$GITHUB_SHA"
 
       - name: Install the locked Fastlane bundle in runner temp
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         shell: bash
         run: |
           set -euo pipefail
@@ -210,7 +307,7 @@ jobs:
           bundle install --jobs 4 --retry 3
 
       - name: Build, sign, export, upload and verify the exact Mac App Store build
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -229,7 +326,7 @@ jobs:
             --derived-data "$RUNNER_TEMP/macos-app-store-derived-data"
 
       - name: Attest uploaded installer package
-        if: success() && inputs.preflight_only != true && inputs.profile_inspection_only != true
+        if: success() && inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: ${{ runner.temp }}/macos-app-store-output/pleazyng-macos-appstore.pkg

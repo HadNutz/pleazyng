@@ -149,33 +149,9 @@ def _keychain_password() -> str:
     ).hex()
 
 
-def _legacy_keychain_password() -> str:
-    """Derive the prior password only to migrate an existing persistent keychain."""
-    password = os.environ.get(CERTIFICATE_PASSWORD_SECRET, "")
-    team = os.environ.get(TEAM_SECRET, "")
-    if not password or not re.fullmatch(r"[A-Z0-9]{10}", team):
-        raise ValueError(f"{CERTIFICATE_PASSWORD_SECRET} and {TEAM_SECRET} are required to migrate the persistent signing keychain")
-    # Compatibility only: on first unlock, this value immediately rotates to PBKDF2.
-    # codeql[py/weak-sensitive-data-hashing]
-    return hashlib.sha256(("PleazyngMacAppStore:" + team + password).encode()).hexdigest()
-
-
 def _unlock_keychain(keychain: Path, password: str) -> None:
-    """Unlock with the current KDF or upgrade a retained keychain from the old one."""
-    command = ["security", "unlock-keychain", "-p", password, str(keychain)]
-    try:
-        signing_run(command)
-        return
-    except RuntimeError:
-        legacy_password = _legacy_keychain_password()
-    try:
-        signing_run(["security", "unlock-keychain", "-p", legacy_password, str(keychain)])
-    except RuntimeError:
-        raise ValueError("Persistent Mac App Store keychain could not be unlocked with current signing credentials") from None
-    signing_run([
-        "security", "set-keychain-password", "-o", legacy_password, "-p", password, str(keychain),
-    ])
-    signing_run(command)
+    """Unlock a persistent keychain protected by the current slow KDF."""
+    signing_run(["security", "unlock-keychain", "-p", password, str(keychain)])
 
 
 def _safe_tag(tag: str) -> None:
