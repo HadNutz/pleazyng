@@ -350,6 +350,26 @@ def prepare_gradle(root, cache):
     shutil.copyfile(archive, target)  # Original Wrapper still verifies and extracts it.
 
 
+def prepare_android_mpv(root, cache):
+    lock = json.loads((root / "mpv-build.lock.json").read_text())
+    android = lock.get("artifacts", {}).get("android", {})
+    aar = android.get("aar", {})
+    base = android.get("assetBase", "")
+    match = re.fullmatch(r"https://github\.com/snapetech-org/mpv-build/releases/download/([A-Za-z0-9_.+%-]+)", base)
+    if not match or not re.fullmatch(r"mpv-android-[0-9a-f]{12}\.aar", aar.get("asset", "")):
+        raise ValueError("Android mpv AAR pin has an unreviewed source or asset name")
+    source = pinned_asset("snapetech-org/mpv-build", match[1], aar["asset"], aar.get("checksum", ""), cache)
+    runner_temp = Path(os.environ["RUNNER_TEMP"])
+    destination = runner_temp / aar["asset"]
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.is_symlink():
+        raise ValueError("Refusing linked Android mpv AAR staging output")
+    shutil.copyfile(source, destination)
+    environment = Path(os.environ["GITHUB_ENV"])
+    with environment.open("a", encoding="utf-8") as output:
+        output.write(f"PLEAZYNG_ANDROID_MPV_AAR={destination}\n")
+
+
 def prepare_github_url(url, expected, destination, cache):
     match = re.fullmatch(r"https://github\.com/([^/]+/[^/]+)/releases/download/([^/]+)/([^/]+)", url)
     if not match:
@@ -469,6 +489,7 @@ def main():
             prepare_apple_pdfium(args.project_root.resolve(), args.cache_dir.resolve())
         if args.sqlite_platform == "android":
             prepare_gradle(args.project_root.resolve(), args.cache_dir.resolve())
+            prepare_android_mpv(args.project_root.resolve(), args.cache_dir.resolve())
     if args.cmake_deps:
         prepare_cmake_downloads(args.project_root.resolve(), args.sqlite_platform, args.arch, args.cache_dir.resolve())
     if args.github_url:

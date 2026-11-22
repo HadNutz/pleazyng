@@ -961,6 +961,7 @@ flatpak_setup = named_step(linux, "Install Flatpak packaging dependencies")
 require(
     "scripts/retry_flatpak.py remote-add" in flatpak_setup
     and "scripts/retry_flatpak.py install" in flatpak_setup
+    and "flatpak-builder imagemagick" in flatpak_setup
     and "flatpak remote-add" not in flatpak_setup
     and "flatpak install" not in flatpak_setup,
     "Flathub remote and runtime downloads must use the bounded retry helper",
@@ -2252,6 +2253,16 @@ require(
 android_memory_diagnostics = named_step(android_job, "Capture Android hosted runner memory diagnostics")
 android_ffmpeg_prepare = named_step(android_job, "Prepare verified Android FFmpeg source archive")
 android_gradle_properties = (ROOT / "android/gradle.properties").read_text(encoding="utf-8")
+android_native_prefetch = named_step(android_job, "Prefetch checksum-pinned Android native downloads")
+android_native_downloads = (ROOT / "scripts/prepare_native_downloads.py").read_text(encoding="utf-8")
+require(
+    "--sqlite-platform android" in android_native_prefetch
+    and "prepare_android_mpv" in android_native_downloads
+    and "prepare_android_mpv(args.project_root.resolve(), args.cache_dir.resolve())" in android_native_downloads
+    and 'environmentVariable("PLEAZYNG_ANDROID_MPV_AAR")' in android_gradle
+    and 'verifySha256(file, mpvAar.getValue("checksum"), "pinned Android mpv AAR")' in android_gradle,
+    "Android release must stage the pinned mpv AAR through the verified GitHub API path before Gradle uses it",
+)
 android_ci = job_block(ci_text, "android-test")
 android_ci_ffmpeg_prepare = named_step(android_ci, "Prepare verified Android FFmpeg source archive")
 android_ffmpeg_gradle = (ROOT / "android/app/build.gradle.kts").read_text(encoding="utf-8")

@@ -4117,7 +4117,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends flatpak flatpak-builder
+          sudo apt-get install -y --no-install-recommends flatpak flatpak-builder imagemagick
           python3 scripts/retry_flatpak.py remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           python3 scripts/retry_flatpak.py install --user --noninteractive -y flathub org.freedesktop.Platform//25.08 org.freedesktop.Sdk//25.08
 

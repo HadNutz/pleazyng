@@ -14,6 +14,15 @@ from scripts.tv_mpv.build import lint_webos_ndl, rewrite_webos_source_mirrors
 
 
 class TvMpvSourceMirrorTests(unittest.TestCase):
+    def test_tv_patch_applies_mpv_changes_after_extracting_source_tree(self) -> None:
+        patch_text = (ROOT / "scripts/tv_mpv/video.patch").read_text(encoding="utf-8")
+        hunk = patch_text.split("@@ -481,3 +529,7 @@ cross_mpv_source() {", 1)[1].split("diff --git", 1)[0]
+        source = 'CROSS_MPV_DIR="$(extract "$src" "$CROSS_BUILD_DIR/src")"'
+        apply = 'apply_mpv_patches_common "$CROSS_MPV_DIR"'
+        extra_patch = 'patch --batch --fuzz=0 -p1 -i "$PLEAZYNG_TV_MPV_SOURCE/sw-subtitles.patch"'
+        self.assertLess(hunk.index(source), hunk.index(apply))
+        self.assertLess(hunk.index(apply), hunk.index(extra_patch))
+
     def test_ndl_analysis_uses_the_lg_wrapper_and_meson_staged_source(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

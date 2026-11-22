@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Fix TV MPV patch ordering so the source tree exists before shared subtitle and webOS NDL patches run, install ImageMagick for Flatpak icon generation, and keep iOS Simulator motion playback tests off the simulator's crashing MoltenVK shared-memory path.
+
+- Stage the checksum-pinned Android mpv AAR through the authenticated GitHub asset API and verify it before Gradle consumes it, avoiding the public release redirect that returned HTTP 403 in the automotive bundle job.
+
 - Provision the pinned Flutter SDK and dependencies in the isolated reader browser job, use the hosted Chrome binary for plugin browser tests, and correct ComicInfo indexes and scan dimensions in the real reader fixture.
 
 - Keep the 40 GiB APFS scratch requirement for private Apple runners while using the existing 20 GiB Apple CI floor on GitHub-hosted Apple runners, so the Xcode 27 lane can start with its actual available workspace capacity.

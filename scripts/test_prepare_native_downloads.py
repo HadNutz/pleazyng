@@ -88,6 +88,25 @@ class NativeDownloadsTests(unittest.TestCase):
         self.assertEqual(staged.read_bytes(), self.content)
         self.assertFalse(staged.with_suffix(".zip.ok").exists(), "Only the original Wrapper may acknowledge verification/extraction")
 
+    def test_android_mpv_aar_is_staged_from_the_checksum_pinned_release(self):
+        asset = "mpv-android-30e8b9094d46.aar"
+        lock = {"artifacts": {"android": {
+            "assetBase": "https://github.com/snapetech-org/mpv-build/releases/download/binaries-android",
+            "aar": {"asset": asset, "checksum": self.digest, "key": "30e8b9094d46"},
+        }}}
+        (self.root / "mpv-build.lock.json").write_text(json.dumps(lock))
+        source = self.root / "cached.aar"
+        source.write_bytes(self.content)
+        runner_temp = self.root / "runner-temp"
+        runner_temp.mkdir()
+        environment = self.root / "github-env"
+        with patch.dict(downloads.os.environ, {"RUNNER_TEMP": str(runner_temp), "GITHUB_ENV": str(environment)}), \
+                patch.object(downloads, "pinned_asset", return_value=source) as fetch:
+            downloads.prepare_android_mpv(self.root, self.root / "cache")
+        fetch.assert_called_once_with("snapetech-org/mpv-build", "binaries-android", asset, self.digest, self.root / "cache")
+        self.assertEqual((runner_temp / asset).read_bytes(), self.content)
+        self.assertIn(f"PLEAZYNG_ANDROID_MPV_AAR={runner_temp / asset}", environment.read_text())
+
     def test_cocoapods_receives_only_the_original_verified_pdfium_zip(self):
         package = self.root / "pdfium-flutter"
         (package / "darwin").mkdir(parents=True)

@@ -69,13 +69,21 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
   private func verifyFallbackFrameMixing(_ core: MpvPlayerCore, entry: String) throws {
     guard try awaitGetProperty(core, name: "pleazyng-vt-motion-supported").get() == "no" else { return }
     let label = "@plezy-apple-motion"
-    let gpu = "libplacebo=fps=60:frame_mixer=oversample:format=yuv420p"
     let cpu = "minterpolate=fps=60:mi_mode=blend"
     let originalHwdec = try awaitGetProperty(core, name: "hwdec").get() ?? "auto"
     if originalHwdec != "no" {
       XCTAssertSuccess(awaitProperty(core, name: "hwdec", value: "videotoolbox-copy"))
     }
     let provider: String
+#if targetEnvironment(simulator)
+    // The iOS Simulator exposes MoltenVK, but libplacebo's mapped AVFrames can
+    // hit an XPC shared-memory trap inside the simulator's Metal device. Keep
+    // the playback/fallback integration check deterministic there; real Apple
+    // devices still exercise the GPU route below.
+    _ = try runMotionCommand(core, ["vf", "add", "\(label):lavfi=[\(cpu)]"])
+    provider = "FFmpeg CPU (iOS Simulator)"
+#else
+    let gpu = "libplacebo=fps=60:frame_mixer=oversample:format=yuv420p"
     do {
       _ = try runMotionCommand(core, ["vf", "add", "\(label):lavfi=[\(gpu)]"], timeout: 60)
       provider = "libplacebo GPU"
@@ -83,6 +91,7 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
       _ = try runMotionCommand(core, ["vf", "add", "\(label):lavfi=[\(cpu)]"])
       provider = "FFmpeg CPU"
     }
+#endif
     let deadline = Date().addingTimeInterval(nativeCompletionTimeout)
     var measured = 0.0
     repeat {

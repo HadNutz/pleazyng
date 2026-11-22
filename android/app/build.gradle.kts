@@ -191,7 +191,17 @@ if (felAarPath != null && experimentalMpvAar != null) {
 // A local AAR must be wrapped as a Gradle file collection. Passing File
 // directly is not valid dependency notation in the Kotlin DSL; the published
 // Ivy module remains a coordinate as before.
-val selectedLocalMpvAar = felAarFile ?: experimentalMpvAar
+val verifiedAndroidMpvAar = providers.environmentVariable("PLEAZYNG_ANDROID_MPV_AAR").orNull
+  ?.takeIf(String::isNotBlank)
+  ?.let { path ->
+    val file = File(path).canonicalFile
+    if (!file.isFile || file.name != mpvAar.getValue("asset")) {
+      throw GradleException("PLEAZYNG_ANDROID_MPV_AAR must name the pinned AAR ${mpvAar.getValue("asset")}")
+    }
+    verifySha256(file, mpvAar.getValue("checksum"), "pinned Android mpv AAR")
+    file
+  }
+val selectedLocalMpvAar = felAarFile ?: experimentalMpvAar ?: verifiedAndroidMpvAar
 val mpvAarDependency: Any = selectedLocalMpvAar?.let { files(it) }
   ?: "edde746:mpv-android:${mpvAar.getValue("key")}@aar"
 val mpvAarDependencyLabel = selectedLocalMpvAar?.absolutePath ?: mpvAarDependency.toString()

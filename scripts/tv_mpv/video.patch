@@ -95,7 +95,10 @@ index 049294f..0a95460 100644
 @@ -466 +513 @@ cross_build_ffmpeg() {
 -    "$@"
 +    "$@" "${video_uapi[@]}"
-@@ -483,0 +531,4 @@ cross_mpv_source() {
+@@ -481,3 +529,7 @@ cross_mpv_source() {
+   CROSS_MPV_DIR="$(extract "$src" "$CROSS_BUILD_DIR/src")"
+   patch_record_start mpv "$CROSS_PREFIX_DIR"
+   apply_mpv_patches_common "$CROSS_MPV_DIR"
 +  (cd "$CROSS_MPV_DIR" && patch --batch --fuzz=0 -p1 -i "$PLEAZYNG_TV_MPV_SOURCE/sw-subtitles.patch")
 +  if [[ "${NDK_TRIPLE:-}" == "arm-webosmllib32-linux-gnueabi" ]]; then
 +    python3 "$PLEAZYNG_TV_MPV_SOURCE/install_ndl.py" "$CROSS_MPV_DIR"
