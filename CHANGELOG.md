@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Repair CI guards after integration: refresh the SwiftLint baseline and localization coverage counts, match concurrency checks to current cancellation policy, and remove a duplicate podcast icon import.
+
 - Update the Android Gradle wrapper and split Apple motion tests to keep native validation passing while reducing the Swift lint baseline.
 
 - Avoid duplicate mpv display refresh-rate writes when concurrent display notifications report the same mode, and update the Android test-only Robolectric dependency to 4.18.1.

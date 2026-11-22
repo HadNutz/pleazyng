@@ -19,9 +19,9 @@ class IntegrationWorkflowConcurrencyTests(unittest.TestCase):
         text = (ROOT / ".github/workflows/pull-request.yml").read_text(encoding="utf-8")
         self.assertFalse(workflow_event_block(text, "push"))
         self.assertIn("pull_request:", text)
-        self.assertIn("github.event.pull_request.number || github.ref_name", text)
-        self.assertIn("github.event_name == 'workflow_dispatch' && github.sha", text)
-        self.assertIn("cancel-in-progress: true", text)
+        self.assertIn("github.event.pull_request.number || github.run_id", text)
+        self.assertIn("workflow_dispatch:", text)
+        self.assertIn("cancel-in-progress: ${{ github.event_name == 'pull_request' }}", text)
 
     def test_specialist_suites_only_push_on_main_and_run_on_pr_changes(self):
         for name in ("android-native-checks", "apple-compile", "native-lint", "native-patches"):
