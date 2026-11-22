@@ -332,6 +332,8 @@ private final class AppleDVBackend: DVRuntimeBackend {
     case "container-fps", "estimated-vf-fps": return engine.sourceVideoFrameRate
     case "video-codec": return engine.sourceVideoCodecName
     case "current-vo": return "aether"
+    case "pleazyng-vt-motion-supported", "pleazyng-apple-mixer-gpu-supported": return "no"
+    case "video-out-interpolation": return "unavailable"
     case "hwdec-current": return engine.activeVideoDecoder
     case "plezyng-dv-engine": return "plezyng-apple-dv-runtime-v1"
     case "current-tracks/video/dolby-vision-profile": return engine.sourceDVProfile
