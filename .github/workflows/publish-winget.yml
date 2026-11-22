@@ -32,6 +32,11 @@ env:
 permissions:
   contents: read
 
+concurrency:
+  group: winget-pleazyng-${{ inputs.release_tag }}
+  cancel-in-progress: false
+  queue: max
+
 jobs:
   submit:
     runs-on: windows-2025

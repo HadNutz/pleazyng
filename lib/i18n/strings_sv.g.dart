@@ -387,7 +387,6 @@ class _Translations$settings$sv extends Translations$settings$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Gångjärn på vikbar skärm';
 	@override String get title => 'Inställningar';
 	@override String get supportDeveloper => 'Stöd Pleazyng';
 	@override String get supportDeveloperDescription => 'Donera för att stödja utvecklingen';
@@ -490,6 +489,7 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get playerBackend => 'Uppspelningsmotor';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Gångjärn på vikbar skärm';
 	@override String get hardwareDecoding => 'Hårdvaruavkodning';
 	@override String get hardwareDecodingDescription => 'Använd hårdvaruacceleration när tillgängligt';
 	@override String get playbackBuffer => 'Uppspelningsbuffert';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$sv extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Reservkällor i uppspelningsordning';
+	@override String get exportPrivate => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.';
+	@override String get dynamicStreamExport => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.';
 	@override String get lineupOrder => 'Kanalordning';
+	@override String get moveUp => 'rör sig upp';
+	@override String get moveDown => 'Flytta ner';
 	@override String get orderChanged => 'Kanalordningen har ändrats. Granska den och försök igen.';
+	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 	@override String get localPlaylist => 'M3U-fil';
 	@override String get pastePlaylist => 'Klistra in spellistans text';
+	@override String get choosePlaylist => 'Välj Playlist fil';
 	@override String get playlistBase => 'Bas-URL för relativa länkar (valfritt)';
 	@override String get localPlaylistHelp => 'Importera en privat kopia av en M3U- eller M3U8-kanallista. Du kan ersätta den med en annan fil.';
 	@override String get showMatches => 'Visa matchande kanaler';
 	@override String get hideMatches => 'Dölj matchande kanaler';
 	@override String get pickerCredit => 'Inspirerat av · M3U Web Picker · Zachary Schmook (@zschmook) och medverkande';
-	@override String get exportPrivate => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.';
-	@override String get dynamicStreamExport => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.';
-	@override String get moveUp => 'rör sig upp';
-	@override String get moveDown => 'Flytta ner';
-	@override String get choosePlaylist => 'Välj Playlist fil';
-	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsSv {
 			'update.viewRelease' => 'Visa versionsinformation',
 			'update.latestVersion' => 'Du har den senaste versionen',
 			'update.checkFailed' => 'Det gick inte att söka efter uppdateringar',
-			'settings.foldableDisplay' => 'Gångjärn på vikbar skärm',
 			'settings.title' => 'Inställningar',
 			'settings.supportDeveloper' => 'Stöd Pleazyng',
 			'settings.supportDeveloperDescription' => 'Donera för att stödja utvecklingen',
@@ -5994,6 +5993,7 @@ extension on TranslationsSv {
 			'settings.playerBackend' => 'Uppspelningsmotor',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Gångjärn på vikbar skärm',
 			'settings.hardwareDecoding' => 'Hårdvaruavkodning',
 			'settings.hardwareDecodingDescription' => 'Använd hårdvaruacceleration när tillgängligt',
 			'settings.playbackBuffer' => 'Uppspelningsbuffert',
@@ -7045,21 +7045,21 @@ extension on TranslationsSv {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Redigera ${product}-anslutning',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Lägg till eller ta bort URL:er för ${serverName}. Pleazyng använder den nåbara URL:en med lägst latens.',
 			'iptv.backupFeeds' => 'Reservkällor i uppspelningsordning',
+			'iptv.exportPrivate' => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.',
+			'iptv.dynamicStreamExport' => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.',
 			'iptv.lineupOrder' => 'Kanalordning',
+			'iptv.moveUp' => 'rör sig upp',
+			'iptv.moveDown' => 'Flytta ner',
 			'iptv.orderChanged' => 'Kanalordningen har ändrats. Granska den och försök igen.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'iptv.localPlaylist' => 'M3U-fil',
 			'iptv.pastePlaylist' => 'Klistra in spellistans text',
+			'iptv.choosePlaylist' => 'Välj Playlist fil',
 			'iptv.playlistBase' => 'Bas-URL för relativa länkar (valfritt)',
 			'iptv.localPlaylistHelp' => 'Importera en privat kopia av en M3U- eller M3U8-kanallista. Du kan ersätta den med en annan fil.',
 			'iptv.showMatches' => 'Visa matchande kanaler',
 			'iptv.hideMatches' => 'Dölj matchande kanaler',
 			'iptv.pickerCredit' => 'Inspirerat av · M3U Web Picker · Zachary Schmook (@zschmook) och medverkande',
-			'iptv.exportPrivate' => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.',
-			'iptv.dynamicStreamExport' => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.',
-			'iptv.moveUp' => 'rör sig upp',
-			'iptv.moveDown' => 'Flytta ner',
-			'iptv.choosePlaylist' => 'Välj Playlist fil',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'accountPreferences.sectionTitle' => 'Kontoinställningar',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Ljud-, undertext- och biblioteksalternativ sparade på ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Ljud-, undertext- och biblioteksalternativ sparade på ${count} konton',
@@ -7214,9 +7214,9 @@ extension on TranslationsSv {
 			'discover.rating' => 'Betyg',
 			'discover.director' => 'Regissör',
 			'discover.directors' => 'Regissörer',
-			'discover.movie' => 'Film',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min kvar',
 			'discover.moreLikeThis' => 'Mer liknande innehåll',
@@ -7728,9 +7728,9 @@ extension on TranslationsSv {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Ta bort "${title}" från den här samlingen?',
 			'collections.removedFromCollection' => 'Objektet har tagits bort från samlingen',
 			'collections.removeFromCollectionFailed' => 'Det gick inte att ta bort objektet från samlingen',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Fel när objektet skulle tas bort från samlingen: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Fel när objektet skulle tas bort från samlingen: ${error}',
 			'collections.searchCollections' => 'Sök samlingar...',
 			'playlists.title' => 'Spellistor',
 			'playlists.playlist' => 'Spellista',
@@ -8242,9 +8242,9 @@ extension on TranslationsSv {
 			'performanceOverlay.dvPath' => 'DV-sökväg',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekoder (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Baslager',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Baslager',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-baslager',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-baslager',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-baslager',
@@ -8756,9 +8756,9 @@ extension on TranslationsSv {
 			'homeLayout.autoSlide' => 'Auto-slida',
 			'homeLayout.autoSlideDescription' => 'Låtar (PC) och d-pad (TV) fungerar alltid och startar timern om.',
 			'homeLayout.autoSlideEditDescription' => 'Slides också på egen hand varje några sekunder. Off: rör sig endast när du klickar på en pil (PC) eller trycker vänster/rät mot fjärr (TV).',
-			'homeLayout.enableHeroFirst' => 'Hjälten först',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'Hjälten först',
 			'homeLayout.showOnHome' => 'Visa på hemskärmen',
 			'homeLayout.home' => 'Hem',
 			'homeLayout.removeFromHome' => 'Ta bort från hemmet',
@@ -9270,9 +9270,9 @@ extension on TranslationsSv {
 			'audiobook.useDefaults' => 'Använd dessa lyssningskontroller för nya böcker',
 			'audiobook.librarySort' => 'Sorterade böcker',
 			'audiobook.sortTitle' => 'Titeln',
-			'audiobook.sortAuthor' => 'Författare',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Författare',
 			'audiobook.sortNarrator' => 'berättare',
 			'audiobook.sortSeries' => 'Serien order',
 			'audiobook.sortRecent' => 'Nyligen öppnade',
@@ -9784,9 +9784,9 @@ extension on TranslationsSv {
 			'musicTools.storageBudget' => 'Uppskattad nedladdningsgräns (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Gäst-DJ',
 			'musicTools.charts' => 'Lyssningslistor',
-			'musicTools.rediscover' => 'Återupptäck',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Återupptäck',
 			'musicTools.stations' => 'Musikstationer',
 			'musicTools.prompt' => 'Spellista från beskrivning',
 			'musicTools.provider' => 'Leverantörens genererings-URL',

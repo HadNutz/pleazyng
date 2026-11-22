@@ -387,7 +387,6 @@ class _Translations$settings$kk extends Translations$settings$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Жиналмалы экранның топсасы';
 	@override String get title => 'Баптаулар';
 	@override String get supportDeveloper => 'Pleazyng жобасын қолдау';
 	@override String get supportDeveloperDescription => 'Әзірлеуді қолдау үшін қайырымдылық жасаңыз';
@@ -490,6 +489,7 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String get playerBackend => 'Ойнатқыш инфрақұрылымы';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Жиналмалы экранның топсасы';
 	@override String get hardwareDecoding => 'Аппараттық декодтау';
 	@override String get hardwareDecodingDescription => 'Мүмкіндігінше аппараттық үдетуді пайдалану';
 	@override String get playbackBuffer => 'Ойнату буфері';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$kk extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Ойнату ретімен қосалқы көздер';
+	@override String get exportPrivate => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.';
+	@override String get dynamicStreamExport => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.';
 	@override String get lineupOrder => 'Арналар реті';
+	@override String get moveUp => 'Өзінің';
+	@override String get moveDown => 'Қайтаны';
 	@override String get orderChanged => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.';
+	@override String affectedChannels({required Object count}) => 'Арналар · ${count}';
 	@override String get localPlaylist => 'M3U файлы';
 	@override String get pastePlaylist => 'Ойнату тізімінің мәтінін қою';
+	@override String get choosePlaylist => 'Серіктің қағидалары';
 	@override String get playlistBase => 'Салыстырмалы сілтемелерге арналған негізгі URL (міндетті емес)';
 	@override String get localPlaylistHelp => 'M3U немесе M3U8 арналар тізімінің жеке көшірмесін импорттаңыз. Оны басқа файлмен ауыстыруға болады.';
 	@override String get showMatches => 'Сәйкес арналарды көрсету';
 	@override String get hideMatches => 'Сәйкес арналарды жасыру';
 	@override String get pickerCredit => 'Шабыт көзі · M3U Web Picker · Zachary Schmook (@zschmook) және үлес қосушылар';
-	@override String get exportPrivate => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.';
-	@override String get dynamicStreamExport => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.';
-	@override String get moveUp => 'Өзінің';
-	@override String get moveDown => 'Қайтаны';
-	@override String get choosePlaylist => 'Серіктің қағидалары';
-	@override String affectedChannels({required Object count}) => 'Арналар · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsKk {
 			'update.viewRelease' => 'Релизді көру',
 			'update.latestVersion' => 'Сізде ең соңғы нұсқа орнатылған',
 			'update.checkFailed' => 'Жаңартуларды тексеру мүмкін болмады',
-			'settings.foldableDisplay' => 'Жиналмалы экранның топсасы',
 			'settings.title' => 'Баптаулар',
 			'settings.supportDeveloper' => 'Pleazyng жобасын қолдау',
 			'settings.supportDeveloperDescription' => 'Әзірлеуді қолдау үшін қайырымдылық жасаңыз',
@@ -5994,6 +5993,7 @@ extension on TranslationsKk {
 			'settings.playerBackend' => 'Ойнатқыш инфрақұрылымы',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Жиналмалы экранның топсасы',
 			'settings.hardwareDecoding' => 'Аппараттық декодтау',
 			'settings.hardwareDecodingDescription' => 'Мүмкіндігінше аппараттық үдетуді пайдалану',
 			'settings.playbackBuffer' => 'Ойнату буфері',
@@ -7045,21 +7045,21 @@ extension on TranslationsKk {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} қосылымын өңдеу',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} үшін URL мекенжайларды қосыңыз немесе өшіріңіз. Pleazyng ең төмен кідірісі бар қолжетімді URL мекенжайды пайдаланады.',
 			'iptv.backupFeeds' => 'Ойнату ретімен қосалқы көздер',
+			'iptv.exportPrivate' => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.',
+			'iptv.dynamicStreamExport' => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.',
 			'iptv.lineupOrder' => 'Арналар реті',
+			'iptv.moveUp' => 'Өзінің',
+			'iptv.moveDown' => 'Қайтаны',
 			'iptv.orderChanged' => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Арналар · ${count}',
 			'iptv.localPlaylist' => 'M3U файлы',
 			'iptv.pastePlaylist' => 'Ойнату тізімінің мәтінін қою',
+			'iptv.choosePlaylist' => 'Серіктің қағидалары',
 			'iptv.playlistBase' => 'Салыстырмалы сілтемелерге арналған негізгі URL (міндетті емес)',
 			'iptv.localPlaylistHelp' => 'M3U немесе M3U8 арналар тізімінің жеке көшірмесін импорттаңыз. Оны басқа файлмен ауыстыруға болады.',
 			'iptv.showMatches' => 'Сәйкес арналарды көрсету',
 			'iptv.hideMatches' => 'Сәйкес арналарды жасыру',
 			'iptv.pickerCredit' => 'Шабыт көзі · M3U Web Picker · Zachary Schmook (@zschmook) және үлес қосушылар',
-			'iptv.exportPrivate' => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.',
-			'iptv.dynamicStreamExport' => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.',
-			'iptv.moveUp' => 'Өзінің',
-			'iptv.moveDown' => 'Қайтаны',
-			'iptv.choosePlaylist' => 'Серіктің қағидалары',
-			'iptv.affectedChannels' => ({required Object count}) => 'Арналар · ${count}',
 			'accountPreferences.sectionTitle' => 'Тіркелгі баптаулары',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account} тіркелгісінде сақталған аудио, субтитр және кітапхана баптаулары',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count} тіркелгіде сақталған аудио, субтитр және кітапхана баптаулары',
@@ -7214,9 +7214,9 @@ extension on TranslationsKk {
 			'discover.rating' => 'Рейтинг',
 			'discover.director' => 'Режиссер',
 			'discover.directors' => 'Режиссерлер',
-			'discover.movie' => 'Фильм',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Фильм',
 			'discover.tvShow' => 'TV Шоу',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} мин қалды',
 			'discover.moreLikeThis' => 'Ұқсастар',
@@ -7728,9 +7728,9 @@ extension on TranslationsKk {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" осы топтамадан өшірілсін бе?',
 			'collections.removedFromCollection' => 'Топтамадан өшірілді',
 			'collections.removeFromCollectionFailed' => 'Топтамадан өшіру мүмкін болмады',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Өшіру қатесі: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Өшіру қатесі: ${error}',
 			'collections.searchCollections' => 'Топтамалардан іздеу...',
 			'playlists.title' => 'Ойнату тізімдері',
 			'playlists.playlist' => 'Ойнату тізімі',
@@ -8242,9 +8242,9 @@ extension on TranslationsKk {
 			'performanceOverlay.dvPath' => 'DV жолы',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision декодері',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодері (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Негізгі қабат',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Негізгі қабат',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 негізгі қабаты',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG негізгі қабаты',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR негізгі қабаты',
@@ -8756,9 +8756,9 @@ extension on TranslationsKk {
 			'homeLayout.autoSlide' => 'Авто-Слайд',
 			'homeLayout.autoSlideDescription' => 'Бұл үшін, бұл жерде де ұзақ уақытқа дейін ұзақ уақыт бойы жасылған.',
 			'homeLayout.autoSlideEditDescription' => 'Бұл үшін, бұл жерде де ұзақ уақытқа дейін ұзақ уақыт бойы жасылған.Ап: бұл жерде ұзақ уақыттан дейін ұзақ жылдан дейін ұзақ уақытта ұзақ уақытға дейін ұзақ мерзімде (PC) немесе ұзақ мерзімі (TV) ұзақ мерзі (TV) жасылғанды.',
-			'homeLayout.enableHeroFirst' => 'Бұл үшін Герояның',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'Бұл үшін Герояның',
 			'homeLayout.showOnHome' => 'Home Screen қауымда',
 			'homeLayout.home' => 'Басты бет',
 			'homeLayout.removeFromHome' => 'Өйткені қайтарып',
@@ -9270,9 +9270,9 @@ extension on TranslationsKk {
 			'audiobook.useDefaults' => 'Теңіздердің аудармаларын аудармаларын аудармаларын',
 			'audiobook.librarySort' => 'Бібліотекасы',
 			'audiobook.sortTitle' => 'Қатысушылардың',
-			'audiobook.sortAuthor' => 'Алдыңғы',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Алдыңғы',
 			'audiobook.sortNarrator' => 'Жарысқа',
 			'audiobook.sortSeries' => 'Сериялық ордер',
 			'audiobook.sortRecent' => 'Ауыз ішінен',
@@ -9784,9 +9784,9 @@ extension on TranslationsKk {
 			'musicTools.storageBudget' => 'Жүктеп алудың болжалды шегі (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Қонақ диджей',
 			'musicTools.charts' => 'Тыңдау рейтингі',
-			'musicTools.rediscover' => 'Қайта ашу',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Қайта ашу',
 			'musicTools.stations' => 'Музыка станциялары',
 			'musicTools.prompt' => 'Сипаттамадан ойнату тізімі',
 			'musicTools.provider' => 'Провайдердің жасау мекенжайы',

@@ -387,7 +387,6 @@ class _Translations$settings$az extends Translations$settings$en {
 	final TranslationsAz _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Qatlanan ekranın menteşəsi';
 	@override String get title => 'Tənzimləmələr';
 	@override String get supportDeveloper => 'Pleazyng-yə dəstək ol';
 	@override String get supportDeveloperDescription => 'İnkişafı dəstəkləmək üçün ianə edin';
@@ -490,6 +489,7 @@ class _Translations$settings$az extends Translations$settings$en {
 	@override String get playerBackend => 'Oynadıcı infrastrukturu';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Qatlanan ekranın menteşəsi';
 	@override String get hardwareDecoding => 'Avadanlıq kod açılması';
 	@override String get hardwareDecodingDescription => 'Mümkün olduqda avadanlıq sürətləndirməsini istifadə et';
 	@override String get playbackBuffer => 'Oxutma buferi';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$az extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Oxutma sırasına görə ehtiyat mənbələr';
+	@override String get exportPrivate => 'Yayım keçidlərində provayderin giriş məlumatları ola bilər. Siyahını şəxsi yerdə saxlayın.';
+	@override String get dynamicStreamExport => 'Portal hər oxutma üçün yeni keçid yaradır. Proqram bələdçisini ixrac edə bilərsiniz.';
 	@override String get lineupOrder => 'Kanalların sırası';
+	@override String get moveUp => 'Yüksək';
+	@override String get moveDown => 'aşağı doğru hareket';
 	@override String get orderChanged => 'Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.';
+	@override String affectedChannels({required Object count}) => 'Kanallar · ${count}';
 	@override String get localPlaylist => 'M3U faylı';
 	@override String get pastePlaylist => 'Pleylist mətnini yapışdır';
+	@override String get choosePlaylist => 'Playlist filləri seçin';
 	@override String get playlistBase => 'Nisbi keçidlər üçün əsas URL (istəyə bağlı)';
 	@override String get localPlaylistHelp => 'M3U və ya M3U8 kanal siyahısının şəxsi surətini idxal edin. Onu başqa faylla əvəz edə bilərsiniz.';
 	@override String get showMatches => 'Uyğun kanalları göstər';
 	@override String get hideMatches => 'Uyğun kanalları gizlət';
 	@override String get pickerCredit => 'İlham mənbəyi · M3U Web Picker · Zachary Schmook (@zschmook) və digər iştirakçılar';
-	@override String get exportPrivate => 'Yayım keçidlərində provayderin giriş məlumatları ola bilər. Siyahını şəxsi yerdə saxlayın.';
-	@override String get dynamicStreamExport => 'Portal hər oxutma üçün yeni keçid yaradır. Proqram bələdçisini ixrac edə bilərsiniz.';
-	@override String get moveUp => 'Yüksək';
-	@override String get moveDown => 'aşağı doğru hareket';
-	@override String get choosePlaylist => 'Playlist filləri seçin';
-	@override String affectedChannels({required Object count}) => 'Kanallar · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsAz {
 			'update.viewRelease' => 'Buraxılışa bax',
 			'update.latestVersion' => 'Siz ən son versiyadasınız',
 			'update.checkFailed' => 'Yenilənmələr yoxlanıla bilmədi',
-			'settings.foldableDisplay' => 'Qatlanan ekranın menteşəsi',
 			'settings.title' => 'Tənzimləmələr',
 			'settings.supportDeveloper' => 'Pleazyng-yə dəstək ol',
 			'settings.supportDeveloperDescription' => 'İnkişafı dəstəkləmək üçün ianə edin',
@@ -5994,6 +5993,7 @@ extension on TranslationsAz {
 			'settings.playerBackend' => 'Oynadıcı infrastrukturu',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Qatlanan ekranın menteşəsi',
 			'settings.hardwareDecoding' => 'Avadanlıq kod açılması',
 			'settings.hardwareDecodingDescription' => 'Mümkün olduqda avadanlıq sürətləndirməsini istifadə et',
 			'settings.playbackBuffer' => 'Oxutma buferi',
@@ -7045,21 +7045,21 @@ extension on TranslationsAz {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} qoşulmasını düzəliş et',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} üçün URL-lər əlavə edin və ya silin. Pleazyng əlçatan olan ən aşağı gecikməli URL-i istifadə edəcək.',
 			'iptv.backupFeeds' => 'Oxutma sırasına görə ehtiyat mənbələr',
+			'iptv.exportPrivate' => 'Yayım keçidlərində provayderin giriş məlumatları ola bilər. Siyahını şəxsi yerdə saxlayın.',
+			'iptv.dynamicStreamExport' => 'Portal hər oxutma üçün yeni keçid yaradır. Proqram bələdçisini ixrac edə bilərsiniz.',
 			'iptv.lineupOrder' => 'Kanalların sırası',
+			'iptv.moveUp' => 'Yüksək',
+			'iptv.moveDown' => 'aşağı doğru hareket',
 			'iptv.orderChanged' => 'Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanallar · ${count}',
 			'iptv.localPlaylist' => 'M3U faylı',
 			'iptv.pastePlaylist' => 'Pleylist mətnini yapışdır',
+			'iptv.choosePlaylist' => 'Playlist filləri seçin',
 			'iptv.playlistBase' => 'Nisbi keçidlər üçün əsas URL (istəyə bağlı)',
 			'iptv.localPlaylistHelp' => 'M3U və ya M3U8 kanal siyahısının şəxsi surətini idxal edin. Onu başqa faylla əvəz edə bilərsiniz.',
 			'iptv.showMatches' => 'Uyğun kanalları göstər',
 			'iptv.hideMatches' => 'Uyğun kanalları gizlət',
 			'iptv.pickerCredit' => 'İlham mənbəyi · M3U Web Picker · Zachary Schmook (@zschmook) və digər iştirakçılar',
-			'iptv.exportPrivate' => 'Yayım keçidlərində provayderin giriş məlumatları ola bilər. Siyahını şəxsi yerdə saxlayın.',
-			'iptv.dynamicStreamExport' => 'Portal hər oxutma üçün yeni keçid yaradır. Proqram bələdçisini ixrac edə bilərsiniz.',
-			'iptv.moveUp' => 'Yüksək',
-			'iptv.moveDown' => 'aşağı doğru hareket',
-			'iptv.choosePlaylist' => 'Playlist filləri seçin',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanallar · ${count}',
 			'accountPreferences.sectionTitle' => 'Hesab tərcihləri',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account} hesabında saxlanılan səs, altyazı və kitabxana seçimləri',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count} hesabda saxlanılan səs, altyazı və kitabxana seçimləri',
@@ -7214,9 +7214,9 @@ extension on TranslationsAz {
 			'discover.rating' => 'Reytinq',
 			'discover.director' => 'Rejissor',
 			'discover.directors' => 'Rejissorlar',
-			'discover.movie' => 'Kino',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Kino',
 			'discover.tvShow' => 'TV Şou',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} dəq qaldı',
 			'discover.moreLikeThis' => 'Buna bənzərlər',
@@ -7728,9 +7728,9 @@ extension on TranslationsAz {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" bu kolleksiyadan silinsin?',
 			'collections.removedFromCollection' => 'Kolleksiyadan silindi',
 			'collections.removeFromCollectionFailed' => 'Kolleksiyadan silinə bilmədi',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Kolleksiyadan silinərkən xəta: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Kolleksiyadan silinərkən xəta: ${error}',
 			'collections.searchCollections' => 'Kolleksiyalarda axtar...',
 			'playlists.title' => 'Oynatma siyahıları',
 			'playlists.playlist' => 'Oynatma siyahısı',
@@ -8242,9 +8242,9 @@ extension on TranslationsAz {
 			'performanceOverlay.dvPath' => 'DV yolu',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision çözücüsü',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision çözücüsü (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Baza təbəqə',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Baza təbəqə',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 baza təbəqə',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG baza təbəqə',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR baza təbəqə',
@@ -8756,9 +8756,9 @@ extension on TranslationsAz {
 			'homeLayout.autoSlide' => 'Auto-Slayt',
 			'homeLayout.autoSlideDescription' => 'Qadınlar (PC) və d-pad (TV) hər zaman çalışır və zamanlayıcının yeniden başlatılmasıdır.',
 			'homeLayout.autoSlideEditDescription' => 'Bu, hər bir saniye özünə çıxır. Off: yalnız bir pul (PC) tıklayınca və ya televizyonda sol/sağ basınca hareket edir.',
-			'homeLayout.enableHeroFirst' => 'Birincisi Hero.',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'Birincisi Hero.',
 			'homeLayout.showOnHome' => 'Ev ekranında görünür',
 			'homeLayout.home' => 'Ana səhifə',
 			'homeLayout.removeFromHome' => 'Evdən çıxmaq',
@@ -9270,9 +9270,9 @@ extension on TranslationsAz {
 			'audiobook.useDefaults' => 'Yeni kitablar üçün bu oxuma kontrollarını kullanın',
 			'audiobook.librarySort' => 'Kitaplar',
 			'audiobook.sortTitle' => 'Başlık',
-			'audiobook.sortAuthor' => 'Yazarın',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Yazarın',
 			'audiobook.sortNarrator' => 'Öykənlər',
 			'audiobook.sortSeries' => 'Seriyalı komandalar',
 			'audiobook.sortRecent' => 'Son zamanlarda açıldı',
@@ -9784,9 +9784,9 @@ extension on TranslationsAz {
 			'musicTools.storageBudget' => 'Təxmini endirmə büdcəsi (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Qonaq DJ',
 			'musicTools.charts' => 'Dinləmə reytinqləri',
-			'musicTools.rediscover' => 'Yenidən kəşf et',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Yenidən kəşf et',
 			'musicTools.stations' => 'Musiqi stansiyaları',
 			'musicTools.prompt' => 'Təsvirdən pleylist',
 			'musicTools.provider' => 'Provayderin generasiya URL-i',

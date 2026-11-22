@@ -419,16 +419,15 @@ class MacAppStoreSigningGuardTests(unittest.TestCase):
         self.assertIn('"labels":["self-hosted","macOS","ARM64","private-apple"', runner)
         self.assertIn(f'"gha-{{0}}-{job.group(1)}"', runner)
 
-        self.assertNotIn("ruby/setup-ruby", workflow)
+        self.assertNotIn("ruby/setup-ruby", workflow.split("  deliver:", 1)[0])
+        self.assertIn("ruby/setup-ruby", workflow.split("  deliver:", 1)[1])
         self.assertIn("BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile", workflow)
         self.assertNotIn("BUNDLE_PATH: ${{ runner.temp }}", workflow.split("jobs:", 1)[0])
-        self.assertIn('echo "BUNDLE_PATH=$RUNNER_TEMP/fastlane-bundle" >> "$GITHUB_ENV"', workflow)
+        deliver = workflow.split("  deliver:", 1)[1].split("  inspect-profiles:", 1)[0]
         self.assertIn('BUNDLE_FROZEN: "true"', workflow)
-        bundle_step = workflow.split(
-            "- name: Install the locked Fastlane bundle in runner temp", 1
-        )[1].split("\n      - ", 1)[0]
-        self.assertIn('gem install bundler --version "$bundler_version"', bundle_step)
-        self.assertIn("bundle install --jobs 4 --retry 3", bundle_step)
+        self.assertIn("bundler-cache: true", deliver)
+        self.assertIn("--deliver-only", deliver)
+        self.assertIn("--export-only", workflow.split("  deliver:", 1)[0])
 
     def test_only_mac_app_store_resolver_lockfiles_are_restored_on_success_and_error(self):
         self.assertEqual(package_locks.MACOS_PACKAGE_LOCK_PATHS, (

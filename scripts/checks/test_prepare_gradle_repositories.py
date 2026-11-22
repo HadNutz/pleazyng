@@ -88,7 +88,7 @@ class GradleRepositoryTests(unittest.TestCase):
 
     def test_android_ci_and_release_share_cache_keys_and_bootstrap_policy(self):
         ci = job_block((ROOT / ".github/workflows/ci.yml").read_text(), "android-test")
-        release = job_block((ROOT / ".github/workflows/build.yml").read_text(), "build-android")
+        release = job_block((ROOT / ".github/workflows/build.yml").read_text(), "android-variant")
 
         def field(block, step, name):
             text = block.split(f"- name: {step}\n", 1)[1]
@@ -103,7 +103,7 @@ class GradleRepositoryTests(unittest.TestCase):
             self.assertIn("run: python3 scripts/prepare_gradle_repositories.py", block)
 
     def test_android_builds_are_observed_without_changing_release_variants(self):
-        release = job_block((ROOT / ".github/workflows/build.yml").read_text(), "build-android")
+        release = job_block((ROOT / ".github/workflows/build.yml").read_text(), "android-variant")
         self.assertEqual(release.count("scripts/run_android_build.py flutter --verbose build "), 5)
         for flag in ("--split-per-abi", "--dart-define=SUPPORTER_MODE=iap", "--dart-define=AMAZON_STORE=true"):
             self.assertIn(flag, release)

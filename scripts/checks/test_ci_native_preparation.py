@@ -207,14 +207,24 @@ class NativePreparationOrderTests(unittest.TestCase):
                 self.assertIn('${{ ' + output + ' }}', upload['with']['path'].splitlines())
                 self.assertLess(action_steps.index(upload), action_steps.index(cleanup))
 
+    def test_flutter_shards_cover_each_test_once_with_deterministic_assignment(self):
+        from ci.flutter_test_shard import partition
+        files = ['test/slow_test.dart', 'test/other_test.dart', 'test/new_test.dart', 'test/fast_test.dart']
+        groups = partition(files, {files[0]: 100}, 3)
+        self.assertEqual([files[0]], groups[0])
+        self.assertEqual(sorted(files), sorted(p for group in groups for p in group))
+        self.assertEqual(groups, partition(list(reversed(files)), {files[0]: 100}, 3))
+
     def test_unit_job_is_the_only_full_application_suite(self):
         workflow = WORKFLOW.read_text()
         analysis = job(workflow, 'analyze')
-        unit = job(workflow, 'test')
+        unit = job(workflow, 'test-extras') + job(workflow, 'reader-browser')
+        shards = job(workflow, 'test-shards')
         self.assertNotRegex(analysis, r'flutter test\b|scripts/run_tests\.sh\b')
         self.assertIn('dart run scripts/checks/check_analyzer.dart', step(analysis, 'Analyze code'))
-        self.assertEqual(workflow.count('scripts/run_tests.sh'), 1)
-        self.assertIn('scripts/run_tests.sh -j 2 --timeout=120s', step(unit, 'Run tests'))
+        self.assertEqual(workflow.count('scripts/ci/flutter_test_shard.py'), 1)
+        self.assertIn('matrix.shard', step(shards, 'Run Flutter test shard'))
+        self.assertIn('needs: [test-shards, test-extras, reader-browser]', job(workflow, 'test'))
         # These independent suites are intentional coverage, not duplicates.
         for name in (
             'Run real reader browser checks',

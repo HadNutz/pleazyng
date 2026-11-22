@@ -387,7 +387,6 @@ class _Translations$settings$cs extends Translations$settings$en {
 	final TranslationsCs _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Pant skládacího displeje';
 	@override String get title => 'Nastavení';
 	@override String get supportDeveloper => 'Podpora Pleazyng';
 	@override String get supportDeveloperDescription => 'Dotace na podporu rozvoje';
@@ -490,6 +489,7 @@ class _Translations$settings$cs extends Translations$settings$en {
 	@override String get playerBackend => 'Hráč Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Pant skládacího displeje';
 	@override String get hardwareDecoding => 'Hardware dekódování';
 	@override String get hardwareDecodingDescription => 'Použijte hardware akcelerace, když je k dispozici';
 	@override String get playbackBuffer => 'Hrají buffer';
@@ -1665,21 +1665,21 @@ class _Translations$iptv$cs extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Záložní zdroje v pořadí přehrávání';
+	@override String get exportPrivate => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.';
+	@override String get dynamicStreamExport => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.';
 	@override String get lineupOrder => 'Pořadí kanálů';
+	@override String get moveUp => 'Přemístěte se';
+	@override String get moveDown => 'Přemístěte se dolů';
 	@override String get orderChanged => 'Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.';
+	@override String affectedChannels({required Object count}) => 'Kanály · ${count}';
 	@override String get localPlaylist => 'Soubor M3U';
 	@override String get pastePlaylist => 'Vložit text playlistu';
+	@override String get choosePlaylist => 'Vyberte soubor playlist';
 	@override String get playlistBase => 'Základní URL pro relativní odkazy (volitelné)';
 	@override String get localPlaylistHelp => 'Importujte soukromou kopii seznamu kanálů M3U nebo M3U8. Můžete ji nahradit jiným souborem.';
 	@override String get showMatches => 'Zobrazit odpovídající kanály';
 	@override String get hideMatches => 'Skrýt odpovídající kanály';
 	@override String get pickerCredit => 'Inspirováno projektem · M3U Web Picker · Zachary Schmook (@zschmook) a přispěvatelé';
-	@override String get exportPrivate => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.';
-	@override String get dynamicStreamExport => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.';
-	@override String get moveUp => 'Přemístěte se';
-	@override String get moveDown => 'Přemístěte se dolů';
-	@override String get choosePlaylist => 'Vyberte soubor playlist';
-	@override String affectedChannels({required Object count}) => 'Kanály · ${count}';
 }
 
 // Path: accountPreferences
@@ -5935,7 +5935,6 @@ extension on TranslationsCs {
 			'update.viewRelease' => 'Zobrazit Release',
 			'update.latestVersion' => 'Jste na nejnovější verzi',
 			'update.checkFailed' => 'Nedokázal se dohlížet na aktualizace',
-			'settings.foldableDisplay' => 'Pant skládacího displeje',
 			'settings.title' => 'Nastavení',
 			'settings.supportDeveloper' => 'Podpora Pleazyng',
 			'settings.supportDeveloperDescription' => 'Dotace na podporu rozvoje',
@@ -6038,6 +6037,7 @@ extension on TranslationsCs {
 			'settings.playerBackend' => 'Hráč Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Pant skládacího displeje',
 			'settings.hardwareDecoding' => 'Hardware dekódování',
 			'settings.hardwareDecodingDescription' => 'Použijte hardware akcelerace, když je k dispozici',
 			'settings.playbackBuffer' => 'Hrají buffer',
@@ -7089,21 +7089,21 @@ extension on TranslationsCs {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} připojení',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Přidat nebo odstranit URL pro ${serverName}. Pleazyng bude používat přístupné URL s nejnižší latencí.',
 			'iptv.backupFeeds' => 'Záložní zdroje v pořadí přehrávání',
+			'iptv.exportPrivate' => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.',
+			'iptv.dynamicStreamExport' => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.',
 			'iptv.lineupOrder' => 'Pořadí kanálů',
+			'iptv.moveUp' => 'Přemístěte se',
+			'iptv.moveDown' => 'Přemístěte se dolů',
 			'iptv.orderChanged' => 'Pořadí kanálů se změnilo. Zkontrolujte ho a zkuste to znovu.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanály · ${count}',
 			'iptv.localPlaylist' => 'Soubor M3U',
 			'iptv.pastePlaylist' => 'Vložit text playlistu',
+			'iptv.choosePlaylist' => 'Vyberte soubor playlist',
 			'iptv.playlistBase' => 'Základní URL pro relativní odkazy (volitelné)',
 			'iptv.localPlaylistHelp' => 'Importujte soukromou kopii seznamu kanálů M3U nebo M3U8. Můžete ji nahradit jiným souborem.',
 			'iptv.showMatches' => 'Zobrazit odpovídající kanály',
 			'iptv.hideMatches' => 'Skrýt odpovídající kanály',
 			'iptv.pickerCredit' => 'Inspirováno projektem · M3U Web Picker · Zachary Schmook (@zschmook) a přispěvatelé',
-			'iptv.exportPrivate' => 'Adresy streamů mohou obsahovat přihlašovací údaje poskytovatele. Seznam uložte na soukromé místo.',
-			'iptv.dynamicStreamExport' => 'Portál vytváří při každém přehrání nový odkaz. Program lze exportovat.',
-			'iptv.moveUp' => 'Přemístěte se',
-			'iptv.moveDown' => 'Přemístěte se dolů',
-			'iptv.choosePlaylist' => 'Vyberte soubor playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanály · ${count}',
 			'accountPreferences.sectionTitle' => 'účetní preference',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Možnosti audio, podtitulů a knihovny uložené na ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Možnosti audio, podtitulů a knihovny uložené na účtech ${count}',
@@ -7258,9 +7258,9 @@ extension on TranslationsCs {
 			'discover.rating' => 'Hodnocení',
 			'discover.director' => 'Režisér',
 			'discover.directors' => 'Režiséři',
-			'discover.movie' => 'Film',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV show',
 			'discover.minutesLeft' => ({required Object minutes}) => 'Zbývá ${minutes} min',
 			'discover.moreLikeThis' => 'Podobné položky',
@@ -7772,9 +7772,9 @@ extension on TranslationsCs {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Odebrat „${title}“ z této kolekce?',
 			'collections.removedFromCollection' => 'Odstranění z kolekce',
 			'collections.removeFromCollectionFailed' => 'Neschopnost odstranit ze sbírky',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Odstranění chyb z sběru: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Odstranění chyb z sběru: ${error}',
 			'collections.searchCollections' => 'Vyhledávací sbírky...',
 			'playlists.title' => 'Seznamy skladeb',
 			'playlists.playlist' => 'Seznam skladeb',
@@ -8286,9 +8286,9 @@ extension on TranslationsCs {
 			'performanceOverlay.dvPath' => 'Dva cesty',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision dekódování',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision dekodér (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Základní vrstva',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Základní vrstva',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 základní vrstva',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG základní vrstva',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR základní vrstva',
@@ -8800,9 +8800,9 @@ extension on TranslationsCs {
 			'homeLayout.autoSlide' => 'Auto slide',
 			'homeLayout.autoSlideDescription' => 'Přístupy (PC) a d-pad (TV) vždy fungují a časovač znovu spouští.',
 			'homeLayout.autoSlideEditDescription' => 'Odstraní: pouze se pohybuje, když kliknete na šípku (PC) nebo stisknete levou / pravou na dálku (TV).',
-			'homeLayout.enableHeroFirst' => 'První hrdina',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'První hrdina',
 			'homeLayout.showOnHome' => 'Zobrazit na domácím obrazovce',
 			'homeLayout.home' => 'Domovská obrazovka',
 			'homeLayout.removeFromHome' => 'Odstranit z domova',
@@ -9314,9 +9314,9 @@ extension on TranslationsCs {
 			'audiobook.useDefaults' => 'Použijte tyto ovládací prvky pro nové knihy',
 			'audiobook.librarySort' => 'Černé knihy',
 			'audiobook.sortTitle' => 'Název',
-			'audiobook.sortAuthor' => 'Autorka',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Autorka',
 			'audiobook.sortNarrator' => 'Příběh',
 			'audiobook.sortSeries' => 'Seriálový příkaz',
 			'audiobook.sortRecent' => 'Nedávno otevřeno',
@@ -9828,9 +9828,9 @@ extension on TranslationsCs {
 			'musicTools.storageBudget' => 'Odhadovaný limit stahování (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Hostující DJ',
 			'musicTools.charts' => 'Žebříčky poslechu',
-			'musicTools.rediscover' => 'Znovu objevit',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Znovu objevit',
 			'musicTools.stations' => 'Hudební stanice',
 			'musicTools.prompt' => 'Seznam podle popisu',
 			'musicTools.provider' => 'URL generování poskytovatele',

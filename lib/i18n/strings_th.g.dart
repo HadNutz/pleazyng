@@ -387,7 +387,6 @@ class _Translations$settings$th extends Translations$settings$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'บานพับของหน้าจอพับได้';
 	@override String get title => 'การตั้งค่า';
 	@override String get supportDeveloper => 'สนับสนุน Pleazyng';
 	@override String get supportDeveloperDescription => 'การสนับสนุนการพัฒนา';
@@ -490,6 +489,7 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get playerBackend => 'ผู้เล่น Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'บานพับของหน้าจอพับได้';
 	@override String get hardwareDecoding => 'การเข้ารหัสฮาร์ดแวร์';
 	@override String get hardwareDecodingDescription => 'ใช้ความเร็วฮาร์ดแวร์เมื่อมี';
 	@override String get playbackBuffer => 'บูฟเวอร์ Playback';
@@ -1646,21 +1646,21 @@ class _Translations$iptv$th extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'แหล่งสำรองตามลำดับการเล่น';
+	@override String get exportPrivate => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว';
+	@override String get dynamicStreamExport => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้';
 	@override String get lineupOrder => 'ลำดับช่อง';
+	@override String get moveUp => 'ขึ้นไป';
+	@override String get moveDown => 'การเคลื่อนไหวลง';
 	@override String get orderChanged => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง';
+	@override String affectedChannels({required Object count}) => 'ช่อง · ${count}';
 	@override String get localPlaylist => 'ไฟล์ M3U';
 	@override String get pastePlaylist => 'วางข้อความเพลย์ลิสต์';
+	@override String get choosePlaylist => 'เลือกไฟล์ Playlist';
 	@override String get playlistBase => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)';
 	@override String get localPlaylistHelp => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้';
 	@override String get showMatches => 'แสดงช่องที่ตรงกัน';
 	@override String get hideMatches => 'ซ่อนช่องที่ตรงกัน';
 	@override String get pickerCredit => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา';
-	@override String get exportPrivate => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว';
-	@override String get dynamicStreamExport => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้';
-	@override String get moveUp => 'ขึ้นไป';
-	@override String get moveDown => 'การเคลื่อนไหวลง';
-	@override String get choosePlaylist => 'เลือกไฟล์ Playlist';
-	@override String affectedChannels({required Object count}) => 'ช่อง · ${count}';
 }
 
 // Path: accountPreferences
@@ -5866,7 +5866,6 @@ extension on TranslationsTh {
 			'update.viewRelease' => 'ดูการปล่อย',
 			'update.latestVersion' => 'คุณอยู่ในเวอร์ชันล่าสุด',
 			'update.checkFailed' => 'ไม่สามารถตรวจสอบอัปเดตได้',
-			'settings.foldableDisplay' => 'บานพับของหน้าจอพับได้',
 			'settings.title' => 'การตั้งค่า',
 			'settings.supportDeveloper' => 'สนับสนุน Pleazyng',
 			'settings.supportDeveloperDescription' => 'การสนับสนุนการพัฒนา',
@@ -5969,6 +5968,7 @@ extension on TranslationsTh {
 			'settings.playerBackend' => 'ผู้เล่น Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'บานพับของหน้าจอพับได้',
 			'settings.hardwareDecoding' => 'การเข้ารหัสฮาร์ดแวร์',
 			'settings.hardwareDecodingDescription' => 'ใช้ความเร็วฮาร์ดแวร์เมื่อมี',
 			'settings.playbackBuffer' => 'บูฟเวอร์ Playback',
@@ -7020,21 +7020,21 @@ extension on TranslationsTh {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} การเชื่อมต่อ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด',
 			'iptv.backupFeeds' => 'แหล่งสำรองตามลำดับการเล่น',
+			'iptv.exportPrivate' => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว',
+			'iptv.dynamicStreamExport' => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้',
 			'iptv.lineupOrder' => 'ลำดับช่อง',
+			'iptv.moveUp' => 'ขึ้นไป',
+			'iptv.moveDown' => 'การเคลื่อนไหวลง',
 			'iptv.orderChanged' => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง',
+			'iptv.affectedChannels' => ({required Object count}) => 'ช่อง · ${count}',
 			'iptv.localPlaylist' => 'ไฟล์ M3U',
 			'iptv.pastePlaylist' => 'วางข้อความเพลย์ลิสต์',
+			'iptv.choosePlaylist' => 'เลือกไฟล์ Playlist',
 			'iptv.playlistBase' => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)',
 			'iptv.localPlaylistHelp' => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้',
 			'iptv.showMatches' => 'แสดงช่องที่ตรงกัน',
 			'iptv.hideMatches' => 'ซ่อนช่องที่ตรงกัน',
 			'iptv.pickerCredit' => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา',
-			'iptv.exportPrivate' => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว',
-			'iptv.dynamicStreamExport' => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้',
-			'iptv.moveUp' => 'ขึ้นไป',
-			'iptv.moveDown' => 'การเคลื่อนไหวลง',
-			'iptv.choosePlaylist' => 'เลือกไฟล์ Playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'ช่อง · ${count}',
 			'accountPreferences.sectionTitle' => 'การตั้งค่าบัญชี',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'ออฟต์แวร์เสียงและตัวเลือกห้องสมุดที่บันทึกไว้บน ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'ออฟต์แวร์อัตโนมัติและตัวเลือกห้องสมุดที่บันทึกไว้ในบัญชี ${count}',
@@ -7189,9 +7189,9 @@ extension on TranslationsTh {
 			'discover.rating' => 'คะแนน',
 			'discover.director' => 'ผู้กำกับ',
 			'discover.directors' => 'ผู้กำกับ',
-			'discover.movie' => 'ภาพยนตร์',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'ภาพยนตร์',
 			'discover.tvShow' => 'แสดงทีวี',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} นาที left',
 			'discover.moreLikeThis' => 'มากกว่าเช่นนี้',
@@ -7703,9 +7703,9 @@ extension on TranslationsTh {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'นำ “${title}” ออกจากคอลเลกชันนี้หรือไม่',
 			'collections.removedFromCollection' => 'การกําจัดจากการเก็บรวบรวม',
 			'collections.removeFromCollectionFailed' => 'ไม่สามารถถอดออกจากการเก็บรวบรวม',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'ความผิดพลาดในการลบจากการเก็บรวบรวม: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'ความผิดพลาดในการลบจากการเก็บรวบรวม: ${error}',
 			'collections.searchCollections' => 'ค้นหาคอลเลกชัน',
 			'playlists.title' => 'เพลย์ลิสต์',
 			'playlists.playlist' => 'เพลย์ลิสต์',
@@ -8217,9 +8217,9 @@ extension on TranslationsTh {
 			'performanceOverlay.dvPath' => 'สองเส้นทาง',
 			'performanceOverlay.dvRouteDecoder' => 'ตัวถอดรหัส Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'ตัวถอดรหัส Dolby Vision (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'ฐานชั้น',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'ฐานชั้น',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ชั้นฐาน',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG ฐานชั้น',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR ฐานชั้น',
@@ -8731,9 +8731,9 @@ extension on TranslationsTh {
 			'homeLayout.autoSlide' => 'อัตโนมัติ Slide',
 			'homeLayout.autoSlideDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที Arrows (PC) และ d-pad (TV) ทํางานเสมอและเปิดตัวใหม่ชั่วโมง',
 			'homeLayout.autoSlideEditDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที ปิด: เท่านั้นเคลื่อนที่เมื่อคุณคลิกปืน (พีซี) หรือกดซ้าย / ขวาบนระยะไกล (ทีวี) สไลด์และ d-pad ทํางานเสมอในทางใด ๆ',
-			'homeLayout.enableHeroFirst' => 'อนุญาตให้ฮีโร่แรก',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'อนุญาตให้ฮีโร่แรก',
 			'homeLayout.showOnHome' => 'แสดงบนหน้าจอบ้าน',
 			'homeLayout.home' => 'บ้าน',
 			'homeLayout.removeFromHome' => 'เอาจากบ้าน',
@@ -9245,9 +9245,9 @@ extension on TranslationsTh {
 			'audiobook.useDefaults' => 'ใช้ตัวควบคุมฟังเหล่านี้สําหรับหนังสือใหม่',
 			'audiobook.librarySort' => 'โคตรหนังสือ',
 			'audiobook.sortTitle' => 'ชื่อ',
-			'audiobook.sortAuthor' => 'ผู้เขียน',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'ผู้เขียน',
 			'audiobook.sortNarrator' => 'พูดคุย',
 			'audiobook.sortSeries' => 'ชุดคําสั่ง',
 			'audiobook.sortRecent' => 'กุมภาพันธ์',
@@ -9759,9 +9759,9 @@ extension on TranslationsTh {
 			'musicTools.storageBudget' => 'ขีดจำกัดการดาวน์โหลดโดยประมาณ (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'ดีเจรับเชิญ',
 			'musicTools.charts' => 'อันดับการฟัง',
-			'musicTools.rediscover' => 'ค้นพบอีกครั้ง',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'ค้นพบอีกครั้ง',
 			'musicTools.stations' => 'สถานีเพลง',
 			'musicTools.prompt' => 'เพลย์ลิสต์จากคำอธิบาย',
 			'musicTools.provider' => 'URL สร้างรายการของผู้ให้บริการ',

@@ -1893,9 +1893,9 @@ extension on TranslationsEs419 {
 			'romm.slot' => 'Save slot',
 			'romm.core' => 'Core identity',
 			'romm.compatibilityHelp' => 'Save states require the same emulator and compatible core version. Choose the exact game copy before importing.',
-			'romm.saveConflict' => 'Both copies changed. Keep both versions, use the server copy, or explicitly replace it.',
 			_ => null,
 		} ?? switch (path) {
+			'romm.saveConflict' => 'Both copies changed. Keep both versions, use the server copy, or explicitly replace it.',
 			'romm.keepBoth' => 'Keep both',
 			'romm.useServer' => 'Use server copy',
 			'romm.replaceServer' => 'Replace server copy',

@@ -24,8 +24,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: music-devices-${{ github.ref }}
-  cancel-in-progress: false
+  group: music-devices-${{ github.event_name == 'push' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
   handoff:

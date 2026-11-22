@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Remove obsolete podcast import and motion smoothing localization messages.
+
+- Defer playback window-size lookup until Flutter attaches inherited view data, preventing video controls from failing during initialization.
+
 - Apple MPV playback now tries GPU and software frame mixing if the VideoToolbox capability check is unavailable. The Dolby Vision runtime reports its motion support separately. On the iPhone simulator, MPV uses software mixing when the simulated Metal driver cannot copy interpolated frames for display.
 
 - Xtream connections can use the provider’s live-only catalog, including category names and correctly escaped stream paths. Pleazyng tries the other provider endpoint when the selected API or playlist is unavailable. Inspired by the [M3U Web Picker provider loader](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/core.py) from [Zachary Schmook](https://github.com/zschmook) and contributors.
@@ -54,6 +58,7 @@
 - Preserve audiobook and reading progress on unavailable files. Restore IPTV recording and tuning for affected profiles, label TV keyboard actions for screen readers, and show the actual results of local and network settings restores.
 
 - Keep manual app-store review submissions tracked separately from successful artifact uploads.
+- Reuse completed Apple, Android, Windows and Linux jobs across release retries. Package formats, relay architectures and independent store deliveries can proceed in parallel.
 - Remove unused download and music helpers and restore a clean analyzer run. Behaviour is unchanged.
 
 ## [3.0.47] - 2026-11-21

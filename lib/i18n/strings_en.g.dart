@@ -1704,9 +1704,6 @@ class Translations$settings$en {
 	/// en: 'MPV has not activated display-synchronized interpolation for this session.'
 	String get motionSmoothingNotActiveDescription => 'MPV has not activated display-synchronized interpolation for this session.';
 
-	/// en: 'Saved for the next video. The player prepares its motion processor when playback starts.'
-	String get motionSmoothingNextPlayback => 'Saved for the next video. The player prepares its motion processor when playback starts.';
-
 	/// en: 'Off'
 	String get motionSmoothingOff => 'Off';
 
@@ -12779,9 +12776,6 @@ class Translations$podcasts$en {
 	/// en: 'Export subscriptions (OPML)'
 	String get exportOpml => 'Export subscriptions (OPML)';
 
-	/// en: 'Subscriptions imported.'
-	String get imported => 'Subscriptions imported.';
-
 	/// en: 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.'
 	String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.';
 
@@ -18859,7 +18853,6 @@ extension on Translations {
 			'settings.motionSmoothingApplyFailed' => 'The player could not apply motion smoothing. Playback will continue unchanged.',
 			'settings.motionSmoothingLiveUnavailableDescription' => 'Motion smoothing is disabled for live playback to preserve stream timing.',
 			'settings.motionSmoothingNotActiveDescription' => 'MPV has not activated display-synchronized interpolation for this session.',
-			'settings.motionSmoothingNextPlayback' => 'Saved for the next video. The player prepares its motion processor when playback starts.',
 			'settings.motionSmoothingOff' => 'Off',
 			'settings.motionSmoothingOffDescription' => 'Keep the player’s existing display and frame cadence.',
 			'settings.motionSmoothingMpv' => 'MPV',
@@ -19345,9 +19338,9 @@ extension on Translations {
 			'accessibility.tapToPlay' => 'Tap to play',
 			'accessibility.decrease' => 'Decrease',
 			'accessibility.increase' => 'Increase',
+			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
 			'accessibility.hue' => 'Hue',
 			'accessibility.saturation' => 'Saturation',
@@ -22958,7 +22951,6 @@ extension on Translations {
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
-			'podcasts.imported' => 'Subscriptions imported.',
 			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
@@ -23458,9 +23450,9 @@ extension on Translations {
 			'karaokeUi.microphoneAndPrivateTake' => 'Microphone and private take',
 			'karaokeUi.pitchFeedbackAndDryRecordingUseYourSelectedMicrophone' => 'Pitch feedback and dry recording use your selected microphone. Use an external mixer for amplification.',
 			'karaokeUi.tvMicrophoneCaptureUnavailable' => 'Microphone capture is unavailable in this TV build. Use the karaoke phone companion for mic capture, or connect a microphone to an external mixer for stage amplification.',
+			'karaokeUi.enableMicrophone' => 'Enable microphone',
 			_ => null,
 		} ?? switch (path) {
-			'karaokeUi.enableMicrophone' => 'Enable microphone',
 			'karaokeUi.muteMicrophone' => 'Mute microphone',
 			'karaokeUi.recordPrivateTake' => 'Record private take',
 			'karaokeUi.savePrivateTake' => 'Save private take',

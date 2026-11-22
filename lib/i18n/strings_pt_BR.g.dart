@@ -1936,9 +1936,9 @@ extension on TranslationsPtBr {
 			'romm.native' => 'On this device',
 			'romm.emulatorJs' => 'EmulatorJS',
 			'romm.ruffle' => 'Ruffle',
-			'romm.jsDos' => 'js-dos',
 			_ => null,
 		} ?? switch (path) {
+			'romm.jsDos' => 'js-dos',
 			'romm.pico8' => 'PICO-8',
 			'romm.easyRpg' => 'EasyRPG',
 			'romm.browserUnavailable' => 'An embedded browser player is not available in this build.',

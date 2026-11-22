@@ -387,7 +387,6 @@ class _Translations$settings$nb extends Translations$settings$en {
 	final TranslationsNb _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Hengsel på brettbar skjerm';
 	@override String get title => 'Innstillinger';
 	@override String get supportDeveloper => 'Støtt Pleazyng';
 	@override String get supportDeveloperDescription => 'Doner for å støtte utviklingen';
@@ -490,6 +489,7 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get playerBackend => 'Avspillingsmotor';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Hengsel på brettbar skjerm';
 	@override String get hardwareDecoding => 'Maskinvaredekoding';
 	@override String get hardwareDecodingDescription => 'Bruk maskinvareakselerasjon når tilgjengelig';
 	@override String get playbackBuffer => 'Avspillingsbuffer';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$nb extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Reservekilder i avspillingsrekkefølge';
+	@override String get exportPrivate => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.';
+	@override String get dynamicStreamExport => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.';
 	@override String get lineupOrder => 'Kanalrekkefølge';
+	@override String get moveUp => 'Flytt opp';
+	@override String get moveDown => 'Flytt ned';
 	@override String get orderChanged => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.';
+	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 	@override String get localPlaylist => 'M3U-fil';
 	@override String get pastePlaylist => 'Lim inn spillelistetekst';
+	@override String get choosePlaylist => 'Velg Playlist filer';
 	@override String get playlistBase => 'Basisadresse for relative lenker (valgfritt)';
 	@override String get localPlaylistHelp => 'Importer en privat kopi av en M3U- eller M3U8-kanalliste. Velg en annen fil for å erstatte den.';
 	@override String get showMatches => 'Vis samsvarende kanaler';
 	@override String get hideMatches => 'Skjul samsvarende kanaler';
 	@override String get pickerCredit => 'Inspirert av · M3U Web Picker · Zachary Schmook (@zschmook) og bidragsytere';
-	@override String get exportPrivate => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.';
-	@override String get dynamicStreamExport => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.';
-	@override String get moveUp => 'Flytt opp';
-	@override String get moveDown => 'Flytt ned';
-	@override String get choosePlaylist => 'Velg Playlist filer';
-	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsNb {
 			'update.viewRelease' => 'Vis utgivelse',
 			'update.latestVersion' => 'Du har den nyeste versjonen',
 			'update.checkFailed' => 'Kunne ikke se etter oppdateringer',
-			'settings.foldableDisplay' => 'Hengsel på brettbar skjerm',
 			'settings.title' => 'Innstillinger',
 			'settings.supportDeveloper' => 'Støtt Pleazyng',
 			'settings.supportDeveloperDescription' => 'Doner for å støtte utviklingen',
@@ -5994,6 +5993,7 @@ extension on TranslationsNb {
 			'settings.playerBackend' => 'Avspillingsmotor',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Hengsel på brettbar skjerm',
 			'settings.hardwareDecoding' => 'Maskinvaredekoding',
 			'settings.hardwareDecodingDescription' => 'Bruk maskinvareakselerasjon når tilgjengelig',
 			'settings.playbackBuffer' => 'Avspillingsbuffer',
@@ -7045,21 +7045,21 @@ extension on TranslationsNb {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Rediger ${product}-tilkobling',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Legg til eller fjern URL-er for ${serverName}. Pleazyng vil bruke den nåbare URL-en med lavest ventetid.',
 			'iptv.backupFeeds' => 'Reservekilder i avspillingsrekkefølge',
+			'iptv.exportPrivate' => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.',
+			'iptv.dynamicStreamExport' => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.',
 			'iptv.lineupOrder' => 'Kanalrekkefølge',
+			'iptv.moveUp' => 'Flytt opp',
+			'iptv.moveDown' => 'Flytt ned',
 			'iptv.orderChanged' => 'Kanalrekkefølgen er endret. Se gjennom den og prøv igjen.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'iptv.localPlaylist' => 'M3U-fil',
 			'iptv.pastePlaylist' => 'Lim inn spillelistetekst',
+			'iptv.choosePlaylist' => 'Velg Playlist filer',
 			'iptv.playlistBase' => 'Basisadresse for relative lenker (valgfritt)',
 			'iptv.localPlaylistHelp' => 'Importer en privat kopi av en M3U- eller M3U8-kanalliste. Velg en annen fil for å erstatte den.',
 			'iptv.showMatches' => 'Vis samsvarende kanaler',
 			'iptv.hideMatches' => 'Skjul samsvarende kanaler',
 			'iptv.pickerCredit' => 'Inspirert av · M3U Web Picker · Zachary Schmook (@zschmook) og bidragsytere',
-			'iptv.exportPrivate' => 'Strømmeadressene kan inneholde påloggingsinformasjon. Lagre listen på et privat sted.',
-			'iptv.dynamicStreamExport' => 'Portalen oppretter en ny lenke ved hver avspilling. Programguiden kan eksporteres.',
-			'iptv.moveUp' => 'Flytt opp',
-			'iptv.moveDown' => 'Flytt ned',
-			'iptv.choosePlaylist' => 'Velg Playlist filer',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'accountPreferences.sectionTitle' => 'Kontoinnstillinger',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Lyd-, undertekst- og bibliotekalternativer lagret på ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Lyd-, undertekst- og bibliotekalternativer lagret på ${count} kontoer',
@@ -7214,9 +7214,9 @@ extension on TranslationsNb {
 			'discover.rating' => 'Vurdering',
 			'discover.director' => 'Regissør',
 			'discover.directors' => 'Regissører',
-			'discover.movie' => 'Film',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Film',
 			'discover.tvShow' => 'TV-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min igjen',
 			'discover.moreLikeThis' => 'Mer som dette',
@@ -7728,9 +7728,9 @@ extension on TranslationsNb {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Fjerne "${title}" fra denne samlingen?',
 			'collections.removedFromCollection' => 'Fjernet fra samling',
 			'collections.removeFromCollectionFailed' => 'Kunne ikke fjerne fra samling',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Feil ved fjerning fra samling: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Feil ved fjerning fra samling: ${error}',
 			'collections.searchCollections' => 'Søk i samlinger...',
 			'playlists.title' => 'Spillelister',
 			'playlists.playlist' => 'Spilleliste',
@@ -8242,9 +8242,9 @@ extension on TranslationsNb {
 			'performanceOverlay.dvPath' => 'DV-sti',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekoder (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Basislag',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Basislag',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislag',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-basislag',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-basislag',
@@ -8756,9 +8756,9 @@ extension on TranslationsNb {
 			'homeLayout.autoSlide' => 'Automatisk bytte',
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) og d-pad (TV) fungerer alltid og starter timeret på nytt.',
 			'homeLayout.autoSlideEditDescription' => 'Slides også på egen hånd hvert få sekunder. Av: bare beveger seg når du klikker på en pil (PC) eller trykker venstre/høyre på fjern (TV).',
-			'homeLayout.enableHeroFirst' => 'Oppmuntre til å helte først',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'Oppmuntre til å helte først',
 			'homeLayout.showOnHome' => 'Show på hjemskjermen',
 			'homeLayout.home' => 'Hjem',
 			'homeLayout.removeFromHome' => 'Fjern fra hjemmet',
@@ -9270,9 +9270,9 @@ extension on TranslationsNb {
 			'audiobook.useDefaults' => 'Bruk disse lyttekontroller for nye bøker',
 			'audiobook.librarySort' => 'Sort bøker',
 			'audiobook.sortTitle' => 'Tittel',
-			'audiobook.sortAuthor' => 'Forfatter',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Forfatter',
 			'audiobook.sortNarrator' => 'Narratør',
 			'audiobook.sortSeries' => 'Serien ordre',
 			'audiobook.sortRecent' => 'Nylig åpnet',
@@ -9784,9 +9784,9 @@ extension on TranslationsNb {
 			'musicTools.storageBudget' => 'Anslått nedlastingsgrense (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Gjeste-DJ',
 			'musicTools.charts' => 'Lyttestatistikk',
-			'musicTools.rediscover' => 'Gjenoppdag',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Gjenoppdag',
 			'musicTools.stations' => 'Musikkstasjoner',
 			'musicTools.prompt' => 'Spilleliste fra beskrivelse',
 			'musicTools.provider' => 'Leverandørens genererings-URL',

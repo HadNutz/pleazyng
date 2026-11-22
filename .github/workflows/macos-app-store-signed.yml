@@ -26,10 +26,6 @@ permissions:
   contents: read
   id-token: write
 
-concurrency:
-  group: pleazyng-macos-app-store-signing
-  cancel-in-progress: false
-
 env:
   GH_TOKEN: ${{ github.token }}
   PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
@@ -42,6 +38,10 @@ env:
 jobs:
   build-upload:
     name: Build and upload signed Mac App Store package
+    concurrency:
+      group: pleazyng-macos-app-store-signing
+      cancel-in-progress: false
+      queue: max
     if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && inputs.profile_inspection_only != true
     runs-on: ${{ fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","gha-{0}-build-upload"]}}', github.run_id)) }}
     timeout-minutes: 240
@@ -79,11 +79,6 @@ jobs:
             echo "Choose either signing preflight or profile inspection." >&2
             exit 1
           fi
-
-      - name: Configure isolated Ruby bundle path
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
-        shell: bash
-        run: echo "BUNDLE_PATH=$RUNNER_TEMP/fastlane-bundle" >> "$GITHUB_ENV"
 
       - name: Preflight macOS build disk capacity
         env:
@@ -190,25 +185,6 @@ jobs:
             --release-tag "$RELEASE_TAG" \
             --main-commit "$GITHUB_SHA"
 
-      - name: Install the locked Fastlane bundle in runner temp
-        if: inputs.preflight_only != true && inputs.profile_inspection_only != true
-        shell: bash
-        run: |
-          set -euo pipefail
-          export PATH="/opt/homebrew/bin:$PATH"
-          [[ "$GEM_HOME" == "$RUNNER_TEMP/cocoapods-gems" ]]
-          bundler_version="$(awk '$0 == "BUNDLED WITH" { getline; sub(/^[[:space:]]+/, ""); print; exit }' Gemfile.lock)"
-          if [[ ! "$bundler_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Gemfile.lock has no supported pinned Bundler version." >&2
-            exit 1
-          fi
-          gem install bundler --version "$bundler_version" --no-document \
-            --install-dir "$GEM_HOME" \
-            --bindir "$RUNNER_TEMP/cocoapods-bin"
-          export GEM_PATH="$GEM_HOME:${GEM_PATH:-$(gem env gempath)}"
-          export PATH="$RUNNER_TEMP/cocoapods-bin:/opt/homebrew/bin:$PATH"
-          bundle install --jobs 4 --retry 3
-
       - name: Build, sign, export, upload and verify the exact Mac App Store build
         if: inputs.preflight_only != true && inputs.profile_inspection_only != true
         env:
@@ -225,22 +201,71 @@ jobs:
             --release-tag "$RELEASE_TAG" \
             --source-dir "$GITHUB_WORKSPACE/source" \
             --output-dir "$RUNNER_TEMP/macos-app-store-output" \
-            --archive-path "$RUNNER_TEMP/macos-app-store-archive/Pleazyng.xcarchive" \
+            --export-only --archive-path "$RUNNER_TEMP/macos-app-store-archive/Pleazyng.xcarchive" \
             --derived-data "$RUNNER_TEMP/macos-app-store-derived-data"
 
-      - name: Attest uploaded installer package
+      - name: Attest signed installer package
         if: success() && inputs.preflight_only != true && inputs.profile_inspection_only != true
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: ${{ runner.temp }}/macos-app-store-output/pleazyng-macos-appstore.pkg
 
-      - name: Retain signed package and App Store processing receipt
+      - name: Retain signing checkpoint or preflight receipt
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: ${{ inputs.profile_inspection_only == true && 'pleazyng-macos-appstore-profile-inspection' || inputs.preflight_only == true && 'pleazyng-macos-appstore-signing-preflight' || 'pleazyng-macos-appstore' }}-${{ inputs.release_tag }}-${{ github.run_id }}
+          name: ${{ inputs.profile_inspection_only == true && 'pleazyng-macos-appstore-profile-inspection' || inputs.preflight_only == true && 'pleazyng-macos-appstore-signing-preflight' || 'pleazyng-macos-signed-checkpoint' }}-${{ inputs.release_tag }}-${{ github.run_id }}
           path: ${{ runner.temp }}/macos-app-store-output/
           if-no-files-found: ignore
+          overwrite: true
+          retention-days: 30
+
+  deliver:
+    name: Deliver verified Mac App Store package
+    concurrency:
+      group: pleazyng-macos-app-store-delivery
+      cancel-in-progress: false
+      queue: max
+    needs: build-upload
+    if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+    runs-on: macos-26
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Check out the immutable product release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.release_tag }}
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: pleazyng-macos-signed-checkpoint-${{ inputs.release_tag }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/macos-app-store-output
+      - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Reconcile and upload the exact signed package
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: python3 scripts/build_macos_app_store_signed.py --deliver-only --release-tag "$RELEASE_TAG" --source-dir "$GITHUB_WORKSPACE/source" --output-dir "$RUNNER_TEMP/macos-app-store-output"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: pleazyng-macos-appstore-${{ inputs.release_tag }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/macos-app-store-output/
+          if-no-files-found: error
+          overwrite: true
           retention-days: 30
 
   inspect-profiles:
@@ -307,4 +332,5 @@ jobs:
           name: pleazyng-macos-appstore-profile-inspection-${{ inputs.release_tag }}-${{ github.run_id }}
           path: ${{ runner.temp }}/macos-app-store-profile-inspection/
           if-no-files-found: ignore
+          overwrite: true
           retention-days: 30

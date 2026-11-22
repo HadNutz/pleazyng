@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 
+from release_job_inventory import FINISH_MAC, inventory
 from verify_embedded_release_ci import latest_attempt_jobs, GateError
 
 REPOSITORY = 'snapetech-org/pleazyng'
@@ -16,7 +17,7 @@ MAX_ATTEMPTS = 100
 ARTIFACT_PRODUCERS = {
     'android-apk': {'build-android'},
     'webos-ipk': {'Build WebOS TV package (ARMv7)'},
-    'pleazyng-tizen-arm-experimental': {'Build Samsung Tizen TV package (ARM)'},
+    'pleazyng-tizen-arm-experimental': {'Build Samsung Tizen TV package (ARM) / package'},
     'ios-ipa': {'build-ios'},
     'tvos-ipa': {'Build tvOS developer package (arm64)'},
     'macos-dmg': {'build-macos'},
@@ -49,30 +50,22 @@ def inspect_run(run_id: int, *, get=api):
             or run.get('head_branch') != 'main' or run.get('path', '').split('@')[0] != WORKFLOW
             or (run.get('head_repository') or {}).get('full_name') != REPOSITORY
             or re.fullmatch(r'[0-9a-f]{40}', str(run.get('head_sha', ''))) is None
-            or not str(run.get('display_title', '')).startswith('action:release:pool:public:tag:v')):
+            or not str(run.get('display_title', '')).removeprefix('apple-signing-unavailable:').startswith('action:release:pool:public:tag:v')):
         raise GateError('Only a canonical main release candidate can be resumed.')
     if run.get('status') != 'completed' or run.get('conclusion') not in {'failure', 'cancelled', 'timed_out'}:
         raise GateError('Resume requires a completed failed candidate; active and successful runs are left untouched.')
     attempt = run.get('run_attempt')
     if type(attempt) is not int or not 1 <= attempt < MAX_ATTEMPTS:
         raise GateError('Run attempt is outside the supported recovery range.')
-    history = []
-    for number in range(1, attempt + 1):
-        response = get(f'actions/runs/{run_id}/attempts/{number}/jobs?per_page=100')
-        jobs = response.get('jobs')
-        if not isinstance(jobs, list) or response.get('total_count', len(jobs)) != len(jobs):
-            raise GateError(f'Attempt {number} has an incomplete job inventory.')
-        history.append(jobs)
+    history = [inventory(f'actions/runs/{run_id}/attempts/{number}/jobs', 'jobs', get, GateError)
+               for number in range(1, attempt + 1)]
     newest = latest_attempt_jobs(history)
     failed = sorted((job['name'] for job in newest
                      if job.get('status') == 'completed'
                      and job.get('conclusion') in {'failure', 'cancelled', 'timed_out'}))
     if not failed:
         raise GateError('Run conclusion is failed but no failed jobs were found in attempt history.')
-    artifacts_response = get(f'actions/runs/{run_id}/artifacts?per_page=100')
-    artifacts = artifacts_response.get('artifacts')
-    if not isinstance(artifacts, list) or artifacts_response.get('total_count', len(artifacts)) != len(artifacts):
-        raise GateError('Artifact inventory is incomplete; refusing an ambiguous recovery.')
+    artifacts = inventory(f'actions/runs/{run_id}/artifacts', 'artifacts', get, GateError)
     names = [a.get('name') for a in artifacts]
     if len(names) != len(set(names)):
         raise GateError('Artifact inventory contains duplicate names; refusing an ambiguous recovery.')
@@ -81,17 +74,67 @@ def inspect_run(run_id: int, *, get=api):
         if (identity.get('id') != run_id or identity.get('head_sha') != run['head_sha']
                 or not re.fullmatch(r'sha256:[0-9a-f]{64}', str(artifact.get('digest', '')))):
             raise GateError(f"Artifact source or digest is invalid: {artifact.get('name', '<unnamed>')}")
+    # A skipped optional upload is expected when its channel is disabled.
+    optional_steps = {
+        'windows-store-x64-build': 'Upload Microsoft Store x64 payload',
+        'windows-store-arm64-build': 'Upload Microsoft Store arm64 payload',
+        'windows-msix': 'Upload Microsoft Store bundle',
+        'windows-chocolatey': 'Upload Chocolatey package',
+    }
     retained = sorted(a['name'] for a in artifacts if a.get('expired') is False)
     expired = sorted(a['name'] for a in artifacts if a.get('expired') is True)
-    failed_set = set(failed)
+    missing = {}
+    producers_by_output = ARTIFACT_PRODUCERS.copy()
+    jobs_by_name = {j['name']: j for j in newest}
+    if FINISH_MAC in jobs_by_name and jobs_by_name[FINISH_MAC].get('conclusion') != 'skipped':
+        producers_by_output['macos-dmg'] = {FINISH_MAC}
+    for output, lane in [('windows-msix', 'Package Windows MSIX'), ('windows-chocolatey', 'Package Windows Chocolatey'),
+                         ('windows-store-x64-build', 'Build Windows Store (x64)'),
+                         ('windows-store-arm64-build', 'Build Windows Store (arm64)')]:
+        if lane in jobs_by_name:
+            producers_by_output[output] = {lane}
+    def needs_replay(job, output):
+        return job in jobs_by_name and (output not in retained or jobs_by_name[job].get('conclusion') != 'success')
+
+    for arch in ('x64', 'arm64'):
+        final_lane = f'Build Linux ({arch})'
+        for fmt in ('distro', 'flatpak', 'snap', 'portable'):
+            format_lane = f'Package Linux ({arch}, {fmt})'
+            checkpoint = f'linux-format-{arch}-{fmt}'
+            format_needed = needs_replay(final_lane, f'linux-{arch}')
+            appimage_needed = arch == 'x64' and fmt == 'portable' and 'linux-x64-appimage' not in retained
+            if format_needed:
+                producers_by_output[checkpoint] = {format_lane}
+            if (format_needed and needs_replay(format_lane, checkpoint)) or appimage_needed:
+                producers_by_output[f'linux-bundle-{arch}'] = {f'Compile Linux ({arch})'}
+    if 'Package Linux (x64, portable)' in jobs_by_name:
+        producers_by_output['linux-x64-appimage'] = {'Package Linux (x64, portable)'}
+    if needs_replay('build-android', 'android-apk'):
+        for variant in ('developer', 'play', 'firetv', 'automotive'):
+            producers_by_output[f'android-variant-{variant}'] = {f'Android release ({variant})'}
+    if needs_replay(FINISH_MAC, 'macos-dmg') and jobs_by_name[FINISH_MAC].get('conclusion') != 'skipped':
+        prefix = f'macos-notarization-checkpoint-{run_id}-'
+        if not any(re.fullmatch(re.escape(prefix) + r'[1-9][0-9]*', name) for name in retained):
+            producers_by_output[f'{prefix}{attempt}'] = {'build-macos'}
+    for name, producers in producers_by_output.items():
+        for job in newest:
+            if job['name'] not in producers or job.get('conclusion') != 'success':
+                continue
+            if name in optional_steps and not any(
+                    step['name'] == optional_steps[name] and step.get('conclusion') == 'success'
+                    for step in job.get('steps', [])):
+                continue
+            if name not in retained:
+                missing[name] = job['name']
     blocked = sorted(name for name in expired if name in ARTIFACT_PRODUCERS
-                     and not (ARTIFACT_PRODUCERS[name] & failed_set))
+                     and not (producers_by_output[name] & set(failed))
+                     and (name in missing or not (producers_by_output[name] & jobs_by_name.keys())))
     return {'run': run, 'attempt': attempt, 'jobs': newest, 'failed_jobs': failed,
             'retained_artifacts': retained, 'expired_artifacts': expired,
-            'blocking_expired_artifacts': blocked}
+            'missing_outputs': missing, 'blocking_expired_artifacts': blocked}
 
 
-def resume(run_id: int, *, get=api, command=subprocess.run, output=print):
+def resume(run_id: int, *, plan_only=False, get=api, command=subprocess.run, output=print):
     plan = inspect_run(run_id, get=get)
     output(f"Candidate {run_id} at {plan['run']['head_sha']} (attempt {plan['attempt']})")
     output('Passing jobs retained: ' + ', '.join(sorted(
@@ -101,9 +144,17 @@ def resume(run_id: int, *, get=api, command=subprocess.run, output=print):
     if plan['expired_artifacts']:
         output('Expired artifacts: ' + ', '.join(plan['expired_artifacts']))
     output(f'https://github.com/{REPOSITORY}/actions/runs/{run_id}')
-    if plan['blocking_expired_artifacts']:
-        raise GateError('Required artifacts from passing jobs expired; rebuild their producer lanes instead of retrying assembly: '
-                        + ', '.join(plan['blocking_expired_artifacts']))
+    for name, producer in sorted(plan['missing_outputs'].items()):
+        state = 'expired' if name in plan['expired_artifacts'] else 'missing'
+        job = next(j for j in plan['jobs'] if j['name'] == producer)
+        output(f'{name}: {state}; replay producer {producer} before release assembly.')
+        if job.get('id'):
+            output(f"  gh run rerun {run_id} --job {job['id']} --repo {REPOSITORY}")
+    if plan_only:
+        return plan
+    if plan['missing_outputs'] or plan['blocking_expired_artifacts']:
+        raise GateError('Required artifacts unavailable; rebuild their producer lanes instead of retrying assembly: '
+                        + ', '.join(sorted(set(plan['blocking_expired_artifacts']) | set(plan['missing_outputs']))))
     command(['gh', 'run', 'rerun', '--failed', str(run_id), '--repo', REPOSITORY], check=True)
     return plan
 
@@ -111,9 +162,10 @@ def resume(run_id: int, *, get=api, command=subprocess.run, output=print):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('run_id', type=int, help='Completed failed release workflow run')
+    parser.add_argument('--plan', action='store_true', help='Inspect retry targets without dispatching')
     args = parser.parse_args()
     try:
-        resume(args.run_id)
+        resume(args.run_id, plan_only=args.plan)
     except (GateError, subprocess.CalledProcessError) as error:
         print(f'Release resume failed: {error}', file=sys.stderr)
         return 1

@@ -387,7 +387,6 @@ class _Translations$settings$ar extends Translations$settings$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'مفصلة الشاشة القابلة للطي';
 	@override String get title => 'الإعدادات';
 	@override String get supportDeveloper => 'دعم Pleazyng';
 	@override String get supportDeveloperDescription => 'التبرع بدعم التنمية';
@@ -490,6 +489,7 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get playerBackend => 'اللاعب Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'مفصلة الشاشة القابلة للطي';
 	@override String get hardwareDecoding => 'التخزين الصلب';
 	@override String get hardwareDecodingDescription => 'استخدم تسارع الأجهزة عندما يكون متاحًا';
 	@override String get playbackBuffer => 'لعبة Playback Buffer';
@@ -1681,21 +1681,21 @@ class _Translations$iptv$ar extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'المصادر الاحتياطية بترتيب التشغيل';
+	@override String get exportPrivate => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.';
+	@override String get dynamicStreamExport => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.';
 	@override String get lineupOrder => 'ترتيب القنوات';
+	@override String get moveUp => 'تحرك إلى الأعلى';
+	@override String get moveDown => 'تحرك إلى أسفل';
 	@override String get orderChanged => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.';
+	@override String affectedChannels({required Object count}) => 'القنوات · ${count}';
 	@override String get localPlaylist => 'ملف M3U';
 	@override String get pastePlaylist => 'لصق نص قائمة التشغيل';
+	@override String get choosePlaylist => 'اختيار ملف Playlist';
 	@override String get playlistBase => 'عنوان أساسي للروابط النسبية (اختياري)';
 	@override String get localPlaylistHelp => 'استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.';
 	@override String get showMatches => 'إظهار القنوات المطابقة';
 	@override String get hideMatches => 'إخفاء القنوات المطابقة';
 	@override String get pickerCredit => 'مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين';
-	@override String get exportPrivate => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.';
-	@override String get dynamicStreamExport => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.';
-	@override String get moveUp => 'تحرك إلى الأعلى';
-	@override String get moveDown => 'تحرك إلى أسفل';
-	@override String get choosePlaylist => 'اختيار ملف Playlist';
-	@override String affectedChannels({required Object count}) => 'القنوات · ${count}';
 }
 
 // Path: accountPreferences
@@ -5991,7 +5991,6 @@ extension on TranslationsAr {
 			'update.viewRelease' => 'مشاهدة الإصدار',
 			'update.latestVersion' => 'أنت في أحدث النسخة',
 			'update.checkFailed' => 'فشل في التحقق من التحديثات',
-			'settings.foldableDisplay' => 'مفصلة الشاشة القابلة للطي',
 			'settings.title' => 'الإعدادات',
 			'settings.supportDeveloper' => 'دعم Pleazyng',
 			'settings.supportDeveloperDescription' => 'التبرع بدعم التنمية',
@@ -6094,6 +6093,7 @@ extension on TranslationsAr {
 			'settings.playerBackend' => 'اللاعب Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'مفصلة الشاشة القابلة للطي',
 			'settings.hardwareDecoding' => 'التخزين الصلب',
 			'settings.hardwareDecodingDescription' => 'استخدم تسارع الأجهزة عندما يكون متاحًا',
 			'settings.playbackBuffer' => 'لعبة Playback Buffer',
@@ -7145,21 +7145,21 @@ extension on TranslationsAr {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'تحرير ${product} الاتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير.',
 			'iptv.backupFeeds' => 'المصادر الاحتياطية بترتيب التشغيل',
+			'iptv.exportPrivate' => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.',
+			'iptv.dynamicStreamExport' => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.',
 			'iptv.lineupOrder' => 'ترتيب القنوات',
+			'iptv.moveUp' => 'تحرك إلى الأعلى',
+			'iptv.moveDown' => 'تحرك إلى أسفل',
 			'iptv.orderChanged' => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.',
+			'iptv.affectedChannels' => ({required Object count}) => 'القنوات · ${count}',
 			'iptv.localPlaylist' => 'ملف M3U',
 			'iptv.pastePlaylist' => 'لصق نص قائمة التشغيل',
+			'iptv.choosePlaylist' => 'اختيار ملف Playlist',
 			'iptv.playlistBase' => 'عنوان أساسي للروابط النسبية (اختياري)',
 			'iptv.localPlaylistHelp' => 'استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.',
 			'iptv.showMatches' => 'إظهار القنوات المطابقة',
 			'iptv.hideMatches' => 'إخفاء القنوات المطابقة',
 			'iptv.pickerCredit' => 'مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين',
-			'iptv.exportPrivate' => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.',
-			'iptv.dynamicStreamExport' => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.',
-			'iptv.moveUp' => 'تحرك إلى الأعلى',
-			'iptv.moveDown' => 'تحرك إلى أسفل',
-			'iptv.choosePlaylist' => 'اختيار ملف Playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'القنوات · ${count}',
 			'accountPreferences.sectionTitle' => 'تفضيلات الحساب',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'تم حفظ خيارات الصوت والعنوان والمكتبة على ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'تم حفظ خيارات الصوت والعنوان والمكتبة على حسابات ${count}',
@@ -7314,9 +7314,9 @@ extension on TranslationsAr {
 			'discover.rating' => 'تصنيف',
 			'discover.director' => 'المخرج',
 			'discover.directors' => 'المخرجون',
-			'discover.movie' => 'فيلم',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'فيلم',
 			'discover.tvShow' => 'عرض التلفزيون',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} دقيقة متبقية',
 			'discover.moreLikeThis' => 'مشابه لهذا',
@@ -7828,9 +7828,9 @@ extension on TranslationsAr {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'هل تريد إزالة «${title}» من هذه المجموعة؟',
 			'collections.removedFromCollection' => 'إزالة من المجموعة',
 			'collections.removeFromCollectionFailed' => 'فشل في إزالتها من المجموعة',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'أخطاء إزالة من المجموعة: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'أخطاء إزالة من المجموعة: ${error}',
 			'collections.searchCollections' => 'البحث عن مجموعات...',
 			'playlists.title' => 'قوائم التشغيل',
 			'playlists.playlist' => 'قائمة التشغيل',
@@ -8342,9 +8342,9 @@ extension on TranslationsAr {
 			'performanceOverlay.dvPath' => 'الطريق DV',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision الخصم',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision التخزين (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'طبقة قاعدة',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'طبقة قاعدة',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 طبقة أساسية',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'طبقة قاعدة HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR طبقة أساسية',
@@ -8856,9 +8856,9 @@ extension on TranslationsAr {
 			'homeLayout.autoSlide' => 'تنقّل تلقائي',
 			'homeLayout.autoSlideDescription' => 'ينتقل أيضًا تلقائيًا كل بضع ثوانٍ. تعمل الأسهم على الكمبيوتر وأزرار الاتجاهات على التلفزيون دائمًا، وتعيد بدء المؤقّت.',
 			'homeLayout.autoSlideEditDescription' => 'ينتقل أيضًا تلقائيًا كل بضع ثوانٍ. عند الإيقاف، يتنقّل فقط عند النقر على سهم في الكمبيوتر أو الضغط على اليمين أو اليسار في جهاز التحكم. تعمل الأسهم وأزرار الاتجاهات في الحالتين.',
-			'homeLayout.enableHeroFirst' => 'فعّل البطاقة البارزة أولًا',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'فعّل البطاقة البارزة أولًا',
 			'homeLayout.showOnHome' => 'إظهار في الصفحة الرئيسية',
 			'homeLayout.home' => 'الرئيسية',
 			'homeLayout.removeFromHome' => 'إزالة من الصفحة الرئيسية',
@@ -9370,9 +9370,9 @@ extension on TranslationsAr {
 			'audiobook.useDefaults' => 'استخدم هذه التحكمات الاستماعية للكتب الجديدة',
 			'audiobook.librarySort' => 'الكتب المختلفة',
 			'audiobook.sortTitle' => 'العنوان',
-			'audiobook.sortAuthor' => 'الكاتب',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'الكاتب',
 			'audiobook.sortNarrator' => 'القارئ',
 			'audiobook.sortSeries' => 'سلسلة الأوامر',
 			'audiobook.sortRecent' => 'افتتح مؤخرا',
@@ -9884,9 +9884,9 @@ extension on TranslationsAr {
 			'musicTools.storageBudget' => 'ميزانية التنزيل التقديرية (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'منسق موسيقى ضيف',
 			'musicTools.charts' => 'إحصاءات الاستماع',
-			'musicTools.rediscover' => 'إعادة الاكتشاف',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'إعادة الاكتشاف',
 			'musicTools.stations' => 'محطات موسيقية',
 			'musicTools.prompt' => 'قائمة من وصف',
 			'musicTools.provider' => 'رابط التوليد لدى المزود',

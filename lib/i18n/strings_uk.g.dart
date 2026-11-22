@@ -387,7 +387,6 @@ class _Translations$settings$uk extends Translations$settings$en {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Шарнір складаного екрана';
 	@override String get title => 'Налаштування';
 	@override String get supportDeveloper => 'Підтримка Pleazyng';
 	@override String get supportDeveloperDescription => 'Донорство на підтримку розвитку';
@@ -490,6 +489,7 @@ class _Translations$settings$uk extends Translations$settings$en {
 	@override String get playerBackend => 'Гравець Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Шарнір складаного екрана';
 	@override String get hardwareDecoding => 'Декодування харчового обладнання';
 	@override String get hardwareDecodingDescription => 'Використовуйте прискорення харчових пристроїв, коли вони доступні';
 	@override String get playbackBuffer => 'Завантажити Playback Buffer';
@@ -1665,21 +1665,21 @@ class _Translations$iptv$uk extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Резервні джерела в порядку відтворення';
+	@override String get exportPrivate => 'Адреси потоків можуть містити облікові дані провайдера. Збережіть список у приватному місці.';
+	@override String get dynamicStreamExport => 'Портал створює нове посилання під час кожного відтворення. Телепрограму можна експортувати.';
 	@override String get lineupOrder => 'Порядок каналів';
+	@override String get moveUp => 'Змінюйся';
+	@override String get moveDown => 'Перемістити вниз';
 	@override String get orderChanged => 'Порядок каналів змінився. Перегляньте його та спробуйте знову.';
+	@override String affectedChannels({required Object count}) => 'Канали · ${count}';
 	@override String get localPlaylist => 'Файл M3U';
 	@override String get pastePlaylist => 'Вставити текст списку відтворення';
+	@override String get choosePlaylist => 'Вибір файлу Playlist';
 	@override String get playlistBase => 'Базова URL-адреса для відносних посилань (необов’язково)';
 	@override String get localPlaylistHelp => 'Імпортуйте особисту копію списку каналів M3U або M3U8. Її можна замінити іншим файлом.';
 	@override String get showMatches => 'Показати відповідні канали';
 	@override String get hideMatches => 'Приховати відповідні канали';
 	@override String get pickerCredit => 'Джерело натхнення · M3U Web Picker · Zachary Schmook (@zschmook) та інші учасники';
-	@override String get exportPrivate => 'Адреси потоків можуть містити облікові дані провайдера. Збережіть список у приватному місці.';
-	@override String get dynamicStreamExport => 'Портал створює нове посилання під час кожного відтворення. Телепрограму можна експортувати.';
-	@override String get moveUp => 'Змінюйся';
-	@override String get moveDown => 'Перемістити вниз';
-	@override String get choosePlaylist => 'Вибір файлу Playlist';
-	@override String affectedChannels({required Object count}) => 'Канали · ${count}';
 }
 
 // Path: accountPreferences
@@ -5935,7 +5935,6 @@ extension on TranslationsUk {
 			'update.viewRelease' => 'Переглянути випуск',
 			'update.latestVersion' => 'Ви знаходитесь в останній версії',
 			'update.checkFailed' => 'Не вдалося перевірити оновлення',
-			'settings.foldableDisplay' => 'Шарнір складаного екрана',
 			'settings.title' => 'Налаштування',
 			'settings.supportDeveloper' => 'Підтримка Pleazyng',
 			'settings.supportDeveloperDescription' => 'Донорство на підтримку розвитку',
@@ -6038,6 +6037,7 @@ extension on TranslationsUk {
 			'settings.playerBackend' => 'Гравець Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Шарнір складаного екрана',
 			'settings.hardwareDecoding' => 'Декодування харчового обладнання',
 			'settings.hardwareDecodingDescription' => 'Використовуйте прискорення харчових пристроїв, коли вони доступні',
 			'settings.playbackBuffer' => 'Завантажити Playback Buffer',
@@ -7089,21 +7089,21 @@ extension on TranslationsUk {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Реєстрація ${product} зв\'язок',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Додати або видалити URL-адреси для ${serverName}. Pleazyng буде використовувати доступний URL з найнижчою затримкою.',
 			'iptv.backupFeeds' => 'Резервні джерела в порядку відтворення',
+			'iptv.exportPrivate' => 'Адреси потоків можуть містити облікові дані провайдера. Збережіть список у приватному місці.',
+			'iptv.dynamicStreamExport' => 'Портал створює нове посилання під час кожного відтворення. Телепрограму можна експортувати.',
 			'iptv.lineupOrder' => 'Порядок каналів',
+			'iptv.moveUp' => 'Змінюйся',
+			'iptv.moveDown' => 'Перемістити вниз',
 			'iptv.orderChanged' => 'Порядок каналів змінився. Перегляньте його та спробуйте знову.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Канали · ${count}',
 			'iptv.localPlaylist' => 'Файл M3U',
 			'iptv.pastePlaylist' => 'Вставити текст списку відтворення',
+			'iptv.choosePlaylist' => 'Вибір файлу Playlist',
 			'iptv.playlistBase' => 'Базова URL-адреса для відносних посилань (необов’язково)',
 			'iptv.localPlaylistHelp' => 'Імпортуйте особисту копію списку каналів M3U або M3U8. Її можна замінити іншим файлом.',
 			'iptv.showMatches' => 'Показати відповідні канали',
 			'iptv.hideMatches' => 'Приховати відповідні канали',
 			'iptv.pickerCredit' => 'Джерело натхнення · M3U Web Picker · Zachary Schmook (@zschmook) та інші учасники',
-			'iptv.exportPrivate' => 'Адреси потоків можуть містити облікові дані провайдера. Збережіть список у приватному місці.',
-			'iptv.dynamicStreamExport' => 'Портал створює нове посилання під час кожного відтворення. Телепрограму можна експортувати.',
-			'iptv.moveUp' => 'Змінюйся',
-			'iptv.moveDown' => 'Перемістити вниз',
-			'iptv.choosePlaylist' => 'Вибір файлу Playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Канали · ${count}',
 			'accountPreferences.sectionTitle' => 'Переваги облікового запису',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Аудіо, субтитри та варіанти бібліотеки збереглися на ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Аудіо, субтитри та варіанти бібліотеки збережені на акаунтах ${count}',
@@ -7258,9 +7258,9 @@ extension on TranslationsUk {
 			'discover.rating' => 'Рейтинг',
 			'discover.director' => 'Режисер',
 			'discover.directors' => 'Режисери',
-			'discover.movie' => 'Фільми',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Фільми',
 			'discover.tvShow' => 'Телевізійне шоу',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} хвилини',
 			'discover.moreLikeThis' => 'Подібні до цього',
@@ -7772,9 +7772,9 @@ extension on TranslationsUk {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Вилучити «${title}» із цієї колекції?',
 			'collections.removedFromCollection' => 'Вилучено з колекції',
 			'collections.removeFromCollectionFailed' => 'Не вдалося зняти з колекції',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Помилка у видаленні з колекції: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Помилка у видаленні з колекції: ${error}',
 			'collections.searchCollections' => 'Пошук колекцій...',
 			'playlists.title' => 'Плейлисти',
 			'playlists.playlist' => 'Плейлист',
@@ -8286,9 +8286,9 @@ extension on TranslationsUk {
 			'performanceOverlay.dvPath' => 'ДВ ПУТ',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision Декодер',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодер (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Базовий шар',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Базовий шар',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 базовий шар',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG базовий шар',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'СДР базовий шар',
@@ -8800,9 +8800,9 @@ extension on TranslationsUk {
 			'homeLayout.autoSlide' => 'Автомобільний слайд',
 			'homeLayout.autoSlideDescription' => 'Пристрій (PC) і d-pad (TV) завжди працюють і відновлюють час.',
 			'homeLayout.autoSlideEditDescription' => 'Вимкніть: рухається тільки тоді, коли натискаєте стрілку (ПК) або натискаєте ліво/право на віддаленому (ТВ).',
-			'homeLayout.enableHeroFirst' => 'Перший герой',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'Перший герой',
 			'homeLayout.showOnHome' => 'Показати на домашньому екрані',
 			'homeLayout.home' => 'Головна',
 			'homeLayout.removeFromHome' => 'Зняти з дому',
@@ -9314,9 +9314,9 @@ extension on TranslationsUk {
 			'audiobook.useDefaults' => 'Використовуйте ці контрольні системи для нових книг',
 			'audiobook.librarySort' => 'Сорт книг',
 			'audiobook.sortTitle' => 'Заголовок',
-			'audiobook.sortAuthor' => 'Автор',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Автор',
 			'audiobook.sortNarrator' => 'Назавжди',
 			'audiobook.sortSeries' => 'Серія замовлення',
 			'audiobook.sortRecent' => 'Нещодавно відкрито',
@@ -9828,9 +9828,9 @@ extension on TranslationsUk {
 			'musicTools.storageBudget' => 'Орієнтовний ліміт завантаження (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Запрошений діджей',
 			'musicTools.charts' => 'Статистика прослуховувань',
-			'musicTools.rediscover' => 'Відкрити знову',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Відкрити знову',
 			'musicTools.stations' => 'Музичні станції',
 			'musicTools.prompt' => 'Плейлист за описом',
 			'musicTools.provider' => 'Адреса генерації постачальника',

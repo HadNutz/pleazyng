@@ -387,7 +387,6 @@ class _Translations$settings$nl extends Translations$settings$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Scharnier van het vouwscherm';
 	@override String get title => 'Instellingen';
 	@override String get supportDeveloper => 'Steun Pleazyng';
 	@override String get supportDeveloperDescription => 'Doneer om de ontwikkeling te steunen';
@@ -490,6 +489,7 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String get playerBackend => 'Afspeelbackend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Scharnier van het vouwscherm';
 	@override String get hardwareDecoding => 'Hardwaredecodering';
 	@override String get hardwareDecodingDescription => 'Gebruik hardwareversnelling indien beschikbaar';
 	@override String get playbackBuffer => 'Afspeelbuffer';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$nl extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Reservebronnen in afspeelvolgorde';
+	@override String get exportPrivate => 'Streamadressen kunnen je inloggegevens bevatten. Bewaar de lijst op een privélocatie.';
+	@override String get dynamicStreamExport => 'Het portaal maakt bij elke afspeelbeurt een nieuwe link. Je kunt de programmagids exporteren.';
 	@override String get lineupOrder => 'Kanaalvolgorde';
+	@override String get moveUp => 'bewegen op';
+	@override String get moveDown => 'Verplaatsen naar beneden';
 	@override String get orderChanged => 'De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.';
+	@override String affectedChannels({required Object count}) => 'Zenders · ${count}';
 	@override String get localPlaylist => 'M3U-bestand';
 	@override String get pastePlaylist => 'Tekst van afspeellijst plakken';
+	@override String get choosePlaylist => 'Kies een playlist bestand';
 	@override String get playlistBase => 'Basis-URL voor relatieve links (optioneel)';
 	@override String get localPlaylistHelp => 'Importeer een privékopie van een M3U- of M3U8-kanaallijst. Je kunt deze vervangen door een ander bestand.';
 	@override String get showMatches => 'Overeenkomende kanalen tonen';
 	@override String get hideMatches => 'Overeenkomende kanalen verbergen';
 	@override String get pickerCredit => 'Geïnspireerd door · M3U Web Picker · Zachary Schmook (@zschmook) en bijdragers';
-	@override String get exportPrivate => 'Streamadressen kunnen je inloggegevens bevatten. Bewaar de lijst op een privélocatie.';
-	@override String get dynamicStreamExport => 'Het portaal maakt bij elke afspeelbeurt een nieuwe link. Je kunt de programmagids exporteren.';
-	@override String get moveUp => 'bewegen op';
-	@override String get moveDown => 'Verplaatsen naar beneden';
-	@override String get choosePlaylist => 'Kies een playlist bestand';
-	@override String affectedChannels({required Object count}) => 'Zenders · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsNl {
 			'update.viewRelease' => 'Bekijk release',
 			'update.latestVersion' => 'Je hebt de nieuwste versie',
 			'update.checkFailed' => 'Kon niet controleren op updates',
-			'settings.foldableDisplay' => 'Scharnier van het vouwscherm',
 			'settings.title' => 'Instellingen',
 			'settings.supportDeveloper' => 'Steun Pleazyng',
 			'settings.supportDeveloperDescription' => 'Doneer om de ontwikkeling te steunen',
@@ -5994,6 +5993,7 @@ extension on TranslationsNl {
 			'settings.playerBackend' => 'Afspeelbackend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Scharnier van het vouwscherm',
 			'settings.hardwareDecoding' => 'Hardwaredecodering',
 			'settings.hardwareDecodingDescription' => 'Gebruik hardwareversnelling indien beschikbaar',
 			'settings.playbackBuffer' => 'Afspeelbuffer',
@@ -7045,21 +7045,21 @@ extension on TranslationsNl {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product}-verbinding bewerken',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Voeg URL\'s toe aan ${serverName} of verwijder ze. Pleazyng gebruikt de bereikbare URL met de laagste latentie.',
 			'iptv.backupFeeds' => 'Reservebronnen in afspeelvolgorde',
+			'iptv.exportPrivate' => 'Streamadressen kunnen je inloggegevens bevatten. Bewaar de lijst op een privélocatie.',
+			'iptv.dynamicStreamExport' => 'Het portaal maakt bij elke afspeelbeurt een nieuwe link. Je kunt de programmagids exporteren.',
 			'iptv.lineupOrder' => 'Kanaalvolgorde',
+			'iptv.moveUp' => 'bewegen op',
+			'iptv.moveDown' => 'Verplaatsen naar beneden',
 			'iptv.orderChanged' => 'De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Zenders · ${count}',
 			'iptv.localPlaylist' => 'M3U-bestand',
 			'iptv.pastePlaylist' => 'Tekst van afspeellijst plakken',
+			'iptv.choosePlaylist' => 'Kies een playlist bestand',
 			'iptv.playlistBase' => 'Basis-URL voor relatieve links (optioneel)',
 			'iptv.localPlaylistHelp' => 'Importeer een privékopie van een M3U- of M3U8-kanaallijst. Je kunt deze vervangen door een ander bestand.',
 			'iptv.showMatches' => 'Overeenkomende kanalen tonen',
 			'iptv.hideMatches' => 'Overeenkomende kanalen verbergen',
 			'iptv.pickerCredit' => 'Geïnspireerd door · M3U Web Picker · Zachary Schmook (@zschmook) en bijdragers',
-			'iptv.exportPrivate' => 'Streamadressen kunnen je inloggegevens bevatten. Bewaar de lijst op een privélocatie.',
-			'iptv.dynamicStreamExport' => 'Het portaal maakt bij elke afspeelbeurt een nieuwe link. Je kunt de programmagids exporteren.',
-			'iptv.moveUp' => 'bewegen op',
-			'iptv.moveDown' => 'Verplaatsen naar beneden',
-			'iptv.choosePlaylist' => 'Kies een playlist bestand',
-			'iptv.affectedChannels' => ({required Object count}) => 'Zenders · ${count}',
 			'accountPreferences.sectionTitle' => 'Accountvoorkeuren',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio-, ondertitel- en bibliotheekopties opgeslagen op ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio-, ondertitel- en bibliotheekopties opgeslagen op ${count} accounts',
@@ -7214,9 +7214,9 @@ extension on TranslationsNl {
 			'discover.rating' => 'Beoordeling',
 			'discover.director' => 'Regisseur',
 			'discover.directors' => 'Regisseurs',
-			'discover.movie' => 'Film',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Film',
 			'discover.tvShow' => 'Tv-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => 'nog ${minutes} min',
 			'discover.moreLikeThis' => 'Meer zoals dit',
@@ -7728,9 +7728,9 @@ extension on TranslationsNl {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '"${title}" uit deze collectie verwijderen?',
 			'collections.removedFromCollection' => 'Uit collectie verwijderd',
 			'collections.removeFromCollectionFailed' => 'Verwijderen uit collectie mislukt',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Fout bij verwijderen uit collectie: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Fout bij verwijderen uit collectie: ${error}',
 			'collections.searchCollections' => 'Collecties zoeken...',
 			'playlists.title' => 'Afspeellijsten',
 			'playlists.playlist' => 'Afspeellijst',
@@ -8242,9 +8242,9 @@ extension on TranslationsNl {
 			'performanceOverlay.dvPath' => 'DV-pad',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-decoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-decoder (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Basislaag',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Basislaag',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislaag',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-basislaag',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-basislaag',
@@ -8756,9 +8756,9 @@ extension on TranslationsNl {
 			'homeLayout.autoSlide' => 'Automatisch wisselen',
 			'homeLayout.autoSlideDescription' => 'Ook slides op zichzelf elke paar seconden. Arrows (PC) en d-pad (TV) werken altijd en herstarten de timer.',
 			'homeLayout.autoSlideEditDescription' => 'Ook slides op zichzelf elke paar seconden. Off: bewegt alleen wanneer u een pijl (PC) klikt of links/rijk op de afstand (TV) druk.',
-			'homeLayout.enableHeroFirst' => 'Helden eerst mogelijk maken',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'Helden eerst mogelijk maken',
 			'homeLayout.showOnHome' => 'Show op Home Screen',
 			'homeLayout.home' => 'Home →',
 			'homeLayout.removeFromHome' => 'Verwijder van huis',
@@ -9270,9 +9270,9 @@ extension on TranslationsNl {
 			'audiobook.useDefaults' => 'Gebruik deze luisteren controles voor nieuwe boeken',
 			'audiobook.librarySort' => 'Sorte boeken',
 			'audiobook.sortTitle' => 'Titel',
-			'audiobook.sortAuthor' => 'Schrijver',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Schrijver',
 			'audiobook.sortNarrator' => 'De narrator',
 			'audiobook.sortSeries' => 'Serie bevel',
 			'audiobook.sortRecent' => 'Onlangs geopend',
@@ -9784,9 +9784,9 @@ extension on TranslationsNl {
 			'musicTools.storageBudget' => 'Geschat downloadbudget (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Gast-dj',
 			'musicTools.charts' => 'Luisterlijsten',
-			'musicTools.rediscover' => 'Herontdekken',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Herontdekken',
 			'musicTools.stations' => 'Muziekstations',
 			'musicTools.prompt' => 'Afspeellijst uit beschrijving',
 			'musicTools.provider' => 'Generatie-URL van aanbieder',

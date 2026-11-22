@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
   actions: read
+concurrency:
+  group: localization-review-${{ github.event_name == 'push' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
 jobs:
   collect:
     if: github.repository == 'snapetech-org/pleazyng'

@@ -5,23 +5,71 @@ name: Pull request checks
 on:
   pull_request:
     branches: [main]
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: pull-request-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: pull-request-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   DASH__SUPPRESS_ANALYTICS: "true"
   FLUTTER_SUPPRESS_ANALYTICS: "true"
 
 jobs:
-  checks:
-    name: Flutter checks and tests
+  change-scope:
+    name: Identify affected checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      app: ${{ steps.scope.outputs.app }}
+      server: ${{ steps.scope.outputs.server }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate changelog entry
+        if: github.event_name == 'pull_request'
+        env:
+          CHANGELOG_BASE: ${{ github.event.pull_request.base.sha }}
+          CHANGELOG_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: python3 scripts/changelog.py validate --mode range --base "$CHANGELOG_BASE" --head "$CHANGELOG_HEAD"
+
+      - name: Select affected suites
+        id: scope
+        run: python3 scripts/ci/pr_scope.py
+
+  relay:
+    name: Relay and edge tests
+    needs: change-scope
+    if: needs.change-scope.outputs.server == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24'
+      - name: Test and vet relay service
+        working-directory: server
+        run: go test -race ./... && go vet ./...
+      - name: Test OAuth edge worker
+        run: node --test server/cloudflare-oauth/worker.test.mjs
+
+  analysis:
+    needs: change-scope
+    if: needs.change-scope.outputs.app == 'true'
+    name: Flutter analysis and generated files
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     permissions:
@@ -32,13 +80,6 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-
-      - name: Validate changelog entry
-        if: github.event_name == 'pull_request'
-        env:
-          CHANGELOG_BASE: ${{ github.event.pull_request.base.sha }}
-          CHANGELOG_HEAD: ${{ github.event.pull_request.head.sha }}
-        run: python3 scripts/changelog.py validate --mode range --base "$CHANGELOG_BASE" --head "$CHANGELOG_HEAD"
 
       - name: Load pinned Flutter SDK
         run: python3 scripts/flutter/load_sdk_pin.py --github-env
@@ -107,5 +148,83 @@ jobs:
           dart run dart_code_linter:metrics check-unused-files lib 2>&1 | tee unused_files.txt
           grep -qi "no unused files found" unused_files.txt
 
-      - name: Run unit and widget tests
-        run: scripts/run_tests.sh -j 2 --timeout=120s
+
+  flutter-tests:
+    needs: change-scope
+    if: needs.change-scope.outputs.app == 'true'
+    name: Flutter unit and widget tests (${{ matrix.shard }}/3)
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - name: Check out pull request merge commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Load pinned Flutter SDK
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: false
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pull-request-pub-v1-${{ hashFiles('**/pubspec.yaml', '**/pubspec.lock') }}
+
+      - name: Install system dependencies
+        env:
+          RUNNER_ENVIRONMENT: ${{ runner.environment }}
+        run: |
+          sudo python3 scripts/configure_hosted_apt.py "$RUNNER_ENVIRONMENT"
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang build-essential cmake ffmpeg
+
+      - name: Install Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Prefetch checksum-pinned host native libraries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/prepare_native_downloads.py --sqlite-platform linux --arch x64
+
+      - name: Run Flutter test shard
+        run: python3 scripts/ci/flutter_test_shard.py ${{ matrix.shard }}
+
+  checks:
+    name: Flutter checks and tests
+    needs: [change-scope, analysis, flutter-tests, relay]
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - run: |
+          set -eu
+          test "$SCOPE" = success
+          if [[ "$APP" == true ]]; then
+            test "$ANALYSIS" = success
+            test "$TESTS" = success
+          else
+            test "$APP:$ANALYSIS:$TESTS" = false:skipped:skipped
+          fi
+          if [[ "$SERVER" == true ]]; then test "$RELAY" = success; else test "$SERVER:$RELAY" = false:skipped; fi
+        env:
+          SCOPE: ${{ needs.change-scope.result }}
+          APP: ${{ needs.change-scope.outputs.app }}
+          SERVER: ${{ needs.change-scope.outputs.server }}
+          RELAY: ${{ needs.relay.result }}
+          ANALYSIS: ${{ needs.analysis.result }}
+          TESTS: ${{ needs.flutter-tests.result }}

@@ -168,6 +168,7 @@ concurrency:
   # proceed while a superseded release is still finishing an expensive job.
   group: ${{ inputs.action == 'apple-signing-preflight' && 'pleazyng-apple-signing-preflight' || (inputs.recovery_source_sha != '' && inputs.rebuild_tvos && !inputs.rebuild_ios && format('pleazyng-tvos-repair-{0}', inputs.build_version)) || inputs.action == 'release' && format('pleazyng-versioned-release-{0}', inputs.candidate_ref) || inputs.action == 'build' && 'pleazyng-candidate-build-v2' || 'pleazyng-core-release-v2' }}
   cancel-in-progress: false
+  queue: max
 
 jobs:
   apple-signing-preflight:
@@ -196,6 +197,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ios-profile-public-report
+          overwrite: true
           path: ${{ runner.temp }}/ios-profile-public-report.json
           if-no-files-found: error
           retention-days: 30
@@ -278,6 +280,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ios-store-signing-preflight-${{ github.run_id }}
+          overwrite: true
           path: ${{ runner.temp }}/ios-signing-preflight-report.json
           if-no-files-found: ignore
           retention-days: 14
@@ -294,17 +297,61 @@ jobs:
       action: ci
       runner_pool: public
       execution_profile: hybrid
-      build_linux_packages: true
+      build_linux_packages: false
       # Signed App Store releases explicitly reserve the Apple Silicon JIT for
       # exact-source native qualification; unsigned and ordinary CI stay hosted.
-      apple_runner_pool: ${{ inputs.include_apple_store_build && inputs.tvos_runner_pool == 'private' && 'private' || 'hosted' }}
+      apple_runner_pool: ${{ vars.APPLE_NATIVE_CI_RUNNER_POOL == 'private' && !inputs.private_apple_signing_unavailable && 'private' || 'hosted' }}
       # Explicitly document that the early signing preflight is independent;
       # its result gates only build-ios below.
 
+  candidate-isolation:
+    name: Candidate isolation
+    needs: capture-candidate
+    uses: ./.github/workflows/native-emulator-isolation.yml
+    permissions:
+      contents: read
+
+  candidate-security:
+    name: Candidate security
+    needs: capture-candidate
+    uses: ./.github/workflows/security-regressions.yml
+    with:
+      flutter_suite_in_candidate: true
+    permissions:
+      contents: read
+
+  record-qualified-source:
+    name: Record qualified source
+    needs: [capture-candidate, release-ci, build-linux, candidate-isolation, candidate-security]
+    if: ${{ needs.capture-candidate.result == 'success' && needs.release-ci.result == 'success' && needs.build-linux.result == 'success' && needs.candidate-isolation.result == 'success' && needs.candidate-security.result == 'success' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Require every exact-source CI job before creating the stable tag
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.sha }}
+          RELEASE_TAG: v${{ inputs.build_version }}
+          CANDIDATE_REF: ${{ inputs.candidate_ref }}
+        run: python3 scripts/verify_embedded_release_ci.py --qualification-only --proof "$RUNNER_TEMP/release-source-qualification.json"
+      - name: Retain exact-source qualification proof
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: release-source-qualification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/release-source-qualification.json
+          if-no-files-found: error
+
   freeze-qualified-source:
     name: Freeze qualified source
-    needs: [capture-candidate, release-ci]
-    if: ${{ needs.capture-candidate.result == 'success' && needs.release-ci.result == 'success' }}
+    needs: record-qualified-source
+    if: ${{ needs.record-qualified-source.result == 'success' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -321,18 +368,13 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           RELEASE_TAG: v${{ inputs.build_version }}
           CANDIDATE_REF: ${{ inputs.candidate_ref }}
-        run: python3 scripts/verify_embedded_release_ci.py --create-tag --proof "$RUNNER_TEMP/release-source-qualification.json"
-      - name: Retain exact-source qualification proof
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: release-source-qualification-${{ github.run_id }}
-          path: ${{ runner.temp }}/release-source-qualification.json
-          if-no-files-found: error
+        run: python3 scripts/verify_embedded_release_ci.py --create-tag
 
   validate-trusted-ref:
     name: Validate release request
     needs: capture-candidate
     if: ${{ always() && inputs.runner_pool == 'public' && (inputs.action == 'build' || inputs.action == 'release') && (inputs.candidate_ref == '' || needs.capture-candidate.result == 'success') }}
+    timeout-minutes: 30
     runs-on: ubuntu-24.04
     outputs:
       action: ${{ steps.request.outputs.action }}
@@ -351,6 +393,7 @@ jobs:
       include_tizen_build: ${{ steps.request.outputs.include_tizen_build }}
       include_apple_store_build: ${{ steps.request.outputs.include_apple_store_build }}
       prepare_homebrew_cask: ${{ steps.request.outputs.prepare_homebrew_cask }}
+      private_apple_signing_unavailable: ${{ steps.request.outputs.private_apple_signing_unavailable }}
       tvos_runner_pool: ${{ steps.request.outputs.tvos_runner_pool }}
     permissions:
       contents: read
@@ -863,7 +906,8 @@ jobs:
           echo "This manual run builds only the macOS app and checks signing, notarization, and Gatekeeper."
           echo "No draft release is created."
 
-  build-android:
+  android-variant:
+    name: Android release (${{ matrix.variant }})
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && inputs.reuse_android_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
     needs: validate-trusted-ref
     timeout-minutes: 360
@@ -874,6 +918,10 @@ jobs:
       id-token: write
       attestations: write
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: ${{ fromJSON(needs.validate-trusted-ref.outputs.mode == 'android-validation' && '["firetv","automotive"]' || '["developer","play","firetv","automotive"]') }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -1011,18 +1059,18 @@ jobs:
           echo "configured=true" >> "$GITHUB_OUTPUT"
 
       - name: Build APKs
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release') && (matrix.variant == 'developer') }}
         run: python3 scripts/run_android_build.py flutter --verbose build apk --release --split-per-abi ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true --obfuscate --split-debug-info=debug-info/android-apk --extra-gen-snapshot-options=--save-obfuscation-map=debug-info/android-apk/obfuscation.map.json
 
       - name: Package APKs
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release') && (matrix.variant == 'developer') }}
         run: |
           tar -czf pleazyng-android-arm64-v8a.tar.gz -C build/app/outputs/flutter-apk app-arm64-v8a-release.apk --transform 's/app-arm64-v8a-release.apk/pleazyng.apk/'
           tar -czf pleazyng-android-armeabi-v7a.tar.gz -C build/app/outputs/flutter-apk app-armeabi-v7a-release.apk --transform 's/app-armeabi-v7a-release.apk/pleazyng.apk/'
           tar -czf pleazyng-android-x86_64.tar.gz -C build/app/outputs/flutter-apk app-x86_64-release.apk --transform 's/app-x86_64-release.apk/pleazyng.apk/'
 
       - name: Package pinned Moonlight corresponding source
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release') && (matrix.variant == 'developer') }}
         env:
           APPLICATION_COMMIT: ${{ inputs.recovery_source_sha || github.sha }}
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.release_tag }}
@@ -1036,7 +1084,7 @@ jobs:
       - name: Build signed Android App Bundle
         env:
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true') && (matrix.variant == 'play') }}
         run: |
           python3 scripts/run_android_build.py flutter --verbose build appbundle --release ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=SUPPORTER_MODE=iap --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --obfuscate --split-debug-info=debug-info/android-play
           cp build/app/outputs/bundle/release/app-release.aab pleazyng-android-play.aab
@@ -1044,12 +1092,13 @@ jobs:
       - name: Build signed Amazon Appstore APK
         env:
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
-        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') && steps.android-signing.outputs.configured == 'true' }}
+        if: ${{ ((needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') && steps.android-signing.outputs.configured == 'true') && (matrix.variant == 'firetv') }}
         run: |
           AMAZON=1 ORG_GRADLE_PROJECT_openiapStore=amazon python3 scripts/run_android_build.py flutter --verbose build apk --release --target-platform android-arm,android-arm64,android-x64 ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=false --dart-define=SUPPORTER_MODE=iap --dart-define=AMAZON_STORE=true --dart-define=REVIEW_ACCESS_PUBLIC_KEY="$REVIEW_ACCESS_PUBLIC_KEY" --dart-define=LIFETIME_UNLOCK_PRODUCT_ID=pleazyng_lifetime_unlock --obfuscate --split-debug-info=debug-info/android-amazon
           cp build/app/outputs/flutter-apk/app-release.apk pleazyng-amazon-firetv.apk
 
       - name: Verify signed Fire TV release APK
+        if: matrix.variant == 'firetv'
         run: >-
           python3 scripts/verify_firetv_apk.py pleazyng-amazon-firetv.apk
           --build-tools "$ANDROID_HOME/build-tools/36.1.0"
@@ -1073,7 +1122,7 @@ jobs:
           fi
 
       - name: Build signed Automotive audio App Bundle
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true' }}
+        if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true') && (matrix.variant == 'automotive') }}
         env:
           ORG_GRADLE_PROJECT_pleazyngAutomotiveMedia: 'true'
           REVIEW_ACCESS_PUBLIC_KEY: ${{ vars.REVIEW_ACCESS_PUBLIC_KEY }}
@@ -1082,6 +1131,7 @@ jobs:
           cp build/app/outputs/bundle/release/app-release.aab pleazyng-automotive-play.aab
 
       - name: Build and verify Automotive audio APK
+        if: matrix.variant == 'automotive'
         env:
           ORG_GRADLE_PROJECT_pleazyngAutomotiveMedia: 'true'
         run: |
@@ -1099,6 +1149,123 @@ jobs:
         if: ${{ always() && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
         run: rm -f android/app/upload-keystore.jks android/key.properties
 
+      - name: Retain failed Fire TV APK for diagnosis
+        if: ${{ (failure()) && (matrix.variant == 'firetv') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: amazon-firetv-diagnostics
+          overwrite: true
+          path: |
+            pleazyng-amazon-firetv.apk
+            pleazyng-amazon-firetv-provenance.json
+          if-no-files-found: ignore
+
+      - name: Retain developer outputs
+        if: matrix.variant == 'developer'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-developer
+          path: |
+            pleazyng-android-arm64-v8a.tar.gz
+            pleazyng-android-armeabi-v7a.tar.gz
+            pleazyng-android-x86_64.tar.gz
+            pleazyng-moonlight-android-source.tar.gz
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Retain play outputs
+        if: matrix.variant == 'play'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-play
+          path: |
+            pleazyng-android-play.aab
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Retain firetv outputs
+        if: matrix.variant == 'firetv'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-firetv
+          path: |
+            pleazyng-amazon-firetv.apk
+            pleazyng-amazon-firetv-provenance.json
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Retain Automotive validation APK
+        if: matrix.variant == 'automotive' && needs.validate-trusted-ref.outputs.mode == 'android-validation'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-automotive
+          path: |
+            pleazyng-automotive-music.apk
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Retain automotive outputs
+        if: matrix.variant == 'automotive' && needs.validate-trusted-ref.outputs.mode == 'release'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: android-variant-automotive
+          path: |
+            pleazyng-automotive-play.aab
+            pleazyng-automotive-music.apk
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+  build-android:
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.android-variant.result == 'success' && inputs.reuse_android_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
+    needs: [validate-trusted-ref, android-variant]
+    timeout-minutes: 30
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Download verified Android variants
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: android-variant-*
+          path: .
+          merge-multiple: true
+
+      - name: Verify required package outputs
+        if: needs.validate-trusted-ref.outputs.mode == 'release'
+        shell: bash
+        run: |
+          set -eu
+          test -s pleazyng-android-arm64-v8a.tar.gz
+          test -s pleazyng-android-armeabi-v7a.tar.gz
+          test -s pleazyng-android-x86_64.tar.gz
+          test -s pleazyng-moonlight-android-source.tar.gz
+          test -s pleazyng-android-play.aab
+          test -s pleazyng-amazon-firetv.apk
+          test -s pleazyng-amazon-firetv-provenance.json
+          test -s pleazyng-automotive-play.aab
+          test -s pleazyng-automotive-music.apk
+
+      - name: Verify validation outputs
+        if: needs.validate-trusted-ref.outputs.mode == 'android-validation'
+        shell: bash
+        run: |
+          set -eu
+          test -s pleazyng-amazon-firetv.apk
+          test -s pleazyng-amazon-firetv-provenance.json
+          test -s pleazyng-automotive-music.apk
+
       - name: Attest APKs
         if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
@@ -1111,7 +1278,7 @@ jobs:
             pleazyng-moonlight-android-source.tar.gz
 
       - name: Attest Android App Bundle
-        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && steps.android-signing.outputs.configured == 'true' }}
+        if: ${{ needs.validate-trusted-ref.outputs.mode == 'release' }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: |
@@ -1124,16 +1291,6 @@ jobs:
           subject-path: |
             pleazyng-amazon-firetv.apk
             pleazyng-amazon-firetv-provenance.json
-
-      - name: Retain failed Fire TV APK for diagnosis
-        if: failure()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: amazon-firetv-diagnostics
-          path: |
-            pleazyng-amazon-firetv.apk
-            pleazyng-amazon-firetv-provenance.json
-          if-no-files-found: ignore
 
       - name: Upload APKs
         if: ${{ (needs.validate-trusted-ref.outputs.mode == 'release' || needs.validate-trusted-ref.outputs.mode == 'android-validation') }}
@@ -1150,7 +1307,8 @@ jobs:
             pleazyng-automotive-play.aab
             pleazyng-amazon-firetv.apk
             pleazyng-amazon-firetv-provenance.json
-          if-no-files-found: warn
+          if-no-files-found: error
+          overwrite: true
 
   prepare-webos-dav1d-source:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.mode == 'webos-validation' || (needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_build == 'true')) && inputs.reuse_webos_run_id == '' && inputs.reuse_macos_package_run_id == '' }}
@@ -1284,14 +1442,35 @@ jobs:
           test "$("$tools_dir/ninja" --version)" = "1.13.2"
           echo "WEBOS_NINJA_BIN=$tools_dir/ninja" >> "$GITHUB_ENV"
 
+      - name: Restore locked TV native libraries
+        id: tv-native-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/tv-native
+          key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-tv-native-v1-webos-armv7l-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.h', 'shared/tv_mpv/**', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
+
       - name: Build and verify the WebOS ARM package
         id: webos-build
         run: bash tools/webos/build_release_candidate.sh
         env:
+          PLEAZYNG_TV_MPV_CACHE: ${{ runner.temp }}/tv-native
           GH_TOKEN: ${{ github.token }}
           PLEZYNG_WEBOS_TASK_ROOT: ${{ runner.temp }}/pleazyng-webos-${{ github.run_id }}
           PLEAZYNG_DAV1D_ARCHIVE: ${{ runner.temp }}/webos-dav1d-source/dav1d-1.5.1.tar.xz
           PLEZY_WEBOS_RELEASE_BUILD: ${{ needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.outputs.include_webos_release == 'true' }}
+
+      - name: Save verified TV native libraries
+        if: ${{ !cancelled() && steps.tv-native-cache.outputs.cache-hit != 'true' }}
+        shell: bash
+        run: |
+          if find "$RUNNER_TEMP/tv-native" -name checksums.json -type f -print -quit | grep -q .; then
+            echo "TV_NATIVE_VERIFIED=true" >> "$GITHUB_ENV"
+          fi
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        if: ${{ !cancelled() && env.TV_NATIVE_VERIFIED == 'true' }}
+        with:
+          path: ${{ runner.temp }}/tv-native
+          key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-tv-native-v1-webos-armv7l-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('scripts/tv_mpv/*.py', 'scripts/tv_mpv/*.c', 'scripts/tv_mpv/*.h', 'shared/tv_mpv/**', 'scripts/tv_mpv/*.sh', 'scripts/tv_mpv/*.patch', 'scripts/tv_mpv/dav1d-COPYING', 'tools/webos/compatibility.json', 'scripts/tizen/sdk-linux-arm.json', 'scripts/tizen/toolchain.json', 'scripts/tizen/bootstrap_linux.py') }}
 
       - name: Retain verified WebOS candidate for private device testing
         env:
@@ -1367,6 +1546,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: webos-ipk
+          overwrite: true
           path: ${{ steps.webos-build.outputs.output_dir }}/*
           if-no-files-found: error
           retention-days: 14
@@ -1376,6 +1556,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: webos-validation-evidence
+          overwrite: true
           path: |
             ${{ steps.webos-build.outputs.output_dir }}/webos-app-provenance.json
             ${{ steps.webos-build.outputs.output_dir }}/webos-engine-provenance.json
@@ -1389,6 +1570,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: webos-build-diagnostics
+          overwrite: true
           path: ${{ runner.temp }}/pleazyng-webos-${{ github.run_id }}/logs/**
           if-no-files-found: warn
           retention-days: 14
@@ -1620,17 +1802,41 @@ jobs:
           printf 'ARCHS = arm64\nONLY_ACTIVE_ARCH = NO\n' > "$override"
           echo "XCODE_XCCONFIG_FILE=$override" >> "$GITHUB_ENV"
 
-      - name: Stage locked iOS worker frameworks for Release
+      - name: Configure locked iOS worker pods
+        id: worker-input
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: |
           set -euo pipefail
           flutter build ios --release --no-codesign --config-only ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true --split-debug-info=debug-info/ios
           (cd ios && pod install --deployment)
+          digest=$(python3 "$GITHUB_WORKSPACE/scripts/apple/worker_cache_key.py")
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Restore verified iOS worker products
+        id: ios-worker-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/ios-worker-checkpoint
+          key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-ios-worker-v1-${{ runner.arch }}-${{ steps.worker-input.outputs.digest }}
+
+      - name: Stage locked iOS worker frameworks for Release
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        env:
+          CACHE_HIT: ${{ steps.ios-worker-cache.outputs.cache-hit }}
+        run: |
+          set -euo pipefail
+          checkpoint="$RUNNER_TEMP/ios-worker-checkpoint"
           products_root="$PWD/build/ios"
-          xcodebuild build -project ios/Pods/Pods.xcodeproj -scheme Pods-RommWorker \
-            -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
-            -derivedDataPath "$APPLE_DERIVED_DATA_PATH" BUILD_DIR="$products_root" \
-            CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO ARCHS=arm64
+          mkdir -p "$products_root" "$checkpoint"
+          if [[ "$CACHE_HIT" == true ]]; then
+            (cd "$checkpoint" && shasum -a 256 --check products.sha256)
+            tar -xf "$checkpoint/products.tar" -C "$products_root"
+          else
+            xcodebuild build -project ios/Pods/Pods.xcodeproj -scheme Pods-RommWorker \
+              -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
+              -derivedDataPath "$APPLE_DERIVED_DATA_PATH" BUILD_DIR="$products_root" \
+              CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO ARCHS=arm64
+          fi
           settings="$RUNNER_TEMP/ios-worker-release-settings.json"
           xcodebuild -project ios/Runner.xcodeproj -target RommWorker \
             -configuration Release -sdk iphoneos -showBuildSettings -json \
@@ -1653,6 +1859,18 @@ jobs:
           subprocess.run(['xcrun', 'lipo', str(binary), '-verify_arch', 'arm64'], check=True)
           print('Verified staged ARM64 worker:', binary, hashlib.file_digest(binary.open('rb'), 'sha256').hexdigest())
           PYSETTINGS
+
+          if [[ "$CACHE_HIT" != true ]]; then
+            tar -cf "$checkpoint/products.tar" -C "$products_root" Release-iphoneos
+            (cd "$checkpoint" && shasum -a 256 products.tar > products.sha256)
+          fi
+
+      - name: Save verified iOS worker products
+        if: steps.ios-worker-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/ios-worker-checkpoint
+          key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-ios-worker-v1-${{ runner.arch }}-${{ steps.worker-input.outputs.digest }}
 
       - name: Build iOS (no codesign)
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
@@ -1680,6 +1898,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ios-unsigned-checkpoint
+          overwrite: true
           path: pleazyng-ios-unsigned.ipa
           if-no-files-found: error
           retention-days: 14
@@ -1731,6 +1950,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ios-store-signing-report
+          overwrite: true
           path: |
             ${{ env.PLEZYNG_APPLE_WORKSPACE }}/pleazyng-ios-signing-report.json
             ${{ env.PLEZYNG_APPLE_WORKSPACE }}/pleazyng-ios-profile-report.json
@@ -1748,6 +1968,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ios-ipa
+          overwrite: true
           path: |
             pleazyng-ios-unsigned.ipa
             pleazyng-ios-appstore.ipa
@@ -1991,6 +2212,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: tvos-unsigned-checkpoint
+          overwrite: true
           path: |
             pleazyng-tvos-unsigned.ipa
             tvos-unsigned-runtime-dependency-receipt.json
@@ -2050,6 +2272,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: tvos-runtime-dependency-report
+          overwrite: true
           path: ${{ github.workspace }}/tvos-runtime-dependency-receipt.json
           if-no-files-found: warn
           retention-days: 14
@@ -2072,6 +2295,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: tvos-store-signing-report
+          overwrite: true
           path: ${{ github.workspace }}/pleazyng-tvos-signing-report.json
           if-no-files-found: warn
           retention-days: 7
@@ -2087,6 +2311,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: tvos-ipa
+          overwrite: true
           path: |
             pleazyng-tvos-unsigned.ipa
             pleazyng-tvos-appstore.ipa
@@ -2542,57 +2767,15 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Wait for notarization acceptance
-        if: ${{ steps.notarization.outcome == 'success' || steps.restore-notarization.outputs.restored == 'true' }}
-        id: notarization-status
-        env:
-          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
-          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
-          APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
-          NOTARIZATION_SUBMISSION_ID: ${{ steps.restore-notarization.outputs.submission_id || steps.notarization.outputs.submission_id }}
-        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
-        run: |
-          set -euo pipefail
-          API_KEY_PATH="$RUNNER_TEMP/pleazyng-macos-notary-api-key.p8"
-          umask 077
-          printf '%s' "$APPLE_API_PRIVATE_KEY" > "$API_KEY_PATH"
-          python3 "$GITHUB_WORKSPACE/scripts/apple/notarization_checkpoint.py" verify \
-            notarization.zip notarization-checkpoint.json "$NOTARIZATION_SUBMISSION_ID" \
-            --source-sha "$GITHUB_SHA" --product-source-sha "$COMPILE_SOURCE_SHA"
-          while true; do
-            xcrun notarytool info "$NOTARIZATION_SUBMISSION_ID" --key "$API_KEY_PATH" \
-              --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER_ID" \
-              --output-format json > notary-result.json
-            status=$(python3 -c 'import json; print(json.load(open("notary-result.json")).get("status", ""))')
-            case "$status" in
-              Accepted) break ;;
-              "In Progress") sleep 30 ;;
-              *) echo "Apple notarization ended with status: $status" >&2; exit 1 ;;
-            esac
-          done
-          python3 "$GITHUB_WORKSPACE/scripts/apple/notarization_checkpoint.py" accept \
-            notarization.zip notary-result.json notarization-checkpoint.json "$NOTARIZATION_SUBMISSION_ID"
-
-      - name: Upload resumed notarization checkpoint
-        if: ${{ steps.restore-notarization.outputs.restored == 'true' && steps.notarization-status.outcome == 'success' }}
+      - name: Retain recovered compilation identity for hosted packaging
+        if: inputs.macos_compilation_job_id != '' && steps.restore-notarization.outputs.restored != 'true' && steps.macos-signing.outputs.notarize == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: macos-notarization-checkpoint-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization.zip
-            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization-checkpoint.json
+          name: macos-recovered-identity-${{ github.run_id }}
+          path: macos-compilation-recovery.json
           if-no-files-found: error
+          overwrite: true
           retention-days: 30
-
-      - name: Staple notarization ticket
-        if: steps.notarization-status.outcome == 'success'
-        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
-        run: |
-          echo "Stapling the notarization ticket to the app..."
-          APP_PATH="build/macos/Build/Products/Release/Pleazyng.app"
-          xcrun stapler staple "$APP_PATH"
-          echo "Verifying notarization..."
-          xcrun stapler validate "$APP_PATH"
 
       - name: Remove temporary macOS signing material
         if: always()
@@ -2620,25 +2803,13 @@ jobs:
             rm -f "$PLEZYNG_APPLE_WORKSPACE/notarization.zip"
           fi
 
-      - name: Verify Gatekeeper acceptance for Homebrew Cask
-        if: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
-        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
-        run: |
-          set -euo pipefail
-          # The assessment service cannot traverse the private NFS source path.
-          # Assess the actual local APFS app behind the build-directory symlink.
-          app_path="$(python3 -c 'from pathlib import Path; print(Path("build/macos/Build/Products/Release/Pleazyng.app").resolve(strict=True))')"
-          spctl --assess --type execute --verbose=4 "$app_path"
-
       - name: Create DMG
+        if: needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true'
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
-        run: |
-          mkdir -p dmg-staging
-          cp -R build/macos/Build/Products/Release/Pleazyng.app dmg-staging/
-          ln -s /Applications dmg-staging/Applications
-          hdiutil create -format ULMO -srcfolder dmg-staging -volname "Pleazyng" pleazyng-macos.dmg
+        run: bash "$GITHUB_WORKSPACE/scripts/apple/create_release_dmg.sh"
 
       - name: Check Sparkle signing key
+        if: needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true'
         id: sparkle-signing
         env:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
@@ -2651,26 +2822,21 @@ jobs:
           fi
 
       - name: Sign DMG for Sparkle (EdDSA)
-        if: steps.sparkle-signing.outputs.available == 'true'
+        if: needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true' && (steps.sparkle-signing.outputs.available == 'true')
         env:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
-        run: |
-          printf -- "-----BEGIN ED25519 PRIVATE KEY-----\n%s\n-----END ED25519 PRIVATE KEY-----\n" "$SPARKLE_PRIVATE_KEY" > ed25519_key.pem
-          OUTPUT=$(dart run auto_updater:sign_update pleazyng-macos.dmg ed25519_key.pem)
-          rm ed25519_key.pem
-          # Extract edSignature value from output like: sparkle:edSignature="..." length="..."
-          SIGNATURE=$(echo "$OUTPUT" | grep -o 'edSignature="[^"]*"' | sed 's/edSignature="//;s/"//')
-          echo "MACOS_ED_SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
-          echo "MACOS_DMG_SIZE=$(stat -f%z pleazyng-macos.dmg)" >> $GITHUB_ENV
+        run: bash "$GITHUB_WORKSPACE/scripts/apple/sign_release_dmg.sh"
 
       - name: Write macOS signature metadata
+        if: needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true'
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: |
           echo "${{ env.MACOS_ED_SIGNATURE }}" > macos-ed-signature.txt
           echo "${{ env.MACOS_DMG_SIZE }}" > macos-dmg-size.txt
 
       - name: Copy macOS deliverables to the workflow workspace
+        if: needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true'
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: |
           set -euo pipefail
@@ -2679,20 +2845,23 @@ jobs:
           fi
 
       - name: Attest macOS DMG
+        if: needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: pleazyng-macos.dmg
 
       - name: Attest recovered macOS compilation provenance
-        if: inputs.macos_compilation_job_id != ''
+        if: needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true' && (inputs.macos_compilation_job_id != '')
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: macos-compilation-recovery.json
 
       - name: Upload macOS DMG
+        if: needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: macos-dmg
+          overwrite: true
           path: |
             pleazyng-macos.dmg
             macos-ed-signature.txt
@@ -2729,10 +2898,173 @@ jobs:
             exit 1
           fi
 
+  finish-notarization:
+    name: Finish macOS notarization and DMG
+    needs: [validate-trusted-ref, build-macos]
+    if: needs.build-macos.result == 'success' && needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true'
+    runs-on: macos-26
+    timeout-minutes: 150
+    permissions:
+      actions: read
+      contents: read
+      attestations: write
+      id-token: write
+    env:
+      PLEZYNG_APPLE_WORKSPACE: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Restore signed app and Apple submission
+        id: restore-notarization
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/apple/resume_notarization_checkpoint.py --include-current --output "$GITHUB_WORKSPACE"
+
+      - name: Restore recovered compilation identity
+        if: inputs.macos_compilation_job_id != ''
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: macos-recovered-identity-${{ github.run_id }}
+
+      - name: Wait for notarization acceptance
+        id: notarization-status
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
+          NOTARIZATION_SUBMISSION_ID: ${{ steps.restore-notarization.outputs.submission_id }}
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: |
+          set -euo pipefail
+          API_KEY_PATH="$RUNNER_TEMP/pleazyng-macos-notary-api-key.p8"
+          umask 077
+          trap 'rm -f "$API_KEY_PATH"' EXIT
+          printf '%s' "$APPLE_API_PRIVATE_KEY" > "$API_KEY_PATH"
+          python3 "$GITHUB_WORKSPACE/scripts/apple/notarization_checkpoint.py" verify \
+            notarization.zip notarization-checkpoint.json "$NOTARIZATION_SUBMISSION_ID" \
+            --source-sha "$GITHUB_SHA" --product-source-sha "$COMPILE_SOURCE_SHA"
+          while true; do
+            xcrun notarytool info "$NOTARIZATION_SUBMISSION_ID" --key "$API_KEY_PATH" \
+              --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER_ID" \
+              --output-format json > notary-result.json
+            status=$(python3 -c 'import json; print(json.load(open("notary-result.json")).get("status", ""))')
+            case "$status" in
+              Accepted) break ;;
+              "In Progress") sleep 30 ;;
+              *) echo "Apple notarization ended with status: $status" >&2; exit 1 ;;
+            esac
+          done
+          python3 "$GITHUB_WORKSPACE/scripts/apple/notarization_checkpoint.py" accept \
+            notarization.zip notary-result.json notarization-checkpoint.json "$NOTARIZATION_SUBMISSION_ID"
+
+      - name: Upload resumed notarization checkpoint
+        if: ${{ steps.restore-notarization.outputs.attempt != github.run_attempt && steps.notarization-status.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: macos-notarization-checkpoint-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization.zip
+            ${{ env.PLEZYNG_APPLE_WORKSPACE }}/notarization-checkpoint.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Staple notarization ticket
+        if: steps.notarization-status.outcome == 'success'
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: |
+          echo "Stapling the notarization ticket to the app..."
+          APP_PATH="build/macos/Build/Products/Release/Pleazyng.app"
+          xcrun stapler staple "$APP_PATH"
+          echo "Verifying notarization..."
+          xcrun stapler validate "$APP_PATH"
+
+      - name: Verify Gatekeeper acceptance for Homebrew Cask
+        if: ${{ needs.validate-trusted-ref.outputs.prepare_homebrew_cask == 'true' }}
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: |
+          set -euo pipefail
+          # The assessment service cannot traverse the private NFS source path.
+          # Assess the actual local APFS app behind the build-directory symlink.
+          app_path="$(python3 -c 'from pathlib import Path; print(Path("build/macos/Build/Products/Release/Pleazyng.app").resolve(strict=True))')"
+          spctl --assess --type execute --verbose=4 "$app_path"
+
+      - name: Load pinned Flutter SDK
+        shell: bash
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Setup Flutter
+        uses: ./.github/actions/setup-flutter-apple
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Install locked Sparkle signing utility
+        run: flutter pub get --enforce-lockfile --no-example
+
+      - name: Create DMG
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: bash "$GITHUB_WORKSPACE/scripts/apple/create_release_dmg.sh"
+
+      - name: Check Sparkle signing key
+        id: sparkle-signing
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: |
+          if [[ -n "$SPARKLE_PRIVATE_KEY" ]]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Sign DMG for Sparkle (EdDSA)
+        if: steps.sparkle-signing.outputs.available == 'true'
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: bash "$GITHUB_WORKSPACE/scripts/apple/sign_release_dmg.sh"
+
+      - name: Write macOS signature metadata
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: |
+          echo "${{ env.MACOS_ED_SIGNATURE }}" > macos-ed-signature.txt
+          echo "${{ env.MACOS_DMG_SIZE }}" > macos-dmg-size.txt
+
+      - name: Copy macOS deliverables to the workflow workspace
+        working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
+        run: |
+          set -euo pipefail
+          if [[ "$PLEZYNG_APPLE_WORKSPACE" != "$GITHUB_WORKSPACE" ]]; then
+            cp -f pleazyng-macos.dmg macos-ed-signature.txt macos-dmg-size.txt "$GITHUB_WORKSPACE/"
+          fi
+
+      - name: Attest macOS DMG
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: pleazyng-macos.dmg
+
+      - name: Attest recovered macOS compilation provenance
+        if: inputs.macos_compilation_job_id != ''
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: macos-compilation-recovery.json
+
+      - name: Upload macOS DMG
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: macos-dmg
+          overwrite: true
+          path: |
+            pleazyng-macos.dmg
+            macos-ed-signature.txt
+            macos-dmg-size.txt
+            macos-compilation-recovery.json
+
   build-windows:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: validate-trusted-ref
     name: Build Windows (${{ matrix.arch }})
+    timeout-minutes: 180
     runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-vs2026-arm' || 'windows-2025' }}
     env:
       GH_TOKEN: ${{ github.token }}
@@ -2743,7 +3075,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' && '{"include":[{"arch":"x64","flutter_setup":"action","native_cache_path":"build/windows/x64/_deps"},{"arch":"arm64","flutter_setup":"git","native_cache_path":"build/windows/arm64/_deps"}]}' || '{"include":[{"arch":"x64","flutter_setup":"action","native_cache_path":"build/windows/x64/_deps"}]}') }}
-    steps:
+    steps: &windows-build-steps
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.recovery_source_sha || github.sha }}
@@ -2913,6 +3245,7 @@ jobs:
         run: python scripts/motion/prepare_desktop_neural_models.py --destination "$env:PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT"
 
       - name: Build Windows ${{ matrix.arch }}
+        if: github.job == 'build-windows'
         id: windows-build
         shell: pwsh
         env:
@@ -2943,6 +3276,7 @@ jobs:
           Write-Host "Verbose CMake install retry exit code: $installExit"
 
       - name: Verify Windows bundle contents
+        if: github.job == 'build-windows'
         shell: pwsh
         run: |
           $bundleDir = "build/windows/${{ matrix.arch }}/runner/Release"
@@ -3032,13 +3366,15 @@ jobs:
           }
 
       - name: Upload ${{ matrix.arch }} build
+        if: github.job == 'build-windows'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: windows-${{ matrix.arch }}-build
+          overwrite: true
           path: build/windows/${{ matrix.arch }}/runner/Release/
 
       - name: Build separate Microsoft Store trial and unlock payload
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        if: ${{ (vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '') && github.job == 'windows-store-native' }}
         shell: pwsh
         env:
           MSSTORE_LIFETIME_PRODUCT_ID: ${{ vars.MSSTORE_LIFETIME_PRODUCT_ID }}
@@ -3047,16 +3383,35 @@ jobs:
         run: python scripts/build_microsoft_store.py --arch "${{ matrix.arch }}"
 
       - name: Upload Microsoft Store ${{ matrix.arch }} payload
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        if: ${{ (vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '') && github.job == 'windows-store-native' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: windows-store-${{ matrix.arch }}-build
+          overwrite: true
           path: build/windows/${{ matrix.arch }}/runner/Release/
           if-no-files-found: error
+
+  windows-store-native:
+    if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' && always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: validate-trusted-ref
+    name: Build Windows Store (${{ matrix.arch }})
+    timeout-minutes: 180
+    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-vs2026-arm' || 'windows-2025' }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PLEZYNG_ALLOW_DIRECT_DOWNLOADS: ${{ needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' && '1' || '0' }}
+      PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT: ${{ github.workspace }}/build/desktop-neural-models
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' && '{"include":[{"arch":"x64","flutter_setup":"action","native_cache_path":"build/windows/x64/_deps"},{"arch":"arm64","flutter_setup":"git","native_cache_path":"build/windows/arm64/_deps"}]}' || '{"include":[{"arch":"x64","flutter_setup":"action","native_cache_path":"build/windows/x64/_deps"}]}') }}
+    steps: *windows-build-steps
 
   package-windows:
     if: ${{ inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: [validate-trusted-ref, build-windows]
+    timeout-minutes: 60
     runs-on: windows-2025
     permissions:
       id-token: write
@@ -3106,6 +3461,126 @@ jobs:
       - name: Build installer and portables
         run: .\windows\build-installer.ps1 -X64BuildDir "build-x64" -Version "${{ steps.version.outputs.version }}"
 
+      - name: Sign installer for Microsoft Store submissions
+        env:
+          WINDOWS_SIGNING_CERTIFICATE_BASE64: ${{ secrets.WINDOWS_SIGNING_CERTIFICATE_BASE64 }}
+          WINDOWS_SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_SIGNING_CERTIFICATE_PASSWORD }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ([string]::IsNullOrWhiteSpace($env:WINDOWS_SIGNING_CERTIFICATE_BASE64) -and [string]::IsNullOrWhiteSpace($env:WINDOWS_SIGNING_CERTIFICATE_PASSWORD)) {
+            Write-Host 'Windows Authenticode signing is not configured; the installer will not be ready for Microsoft Store submission.'
+            exit 0
+          }
+          if ([string]::IsNullOrWhiteSpace($env:WINDOWS_SIGNING_CERTIFICATE_BASE64) -or [string]::IsNullOrWhiteSpace($env:WINDOWS_SIGNING_CERTIFICATE_PASSWORD)) {
+            throw 'Configure both WINDOWS_SIGNING_CERTIFICATE_BASE64 and WINDOWS_SIGNING_CERTIFICATE_PASSWORD.'
+          }
+          $pfxPath = Join-Path $env:RUNNER_TEMP 'pleazyng-authenticode.pfx'
+          try {
+            [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:WINDOWS_SIGNING_CERTIFICATE_BASE64))
+            $signtoolCommand = Get-Command signtool.exe -ErrorAction SilentlyContinue
+            $signtoolPath = if ($null -ne $signtoolCommand) { $signtoolCommand.Source } else { $null }
+            if ($null -eq $signtoolPath) {
+              $sdkBin = Join-Path (${env:ProgramFiles(x86)}) 'Windows Kits\10\bin'
+              $signtoolFile = Get-ChildItem $sdkBin -Filter signtool.exe -Recurse -ErrorAction Stop |
+                Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
+                Sort-Object FullName -Descending |
+                Select-Object -First 1
+              if ($null -ne $signtoolFile) { $signtoolPath = $signtoolFile.FullName }
+            }
+            if ($null -eq $signtoolPath) { throw 'Could not find signtool.exe on the Windows runner.' }
+            & $signtoolPath sign /fd SHA256 /f $pfxPath /p $env:WINDOWS_SIGNING_CERTIFICATE_PASSWORD /tr http://timestamp.digicert.com /td SHA256 pleazyng-windows-installer.exe
+            if ($LASTEXITCODE -ne 0) { throw "Authenticode signing failed with exit code $LASTEXITCODE" }
+            & $signtoolPath verify /pa /all pleazyng-windows-installer.exe
+            if ($LASTEXITCODE -ne 0) { throw "Authenticode signature verification failed with exit code $LASTEXITCODE" }
+          } finally {
+            Remove-Item -Path $pfxPath -Force -ErrorAction SilentlyContinue
+          }
+
+      - name: Check Sparkle signing key
+        id: sparkle-signing
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:SPARKLE_PRIVATE_KEY)) {
+            "available=false" >> $env:GITHUB_OUTPUT
+          } else {
+            "available=true" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Sign installer for WinSparkle (EdDSA)
+        if: steps.sparkle-signing.outputs.available == 'true'
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        shell: pwsh
+        run: |
+          $keyPath = Join-Path $env:RUNNER_TEMP "plezy-winsparkle-ed25519.pem"
+          try {
+            Set-Content -Path $keyPath -Value $env:SPARKLE_PRIVATE_KEY -Encoding ascii -NoNewline
+            $output = & dart run auto_updater:sign_update pleazyng-windows-installer.exe $keyPath
+            if ($LASTEXITCODE -ne 0) {
+              throw "WinSparkle signer failed with exit code $LASTEXITCODE"
+            }
+            $match = [regex]::Match($output, 'edSignature="([^"]*)"')
+            if (-not $match.Success) {
+              throw "WinSparkle signer returned no EdDSA signature"
+            }
+            Set-Content -Path win-ed-signature.txt -Value $match.Groups[1].Value -Encoding ascii -NoNewline
+            Set-Content -Path win-installer-size.txt -Value (Get-Item pleazyng-windows-installer.exe).Length.ToString() -Encoding ascii -NoNewline
+          } finally {
+            Remove-Item -Path $keyPath -Force -ErrorAction SilentlyContinue
+          }
+
+      - name: Attest Windows artifacts
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: |
+            pleazyng-windows-x64-portable.7z
+            pleazyng-windows-installer.exe
+
+      - name: Upload x64 portable
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-x64-portable
+          overwrite: true
+          path: pleazyng-windows-x64-portable.7z
+
+      - name: Upload installer
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-installer
+          overwrite: true
+          path: |
+            pleazyng-windows-installer.exe
+            win-ed-signature.txt
+            win-installer-size.txt
+
+  windows-msix:
+    name: Package Windows MSIX
+    if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' && inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, windows-store-native]
+    timeout-minutes: 45
+    runs-on: windows-2025
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Read version from pubspec
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(python3 scripts/pubspec_version.py pubspec.yaml)
+          echo "version=${VERSION%%+*}" >> "$GITHUB_OUTPUT"
+
       - name: Download Microsoft Store x64 payload
         if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -3139,40 +3614,51 @@ jobs:
             -Publisher $env:MSSTORE_PUBLISHER `
             -PublisherDisplayName $env:MSSTORE_PUBLISHER_DISPLAY_NAME
 
-      - name: Sign installer for Microsoft Store submissions
-        env:
-          WINDOWS_SIGNING_CERTIFICATE_BASE64: ${{ secrets.WINDOWS_SIGNING_CERTIFICATE_BASE64 }}
-          WINDOWS_SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_SIGNING_CERTIFICATE_PASSWORD }}
-        shell: pwsh
+      - name: Attest Microsoft Store bundle
+        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        with:
+          subject-path: pleazyng-windows.msixbundle
+
+      - name: Upload Microsoft Store bundle
+        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: windows-msix
+          overwrite: true
+          path: pleazyng-windows.msixbundle
+
+  windows-chocolatey:
+    name: Package Windows Chocolatey
+    continue-on-error: true
+    if: ${{ inputs.reuse_platform_run_id == '' && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, package-windows]
+    timeout-minutes: 30
+    runs-on: windows-2025
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Restore signed installer for Chocolatey
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: windows-installer
+          path: .
+
+      - name: Read version from pubspec
+        id: version
+        shell: bash
         run: |
-          $ErrorActionPreference = 'Stop'
-          if ([string]::IsNullOrWhiteSpace($env:WINDOWS_SIGNING_CERTIFICATE_BASE64) -and [string]::IsNullOrWhiteSpace($env:WINDOWS_SIGNING_CERTIFICATE_PASSWORD)) {
-            Write-Host 'Windows Authenticode signing is not configured; the installer will not be ready for Microsoft Store submission.'
-            exit 0
-          }
-          if ([string]::IsNullOrWhiteSpace($env:WINDOWS_SIGNING_CERTIFICATE_BASE64) -or [string]::IsNullOrWhiteSpace($env:WINDOWS_SIGNING_CERTIFICATE_PASSWORD)) {
-            throw 'Configure both WINDOWS_SIGNING_CERTIFICATE_BASE64 and WINDOWS_SIGNING_CERTIFICATE_PASSWORD.'
-          }
-          $pfxPath = Join-Path $env:RUNNER_TEMP 'pleazyng-authenticode.pfx'
-          try {
-            [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:WINDOWS_SIGNING_CERTIFICATE_BASE64))
-            $signtoolCommand = Get-Command signtool.exe -ErrorAction SilentlyContinue
-            $signtoolPath = if ($null -ne $signtoolCommand) { $signtoolCommand.Source } else { $null }
-            if ($null -eq $signtoolPath) {
-              $signtoolFile = Get-ChildItem "$env:ProgramFiles(x86)\Windows Kits\10\bin" -Filter signtool.exe -Recurse -ErrorAction Stop |
-                Where-Object { $_.FullName -match '\\x64\\signtool\.exe$' } |
-                Sort-Object FullName -Descending |
-                Select-Object -First 1
-              if ($null -ne $signtoolFile) { $signtoolPath = $signtoolFile.FullName }
-            }
-            if ($null -eq $signtoolPath) { throw 'Could not find signtool.exe on the Windows runner.' }
-            & $signtoolPath sign /fd SHA256 /f $pfxPath /p $env:WINDOWS_SIGNING_CERTIFICATE_PASSWORD /tr http://timestamp.digicert.com /td SHA256 pleazyng-windows-installer.exe
-            if ($LASTEXITCODE -ne 0) { throw "Authenticode signing failed with exit code $LASTEXITCODE" }
-            & $signtoolPath verify /pa /all pleazyng-windows-installer.exe
-            if ($LASTEXITCODE -ne 0) { throw "Authenticode signature verification failed with exit code $LASTEXITCODE" }
-          } finally {
-            Remove-Item -Path $pfxPath -Force -ErrorAction SilentlyContinue
-          }
+          VERSION=$(python3 scripts/pubspec_version.py pubspec.yaml)
+          echo "version=${VERSION%%+*}" >> "$GITHUB_OUTPUT"
 
       - name: Package Chocolatey release
         id: chocolatey-package
@@ -3230,54 +3716,6 @@ jobs:
           $package = Get-Item "release-packages\pleazyng.$env:PACKAGE_VERSION.nupkg"
           if ($null -eq $package) { throw 'Chocolatey package was not created.' }
 
-      - name: Check Sparkle signing key
-        id: sparkle-signing
-        env:
-          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
-        shell: pwsh
-        run: |
-          if ([string]::IsNullOrWhiteSpace($env:SPARKLE_PRIVATE_KEY)) {
-            "available=false" >> $env:GITHUB_OUTPUT
-          } else {
-            "available=true" >> $env:GITHUB_OUTPUT
-          }
-
-      - name: Sign installer for WinSparkle (EdDSA)
-        if: steps.sparkle-signing.outputs.available == 'true'
-        env:
-          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
-        shell: pwsh
-        run: |
-          $keyPath = Join-Path $env:RUNNER_TEMP "plezy-winsparkle-ed25519.pem"
-          try {
-            Set-Content -Path $keyPath -Value $env:SPARKLE_PRIVATE_KEY -Encoding ascii -NoNewline
-            $output = & dart run auto_updater:sign_update pleazyng-windows-installer.exe $keyPath
-            if ($LASTEXITCODE -ne 0) {
-              throw "WinSparkle signer failed with exit code $LASTEXITCODE"
-            }
-            $match = [regex]::Match($output, 'edSignature="([^"]*)"')
-            if (-not $match.Success) {
-              throw "WinSparkle signer returned no EdDSA signature"
-            }
-            Set-Content -Path win-ed-signature.txt -Value $match.Groups[1].Value -Encoding ascii -NoNewline
-            Set-Content -Path win-installer-size.txt -Value (Get-Item pleazyng-windows-installer.exe).Length.ToString() -Encoding ascii -NoNewline
-          } finally {
-            Remove-Item -Path $keyPath -Force -ErrorAction SilentlyContinue
-          }
-
-      - name: Attest Windows artifacts
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
-        with:
-          subject-path: |
-            pleazyng-windows-x64-portable.7z
-            pleazyng-windows-installer.exe
-
-      - name: Attest Microsoft Store bundle
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
-        with:
-          subject-path: pleazyng-windows.msixbundle
-
       - name: Attest Chocolatey package
         if: steps.chocolatey-package.outcome == 'success'
         continue-on-error: true
@@ -3285,40 +3723,20 @@ jobs:
         with:
           subject-path: release-packages/pleazyng.${{ steps.version.outputs.version }}.nupkg
 
-      - name: Upload x64 portable
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: windows-x64-portable
-          path: pleazyng-windows-x64-portable.7z
-
-      - name: Upload installer
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: windows-installer
-          path: |
-            pleazyng-windows-installer.exe
-            win-ed-signature.txt
-            win-installer-size.txt
-
-      - name: Upload Microsoft Store bundle
-        if: ${{ vars.MSSTORE_PACKAGE_NAME != '' && vars.MSSTORE_PUBLISHER != '' && vars.MSSTORE_PUBLISHER_DISPLAY_NAME != '' && vars.MSSTORE_LIFETIME_PRODUCT_ID != '' }}
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: windows-msix
-          path: pleazyng-windows.msixbundle
-
       - name: Upload Chocolatey package
         if: steps.chocolatey-package.outcome == 'success'
         continue-on-error: true
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: windows-chocolatey
+          overwrite: true
           path: release-packages/pleazyng.*.nupkg
 
-  build-linux:
+  linux-bundle:
     if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
     needs: validate-trusted-ref
-    name: Build Linux (${{ matrix.arch }})
+    name: Compile Linux (${{ matrix.arch }})
+    timeout-minutes: 150
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       id-token: write
@@ -3332,14 +3750,10 @@ jobs:
             flutter_channel: stable
             pkg_config_arch: x86_64-linux-gnu
             snap_arch: amd64
-          - arch: arm64
-            flutter_channel: master
-            pkg_config_arch: aarch64-linux-gnu
-            snap_arch: arm64
     env:
       GH_TOKEN: ${{ github.token }}
       PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT: ${{ github.workspace }}/build/desktop-neural-models
-    steps:
+    steps: &linux-bundle-steps
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.recovery_source_sha || github.sha }}
@@ -3447,9 +3861,7 @@ jobs:
           command -v zstd >/dev/null 2>&1 || { sudo apt-get update && sudo apt-get install -y --no-install-recommends zstd; }
           python3 scripts/fetch_linux_libmpv.py --dest libmpv-prefix
 
-      - name: Install fpm
-        shell: bash
-        run: sudo gem install fpm --version 1.17.0 --no-document
+
 
       - name: Install dependencies
         shell: bash
@@ -3555,10 +3967,90 @@ jobs:
         shell: bash
         run: python3 linux/packaging/check-bundle-host-deps.py "$BUNDLE_DIR"
 
-      # Last, from the fully resolved tree above. The host-dependency guard is
-      # skipped because the named step above just ran it against this same
-      # bundle; the internal run exists for by-hand packaging outside CI.
+      - name: Archive verified Linux bundle
+        shell: bash
+        run: tar -C "$BUNDLE_DIR" -I "zstd -T2 -1" -cf linux-bundle.tar.zst .
+      - name: Retain Linux bundle
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-bundle-${{ matrix.arch }}
+          path: |
+            linux-bundle.tar.zst
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+  linux-bundle-arm64:
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: validate-trusted-ref
+    name: Compile Linux (${{ matrix.arch }})
+    timeout-minutes: 150
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            flutter_channel: master
+            pkg_config_arch: aarch64-linux-gnu
+            snap_arch: arm64
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT: ${{ github.workspace }}/build/desktop-neural-models
+    steps: *linux-bundle-steps
+
+  linux-format:
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.linux-bundle.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, linux-bundle]
+    name: Package Linux (${{ matrix.arch }}, ${{ matrix.format }})
+    timeout-minutes: 100
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64]
+        format: [distro, flatpak, snap, portable]
+        include:
+          - arch: x64
+            snap_arch: amd64
+    steps: &linux-format-steps
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Restore verified bundle
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: linux-bundle-${{ matrix.arch }}
+          path: .
+
+      - name: Extract bundle with its executable modes and symlinks
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/linux-bundle"
+          tar --zstd -xf linux-bundle.tar.zst -C "$RUNNER_TEMP/linux-bundle"
+          echo "BUNDLE_DIR=$RUNNER_TEMP/linux-bundle" >> "$GITHUB_ENV"
+
+      - name: Install native package tools
+        if: matrix.format == 'distro'
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y ruby-dev rpm libarchive-tools zstd
+      - name: Install fpm
+        if: matrix.format == 'distro'
+        shell: bash
+        run: sudo gem install fpm --version 1.17.0 --no-document
+
       - name: Build Linux Packages
+        if: matrix.format == 'distro'
         shell: bash
         run: |
           BUILD_DIR="$BUNDLE_DIR" \
@@ -3571,11 +4063,27 @@ jobs:
       # they arrived. Same script the smoke build runs, so the two jobs cannot
       # drift on what counts as declared - and unlike the smoke build, this one
       # covers arm64 and the artifacts users actually install.
+
       - name: Verify the declared dependencies reached the package metadata
+        if: matrix.format == 'distro'
         shell: bash
         run: python3 linux/packaging/check-package-deps.py "$GITHUB_WORKSPACE" --arch ${{ matrix.arch }}
 
+      - name: Retain distro packages
+        if: matrix.format == 'distro'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-format-${{ matrix.arch }}-distro
+          path: |
+            pleazyng-linux-${{ matrix.arch }}.deb
+            pleazyng-linux-${{ matrix.arch }}.rpm
+            pleazyng-linux-${{ matrix.arch }}.pkg.tar.zst
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
       - name: Install Flatpak packaging dependencies
+        if: matrix.format == 'flatpak'
         shell: bash
         run: |
           sudo apt-get update
@@ -3584,10 +4092,30 @@ jobs:
           python3 scripts/retry_flatpak.py install --user --noninteractive -y flathub org.freedesktop.Platform//25.08 org.freedesktop.Sdk//25.08
 
       - name: Build Flatpak bundle
+        if: matrix.format == 'flatpak'
         shell: bash
         run: python3 linux/packaging/build-flatpak.py --bundle "$BUNDLE_DIR" --arch ${{ matrix.arch }} --output "$GITHUB_WORKSPACE"
 
+      - name: Verify installed Flatpak runtime dependencies
+        if: matrix.format == 'flatpak'
+        shell: bash
+        run: |
+          flatpak install --user --noninteractive "pleazyng-linux-${{ matrix.arch }}.flatpak"
+          dbus-run-session -- python3 linux/packaging/check-flatpak.py --arch ${{ matrix.arch }}
+
+      - name: Retain flatpak packages
+        if: matrix.format == 'flatpak'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-format-${{ matrix.arch }}-flatpak
+          path: |
+            pleazyng-linux-${{ matrix.arch }}.flatpak
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
       - name: Prepare Snap package inputs
+        if: matrix.format == 'snap'
         shell: bash
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.version }}
@@ -3603,6 +4131,7 @@ jobs:
           sed -i "s/^version: .*/version: '$RELEASE_TAG'/" "$snap_dir/snapcraft.yaml"
 
       - name: Build Snap package
+        if: matrix.format == 'snap'
         id: snap
         shell: bash
         run: bash scripts/build_snap.sh '${{ matrix.snap_arch }}'
@@ -3610,14 +4139,38 @@ jobs:
           PLEZYNG_ALLOW_PUBLIC_SNAP: ${{ needs.validate-trusted-ref.outputs.execution_profile == 'hybrid' && 'true' || 'false' }}
 
       - name: Name Snap artifact
+        if: matrix.format == 'snap'
         env:
           SNAP_PATH: ${{ steps.snap.outputs.snap }}
           ARCH: ${{ matrix.arch }}
         shell: bash
         run: cp "$SNAP_PATH" "pleazyng-linux-${ARCH}.snap"
 
+      - name: Retain snap packages
+        if: matrix.format == 'snap'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-format-${{ matrix.arch }}-snap
+          path: |
+            pleazyng-linux-${{ matrix.arch }}.snap
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Include standalone app icon in portable bundle
+        if: matrix.format == 'portable'
+        shell: bash
+        run: cp assets/pleazyng.png "$BUNDLE_DIR/pleazyng.png"
+
+      - name: Create tarball
+        if: matrix.format == 'portable'
+        shell: bash
+        run: |
+          cd "$BUNDLE_DIR"
+          tar -czf "$GITHUB_WORKSPACE/pleazyng-linux-${{ matrix.arch }}.tar.gz" *
+
       - name: Build x64 AppImage
-        if: matrix.arch == 'x64'
+        if: ${{ (matrix.arch == 'x64') && (matrix.format == 'portable') }}
         shell: bash
         env:
           RELEASE_TAG: ${{ needs.validate-trusted-ref.outputs.version }}
@@ -3631,28 +4184,98 @@ jobs:
           bash scripts/build_appimage.sh "$BUNDLE_DIR" "$GITHUB_WORKSPACE" "$RELEASE_TAG" "$GITHUB_REPOSITORY"
 
       - name: Attest x64 AppImage
-        if: matrix.arch == 'x64'
+        if: ${{ (matrix.arch == 'x64') && (matrix.format == 'portable') }}
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: |
             pleazyng-linux-x86_64.AppImage
             pleazyng-linux-x86_64.AppImage.zsync
 
-      - name: Verify installed Flatpak runtime dependencies
+      - name: Retain portable packages
+        if: matrix.format == 'portable'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: linux-format-${{ matrix.arch }}-portable
+          path: |
+            pleazyng-linux-${{ matrix.arch }}.tar.gz
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+
+      - name: Upload x64 AppImage artifact
+        if: ${{ (matrix.arch == 'x64') && (matrix.format == 'portable') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          overwrite: true
+          name: linux-x64-appimage
+          path: |
+            pleazyng-linux-x86_64.AppImage
+            pleazyng-linux-x86_64.AppImage.zsync
+
+  linux-format-arm64:
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.linux-bundle-arm64.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, linux-bundle-arm64]
+    name: Package Linux (${{ matrix.arch }}, ${{ matrix.format }})
+    timeout-minutes: 100
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [arm64]
+        format: [distro, flatpak, snap, portable]
+        include:
+          - arch: arm64
+            snap_arch: arm64
+    steps: *linux-format-steps
+
+  build-linux:
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.linux-format.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, linux-format]
+    name: Build Linux (${{ matrix.arch }})
+    timeout-minutes: 30
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            flutter_channel: stable
+            pkg_config_arch: x86_64-linux-gnu
+            snap_arch: amd64
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT: ${{ github.workspace }}/build/desktop-neural-models
+    steps: &build-linux-steps
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Collect verified Linux formats
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: linux-format-${{ matrix.arch }}-*
+          path: .
+          merge-multiple: true
+
+      - name: Verify required package outputs
         shell: bash
         run: |
-          flatpak install --user --noninteractive "pleazyng-linux-${{ matrix.arch }}.flatpak"
-          dbus-run-session -- python3 linux/packaging/check-flatpak.py --arch ${{ matrix.arch }}
-
-      - name: Include standalone app icon in portable bundle
-        shell: bash
-        run: cp assets/pleazyng.png "$BUNDLE_DIR/pleazyng.png"
-
-      - name: Create tarball
-        shell: bash
-        run: |
-          cd "$BUNDLE_DIR"
-          tar -czf "$GITHUB_WORKSPACE/pleazyng-linux-${{ matrix.arch }}.tar.gz" *
+          set -eu
+          test -s pleazyng-linux-${{ matrix.arch }}.deb
+          test -s pleazyng-linux-${{ matrix.arch }}.rpm
+          test -s pleazyng-linux-${{ matrix.arch }}.pkg.tar.zst
+          test -s pleazyng-linux-${{ matrix.arch }}.flatpak
+          test -s pleazyng-linux-${{ matrix.arch }}.snap
+          test -s pleazyng-linux-${{ matrix.arch }}.tar.gz
 
       - name: Attest Linux ${{ matrix.arch }} artifacts
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
@@ -3668,6 +4291,7 @@ jobs:
       - name: Upload Linux ${{ matrix.arch }} artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
+          overwrite: true
           name: linux-${{ matrix.arch }}
           path: |
             pleazyng-linux-${{ matrix.arch }}.tar.gz
@@ -3677,18 +4301,33 @@ jobs:
             pleazyng-linux-${{ matrix.arch }}.flatpak
             pleazyng-linux-${{ matrix.arch }}.snap
 
-      - name: Upload x64 AppImage artifact
-        if: matrix.arch == 'x64'
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: linux-x64-appimage
-          path: |
-            pleazyng-linux-x86_64.AppImage
-            pleazyng-linux-x86_64.AppImage.zsync
+  assemble-linux-arm64:
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && needs.linux-format-arm64.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_linux) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    needs: [validate-trusted-ref, linux-format-arm64]
+    name: Build Linux (${{ matrix.arch }})
+    timeout-minutes: 30
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            flutter_channel: master
+            pkg_config_arch: aarch64-linux-gnu
+            snap_arch: arm64
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT: ${{ github.workspace }}/build/desktop-neural-models
+    steps: *build-linux-steps
 
   create-release:
-    needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, build-windows, package-windows, build-linux]
-    if: ${{ always() && (needs.freeze-qualified-source.result == 'success' || (inputs.candidate_ref == '' && inputs.reuse_platform_run_id == '' && needs.freeze-qualified-source.result == 'skipped' && needs.validate-trusted-ref.outputs.qualified_tag_commit != '' && needs.validate-trusted-ref.outputs.qualified_tag_commit == needs.validate-trusted-ref.outputs.release_commit) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped')) && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && ((inputs.reuse_repaired_run_id == 'tizen-rebuild' && needs.build-tizen.result == 'success') || (inputs.reuse_repaired_run_id != 'tizen-rebuild' && needs.build-tizen.result == 'skipped')))) && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+    needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, windows-msix, windows-chocolatey, build-linux, assemble-linux-arm64]
+    if: ${{ always() && (needs.freeze-qualified-source.result == 'success' || (inputs.candidate_ref == '' && inputs.reuse_platform_run_id == '' && needs.freeze-qualified-source.result == 'skipped' && needs.validate-trusted-ref.outputs.qualified_tag_commit != '' && needs.validate-trusted-ref.outputs.qualified_tag_commit == needs.validate-trusted-ref.outputs.release_commit) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.freeze-qualified-source.result == 'skipped')) && inputs.runner_pool != '' && inputs.action == 'release' && needs.validate-trusted-ref.outputs.runner_pool == 'public' && needs.validate-trusted-ref.outputs.action == 'release' && needs.validate-trusted-ref.outputs.mode == 'release' && needs.validate-trusted-ref.result == 'success' && (needs.build-android.result == 'success' || (inputs.reuse_android_run_id != '' && needs.validate-trusted-ref.outputs.android_source_sha != '' && needs.build-android.result == 'skipped')) && ((inputs.reuse_platform_run_id == '' && needs.build-ios.result == 'success' && needs.build-tvos.result == 'success' && needs.build-macos.result == 'success' && needs.build-windows.result == 'success' && needs.package-windows.result == 'success' && needs.build-linux.result == 'success' && (needs.build-webos.result == 'success' || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && (needs.build-tizen.result == 'success' || (needs.validate-trusted-ref.outputs.include_tizen_build != 'true' && needs.build-tizen.result == 'skipped'))) || (inputs.reuse_platform_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && ((inputs.rebuild_ios && needs.build-ios.result == 'success') || (!inputs.rebuild_ios && needs.build-ios.result == 'skipped')) && ((inputs.rebuild_tvos && needs.build-tvos.result == 'success') || (!inputs.rebuild_tvos && needs.build-tvos.result == 'skipped')) && ((inputs.rebuild_macos && needs.build-macos.result == 'success') || (!inputs.rebuild_macos && needs.build-macos.result == 'skipped')) && needs.build-windows.result == 'skipped' && needs.package-windows.result == 'skipped' && ((inputs.rebuild_linux && needs.build-linux.result == 'success') || (!inputs.rebuild_linux && needs.build-linux.result == 'skipped')) && (needs.build-webos.result == 'success' || (inputs.reuse_webos_run_id != '' && needs.validate-trusted-ref.outputs.webos_source_sha != '' && needs.build-webos.result == 'skipped') || (inputs.reuse_macos_package_run_id != '' && needs.validate-trusted-ref.outputs.reuse_source_sha != '' && needs.build-webos.result == 'skipped') || (needs.validate-trusted-ref.outputs.include_webos_build != 'true' && needs.validate-trusted-ref.outputs.include_webos_release != 'true' && needs.build-webos.result == 'skipped')) && ((inputs.reuse_repaired_run_id == 'tizen-rebuild' && needs.build-tizen.result == 'success') || (inputs.reuse_repaired_run_id != 'tizen-rebuild' && needs.build-tizen.result == 'skipped')))) && (needs.build-macos.result == 'skipped' || needs.validate-trusted-ref.outputs.prepare_homebrew_cask != 'true' || needs.finish-notarization.result == 'success') && needs.assemble-linux-arm64.result == needs.build-linux.result && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
+    timeout-minutes: 75
     runs-on: ubuntu-24.04
     permissions:
       contents: write

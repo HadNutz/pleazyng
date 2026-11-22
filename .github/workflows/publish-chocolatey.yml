@@ -39,6 +39,11 @@ permissions:
   attestations: write
   id-token: write
 
+concurrency:
+  group: chocolatey-pleazyng-${{ inputs.release_tag }}
+  cancel-in-progress: false
+  queue: max
+
 jobs:
   publish:
     if: github.ref == 'refs/heads/main'

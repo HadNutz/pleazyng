@@ -16,6 +16,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: workspace-recovery-validation-${{ github.event_name == 'push' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
 jobs:
   recovery:
     runs-on: ubuntu-24.04

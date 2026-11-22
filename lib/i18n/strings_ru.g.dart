@@ -387,7 +387,6 @@ class _Translations$settings$ru extends Translations$settings$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Шарнир складного экрана';
 	@override String get title => 'Настройки';
 	@override String get supportDeveloper => 'Поддержать Pleazyng';
 	@override String get supportDeveloperDescription => 'Поддержите разработку пожертвованием';
@@ -490,6 +489,7 @@ class _Translations$settings$ru extends Translations$settings$en {
 	@override String get playerBackend => 'Бэкенд плеера';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Шарнир складного экрана';
 	@override String get hardwareDecoding => 'Аппаратное декодирование';
 	@override String get hardwareDecodingDescription => 'Использовать аппаратное ускорение, когда доступно';
 	@override String get playbackBuffer => 'Буфер воспроизведения';
@@ -1667,21 +1667,21 @@ class _Translations$iptv$ru extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Резервные источники в порядке воспроизведения';
+	@override String get exportPrivate => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.';
+	@override String get dynamicStreamExport => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.';
 	@override String get lineupOrder => 'Порядок каналов';
+	@override String get moveUp => 'Перемещаться';
+	@override String get moveDown => 'Переместите вниз';
 	@override String get orderChanged => 'Порядок каналов изменился. Проверьте его и повторите попытку.';
+	@override String affectedChannels({required Object count}) => 'Каналы · ${count}';
 	@override String get localPlaylist => 'Файл M3U';
 	@override String get pastePlaylist => 'Вставить текст плейлиста';
+	@override String get choosePlaylist => 'Выберите файл playlist';
 	@override String get playlistBase => 'Базовый URL для относительных ссылок (необязательно)';
 	@override String get localPlaylistHelp => 'Импортируйте личную копию списка каналов M3U или M3U8. Её можно заменить другим файлом.';
 	@override String get showMatches => 'Показать подходящие каналы';
 	@override String get hideMatches => 'Скрыть подходящие каналы';
 	@override String get pickerCredit => 'Источник вдохновения · M3U Web Picker · Zachary Schmook (@zschmook) и другие участники';
-	@override String get exportPrivate => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.';
-	@override String get dynamicStreamExport => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.';
-	@override String get moveUp => 'Перемещаться';
-	@override String get moveDown => 'Переместите вниз';
-	@override String get choosePlaylist => 'Выберите файл playlist';
-	@override String affectedChannels({required Object count}) => 'Каналы · ${count}';
 }
 
 // Path: accountPreferences
@@ -5941,7 +5941,6 @@ extension on TranslationsRu {
 			'update.viewRelease' => 'Посмотреть релиз',
 			'update.latestVersion' => 'У вас последняя версия',
 			'update.checkFailed' => 'Не удалось проверить обновления',
-			'settings.foldableDisplay' => 'Шарнир складного экрана',
 			'settings.title' => 'Настройки',
 			'settings.supportDeveloper' => 'Поддержать Pleazyng',
 			'settings.supportDeveloperDescription' => 'Поддержите разработку пожертвованием',
@@ -6044,6 +6043,7 @@ extension on TranslationsRu {
 			'settings.playerBackend' => 'Бэкенд плеера',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Шарнир складного экрана',
 			'settings.hardwareDecoding' => 'Аппаратное декодирование',
 			'settings.hardwareDecodingDescription' => 'Использовать аппаратное ускорение, когда доступно',
 			'settings.playbackBuffer' => 'Буфер воспроизведения',
@@ -7095,21 +7095,21 @@ extension on TranslationsRu {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Изменить подключение ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Добавьте или удалите URL-адреса для ${serverName}. Pleazyng будет использовать доступный URL с наименьшей задержкой.',
 			'iptv.backupFeeds' => 'Резервные источники в порядке воспроизведения',
+			'iptv.exportPrivate' => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.',
+			'iptv.dynamicStreamExport' => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.',
 			'iptv.lineupOrder' => 'Порядок каналов',
+			'iptv.moveUp' => 'Перемещаться',
+			'iptv.moveDown' => 'Переместите вниз',
 			'iptv.orderChanged' => 'Порядок каналов изменился. Проверьте его и повторите попытку.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Каналы · ${count}',
 			'iptv.localPlaylist' => 'Файл M3U',
 			'iptv.pastePlaylist' => 'Вставить текст плейлиста',
+			'iptv.choosePlaylist' => 'Выберите файл playlist',
 			'iptv.playlistBase' => 'Базовый URL для относительных ссылок (необязательно)',
 			'iptv.localPlaylistHelp' => 'Импортируйте личную копию списка каналов M3U или M3U8. Её можно заменить другим файлом.',
 			'iptv.showMatches' => 'Показать подходящие каналы',
 			'iptv.hideMatches' => 'Скрыть подходящие каналы',
 			'iptv.pickerCredit' => 'Источник вдохновения · M3U Web Picker · Zachary Schmook (@zschmook) и другие участники',
-			'iptv.exportPrivate' => 'Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.',
-			'iptv.dynamicStreamExport' => 'Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.',
-			'iptv.moveUp' => 'Перемещаться',
-			'iptv.moveDown' => 'Переместите вниз',
-			'iptv.choosePlaylist' => 'Выберите файл playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Каналы · ${count}',
 			'accountPreferences.sectionTitle' => 'Настройки аккаунта',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Параметры аудио, субтитров и библиотеки сохранены на аккаунте ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Параметры аудио, субтитров и библиотеки сохранены на ${count} аккаунтах',
@@ -7264,9 +7264,9 @@ extension on TranslationsRu {
 			'discover.rating' => 'Рейтинг',
 			'discover.director' => 'Режиссёр',
 			'discover.directors' => 'Режиссёры',
-			'discover.movie' => 'Фильм',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Фильм',
 			'discover.tvShow' => 'Сериал',
 			'discover.minutesLeft' => ({required Object minutes}) => 'Осталось ${minutes} мин',
 			'discover.moreLikeThis' => 'Похожее',
@@ -7778,9 +7778,9 @@ extension on TranslationsRu {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Удалить "${title}" из этой коллекции?',
 			'collections.removedFromCollection' => 'Удалено из коллекции',
 			'collections.removeFromCollectionFailed' => 'Не удалось удалить из коллекции',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Ошибка удаления из коллекции: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Ошибка удаления из коллекции: ${error}',
 			'collections.searchCollections' => 'Поиск коллекций...',
 			'playlists.title' => 'Плейлисты',
 			'playlists.playlist' => 'Плейлист',
@@ -8292,9 +8292,9 @@ extension on TranslationsRu {
 			'performanceOverlay.dvPath' => 'Путь DV',
 			'performanceOverlay.dvRouteDecoder' => 'Декодер Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'Декодер Dolby Vision (P7→8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Базовый слой',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Базовый слой',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Базовый слой HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Базовый слой HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Базовый слой SDR',
@@ -8806,9 +8806,9 @@ extension on TranslationsRu {
 			'homeLayout.autoSlide' => 'Авто-Слайд',
 			'homeLayout.autoSlideDescription' => 'Привод (PC) и d-pad (TV) всегда работают и перезапускают часовой режим.',
 			'homeLayout.autoSlideEditDescription' => 'Также слайд на себе каждую секунду. отключается: только перемещается, когда вы нажмите стрелку (ПК) или нажмите левую/право на удаленную (ТВ).',
-			'homeLayout.enableHeroFirst' => 'Первый герой',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'Первый герой',
 			'homeLayout.showOnHome' => 'Показать на домашнем экране',
 			'homeLayout.home' => 'Главная',
 			'homeLayout.removeFromHome' => 'Удаление из дома',
@@ -9320,9 +9320,9 @@ extension on TranslationsRu {
 			'audiobook.useDefaults' => 'Используйте эти контрольные системы для новых книг',
 			'audiobook.librarySort' => 'Сорт книг',
 			'audiobook.sortTitle' => 'Название',
-			'audiobook.sortAuthor' => 'Автор',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Автор',
 			'audiobook.sortNarrator' => 'Притча',
 			'audiobook.sortSeries' => 'Серийный порядок',
 			'audiobook.sortRecent' => 'Недавно открыт',
@@ -9834,9 +9834,9 @@ extension on TranslationsRu {
 			'musicTools.storageBudget' => 'Расчётный лимит загрузки (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'Приглашённый диджей',
 			'musicTools.charts' => 'Статистика прослушиваний',
-			'musicTools.rediscover' => 'Открыть заново',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Открыть заново',
 			'musicTools.stations' => 'Музыкальные станции',
 			'musicTools.prompt' => 'Плейлист по описанию',
 			'musicTools.provider' => 'Адрес генерации провайдера',

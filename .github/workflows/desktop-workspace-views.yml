@@ -17,6 +17,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: desktop-workspace-views-${{ github.event_name == 'push' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
 jobs:
   native:
     strategy:
@@ -28,7 +32,7 @@ jobs:
           - platform: windows
             runner: windows-2025
           - platform: macos
-            runner: xcode-27
+            runner: macos-26
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 35
     steps:

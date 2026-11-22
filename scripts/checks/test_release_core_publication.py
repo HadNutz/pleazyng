@@ -86,12 +86,12 @@ class CorePublicationTests(unittest.TestCase):
     def test_only_channel_metadata_is_optional_and_collected_when_present(self):
         workflow = yaml.safe_load((Path(__file__).resolve().parents[2] / ".github/workflows/build.yml").read_text())
         jobs = workflow["jobs"]
-        windows = next(job for job in jobs.values() if any(step.get("name") == "Package Chocolatey release" for step in job.get("steps", [])))
-        steps = {step.get("name"): step for step in windows["steps"]}
+        steps = {step.get("name"): step for name in ("package-windows", "windows-chocolatey")
+                 for step in jobs[name]["steps"]}
         for name in ("Build installer and portables", "Attest Windows artifacts", "Upload installer"):
             self.assertFalse(steps[name].get("continue-on-error", False))
         self.assertTrue(steps["Package Chocolatey release"]["continue-on-error"])
-        linux = {step.get("name"): step for step in jobs["build-linux"]["steps"]}
+        linux = {step.get("name"): step for step in jobs["linux-format"]["steps"]}
         for name in ("Build Flatpak bundle", "Build Snap package"):
             self.assertFalse(linux[name].get("continue-on-error", False))
         release_steps = {step.get("name"): step for step in jobs["create-release"]["steps"]}

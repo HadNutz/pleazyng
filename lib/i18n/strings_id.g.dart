@@ -387,7 +387,6 @@ class _Translations$settings$id extends Translations$settings$en {
 	final TranslationsId _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Engsel layar lipat';
 	@override String get title => 'Pengaturan';
 	@override String get supportDeveloper => 'Dukungan Pleazyng';
 	@override String get supportDeveloperDescription => 'Memberi dukungan untuk pengembangan';
@@ -490,6 +489,7 @@ class _Translations$settings$id extends Translations$settings$en {
 	@override String get playerBackend => 'Pembuat Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Engsel layar lipat';
 	@override String get hardwareDecoding => 'Hardware Dekodasi';
 	@override String get hardwareDecodingDescription => 'Menggunakan akselerasi perangkat keras saat tersedia';
 	@override String get playbackBuffer => 'Pemain Buffer';
@@ -1646,21 +1646,21 @@ class _Translations$iptv$id extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Sumber cadangan menurut urutan pemutaran';
+	@override String get exportPrivate => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.';
+	@override String get dynamicStreamExport => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.';
 	@override String get lineupOrder => 'Urutan saluran';
+	@override String get moveUp => 'bergerak ke atas';
+	@override String get moveDown => 'Memuat turun';
 	@override String get orderChanged => 'Urutan saluran berubah. Periksa lalu coba lagi.';
+	@override String affectedChannels({required Object count}) => 'Saluran · ${count}';
 	@override String get localPlaylist => 'Berkas M3U';
 	@override String get pastePlaylist => 'Tempel teks daftar putar';
+	@override String get choosePlaylist => 'Pilih file playlist';
 	@override String get playlistBase => 'URL dasar untuk tautan relatif (opsional)';
 	@override String get localPlaylistHelp => 'Impor salinan pribadi daftar saluran M3U atau M3U8. Ganti dengan berkas lain jika perlu.';
 	@override String get showMatches => 'Tampilkan saluran yang cocok';
 	@override String get hideMatches => 'Sembunyikan saluran yang cocok';
 	@override String get pickerCredit => 'Terinspirasi oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan para kontributor';
-	@override String get exportPrivate => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.';
-	@override String get dynamicStreamExport => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.';
-	@override String get moveUp => 'bergerak ke atas';
-	@override String get moveDown => 'Memuat turun';
-	@override String get choosePlaylist => 'Pilih file playlist';
-	@override String affectedChannels({required Object count}) => 'Saluran · ${count}';
 }
 
 // Path: accountPreferences
@@ -5866,7 +5866,6 @@ extension on TranslationsId {
 			'update.viewRelease' => 'Lihat Release',
 			'update.latestVersion' => 'Anda berada di versi terbaru',
 			'update.checkFailed' => 'gagal memeriksa update',
-			'settings.foldableDisplay' => 'Engsel layar lipat',
 			'settings.title' => 'Pengaturan',
 			'settings.supportDeveloper' => 'Dukungan Pleazyng',
 			'settings.supportDeveloperDescription' => 'Memberi dukungan untuk pengembangan',
@@ -5969,6 +5968,7 @@ extension on TranslationsId {
 			'settings.playerBackend' => 'Pembuat Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Engsel layar lipat',
 			'settings.hardwareDecoding' => 'Hardware Dekodasi',
 			'settings.hardwareDecodingDescription' => 'Menggunakan akselerasi perangkat keras saat tersedia',
 			'settings.playbackBuffer' => 'Pemain Buffer',
@@ -7020,21 +7020,21 @@ extension on TranslationsId {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Mengedit ${product} koneksi',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Menambahkan atau menghapus URL untuk ${serverName}. Pleazyng akan menggunakan URL yang dapat diakses dengan latensi terendah.',
 			'iptv.backupFeeds' => 'Sumber cadangan menurut urutan pemutaran',
+			'iptv.exportPrivate' => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.',
+			'iptv.dynamicStreamExport' => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.',
 			'iptv.lineupOrder' => 'Urutan saluran',
+			'iptv.moveUp' => 'bergerak ke atas',
+			'iptv.moveDown' => 'Memuat turun',
 			'iptv.orderChanged' => 'Urutan saluran berubah. Periksa lalu coba lagi.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Saluran · ${count}',
 			'iptv.localPlaylist' => 'Berkas M3U',
 			'iptv.pastePlaylist' => 'Tempel teks daftar putar',
+			'iptv.choosePlaylist' => 'Pilih file playlist',
 			'iptv.playlistBase' => 'URL dasar untuk tautan relatif (opsional)',
 			'iptv.localPlaylistHelp' => 'Impor salinan pribadi daftar saluran M3U atau M3U8. Ganti dengan berkas lain jika perlu.',
 			'iptv.showMatches' => 'Tampilkan saluran yang cocok',
 			'iptv.hideMatches' => 'Sembunyikan saluran yang cocok',
 			'iptv.pickerCredit' => 'Terinspirasi oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan para kontributor',
-			'iptv.exportPrivate' => 'Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.',
-			'iptv.dynamicStreamExport' => 'Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.',
-			'iptv.moveUp' => 'bergerak ke atas',
-			'iptv.moveDown' => 'Memuat turun',
-			'iptv.choosePlaylist' => 'Pilih file playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Saluran · ${count}',
 			'accountPreferences.sectionTitle' => 'Keutamaan Akun',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle, dan pilihan perpustakaan disimpan pada ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle, dan pilihan perpustakaan disimpan pada ${count} akun',
@@ -7189,9 +7189,9 @@ extension on TranslationsId {
 			'discover.rating' => 'Peringkat',
 			'discover.director' => 'Direktur',
 			'discover.directors' => 'Direktur',
-			'discover.movie' => 'Film',
 			_ => null,
 		} ?? switch (path) {
+			'discover.movie' => 'Film',
 			'discover.tvShow' => 'televisi show',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min dibatasi',
 			'discover.moreLikeThis' => 'Lainnya Seperti Ini',
@@ -7703,9 +7703,9 @@ extension on TranslationsId {
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => 'Hapus “${title}” dari koleksi ini?',
 			'collections.removedFromCollection' => 'Menghapus dari Koleksi',
 			'collections.removeFromCollectionFailed' => 'Tidak berhasil keluar dari koleksi',
-			'collections.removeFromCollectionError' => ({required Object error}) => 'Kesalahan penghapusan dari koleksi: ${error}',
 			_ => null,
 		} ?? switch (path) {
+			'collections.removeFromCollectionError' => ({required Object error}) => 'Kesalahan penghapusan dari koleksi: ${error}',
 			'collections.searchCollections' => 'Koleksi pencarian...',
 			'playlists.title' => 'Daftar putar',
 			'playlists.playlist' => 'Daftar Putar',
@@ -8217,9 +8217,9 @@ extension on TranslationsId {
 			'performanceOverlay.dvPath' => 'Jalan Dwi',
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision penghapusan',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision decoder (P7 → 8.1)',
-			'performanceOverlay.dvRouteBaseLayer' => 'Lantai dasar',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.dvRouteBaseLayer' => 'Lantai dasar',
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lapisan dasar',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Lantai dasar HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Lantai dasar SDR',
@@ -8731,9 +8731,9 @@ extension on TranslationsId {
 			'homeLayout.autoSlide' => 'Seluruh Slide',
 			'homeLayout.autoSlideDescription' => 'Arrows (PC) dan d-pad (TV) selalu bekerja dan memulai kembali timer.',
 			'homeLayout.autoSlideEditDescription' => 'Selain itu, ia juga meluncur sendiri setiap beberapa detik. Off: hanya bergerak ketika Anda mengklik pistol (PC) atau tekan kiri/kanan pada remote (TV). Arrow dan d-pad selalu bekerja sama.',
-			'homeLayout.enableHeroFirst' => 'Memungkinkan Hero Pertama',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.enableHeroFirst' => 'Memungkinkan Hero Pertama',
 			'homeLayout.showOnHome' => 'Tampilkan pada Home Screen',
 			'homeLayout.home' => 'rumah',
 			'homeLayout.removeFromHome' => 'Menghilangkan dari rumah',
@@ -9245,9 +9245,9 @@ extension on TranslationsId {
 			'audiobook.useDefaults' => 'Gunakan kontrol pendengaran ini untuk buku baru',
 			'audiobook.librarySort' => 'Berbagai Buku',
 			'audiobook.sortTitle' => 'Judul',
-			'audiobook.sortAuthor' => 'Penulis',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.sortAuthor' => 'Penulis',
 			'audiobook.sortNarrator' => 'narator',
 			'audiobook.sortSeries' => 'Serangkaian perintah',
 			'audiobook.sortRecent' => 'Baru-baru ini dibuka',
@@ -9759,9 +9759,9 @@ extension on TranslationsId {
 			'musicTools.storageBudget' => 'Perkiraan batas unduhan (MiB; 0 = ∞)',
 			'musicTools.guestDj' => 'DJ tamu',
 			'musicTools.charts' => 'Peringkat pendengaran',
-			'musicTools.rediscover' => 'Temukan kembali',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.rediscover' => 'Temukan kembali',
 			'musicTools.stations' => 'Stasiun musik',
 			'musicTools.prompt' => 'Daftar putar dari deskripsi',
 			'musicTools.provider' => 'URL pembuatan penyedia',

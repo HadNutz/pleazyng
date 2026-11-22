@@ -19,17 +19,20 @@ class SigningOptionsTests(unittest.TestCase):
         import yaml
         workflow = yaml.safe_load((Path(__file__).resolve().parents[2] / ".github/workflows/build.yml").read_text())
         shared = workflow["env"]["RELEASE_DART_DEFINES"]
-        commands = {s.get("name"): s.get("run", "") for s in workflow["jobs"]["build-android"]["steps"]}
+        steps = workflow["jobs"]["android-variant"]["steps"]
+        commands = {step.get("name"): step for step in steps}
         channel_options = {
-            "Build APKs": "true",
-            "Build and verify Automotive audio APK": "true",
-            "Build signed Android App Bundle": "false",
-            "Build signed Amazon Appstore APK": "false",
-            "Build signed Automotive audio App Bundle": "false",
+            "Build APKs": ("developer", "true"),
+            "Build and verify Automotive audio APK": ("automotive", "true"),
+            "Build signed Android App Bundle": ("play", "false"),
+            "Build signed Amazon Appstore APK": ("firetv", "false"),
+            "Build signed Automotive audio App Bundle": ("automotive", "false"),
         }
-        for step, enabled in channel_options.items():
+        for step, (variant, enabled) in channel_options.items():
             with self.subTest(build=step):
-                command = commands[step].replace("${{ env.RELEASE_DART_DEFINES }}", shared)
+                entry = commands[step]
+                self.assertIn(f"matrix.variant == '{variant}'", entry.get("if", ""))
+                command = entry.get("run", "").replace("${{ env.RELEASE_DART_DEFINES }}", shared)
                 flags = [arg for arg in command.split() if arg.startswith("--dart-define=ENABLE_UPDATE_CHECK=")]
                 self.assertEqual(flags, [f"--dart-define=ENABLE_UPDATE_CHECK={enabled}"])
 
