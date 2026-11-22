@@ -1703,7 +1703,10 @@ jobs:
 
       - name: Prepare iOS local APFS scratch
         shell: bash
-        run: bash scripts/prepare_apple_jit_scratch.sh ios 40 local-xcode
+        run: |
+          minimum_free_gib=40
+          if [[ "${RUNNER_ENVIRONMENT:-}" == github-hosted ]]; then minimum_free_gib=20; fi
+          bash scripts/prepare_apple_jit_scratch.sh ios "$minimum_free_gib" local-xcode
 
       - name: Stage iOS sources and Git objects on local APFS
         shell: bash
@@ -2067,7 +2070,10 @@ jobs:
 
       - name: Prepare NFS source scratch and local APFS Xcode output
         shell: bash
-        run: bash scripts/prepare_apple_jit_scratch.sh tvos 40 local-xcode >/dev/null
+        run: |
+          minimum_free_gib=40
+          if [[ "${RUNNER_ENVIRONMENT:-}" == github-hosted ]]; then minimum_free_gib=20; fi
+          bash scripts/prepare_apple_jit_scratch.sh tvos "$minimum_free_gib" local-xcode >/dev/null
 
       - name: Ensure CMake for the embedded Steam receiver
         shell: bash
@@ -2567,7 +2573,10 @@ jobs:
       - name: Prepare macOS local APFS scratch
         if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}
         shell: bash
-        run: bash scripts/prepare_apple_jit_scratch.sh macos 40 local-xcode
+        run: |
+          minimum_free_gib=40
+          if [[ "${RUNNER_ENVIRONMENT:-}" == github-hosted ]]; then minimum_free_gib=20; fi
+          bash scripts/prepare_apple_jit_scratch.sh macos "$minimum_free_gib" local-xcode
 
       - name: Stage macOS sources and Git objects on local APFS
         if: ${{ steps.restore-notarization.outputs.restored != 'true' && (inputs.macos_compilation_job_id == '') }}

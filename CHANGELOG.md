@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Provision the pinned Flutter SDK and dependencies in the isolated reader browser job, use the hosted Chrome binary for plugin browser tests, and correct ComicInfo indexes and scan dimensions in the real reader fixture.
+
+- Keep the 40 GiB APFS scratch requirement for private Apple runners while using the existing 20 GiB Apple CI floor on GitHub-hosted Apple runners, so the Xcode 27 lane can start with its actual available workspace capacity.
+
 - Protect the persistent macOS App Store signing keychain with PBKDF2 instead of a fast, unsalted password hash.
 
 - Repair CI and Apple compile failures after integration: refresh the SwiftLint baseline and localization coverage counts, match concurrency checks to current cancellation policy, and remove duplicate podcast imports and test declarations.

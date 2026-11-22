@@ -324,9 +324,8 @@ jobs:
         run: flutter test test/wakelock_plus_linux_plugin_test.dart
 
       - name: Configure Flutter Chrome executable
-        working-directory: tools/reader-tests
         run: |
-          browser_path="$(node -p "require('playwright').chromium.executablePath()")"
+          browser_path="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -x "$browser_path"
           printf 'CHROME_EXECUTABLE=%s\n' "$browser_path" >> "$GITHUB_ENV"
 
@@ -360,6 +359,27 @@ jobs:
           node-version: "24"
           cache: npm
           cache-dependency-path: tools/reader-tests/package-lock.json
+
+      - name: Load pinned Flutter SDK
+        shell: bash
+        run: python3 scripts/flutter/load_sdk_pin.py --github-env
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: "stable"
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: false
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-reader-pub-v1-${{ hashFiles('pubspec.lock') }}
+
+      - name: Install Flutter dependencies
+        run: flutter pub get --enforce-lockfile
 
       - name: Install reader browser dependencies
         working-directory: tools/reader-tests

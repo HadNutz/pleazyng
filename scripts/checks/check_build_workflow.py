@@ -1494,9 +1494,11 @@ for apple_job_name, scratch_job in (
         f"{apple_job_name} must use a UTF-8 locale for CocoaPods and Ruby",
     )
     require(
-        f"scripts/prepare_apple_jit_scratch.sh {scratch_job} 40 local-xcode" in apple_release_job
+        f"scripts/prepare_apple_jit_scratch.sh {scratch_job} \"$minimum_free_gib\" local-xcode" in apple_release_job
+        and "minimum_free_gib=40" in apple_release_job
+        and 'if [[ "${RUNNER_ENVIRONMENT:-}" == github-hosted ]]; then minimum_free_gib=20; fi' in apple_release_job
         and f"scripts/cleanup_apple_jit_scratch.sh {scratch_job}" in apple_release_job,
-        f"{apple_job_name} must allocate local Xcode state and clean task-scoped scratch",
+        f"{apple_job_name} must allocate local Xcode state, use runner-appropriate free-space headroom, and clean task-scoped scratch",
     )
 for apple_job_name, workspace_label in (
     ("build-ios", "iOS"),
@@ -1522,7 +1524,9 @@ for apple_job_name, workspace_label in (
     prepare_step = named_step(apple_release_job, prepare_step_name)
     stage_step = named_step(apple_release_job, stage_step_name)
     require(
-        f"scripts/prepare_apple_jit_scratch.sh {workspace_scratch_job} 40 local-xcode" in prepare_step
+        f"scripts/prepare_apple_jit_scratch.sh {workspace_scratch_job} \"$minimum_free_gib\" local-xcode" in prepare_step
+        and "minimum_free_gib=40" in prepare_step
+        and 'if [[ "${RUNNER_ENVIRONMENT:-}" == github-hosted ]]; then minimum_free_gib=20; fi' in prepare_step
         and apple_release_job.index(prepare_step) < apple_release_job.index(stage_step)
         and "scripts/prepare_apple_jit_scratch.sh" not in stage_step
         and 'source_root="$PLEZYNG_APPLE_LOCAL_SOURCE_ROOT"' in stage_step
@@ -1730,8 +1734,8 @@ unit_tests = job_block(ci_text, "test-extras")
 chrome_setup = named_step(unit_tests, "Configure Flutter Chrome executable")
 chrome_test = named_step(unit_tests, "Run wakelock_plus Chrome tests")
 require(
-    "working-directory: tools/reader-tests" in chrome_setup
-    and "chromium.executablePath()" in chrome_setup
+    "command -v google-chrome" in chrome_setup
+    and "command -v chromium" in chrome_setup
     and "CHROME_EXECUTABLE=%s" in chrome_setup
     and "flutter test --platform chrome --timeout 60s" in chrome_test
     and "timeout-minutes: 10" in chrome_test,

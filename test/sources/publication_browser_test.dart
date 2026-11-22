@@ -63,12 +63,17 @@ void main() {
         if (comic) {
           files.clear();
           for (var i = 1; i <= 12; i++) {
-            final width = i == 5 ? 600 : 800;
+            final width = i == 3
+                ? 1600
+                : i == 5
+                ? 600
+                : 800;
             files['page$i.${i == 2 ? 'SVG' : 'svg'}'] =
                 '<svg xmlns="http://www.w3.org/2000/svg" width="$width" height="1200" viewBox="0 0 800 1200"><rect width="800" height="1200" fill="#18202b"/><rect x="48" y="48" width="704" height="490" rx="14" fill="#40566e"/><rect x="48" y="565" width="704" height="490" rx="14" fill="#536778"/><text x="72" y="1130" font-size="36" fill="white">Page $i</text></svg>';
           }
           files['ComicInfo.xml'] =
-              '<ComicInfo><Manga>YesAndRightToLeft</Manga><Pages><Page Image="2" DoublePage="true" Bookmark="The reveal"/></Pages></ComicInfo>';
+              // ComicInfo Image indexes are zero-based, matching comic_document.dart.
+              '<ComicInfo><Manga>YesAndRightToLeft</Manga><Pages><Page Image="0"/><Page Image="1" DoublePage="true" Bookmark="The reveal"/><Page Image="2"/></Pages></ComicInfo>';
         }
         for (final entry in files.entries) {
           zip.add(ArchiveFile.bytes(entry.key, utf8.encode(entry.value)));
