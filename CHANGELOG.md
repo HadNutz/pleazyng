@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Repair CI guards after integration: refresh the SwiftLint baseline and localization coverage counts, match concurrency checks to current cancellation policy, and remove a duplicate podcast icon import.
+- Repair CI and Apple compile failures after integration: refresh the SwiftLint baseline and localization coverage counts, match concurrency checks to current cancellation policy, and remove duplicate podcast imports and test declarations.
 
 - Update the Android Gradle wrapper and split Apple motion tests to keep native validation passing while reducing the Swift lint baseline.
 
