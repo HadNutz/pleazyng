@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
@@ -14,6 +15,7 @@ import '../../sources/source_models.dart';
 import '../../utils/dialogs.dart';
 import '../../utils/snackbar_helper.dart';
 import '../../widgets/dialog_action_button.dart';
+import '../../widgets/app_icon.dart';
 
 Future<void> importPodcastOpml(BuildContext context) async {
   final sources = context.read<SourceController>();
@@ -94,7 +96,7 @@ Future<Set<Uri>?> _reviewHttpFeeds(BuildContext context, List<PodcastSubscriptio
                         if (url.hasQuery)
                           IconButton(
                             tooltip: showFull ? t.startup.hideDetails : t.startup.showDetails,
-                            icon: Icon(showFull ? Icons.visibility_off : Icons.visibility),
+                            icon: AppIcon(showFull ? Symbols.visibility_off_rounded : Symbols.visibility_rounded),
                             onPressed: () => update(() {
                               if (showFull) {
                                 revealed.remove(url);

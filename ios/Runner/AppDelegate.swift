@@ -56,7 +56,8 @@ enum DownloadBackupPolicy {
 
   func ensureMusicEngine() -> FlutterEngine {
     if let engine = musicEngine { return engine }
-    let engine = FlutterEngine(name: "pleazyng_shared_music", project: nil, allowHeadlessExecution: true, restorationEnabled: true)
+    let engine = FlutterEngine(
+      name: "pleazyng_shared_music", project: nil, allowHeadlessExecution: true, restorationEnabled: true)
     musicEngine = engine
     guard
       engine.run(
@@ -456,7 +457,8 @@ final class MusicPhoneSceneDelegate: UIResponder, UIWindowSceneDelegate, Flutter
   // Share the lifecycle adapter with Flutter's UIKit state-restoration delegate.
   // It is the adapter to which the view registers its engine on attachment.
   lazy var sceneLifeCycleDelegate: FlutterPluginSceneLifeCycleDelegate = {
-    (restorationDelegate as? FlutterSceneLifeCycleProvider)?.sceneLifeCycleDelegate ?? FlutterPluginSceneLifeCycleDelegate()
+    (restorationDelegate as? FlutterSceneLifeCycleProvider)?.sceneLifeCycleDelegate
+      ?? FlutterPluginSceneLifeCycleDelegate()
   }()
   var window: UIWindow?
   private var companion = false
@@ -509,10 +511,14 @@ final class MusicPhoneSceneDelegate: UIResponder, UIWindowSceneDelegate, Flutter
     }
     window = nil
   }
-  func sceneWillEnterForeground(_ scene: UIScene) { if !companion { sceneLifeCycleDelegate.sceneWillEnterForeground(scene) } }
+  func sceneWillEnterForeground(_ scene: UIScene) {
+    if !companion { sceneLifeCycleDelegate.sceneWillEnterForeground(scene) }
+  }
   func sceneDidBecomeActive(_ scene: UIScene) { if !companion { sceneLifeCycleDelegate.sceneDidBecomeActive(scene) } }
   func sceneWillResignActive(_ scene: UIScene) { if !companion { sceneLifeCycleDelegate.sceneWillResignActive(scene) } }
-  func sceneDidEnterBackground(_ scene: UIScene) { if !companion { sceneLifeCycleDelegate.sceneDidEnterBackground(scene) } }
+  func sceneDidEnterBackground(_ scene: UIScene) {
+    if !companion { sceneLifeCycleDelegate.sceneDidEnterBackground(scene) }
+  }
   func scene(_ scene: UIScene, openURLContexts contexts: Set<UIOpenURLContext>) {
     guard !companion else { return }
     sceneLifeCycleDelegate.scene(scene, openURLContexts: contexts)
@@ -549,9 +555,11 @@ private final class CompanionCatalogController: UITableViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    NotificationCenter.default.addObserver(self, selector: #selector(scopeChanged),
+    NotificationCenter.default.addObserver(
+      self, selector: #selector(scopeChanged),
       name: MusicCarBridge.scopeChanged, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(reloadCatalog),
+    NotificationCenter.default.addObserver(
+      self, selector: #selector(reloadCatalog),
       name: MusicCarBridge.catalogChanged, object: nil)
     refreshControl = UIRefreshControl()
     refreshControl?.addTarget(self, action: #selector(reloadCatalog), for: .valueChanged)
@@ -589,7 +597,9 @@ private final class CompanionCatalogController: UITableViewController {
 
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { rows.count }
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "item") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "item")
+    let cell =
+      tableView.dequeueReusableCell(withIdentifier: "item")
+      ?? UITableViewCell(style: .subtitle, reuseIdentifier: "item")
     let row = rows[indexPath.row]
     cell.textLabel?.text = row["title"] as? String
     cell.detailTextLabel?.text = row["subtitle"] as? String
@@ -604,14 +614,16 @@ private final class CompanionCatalogController: UITableViewController {
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     tableView.deselectRow(at: indexPath, animated: true)
     guard MusicCarBridge.shared.ready, rows.indices.contains(indexPath.row),
-      let id = rows[indexPath.row]["id"] as? String else { return }
+      let id = rows[indexPath.row]["id"] as? String
+    else { return }
     let row = rows[indexPath.row]
     if row["playable"] as? Bool == true {
       MusicCarBridge.shared.request("playItem", ["id": id]) { [weak self] value in
         if value as? Bool != true { self?.reloadCatalog() }
       }
     } else {
-      navigationController?.pushViewController(CompanionCatalogController(folder: id, title: row["title"] as? String ?? ""), animated: true)
+      navigationController?.pushViewController(
+        CompanionCatalogController(folder: id, title: row["title"] as? String ?? ""), animated: true)
     }
   }
 }

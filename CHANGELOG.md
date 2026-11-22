@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Use consistent app-symbol icons across IPTV, sports and recording controls.
+
 - Remove obsolete podcast import and motion smoothing localization messages.
 
 - Defer playback window-size lookup until Flutter attaches inherited view data, preventing video controls from failing during initialization.

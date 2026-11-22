@@ -1209,7 +1209,6 @@ final class DownloadBackupPolicyTests: XCTestCase {
   }
 }
 
-
 @MainActor
 final class AdaptivePhoneSceneTests: XCTestCase {
   func testActivePhoneScenePublishesWindowGeometry() async throws {

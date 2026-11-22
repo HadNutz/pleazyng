@@ -41,29 +41,13 @@
     "https://radio.example/stream": "Intentional direct-stream URL example",
     "https://example.org/stations.m3u": "Intentional playlist URL example"
   },
-  "lib/screens/settings/general_settings_screen.dart": {
-    "English": "Language endonym",
-    "Svenska": "Language endonym",
-    "Français": "Language endonym",
-    "Italiano": "Language endonym",
-    "Nederlands": "Language endonym",
-    "Deutsch": "Language endonym",
-    "Magyar": "Language endonym",
-    "简体中文": "Language endonym",
-    "繁體中文": "Language endonym",
-    "한국어": "Language endonym",
-    "Español": "Language endonym",
-    "Português": "Language endonym",
-    "日本語": "Language endonym",
-    "Русский": "Language endonym",
-    "Polski": "Language endonym",
-    "Dansk": "Language endonym",
-    "Norsk bokmål": "Language endonym",
-    "Български": "Language endonym",
-    "Türkçe": "Language endonym",
-    "Azərbaycanca": "Language endonym",
-    "Қазақша": "Language endonym",
-    "Oʻzbekcha": "Language endonym"
+  "lib/screens/iptv/add_iptv_source_screen.dart": {
+    "${t.common.preview} · IPTV-org (US)": "Project name and region label for the public IPTV-org sample playlist.",
+    "#EXTM3U": "Technical playlist-format marker shown as an input hint."
+  },
+  "lib/screens/iptv/iptv_picker_credit.dart": {
+    "M3U Web Picker": "Third-party project name shown in an attribution dialog.",
+    "Zachary Schmook (@zschmook)": "Third-party author attribution shown in the same dialog."
   },
   "lib/screens/settings/logs_screen.dart": {
     "Android ${info.version.release} (API ${info.version.sdkInt})": "English bug-report diagnostic",
@@ -77,7 +61,6 @@
     "Display: ${DevicePerformance.describeDisplay()}": "English bug-report diagnostic"
   },
   "lib/services/startup_diagnostics.dart": {
-    "Plezy startup failure": "English bug-report diagnostic",
     "Version: $appVersion": "English bug-report diagnostic",
     "Platform: $platform": "English bug-report diagnostic",
     "When: ${timestamp.toUtc().toIso8601String()}": "English bug-report diagnostic",

@@ -1511,6 +1511,8 @@
     "exportPrivate": "This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.",
     "dynamicStreamExport": "This portal creates a new link each time you play a channel. Its guide can be exported.",
     "lineupOrder": "Channel order",
+    "exportGuide": "Export XMLTV guide",
+    "lowBandwidth": "Low bandwidth",
     "moveUp": "Move channel up",
     "moveDown": "Move channel down",
     "orderChanged": "The lineup changed. Review the current order and try again.",

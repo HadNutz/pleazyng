@@ -1,8 +1,6 @@
 package com.edde746.plezy.widgets
 
 import android.app.ActivityOptions
-import android.os.Build
-import android.view.Display
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -10,8 +8,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.view.Display
 import android.view.View
 import android.widget.RemoteViews
 import com.edde746.os_media_controls.MusicCarApi
@@ -52,9 +52,11 @@ open class MusicWidgetProvider : AppWidgetProvider() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
           },
           PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-          if (id in coverIds && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+          if (id in coverIds && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ActivityOptions.makeBasic().apply { launchDisplayId = Display.DEFAULT_DISPLAY }.toBundle()
-          else null
+          } else {
+            null
+          }
         )
         views.setOnClickPendingIntent(R.id.music_widget_title, open)
         views.setOnClickPendingIntent(R.id.music_widget_artist, open)

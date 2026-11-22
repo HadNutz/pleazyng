@@ -2,8 +2,8 @@ package com.edde746.plezy.shared
 
 import android.app.Activity
 import android.graphics.Color
-import android.graphics.Rect
 import android.graphics.PixelFormat
+import android.graphics.Rect
 import android.view.Gravity
 import android.view.SurfaceHolder
 import android.view.SurfaceView
