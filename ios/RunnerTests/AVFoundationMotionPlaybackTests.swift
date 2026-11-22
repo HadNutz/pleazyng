@@ -22,8 +22,10 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
     core.experimentalDolbyVisionRequested = false
     XCTAssertTrue(core.initialize(in: window))
     defer {
+      let destroyed = expectation(description: "MPV video output disposed")
       core.dispose()
-      core.queue.sync {}
+      core.queue.async { destroyed.fulfill() }
+      wait(for: [destroyed], timeout: nativeCompletionTimeout)
       window.isHidden = true
     }
     core.setVisible(true)
@@ -59,14 +61,18 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
     try verifyFallbackFrameMixing(core, entry: entry)
   }
 
-  private func runMotionCommand(_ core: MpvPlayerCore, _ args: [String]) throws -> Int64? {
+  private func runMotionCommand(
+    _ core: MpvPlayerCore,
+    _ args: [String],
+    timeout: TimeInterval? = nil
+  ) throws -> Int64? {
     let accepted = expectation(description: args[0])
     var result: Result<Int64?, Error>?
     core.commandAsync(args) { reply in
       result = reply
       accepted.fulfill()
     }
-    wait(for: [accepted], timeout: nativeCompletionTimeout)
+    wait(for: [accepted], timeout: timeout ?? nativeCompletionTimeout)
     return try XCTUnwrap(result).get()
   }
 
@@ -75,11 +81,15 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
     let label = "@plezy-apple-motion"
     let gpu = "libplacebo=fps=60:frame_mixer=oversample:format=yuv420p"
     let cpu = "minterpolate=fps=60:mi_mode=blend"
+    let originalHwdec = try awaitGetProperty(core, name: "hwdec").get() ?? "auto"
+    if originalHwdec != "no" {
+      XCTAssertSuccess(awaitProperty(core, name: "hwdec", value: "videotoolbox-copy"))
+    }
     let provider: String
     do {
-      _ = try runMotionCommand(core, ["vf", "add", "\(label):lavfi=[\(gpu)]"])
+      _ = try runMotionCommand(core, ["vf", "add", "\(label):lavfi=[\(gpu)]"], timeout: 60)
       provider = "libplacebo GPU"
-    } catch {
+    } catch let error as NSError where error.domain == "mpv" {
       _ = try runMotionCommand(core, ["vf", "add", "\(label):lavfi=[\(cpu)]"])
       provider = "FFmpeg CPU"
     }
@@ -93,7 +103,10 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
     } while measured < 45 && Date() < deadline
     XCTAssertGreaterThanOrEqual(measured, 45, "The 29.97 fps fixture must produce intermediate frames")
     print("Live motion mixer: \(provider), measured \(measured) fps")
-    _ = try runMotionCommand(core, ["vf", "remove", label])
+    _ = try runMotionCommand(core, ["vf", "remove", label], timeout: 60)
+    if originalHwdec != "no" {
+      XCTAssertSuccess(awaitProperty(core, name: "hwdec", value: originalHwdec))
+    }
     XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
     XCTAssertFalse((try awaitGetProperty(core, name: "vf").get() ?? "").contains(label))
   }
