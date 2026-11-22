@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Protect the persistent macOS App Store signing keychain with PBKDF2 instead of a fast, unsalted password hash.
+
 - Repair CI and Apple compile failures after integration: refresh the SwiftLint baseline and localization coverage counts, match concurrency checks to current cancellation policy, and remove duplicate podcast imports and test declarations.
 
 - Update the Android Gradle wrapper and split Apple motion tests to keep native validation passing while reducing the Swift lint baseline.
