@@ -387,7 +387,6 @@ class _Translations$settings$bg extends Translations$settings$en {
 	final TranslationsBg _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Панта на сгъваемия дисплей';
 	@override String get title => 'Настройки';
 	@override String get supportDeveloper => 'Подкрепи Pleazyng';
 	@override String get supportDeveloperDescription => 'Направете дарение, за да подкрепите разработката';
@@ -490,6 +489,7 @@ class _Translations$settings$bg extends Translations$settings$en {
 	@override String get playerBackend => 'Система за възпроизвеждане';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Панта на сгъваемия дисплей';
 	@override String get hardwareDecoding => 'Хардуерно декодиране';
 	@override String get hardwareDecodingDescription => 'Използвай хардуерно ускорение, когато е налично';
 	@override String get playbackBuffer => 'Буфер за възпроизвеждане';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$bg extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Резервни източници по ред на възпроизвеждане';
+	@override String get exportPrivate => 'Адресите на потоците може да съдържат данните ви за вход. Запазете списъка на лично място.';
+	@override String get dynamicStreamExport => 'Порталът създава нова връзка при всяко пускане. Можете да експортирате програмата.';
 	@override String get lineupOrder => 'Ред на каналите';
+	@override String get moveUp => 'Подвижване нагоре';
+	@override String get moveDown => 'Направете надолу';
 	@override String get orderChanged => 'Редът на каналите е променен. Проверете го и опитайте отново.';
+	@override String affectedChannels({required Object count}) => 'Канали · ${count}';
 	@override String get localPlaylist => 'M3U файл';
 	@override String get pastePlaylist => 'Поставяне на текста на плейлиста';
+	@override String get choosePlaylist => 'Изберете Playlist файлове';
 	@override String get playlistBase => 'Основен URL за относителни връзки (по избор)';
 	@override String get localPlaylistHelp => 'Импортирайте лично копие на списък с канали M3U или M3U8. Можете да го замените с друг файл.';
 	@override String get showMatches => 'Показване на съответстващите канали';
 	@override String get hideMatches => 'Скриване на съответстващите канали';
 	@override String get pickerCredit => 'Вдъхновено от · M3U Web Picker · Zachary Schmook (@zschmook) и сътрудници';
-	@override String get exportPrivate => 'Адресите на потоците може да съдържат данните ви за вход. Запазете списъка на лично място.';
-	@override String get dynamicStreamExport => 'Порталът създава нова връзка при всяко пускане. Можете да експортирате програмата.';
-	@override String get moveUp => 'Подвижване нагоре';
-	@override String get moveDown => 'Направете надолу';
-	@override String get choosePlaylist => 'Изберете Playlist файлове';
-	@override String affectedChannels({required Object count}) => 'Канали · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsBg {
 			'update.viewRelease' => 'Виж версията',
 			'update.latestVersion' => 'Използвате най-новата версия',
 			'update.checkFailed' => 'Неуспешна проверка за актуализации',
-			'settings.foldableDisplay' => 'Панта на сгъваемия дисплей',
 			'settings.title' => 'Настройки',
 			'settings.supportDeveloper' => 'Подкрепи Pleazyng',
 			'settings.supportDeveloperDescription' => 'Направете дарение, за да подкрепите разработката',
@@ -5994,6 +5993,7 @@ extension on TranslationsBg {
 			'settings.playerBackend' => 'Система за възпроизвеждане',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Панта на сгъваемия дисплей',
 			'settings.hardwareDecoding' => 'Хардуерно декодиране',
 			'settings.hardwareDecodingDescription' => 'Използвай хардуерно ускорение, когато е налично',
 			'settings.playbackBuffer' => 'Буфер за възпроизвеждане',
@@ -7045,21 +7045,21 @@ extension on TranslationsBg {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Редактирай връзката с ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Добавете или премахнете URL адреси за ${serverName}. Pleazyng ще използва достъпния URL адрес с най-ниска латентност.',
 			'iptv.backupFeeds' => 'Резервни източници по ред на възпроизвеждане',
+			'iptv.exportPrivate' => 'Адресите на потоците може да съдържат данните ви за вход. Запазете списъка на лично място.',
+			'iptv.dynamicStreamExport' => 'Порталът създава нова връзка при всяко пускане. Можете да експортирате програмата.',
 			'iptv.lineupOrder' => 'Ред на каналите',
+			'iptv.moveUp' => 'Подвижване нагоре',
+			'iptv.moveDown' => 'Направете надолу',
 			'iptv.orderChanged' => 'Редът на каналите е променен. Проверете го и опитайте отново.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Канали · ${count}',
 			'iptv.localPlaylist' => 'M3U файл',
 			'iptv.pastePlaylist' => 'Поставяне на текста на плейлиста',
+			'iptv.choosePlaylist' => 'Изберете Playlist файлове',
 			'iptv.playlistBase' => 'Основен URL за относителни връзки (по избор)',
 			'iptv.localPlaylistHelp' => 'Импортирайте лично копие на списък с канали M3U или M3U8. Можете да го замените с друг файл.',
 			'iptv.showMatches' => 'Показване на съответстващите канали',
 			'iptv.hideMatches' => 'Скриване на съответстващите канали',
 			'iptv.pickerCredit' => 'Вдъхновено от · M3U Web Picker · Zachary Schmook (@zschmook) и сътрудници',
-			'iptv.exportPrivate' => 'Адресите на потоците може да съдържат данните ви за вход. Запазете списъка на лично място.',
-			'iptv.dynamicStreamExport' => 'Порталът създава нова връзка при всяко пускане. Можете да експортирате програмата.',
-			'iptv.moveUp' => 'Подвижване нагоре',
-			'iptv.moveDown' => 'Направете надолу',
-			'iptv.choosePlaylist' => 'Изберете Playlist файлове',
-			'iptv.affectedChannels' => ({required Object count}) => 'Канали · ${count}',
 			'accountPreferences.sectionTitle' => 'Предпочитания на акаунта',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Опции за аудио, субтитри и библиотека, запазени на ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Опции за аудио, субтитри и библиотека, запазени на ${count} акаунта',

@@ -391,7 +391,6 @@ class Translations$settings$es extends Translations$settings$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Bisagra de la pantalla plegable';
 	@override String get title => 'Configuración';
 	@override String get supportDeveloper => 'Apoya Pleazyng';
 	@override String get supportDeveloperDescription => 'Dona para apoyar el desarrollo';
@@ -494,6 +493,7 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get playerBackend => 'Motor de reproducción';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Bisagra de la pantalla plegable';
 	@override String get hardwareDecoding => 'Decodificación por hardware';
 	@override String get hardwareDecodingDescription => 'Usar aceleración por hardware cuando esté disponible';
 	@override String get playbackBuffer => 'Búfer de reproducción';
@@ -1659,21 +1659,21 @@ class Translations$iptv$es extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Fuentes de respaldo en orden de reproducción';
+	@override String get exportPrivate => 'Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.';
+	@override String get dynamicStreamExport => 'El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.';
 	@override String get lineupOrder => 'Orden de canales';
+	@override String get moveUp => 'Moverse arriba';
+	@override String get moveDown => 'Moverse hacia abajo';
 	@override String get orderChanged => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.';
+	@override String affectedChannels({required Object count}) => 'Canales · ${count}';
 	@override String get localPlaylist => 'Archivo M3U';
 	@override String get pastePlaylist => 'Pegar el texto de la lista';
+	@override String get choosePlaylist => 'Elegir el archivo de playlist';
 	@override String get playlistBase => 'URL base para enlaces relativos (opcional)';
 	@override String get localPlaylistHelp => 'Importa una copia privada de una lista de canales M3U o M3U8. Puedes reemplazarla con otro archivo.';
 	@override String get showMatches => 'Mostrar canales coincidentes';
 	@override String get hideMatches => 'Ocultar canales coincidentes';
 	@override String get pickerCredit => 'Inspirado en · M3U Web Picker · Zachary Schmook (@zschmook) y colaboradores';
-	@override String get exportPrivate => 'Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.';
-	@override String get dynamicStreamExport => 'El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.';
-	@override String get moveUp => 'Moverse arriba';
-	@override String get moveDown => 'Moverse hacia abajo';
-	@override String get choosePlaylist => 'Elegir el archivo de playlist';
-	@override String affectedChannels({required Object count}) => 'Canales · ${count}';
 }
 
 // Path: accountPreferences
@@ -6018,7 +6018,6 @@ extension on TranslationsEs {
 			'update.viewRelease' => 'Ver versión',
 			'update.latestVersion' => 'Ya estás en la última versión',
 			'update.checkFailed' => 'Error al buscar actualizaciones',
-			'settings.foldableDisplay' => 'Bisagra de la pantalla plegable',
 			'settings.title' => 'Configuración',
 			'settings.supportDeveloper' => 'Apoya Pleazyng',
 			'settings.supportDeveloperDescription' => 'Dona para apoyar el desarrollo',
@@ -6121,6 +6120,7 @@ extension on TranslationsEs {
 			'settings.playerBackend' => 'Motor de reproducción',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Bisagra de la pantalla plegable',
 			'settings.hardwareDecoding' => 'Decodificación por hardware',
 			'settings.hardwareDecodingDescription' => 'Usar aceleración por hardware cuando esté disponible',
 			'settings.playbackBuffer' => 'Búfer de reproducción',
@@ -7172,21 +7172,21 @@ extension on TranslationsEs {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Editar conexión de ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Añade o elimina URL para ${serverName}. Pleazyng usará la URL accesible con menor latencia.',
 			'iptv.backupFeeds' => 'Fuentes de respaldo en orden de reproducción',
+			'iptv.exportPrivate' => 'Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.',
+			'iptv.dynamicStreamExport' => 'El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.',
 			'iptv.lineupOrder' => 'Orden de canales',
+			'iptv.moveUp' => 'Moverse arriba',
+			'iptv.moveDown' => 'Moverse hacia abajo',
 			'iptv.orderChanged' => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canales · ${count}',
 			'iptv.localPlaylist' => 'Archivo M3U',
 			'iptv.pastePlaylist' => 'Pegar el texto de la lista',
+			'iptv.choosePlaylist' => 'Elegir el archivo de playlist',
 			'iptv.playlistBase' => 'URL base para enlaces relativos (opcional)',
 			'iptv.localPlaylistHelp' => 'Importa una copia privada de una lista de canales M3U o M3U8. Puedes reemplazarla con otro archivo.',
 			'iptv.showMatches' => 'Mostrar canales coincidentes',
 			'iptv.hideMatches' => 'Ocultar canales coincidentes',
 			'iptv.pickerCredit' => 'Inspirado en · M3U Web Picker · Zachary Schmook (@zschmook) y colaboradores',
-			'iptv.exportPrivate' => 'Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.',
-			'iptv.dynamicStreamExport' => 'El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.',
-			'iptv.moveUp' => 'Moverse arriba',
-			'iptv.moveDown' => 'Moverse hacia abajo',
-			'iptv.choosePlaylist' => 'Elegir el archivo de playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'Canales · ${count}',
 			'accountPreferences.sectionTitle' => 'Preferencias de cuenta',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Opciones de audio, subtítulos y biblioteca guardadas en ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Opciones de audio, subtítulos y biblioteca guardadas en ${count} cuentas',

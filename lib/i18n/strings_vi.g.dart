@@ -387,7 +387,6 @@ class _Translations$settings$vi extends Translations$settings$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Bản lề màn hình gập';
 	@override String get title => 'Cài đặt';
 	@override String get supportDeveloper => 'Hỗ trợ Pleazyng';
 	@override String get supportDeveloperDescription => 'Ưu đãi để hỗ trợ phát triển';
@@ -490,6 +489,7 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String get playerBackend => 'Trò chơi Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Bản lề màn hình gập';
 	@override String get hardwareDecoding => 'Phần cứng decoding';
 	@override String get hardwareDecodingDescription => 'Sử dụng phần cứng tăng tốc khi có sẵn';
 	@override String get playbackBuffer => 'Đánh giá Playback Buffer';
@@ -1646,21 +1646,21 @@ class _Translations$iptv$vi extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Nguồn dự phòng theo thứ tự phát';
+	@override String get exportPrivate => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.';
+	@override String get dynamicStreamExport => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.';
 	@override String get lineupOrder => 'Thứ tự kênh';
+	@override String get moveUp => 'chuyển lên';
+	@override String get moveDown => 'di chuyển xuống';
 	@override String get orderChanged => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.';
+	@override String affectedChannels({required Object count}) => 'Kênh · ${count}';
 	@override String get localPlaylist => 'Tệp M3U';
 	@override String get pastePlaylist => 'Dán văn bản danh sách phát';
+	@override String get choosePlaylist => 'Chọn playlist file';
 	@override String get playlistBase => 'URL cơ sở cho liên kết tương đối (không bắt buộc)';
 	@override String get localPlaylistHelp => 'Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.';
 	@override String get showMatches => 'Hiện kênh phù hợp';
 	@override String get hideMatches => 'Ẩn kênh phù hợp';
 	@override String get pickerCredit => 'Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp';
-	@override String get exportPrivate => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.';
-	@override String get dynamicStreamExport => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.';
-	@override String get moveUp => 'chuyển lên';
-	@override String get moveDown => 'di chuyển xuống';
-	@override String get choosePlaylist => 'Chọn playlist file';
-	@override String affectedChannels({required Object count}) => 'Kênh · ${count}';
 }
 
 // Path: accountPreferences
@@ -5866,7 +5866,6 @@ extension on TranslationsVi {
 			'update.viewRelease' => 'Xem bản phát hành',
 			'update.latestVersion' => 'Bạn đang ở phiên bản mới nhất',
 			'update.checkFailed' => 'Không kiểm tra cho các bản cập nhật',
-			'settings.foldableDisplay' => 'Bản lề màn hình gập',
 			'settings.title' => 'Cài đặt',
 			'settings.supportDeveloper' => 'Hỗ trợ Pleazyng',
 			'settings.supportDeveloperDescription' => 'Ưu đãi để hỗ trợ phát triển',
@@ -5969,6 +5968,7 @@ extension on TranslationsVi {
 			'settings.playerBackend' => 'Trò chơi Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Bản lề màn hình gập',
 			'settings.hardwareDecoding' => 'Phần cứng decoding',
 			'settings.hardwareDecodingDescription' => 'Sử dụng phần cứng tăng tốc khi có sẵn',
 			'settings.playbackBuffer' => 'Đánh giá Playback Buffer',
@@ -7020,21 +7020,21 @@ extension on TranslationsVi {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} kết nối',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.',
 			'iptv.backupFeeds' => 'Nguồn dự phòng theo thứ tự phát',
+			'iptv.exportPrivate' => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.',
+			'iptv.dynamicStreamExport' => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.',
 			'iptv.lineupOrder' => 'Thứ tự kênh',
+			'iptv.moveUp' => 'chuyển lên',
+			'iptv.moveDown' => 'di chuyển xuống',
 			'iptv.orderChanged' => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kênh · ${count}',
 			'iptv.localPlaylist' => 'Tệp M3U',
 			'iptv.pastePlaylist' => 'Dán văn bản danh sách phát',
+			'iptv.choosePlaylist' => 'Chọn playlist file',
 			'iptv.playlistBase' => 'URL cơ sở cho liên kết tương đối (không bắt buộc)',
 			'iptv.localPlaylistHelp' => 'Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.',
 			'iptv.showMatches' => 'Hiện kênh phù hợp',
 			'iptv.hideMatches' => 'Ẩn kênh phù hợp',
 			'iptv.pickerCredit' => 'Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp',
-			'iptv.exportPrivate' => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.',
-			'iptv.dynamicStreamExport' => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.',
-			'iptv.moveUp' => 'chuyển lên',
-			'iptv.moveDown' => 'di chuyển xuống',
-			'iptv.choosePlaylist' => 'Chọn playlist file',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kênh · ${count}',
 			'accountPreferences.sectionTitle' => 'Kế toán ưu tiên',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle và thư viện tùy chọn được lưu trên ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle và thư viện tùy chọn được lưu trên ${count} tài khoản',

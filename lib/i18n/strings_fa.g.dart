@@ -387,7 +387,6 @@ class _Translations$settings$fa extends Translations$settings$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'لولای نمایشگر تاشو';
 	@override String get title => 'تنظیمات';
 	@override String get supportDeveloper => 'پشتیبانی Pleazyng';
 	@override String get supportDeveloperDescription => 'کمک های مالی برای حمایت از توسعه';
@@ -490,6 +489,7 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get playerBackend => 'بازی Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'لولای نمایشگر تاشو';
 	@override String get hardwareDecoding => 'دکوراسیون سخت افزاری';
 	@override String get hardwareDecodingDescription => 'استفاده از سرعت سخت افزاری هنگامی که در دسترس';
 	@override String get playbackBuffer => 'بایگانی برچسب ها: playback buffer';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$fa extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'منابع پشتیبان به ترتیب پخش';
+	@override String get exportPrivate => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.';
+	@override String get dynamicStreamExport => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.';
 	@override String get lineupOrder => 'ترتیب کانال‌ها';
+	@override String get moveUp => 'حرکت بالا';
+	@override String get moveDown => 'حرکت به پایین';
 	@override String get orderChanged => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.';
+	@override String affectedChannels({required Object count}) => 'کانالها · ${count}';
 	@override String get localPlaylist => 'فایل M3U';
 	@override String get pastePlaylist => 'چسباندن متن فهرست پخش';
+	@override String get choosePlaylist => 'انتخاب فایل playlist';
 	@override String get playlistBase => 'نشانی پایه برای پیوندهای نسبی (اختیاری)';
 	@override String get localPlaylistHelp => 'یک نسخهٔ خصوصی از فهرست کانال‌های M3U یا M3U8 وارد کنید. می‌توانید آن را با فایل دیگری جایگزین کنید.';
 	@override String get showMatches => 'نمایش کانال‌های مطابق';
 	@override String get hideMatches => 'پنهان کردن کانال‌های مطابق';
 	@override String get pickerCredit => 'با الهام از · M3U Web Picker · Zachary Schmook (@zschmook) و مشارکت‌کنندگان';
-	@override String get exportPrivate => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.';
-	@override String get dynamicStreamExport => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.';
-	@override String get moveUp => 'حرکت بالا';
-	@override String get moveDown => 'حرکت به پایین';
-	@override String get choosePlaylist => 'انتخاب فایل playlist';
-	@override String affectedChannels({required Object count}) => 'کانالها · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsFa {
 			'update.viewRelease' => 'مشاهده انتشارات',
 			'update.latestVersion' => 'شما در آخرین نسخه هستید',
 			'update.checkFailed' => 'نتوانستیم به روز رسانی ها را بررسی کنیم',
-			'settings.foldableDisplay' => 'لولای نمایشگر تاشو',
 			'settings.title' => 'تنظیمات',
 			'settings.supportDeveloper' => 'پشتیبانی Pleazyng',
 			'settings.supportDeveloperDescription' => 'کمک های مالی برای حمایت از توسعه',
@@ -5994,6 +5993,7 @@ extension on TranslationsFa {
 			'settings.playerBackend' => 'بازی Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'لولای نمایشگر تاشو',
 			'settings.hardwareDecoding' => 'دکوراسیون سخت افزاری',
 			'settings.hardwareDecodingDescription' => 'استفاده از سرعت سخت افزاری هنگامی که در دسترس',
 			'settings.playbackBuffer' => 'بایگانی برچسب ها: playback buffer',
@@ -7045,21 +7045,21 @@ extension on TranslationsFa {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'ویرایش ${product} اتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'اضافه کردن یا حذف URL برای ${serverName}. Pleazyng از URL قابل دسترسی با پایین ترین تاخیر استفاده می کند.',
 			'iptv.backupFeeds' => 'منابع پشتیبان به ترتیب پخش',
+			'iptv.exportPrivate' => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.',
+			'iptv.dynamicStreamExport' => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.',
 			'iptv.lineupOrder' => 'ترتیب کانال‌ها',
+			'iptv.moveUp' => 'حرکت بالا',
+			'iptv.moveDown' => 'حرکت به پایین',
 			'iptv.orderChanged' => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.',
+			'iptv.affectedChannels' => ({required Object count}) => 'کانالها · ${count}',
 			'iptv.localPlaylist' => 'فایل M3U',
 			'iptv.pastePlaylist' => 'چسباندن متن فهرست پخش',
+			'iptv.choosePlaylist' => 'انتخاب فایل playlist',
 			'iptv.playlistBase' => 'نشانی پایه برای پیوندهای نسبی (اختیاری)',
 			'iptv.localPlaylistHelp' => 'یک نسخهٔ خصوصی از فهرست کانال‌های M3U یا M3U8 وارد کنید. می‌توانید آن را با فایل دیگری جایگزین کنید.',
 			'iptv.showMatches' => 'نمایش کانال‌های مطابق',
 			'iptv.hideMatches' => 'پنهان کردن کانال‌های مطابق',
 			'iptv.pickerCredit' => 'با الهام از · M3U Web Picker · Zachary Schmook (@zschmook) و مشارکت‌کنندگان',
-			'iptv.exportPrivate' => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.',
-			'iptv.dynamicStreamExport' => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.',
-			'iptv.moveUp' => 'حرکت بالا',
-			'iptv.moveDown' => 'حرکت به پایین',
-			'iptv.choosePlaylist' => 'انتخاب فایل playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'کانالها · ${count}',
 			'accountPreferences.sectionTitle' => 'حسابداری ترجیحات',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'گزینه های صوتی، زیرنویس و کتابخانه در ${account} ذخیره شده است',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'گزینه های صوتی، زیرنویس و کتابخانه در حساب های ${count} ذخیره شده است',

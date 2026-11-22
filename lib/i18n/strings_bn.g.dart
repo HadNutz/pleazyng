@@ -387,7 +387,6 @@ class _Translations$settings$bn extends Translations$settings$en {
 	final TranslationsBn _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'ভাঁজযোগ্য পর্দার কবজা';
 	@override String get title => 'সিস্টেম';
 	@override String get supportDeveloper => 'সমর্থন Pleazyng';
 	@override String get supportDeveloperDescription => 'উন্নয়নকে সহায়তা দেওয়ার জন্য';
@@ -490,6 +489,7 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get playerBackend => 'খেলোয়াড় Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'ভাঁজযোগ্য পর্দার কবজা';
 	@override String get hardwareDecoding => 'হার্ডওয়ার্ক ডকোডিং';
 	@override String get hardwareDecodingDescription => 'যখন উপলব্ধ হয় তখন হার্ডওয়্যার দ্রুততা ব্যবহার করুন';
 	@override String get playbackBuffer => 'Playback বাফার';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$bn extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'চালানোর ক্রম অনুযায়ী বিকল্প উৎস';
+	@override String get exportPrivate => 'স্ট্রিমের ঠিকানায় পরিষেবার লগইন তথ্য থাকতে পারে। তালিকাটি ব্যক্তিগত স্থানে রাখুন।';
+	@override String get dynamicStreamExport => 'প্রতিবার চালালে পোর্টাল নতুন লিঙ্ক তৈরি করে। অনুষ্ঠানসূচি রপ্তানি করতে পারবেন।';
 	@override String get lineupOrder => 'চ্যানেলের ক্রম';
+	@override String get moveUp => 'উড়ে উঠে';
+	@override String get moveDown => 'নিচে গিয়ে';
 	@override String get orderChanged => 'চ্যানেলের ক্রম বদলেছে। যাচাই করে আবার চেষ্টা করুন।';
+	@override String affectedChannels({required Object count}) => 'চ্যানেলগুলো · ${count}';
 	@override String get localPlaylist => 'M3U ফাইল';
 	@override String get pastePlaylist => 'প্লেলিস্টের লেখা পেস্ট করুন';
+	@override String get choosePlaylist => 'Playlist ফাইল নির্বাচন করুন';
 	@override String get playlistBase => 'আপেক্ষিক লিঙ্কের মূল URL (ঐচ্ছিক)';
 	@override String get localPlaylistHelp => 'M3U বা M3U8 চ্যানেল তালিকার ব্যক্তিগত কপি আমদানি করুন। অন্য ফাইল দিয়ে এটি বদলাতে পারবেন।';
 	@override String get showMatches => 'মিলে যাওয়া চ্যানেল দেখান';
 	@override String get hideMatches => 'মিলে যাওয়া চ্যানেল লুকান';
 	@override String get pickerCredit => 'অনুপ্রেরণা · M3U Web Picker · Zachary Schmook (@zschmook) ও অবদানকারীরা';
-	@override String get exportPrivate => 'স্ট্রিমের ঠিকানায় পরিষেবার লগইন তথ্য থাকতে পারে। তালিকাটি ব্যক্তিগত স্থানে রাখুন।';
-	@override String get dynamicStreamExport => 'প্রতিবার চালালে পোর্টাল নতুন লিঙ্ক তৈরি করে। অনুষ্ঠানসূচি রপ্তানি করতে পারবেন।';
-	@override String get moveUp => 'উড়ে উঠে';
-	@override String get moveDown => 'নিচে গিয়ে';
-	@override String get choosePlaylist => 'Playlist ফাইল নির্বাচন করুন';
-	@override String affectedChannels({required Object count}) => 'চ্যানেলগুলো · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsBn {
 			'update.viewRelease' => 'দেখুন Release',
 			'update.latestVersion' => 'আপনি সর্বশেষ সংস্করণে আছেন',
 			'update.checkFailed' => 'আপডেটের জন্য চেক করতে পারিনি',
-			'settings.foldableDisplay' => 'ভাঁজযোগ্য পর্দার কবজা',
 			'settings.title' => 'সিস্টেম',
 			'settings.supportDeveloper' => 'সমর্থন Pleazyng',
 			'settings.supportDeveloperDescription' => 'উন্নয়নকে সহায়তা দেওয়ার জন্য',
@@ -5994,6 +5993,7 @@ extension on TranslationsBn {
 			'settings.playerBackend' => 'খেলোয়াড় Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'ভাঁজযোগ্য পর্দার কবজা',
 			'settings.hardwareDecoding' => 'হার্ডওয়ার্ক ডকোডিং',
 			'settings.hardwareDecodingDescription' => 'যখন উপলব্ধ হয় তখন হার্ডওয়্যার দ্রুততা ব্যবহার করুন',
 			'settings.playbackBuffer' => 'Playback বাফার',
@@ -7045,21 +7045,21 @@ extension on TranslationsBn {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} সংযোগ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} এর জন্য URLগুলি যোগ করুন বা মুছে ফেলুন. Pleazyng সবচেয়ে কম ল্যাটিংসের সাথে পৌঁছাতে পারে URLগুলি ব্যবহার করবে।',
 			'iptv.backupFeeds' => 'চালানোর ক্রম অনুযায়ী বিকল্প উৎস',
+			'iptv.exportPrivate' => 'স্ট্রিমের ঠিকানায় পরিষেবার লগইন তথ্য থাকতে পারে। তালিকাটি ব্যক্তিগত স্থানে রাখুন।',
+			'iptv.dynamicStreamExport' => 'প্রতিবার চালালে পোর্টাল নতুন লিঙ্ক তৈরি করে। অনুষ্ঠানসূচি রপ্তানি করতে পারবেন।',
 			'iptv.lineupOrder' => 'চ্যানেলের ক্রম',
+			'iptv.moveUp' => 'উড়ে উঠে',
+			'iptv.moveDown' => 'নিচে গিয়ে',
 			'iptv.orderChanged' => 'চ্যানেলের ক্রম বদলেছে। যাচাই করে আবার চেষ্টা করুন।',
+			'iptv.affectedChannels' => ({required Object count}) => 'চ্যানেলগুলো · ${count}',
 			'iptv.localPlaylist' => 'M3U ফাইল',
 			'iptv.pastePlaylist' => 'প্লেলিস্টের লেখা পেস্ট করুন',
+			'iptv.choosePlaylist' => 'Playlist ফাইল নির্বাচন করুন',
 			'iptv.playlistBase' => 'আপেক্ষিক লিঙ্কের মূল URL (ঐচ্ছিক)',
 			'iptv.localPlaylistHelp' => 'M3U বা M3U8 চ্যানেল তালিকার ব্যক্তিগত কপি আমদানি করুন। অন্য ফাইল দিয়ে এটি বদলাতে পারবেন।',
 			'iptv.showMatches' => 'মিলে যাওয়া চ্যানেল দেখান',
 			'iptv.hideMatches' => 'মিলে যাওয়া চ্যানেল লুকান',
 			'iptv.pickerCredit' => 'অনুপ্রেরণা · M3U Web Picker · Zachary Schmook (@zschmook) ও অবদানকারীরা',
-			'iptv.exportPrivate' => 'স্ট্রিমের ঠিকানায় পরিষেবার লগইন তথ্য থাকতে পারে। তালিকাটি ব্যক্তিগত স্থানে রাখুন।',
-			'iptv.dynamicStreamExport' => 'প্রতিবার চালালে পোর্টাল নতুন লিঙ্ক তৈরি করে। অনুষ্ঠানসূচি রপ্তানি করতে পারবেন।',
-			'iptv.moveUp' => 'উড়ে উঠে',
-			'iptv.moveDown' => 'নিচে গিয়ে',
-			'iptv.choosePlaylist' => 'Playlist ফাইল নির্বাচন করুন',
-			'iptv.affectedChannels' => ({required Object count}) => 'চ্যানেলগুলো · ${count}',
 			'accountPreferences.sectionTitle' => 'অ্যাকাউন্ট পছন্দ',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'অডিও, সাবটাইট এবং লাইব্রেরি বিকল্পগুলি ${account} এ সংরক্ষিত',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'অডিও, সাবটাইট এবং লাইব্রেরি বিকল্পগুলি ${count} অ্যাকাউন্টগুলিতে সংরক্ষিত',

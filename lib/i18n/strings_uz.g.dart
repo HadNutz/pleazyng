@@ -387,7 +387,6 @@ class _Translations$settings$uz extends Translations$settings$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Buklanadigan ekran sharniri';
 	@override String get title => 'Sozlamalar';
 	@override String get supportDeveloper => 'Pleazyng-ni qoʻllab-quvvatlash';
 	@override String get supportDeveloperDescription => 'Rivojlanishni qoʻllab-quvvatlash uchun xayriya qiling';
@@ -490,6 +489,7 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String get playerBackend => 'Pleyer infratuzilmasi';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Buklanadigan ekran sharniri';
 	@override String get hardwareDecoding => 'Apparatli dekodlash';
 	@override String get hardwareDecodingDescription => 'Imkon qadar apparatli tezlashtirishdan foydalanish';
 	@override String get playbackBuffer => 'Ijro buferi';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$uz extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Ijro tartibidagi zaxira manbalar';
+	@override String get exportPrivate => 'Oqim manzillarida provayderga kirish ma’lumotlari bo‘lishi mumkin. Ro‘yxatni shaxsiy joyda saqlang.';
+	@override String get dynamicStreamExport => 'Portal har bir ijro uchun yangi havola yaratadi. Dasturlar jadvalini eksport qilish mumkin.';
 	@override String get lineupOrder => 'Kanallar tartibi';
+	@override String get moveUp => 'Tadiqga';
+	@override String get moveDown => 'Tadiqni';
 	@override String get orderChanged => 'Kanallar tartibi o‘zgardi. Tekshirib, qayta urinib ko‘ring.';
+	@override String affectedChannels({required Object count}) => 'Kanallar · ${count}';
 	@override String get localPlaylist => 'M3U fayli';
 	@override String get pastePlaylist => 'Pleylist matnini joylash';
+	@override String get choosePlaylist => 'Playlist fildi seçin';
 	@override String get playlistBase => 'Nisbiy havolalar uchun asosiy URL (ixtiyoriy)';
 	@override String get localPlaylistHelp => 'M3U yoki M3U8 kanallar ro‘yxatining shaxsiy nusxasini import qiling. Uni boshqa fayl bilan almashtirish mumkin.';
 	@override String get showMatches => 'Mos kanallarni ko‘rsatish';
 	@override String get hideMatches => 'Mos kanallarni yashirish';
 	@override String get pickerCredit => 'Ilhom manbai · M3U Web Picker · Zachary Schmook (@zschmook) va hissa qo‘shganlar';
-	@override String get exportPrivate => 'Oqim manzillarida provayderga kirish ma’lumotlari bo‘lishi mumkin. Ro‘yxatni shaxsiy joyda saqlang.';
-	@override String get dynamicStreamExport => 'Portal har bir ijro uchun yangi havola yaratadi. Dasturlar jadvalini eksport qilish mumkin.';
-	@override String get moveUp => 'Tadiqga';
-	@override String get moveDown => 'Tadiqni';
-	@override String get choosePlaylist => 'Playlist fildi seçin';
-	@override String affectedChannels({required Object count}) => 'Kanallar · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsUz {
 			'update.viewRelease' => 'Tafsilotlarni koʻrish',
 			'update.latestVersion' => 'Sizda eng soʻnggi versiya oʻrnatilgan',
 			'update.checkFailed' => 'Yangilanishlarni tekshirish imkoni boʻlmadi',
-			'settings.foldableDisplay' => 'Buklanadigan ekran sharniri',
 			'settings.title' => 'Sozlamalar',
 			'settings.supportDeveloper' => 'Pleazyng-ni qoʻllab-quvvatlash',
 			'settings.supportDeveloperDescription' => 'Rivojlanishni qoʻllab-quvvatlash uchun xayriya qiling',
@@ -5994,6 +5993,7 @@ extension on TranslationsUz {
 			'settings.playerBackend' => 'Pleyer infratuzilmasi',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Buklanadigan ekran sharniri',
 			'settings.hardwareDecoding' => 'Apparatli dekodlash',
 			'settings.hardwareDecodingDescription' => 'Imkon qadar apparatli tezlashtirishdan foydalanish',
 			'settings.playbackBuffer' => 'Ijro buferi',
@@ -7045,21 +7045,21 @@ extension on TranslationsUz {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} ulanishini tahrirlash',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} uchun URL-larni qoʻshing yoki olib tashlang. Pleazyng eng kam kechikishga ega boʻlgan mavjud URL-dan foydalanadi.',
 			'iptv.backupFeeds' => 'Ijro tartibidagi zaxira manbalar',
+			'iptv.exportPrivate' => 'Oqim manzillarida provayderga kirish ma’lumotlari bo‘lishi mumkin. Ro‘yxatni shaxsiy joyda saqlang.',
+			'iptv.dynamicStreamExport' => 'Portal har bir ijro uchun yangi havola yaratadi. Dasturlar jadvalini eksport qilish mumkin.',
 			'iptv.lineupOrder' => 'Kanallar tartibi',
+			'iptv.moveUp' => 'Tadiqga',
+			'iptv.moveDown' => 'Tadiqni',
 			'iptv.orderChanged' => 'Kanallar tartibi o‘zgardi. Tekshirib, qayta urinib ko‘ring.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanallar · ${count}',
 			'iptv.localPlaylist' => 'M3U fayli',
 			'iptv.pastePlaylist' => 'Pleylist matnini joylash',
+			'iptv.choosePlaylist' => 'Playlist fildi seçin',
 			'iptv.playlistBase' => 'Nisbiy havolalar uchun asosiy URL (ixtiyoriy)',
 			'iptv.localPlaylistHelp' => 'M3U yoki M3U8 kanallar ro‘yxatining shaxsiy nusxasini import qiling. Uni boshqa fayl bilan almashtirish mumkin.',
 			'iptv.showMatches' => 'Mos kanallarni ko‘rsatish',
 			'iptv.hideMatches' => 'Mos kanallarni yashirish',
 			'iptv.pickerCredit' => 'Ilhom manbai · M3U Web Picker · Zachary Schmook (@zschmook) va hissa qo‘shganlar',
-			'iptv.exportPrivate' => 'Oqim manzillarida provayderga kirish ma’lumotlari bo‘lishi mumkin. Ro‘yxatni shaxsiy joyda saqlang.',
-			'iptv.dynamicStreamExport' => 'Portal har bir ijro uchun yangi havola yaratadi. Dasturlar jadvalini eksport qilish mumkin.',
-			'iptv.moveUp' => 'Tadiqga',
-			'iptv.moveDown' => 'Tadiqni',
-			'iptv.choosePlaylist' => 'Playlist fildi seçin',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanallar · ${count}',
 			'accountPreferences.sectionTitle' => 'Hisob sozlamalari',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account} hisobida saqlangan audio, subtitr va kutubxona parametrlari',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count} ta hisobda saqlangan audio, subtitr va kutubxona parametrlari',

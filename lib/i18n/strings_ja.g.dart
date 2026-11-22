@@ -387,7 +387,6 @@ class _Translations$settings$ja extends Translations$settings$en {
 	final TranslationsJa _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => '折りたたみ画面のヒンジ';
 	@override String get title => '設定';
 	@override String get supportDeveloper => 'Plezyを支援';
 	@override String get supportDeveloperDescription => '寄付で開発を支援';
@@ -490,6 +489,7 @@ class _Translations$settings$ja extends Translations$settings$en {
 	@override String get playerBackend => 'プレーヤーバックエンド';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => '折りたたみ画面のヒンジ';
 	@override String get hardwareDecoding => 'ハードウェアデコード';
 	@override String get hardwareDecodingDescription => '利用可能な場合にハードウェアアクセラレーションを使用';
 	@override String get playbackBuffer => '再生バッファー';
@@ -1651,21 +1651,21 @@ class _Translations$iptv$ja extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => '再生時に使用する予備ソースの順序';
+	@override String get exportPrivate => '配信URLにはプロバイダーの認証情報が含まれる場合があります。リストは非公開の場所に保存してください。';
+	@override String get dynamicStreamExport => 'このポータルは再生ごとに新しいリンクを作成します。番組表は書き出せます。';
 	@override String get lineupOrder => 'チャンネルの順序';
+	@override String get moveUp => '移動アップ';
+	@override String get moveDown => 'ダウン移動';
 	@override String get orderChanged => 'チャンネルの順序が変更されました。確認してからもう一度お試しください。';
+	@override String affectedChannels({required Object count}) => 'チャンネル · ${count}';
 	@override String get localPlaylist => 'M3Uファイル';
 	@override String get pastePlaylist => 'プレイリストのテキストを貼り付け';
+	@override String get choosePlaylist => 'プレイリストファイルを選択';
 	@override String get playlistBase => '相対リンクの基準URL（任意）';
 	@override String get localPlaylistHelp => 'M3UまたはM3U8形式のチャンネルリストを非公開のコピーとして取り込みます。別のファイルで置き換えられます。';
 	@override String get showMatches => '一致するチャンネルを表示';
 	@override String get hideMatches => '一致するチャンネルを非表示';
 	@override String get pickerCredit => '着想元 · M3U Web Picker · Zachary Schmook (@zschmook) ほか貢献者';
-	@override String get exportPrivate => '配信URLにはプロバイダーの認証情報が含まれる場合があります。リストは非公開の場所に保存してください。';
-	@override String get dynamicStreamExport => 'このポータルは再生ごとに新しいリンクを作成します。番組表は書き出せます。';
-	@override String get moveUp => '移動アップ';
-	@override String get moveDown => 'ダウン移動';
-	@override String get choosePlaylist => 'プレイリストファイルを選択';
-	@override String affectedChannels({required Object count}) => 'チャンネル · ${count}';
 }
 
 // Path: accountPreferences
@@ -5886,7 +5886,6 @@ extension on TranslationsJa {
 			'update.viewRelease' => 'リリースを表示',
 			'update.latestVersion' => '最新バージョンです',
 			'update.checkFailed' => 'アップデートの確認に失敗しました',
-			'settings.foldableDisplay' => '折りたたみ画面のヒンジ',
 			'settings.title' => '設定',
 			'settings.supportDeveloper' => 'Plezyを支援',
 			'settings.supportDeveloperDescription' => '寄付で開発を支援',
@@ -5989,6 +5988,7 @@ extension on TranslationsJa {
 			'settings.playerBackend' => 'プレーヤーバックエンド',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => '折りたたみ画面のヒンジ',
 			'settings.hardwareDecoding' => 'ハードウェアデコード',
 			'settings.hardwareDecodingDescription' => '利用可能な場合にハードウェアアクセラレーションを使用',
 			'settings.playbackBuffer' => '再生バッファー',
@@ -7040,21 +7040,21 @@ extension on TranslationsJa {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product}接続を編集',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}のURLを追加または削除します。Plezyは到達可能なURLのうち、レイテンシーが最も低いものを使用します。',
 			'iptv.backupFeeds' => '再生時に使用する予備ソースの順序',
+			'iptv.exportPrivate' => '配信URLにはプロバイダーの認証情報が含まれる場合があります。リストは非公開の場所に保存してください。',
+			'iptv.dynamicStreamExport' => 'このポータルは再生ごとに新しいリンクを作成します。番組表は書き出せます。',
 			'iptv.lineupOrder' => 'チャンネルの順序',
+			'iptv.moveUp' => '移動アップ',
+			'iptv.moveDown' => 'ダウン移動',
 			'iptv.orderChanged' => 'チャンネルの順序が変更されました。確認してからもう一度お試しください。',
+			'iptv.affectedChannels' => ({required Object count}) => 'チャンネル · ${count}',
 			'iptv.localPlaylist' => 'M3Uファイル',
 			'iptv.pastePlaylist' => 'プレイリストのテキストを貼り付け',
+			'iptv.choosePlaylist' => 'プレイリストファイルを選択',
 			'iptv.playlistBase' => '相対リンクの基準URL（任意）',
 			'iptv.localPlaylistHelp' => 'M3UまたはM3U8形式のチャンネルリストを非公開のコピーとして取り込みます。別のファイルで置き換えられます。',
 			'iptv.showMatches' => '一致するチャンネルを表示',
 			'iptv.hideMatches' => '一致するチャンネルを非表示',
 			'iptv.pickerCredit' => '着想元 · M3U Web Picker · Zachary Schmook (@zschmook) ほか貢献者',
-			'iptv.exportPrivate' => '配信URLにはプロバイダーの認証情報が含まれる場合があります。リストは非公開の場所に保存してください。',
-			'iptv.dynamicStreamExport' => 'このポータルは再生ごとに新しいリンクを作成します。番組表は書き出せます。',
-			'iptv.moveUp' => '移動アップ',
-			'iptv.moveDown' => 'ダウン移動',
-			'iptv.choosePlaylist' => 'プレイリストファイルを選択',
-			'iptv.affectedChannels' => ({required Object count}) => 'チャンネル · ${count}',
 			'accountPreferences.sectionTitle' => 'アカウント設定',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '音声・字幕・ライブラリのオプションは${account}に保存されています',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '音声・字幕・ライブラリのオプションは${count}個のアカウントに保存されています',

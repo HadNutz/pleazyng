@@ -387,7 +387,6 @@ class _Translations$settings$sv extends Translations$settings$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Gångjärn på vikbar skärm';
 	@override String get title => 'Inställningar';
 	@override String get supportDeveloper => 'Stöd Pleazyng';
 	@override String get supportDeveloperDescription => 'Donera för att stödja utvecklingen';
@@ -490,6 +489,7 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get playerBackend => 'Uppspelningsmotor';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Gångjärn på vikbar skärm';
 	@override String get hardwareDecoding => 'Hårdvaruavkodning';
 	@override String get hardwareDecodingDescription => 'Använd hårdvaruacceleration när tillgängligt';
 	@override String get playbackBuffer => 'Uppspelningsbuffert';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$sv extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Reservkällor i uppspelningsordning';
+	@override String get exportPrivate => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.';
+	@override String get dynamicStreamExport => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.';
 	@override String get lineupOrder => 'Kanalordning';
+	@override String get moveUp => 'rör sig upp';
+	@override String get moveDown => 'Flytta ner';
 	@override String get orderChanged => 'Kanalordningen har ändrats. Granska den och försök igen.';
+	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 	@override String get localPlaylist => 'M3U-fil';
 	@override String get pastePlaylist => 'Klistra in spellistans text';
+	@override String get choosePlaylist => 'Välj Playlist fil';
 	@override String get playlistBase => 'Bas-URL för relativa länkar (valfritt)';
 	@override String get localPlaylistHelp => 'Importera en privat kopia av en M3U- eller M3U8-kanallista. Du kan ersätta den med en annan fil.';
 	@override String get showMatches => 'Visa matchande kanaler';
 	@override String get hideMatches => 'Dölj matchande kanaler';
 	@override String get pickerCredit => 'Inspirerat av · M3U Web Picker · Zachary Schmook (@zschmook) och medverkande';
-	@override String get exportPrivate => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.';
-	@override String get dynamicStreamExport => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.';
-	@override String get moveUp => 'rör sig upp';
-	@override String get moveDown => 'Flytta ner';
-	@override String get choosePlaylist => 'Välj Playlist fil';
-	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsSv {
 			'update.viewRelease' => 'Visa versionsinformation',
 			'update.latestVersion' => 'Du har den senaste versionen',
 			'update.checkFailed' => 'Det gick inte att söka efter uppdateringar',
-			'settings.foldableDisplay' => 'Gångjärn på vikbar skärm',
 			'settings.title' => 'Inställningar',
 			'settings.supportDeveloper' => 'Stöd Pleazyng',
 			'settings.supportDeveloperDescription' => 'Donera för att stödja utvecklingen',
@@ -5994,6 +5993,7 @@ extension on TranslationsSv {
 			'settings.playerBackend' => 'Uppspelningsmotor',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Gångjärn på vikbar skärm',
 			'settings.hardwareDecoding' => 'Hårdvaruavkodning',
 			'settings.hardwareDecodingDescription' => 'Använd hårdvaruacceleration när tillgängligt',
 			'settings.playbackBuffer' => 'Uppspelningsbuffert',
@@ -7045,21 +7045,21 @@ extension on TranslationsSv {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Redigera ${product}-anslutning',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Lägg till eller ta bort URL:er för ${serverName}. Pleazyng använder den nåbara URL:en med lägst latens.',
 			'iptv.backupFeeds' => 'Reservkällor i uppspelningsordning',
+			'iptv.exportPrivate' => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.',
+			'iptv.dynamicStreamExport' => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.',
 			'iptv.lineupOrder' => 'Kanalordning',
+			'iptv.moveUp' => 'rör sig upp',
+			'iptv.moveDown' => 'Flytta ner',
 			'iptv.orderChanged' => 'Kanalordningen har ändrats. Granska den och försök igen.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'iptv.localPlaylist' => 'M3U-fil',
 			'iptv.pastePlaylist' => 'Klistra in spellistans text',
+			'iptv.choosePlaylist' => 'Välj Playlist fil',
 			'iptv.playlistBase' => 'Bas-URL för relativa länkar (valfritt)',
 			'iptv.localPlaylistHelp' => 'Importera en privat kopia av en M3U- eller M3U8-kanallista. Du kan ersätta den med en annan fil.',
 			'iptv.showMatches' => 'Visa matchande kanaler',
 			'iptv.hideMatches' => 'Dölj matchande kanaler',
 			'iptv.pickerCredit' => 'Inspirerat av · M3U Web Picker · Zachary Schmook (@zschmook) och medverkande',
-			'iptv.exportPrivate' => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.',
-			'iptv.dynamicStreamExport' => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.',
-			'iptv.moveUp' => 'rör sig upp',
-			'iptv.moveDown' => 'Flytta ner',
-			'iptv.choosePlaylist' => 'Välj Playlist fil',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'accountPreferences.sectionTitle' => 'Kontoinställningar',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Ljud-, undertext- och biblioteksalternativ sparade på ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Ljud-, undertext- och biblioteksalternativ sparade på ${count} konton',

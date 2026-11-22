@@ -1704,9 +1704,6 @@ class Translations$settings$en {
 	/// en: 'MPV has not activated display-synchronized interpolation for this session.'
 	String get motionSmoothingNotActiveDescription => 'MPV has not activated display-synchronized interpolation for this session.';
 
-	/// en: 'Saved for the next video. The player prepares its motion processor when playback starts.'
-	String get motionSmoothingNextPlayback => 'Saved for the next video. The player prepares its motion processor when playback starts.';
-
 	/// en: 'Off'
 	String get motionSmoothingOff => 'Off';
 
@@ -12779,9 +12776,6 @@ class Translations$podcasts$en {
 	/// en: 'Export subscriptions (OPML)'
 	String get exportOpml => 'Export subscriptions (OPML)';
 
-	/// en: 'Subscriptions imported.'
-	String get imported => 'Subscriptions imported.';
-
 	/// en: 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.'
 	String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.';
 
@@ -18859,7 +18853,6 @@ extension on Translations {
 			'settings.motionSmoothingApplyFailed' => 'The player could not apply motion smoothing. Playback will continue unchanged.',
 			'settings.motionSmoothingLiveUnavailableDescription' => 'Motion smoothing is disabled for live playback to preserve stream timing.',
 			'settings.motionSmoothingNotActiveDescription' => 'MPV has not activated display-synchronized interpolation for this session.',
-			'settings.motionSmoothingNextPlayback' => 'Saved for the next video. The player prepares its motion processor when playback starts.',
 			'settings.motionSmoothingOff' => 'Off',
 			'settings.motionSmoothingOffDescription' => 'Keep the player’s existing display and frame cadence.',
 			'settings.motionSmoothingMpv' => 'MPV',
@@ -19345,9 +19338,9 @@ extension on Translations {
 			'accessibility.tapToPlay' => 'Tap to play',
 			'accessibility.decrease' => 'Decrease',
 			'accessibility.increase' => 'Increase',
+			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.decreaseValue' => ({required Object label}) => 'Decrease ${label}',
 			'accessibility.increaseValue' => ({required Object label}) => 'Increase ${label}',
 			'accessibility.hue' => 'Hue',
 			'accessibility.saturation' => 'Saturation',
@@ -19859,9 +19852,9 @@ extension on Translations {
 			'iptv.season' => 'Season',
 			'iptv.specials' => 'Specials',
 			'iptv.localRecordings' => 'Local recordings',
+			'iptv.recordingInProgressLocal' => 'Recording',
 			_ => null,
 		} ?? switch (path) {
-			'iptv.recordingInProgressLocal' => 'Recording',
 			'iptv.recordingInterrupted' => 'Interrupted',
 			'iptv.recordingMissed' => 'Missed',
 			'iptv.recordingAppClosed' => 'Pleazyng closed before recording started or finished.',
@@ -20373,9 +20366,9 @@ extension on Translations {
 			'explore.rows.recommendedShows' => 'Recommended Shows',
 			'explore.rows.trendingMovies' => 'Trending Movies',
 			'explore.rows.trendingShows' => 'Trending Shows',
+			'explore.rows.popularMovies' => 'Popular Movies',
 			_ => null,
 		} ?? switch (path) {
-			'explore.rows.popularMovies' => 'Popular Movies',
 			'explore.rows.popularShows' => 'Popular Shows',
 			'explore.rows.trendingAnime' => 'Trending Anime',
 			'explore.rows.suggestedAnime' => 'Suggested Anime',
@@ -20887,9 +20880,9 @@ extension on Translations {
 			'downloads.downloadingFilesTooltip' => ({required Object files}) => 'Downloading ${files}',
 			'downloads.noDownloadsTree' => 'No downloads',
 			'downloads.pauseAll' => 'Pause all',
+			'downloads.resumeAll' => 'Resume all',
 			_ => null,
 		} ?? switch (path) {
-			'downloads.resumeAll' => 'Resume all',
 			'downloads.retryAll' => 'Retry all',
 			'downloads.retryFailed' => 'Retry failed downloads',
 			'downloads.deleteAll' => 'Delete all',
@@ -21401,9 +21394,9 @@ extension on Translations {
 			'metadataEdit.country' => 'Country',
 			'metadataEdit.collection' => 'Collection',
 			'metadataEdit.label' => 'Label',
+			'metadataEdit.quickTag' => 'Quick Tag...',
 			_ => null,
 		} ?? switch (path) {
-			'metadataEdit.quickTag' => 'Quick Tag...',
 			'metadataEdit.imageUploadLimits' => '≤ 10 MiB · ≤ 64 MP',
 			'matchScreen.match' => 'Match...',
 			'matchScreen.fixMatch' => 'Fix Match...',
@@ -21915,9 +21908,9 @@ extension on Translations {
 			'homeLayout.remove' => 'Remove',
 			'homeLayout.libraryResumeRow' => 'This library\'s resume row',
 			'homeLayout.pressAgainToDelete' => 'Press again to delete',
+			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.actionState' => ({required Object action, required Object state}) => '${action}: ${state}',
 			'homeLayout.on' => 'On',
 			'homeLayout.resetHeroButtonDescription' => 'Turns off every row\'s hero setting and brings back the single rotating banner at the top, like before hero rows existed. Row order is kept.',
 			'homeLayout.tapHeroCardDescription' => 'Choose whether tapping or selecting a Hero card starts playback or opens its details.',
@@ -22429,9 +22422,9 @@ extension on Translations {
 			'sourceSetup.clientCertificate' => 'Client certificate (optional)',
 			'sourceSetup.clientCertificateHelp' => 'Lets the NAS authenticate this client; AUTH_SYS IDs still depend on NAS export policy.',
 			'sourceSetup.savedIdentity' => 'A saved client identity will be used.',
+			'sourceSetup.replaceIdentity' => 'Replace saved client identity',
 			_ => null,
 		} ?? switch (path) {
-			'sourceSetup.replaceIdentity' => 'Replace saved client identity',
 			'sourceSetup.chooseIdentity' => 'Choose PKCS#12 client identity',
 			'sourceSetup.identityPassphrase' => 'Client identity passphrase',
 			'sourceSetup.identityPassphraseHelp' => 'Leave blank if the file has no passphrase.',
@@ -22943,9 +22936,9 @@ extension on Translations {
 			'podcasts.empty' => 'Add a feed, import OPML, or find a show to start listening.',
 			'podcasts.noResults' => 'No matching podcasts.',
 			'podcasts.newest' => 'Newest first',
+			'podcasts.oldest' => 'Oldest first',
 			_ => null,
 		} ?? switch (path) {
-			'podcasts.oldest' => 'Oldest first',
 			'podcasts.explicit' => 'Explicit',
 			'podcasts.trending' => 'Trending',
 			'podcasts.indexSetup' => 'Podcast Index settings',
@@ -22958,7 +22951,6 @@ extension on Translations {
 			'podcasts.refreshPartial' => 'Some feeds could not refresh. Cached episodes remain available.',
 			'podcasts.importOpml' => 'Import subscriptions (OPML)',
 			'podcasts.exportOpml' => 'Export subscriptions (OPML)',
-			'podcasts.imported' => 'Subscriptions imported.',
 			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.',
 			'podcasts.exportHelp' => 'The export contains feed URLs, including private membership links. Keep it private.',
 			'podcasts.serverHelp' => 'Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.',
@@ -23457,10 +23449,10 @@ extension on Translations {
 			'karaokeUi.chooseAMicrophone' => 'Choose a microphone',
 			'karaokeUi.microphoneAndPrivateTake' => 'Microphone and private take',
 			'karaokeUi.pitchFeedbackAndDryRecordingUseYourSelectedMicrophone' => 'Pitch feedback and dry recording use your selected microphone. Use an external mixer for amplification.',
-			_ => null,
-		} ?? switch (path) {
 			'karaokeUi.tvMicrophoneCaptureUnavailable' => 'Microphone capture is unavailable in this TV build. Use the karaoke phone companion for mic capture, or connect a microphone to an external mixer for stage amplification.',
 			'karaokeUi.enableMicrophone' => 'Enable microphone',
+			_ => null,
+		} ?? switch (path) {
 			'karaokeUi.muteMicrophone' => 'Mute microphone',
 			'karaokeUi.recordPrivateTake' => 'Record private take',
 			'karaokeUi.savePrivateTake' => 'Save private take',

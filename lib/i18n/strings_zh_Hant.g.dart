@@ -388,7 +388,6 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => '摺疊螢幕鉸鏈';
 	@override String get title => '設定';
 	@override String get supportDeveloper => '贊助 Pleazyng';
 	@override String get supportDeveloperDescription => '捐款支持開發';
@@ -491,6 +490,7 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	@override String get playerBackend => '播放器引擎';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => '摺疊螢幕鉸鏈';
 	@override String get hardwareDecoding => '硬體解碼';
 	@override String get hardwareDecodingDescription => '如果支援，使用硬體加速';
 	@override String get playbackBuffer => '播放緩衝';
@@ -1652,21 +1652,21 @@ class _Translations$iptv$zh_Hant extends Translations$iptv$zh {
 
 	// Translations
 	@override String get backupFeeds => '依播放順序排列的備用來源';
+	@override String get exportPrivate => '串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。';
+	@override String get dynamicStreamExport => '此入口每次播放都會產生新連結。您可以匯出節目指南。';
 	@override String get lineupOrder => '頻道順序';
+	@override String get moveUp => '移動上';
+	@override String get moveDown => '移動下';
 	@override String get orderChanged => '頻道順序已變更。請檢查後再試一次。';
+	@override String affectedChannels({required Object count}) => '頻道 · ${count}';
 	@override String get localPlaylist => 'M3U 檔案';
 	@override String get pastePlaylist => '貼上播放清單文字';
+	@override String get choosePlaylist => '選擇 Playlist 檔案';
 	@override String get playlistBase => '相對連結的基底 URL（選填）';
 	@override String get localPlaylistHelp => '匯入 M3U 或 M3U8 頻道清單的私人副本。可以選擇其他檔案取代。';
 	@override String get showMatches => '顯示相符的頻道';
 	@override String get hideMatches => '隱藏相符的頻道';
 	@override String get pickerCredit => '靈感來源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他貢獻者';
-	@override String get exportPrivate => '串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。';
-	@override String get dynamicStreamExport => '此入口每次播放都會產生新連結。您可以匯出節目指南。';
-	@override String get moveUp => '移動上';
-	@override String get moveDown => '移動下';
-	@override String get choosePlaylist => '選擇 Playlist 檔案';
-	@override String affectedChannels({required Object count}) => '頻道 · ${count}';
 }
 
 // Path: accountPreferences
@@ -5887,7 +5887,6 @@ extension on TranslationsZhHant {
 			'update.viewRelease' => '查看版本詳情',
 			'update.latestVersion' => '已安裝的版本為最新版本',
 			'update.checkFailed' => '無法檢查更新',
-			'settings.foldableDisplay' => '摺疊螢幕鉸鏈',
 			'settings.title' => '設定',
 			'settings.supportDeveloper' => '贊助 Pleazyng',
 			'settings.supportDeveloperDescription' => '捐款支持開發',
@@ -5990,6 +5989,7 @@ extension on TranslationsZhHant {
 			'settings.playerBackend' => '播放器引擎',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => '摺疊螢幕鉸鏈',
 			'settings.hardwareDecoding' => '硬體解碼',
 			'settings.hardwareDecodingDescription' => '如果支援，使用硬體加速',
 			'settings.playbackBuffer' => '播放緩衝',
@@ -7041,21 +7041,21 @@ extension on TranslationsZhHant {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '編輯 ${product} 連線',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。',
 			'iptv.backupFeeds' => '依播放順序排列的備用來源',
+			'iptv.exportPrivate' => '串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。',
+			'iptv.dynamicStreamExport' => '此入口每次播放都會產生新連結。您可以匯出節目指南。',
 			'iptv.lineupOrder' => '頻道順序',
+			'iptv.moveUp' => '移動上',
+			'iptv.moveDown' => '移動下',
 			'iptv.orderChanged' => '頻道順序已變更。請檢查後再試一次。',
+			'iptv.affectedChannels' => ({required Object count}) => '頻道 · ${count}',
 			'iptv.localPlaylist' => 'M3U 檔案',
 			'iptv.pastePlaylist' => '貼上播放清單文字',
+			'iptv.choosePlaylist' => '選擇 Playlist 檔案',
 			'iptv.playlistBase' => '相對連結的基底 URL（選填）',
 			'iptv.localPlaylistHelp' => '匯入 M3U 或 M3U8 頻道清單的私人副本。可以選擇其他檔案取代。',
 			'iptv.showMatches' => '顯示相符的頻道',
 			'iptv.hideMatches' => '隱藏相符的頻道',
 			'iptv.pickerCredit' => '靈感來源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他貢獻者',
-			'iptv.exportPrivate' => '串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。',
-			'iptv.dynamicStreamExport' => '此入口每次播放都會產生新連結。您可以匯出節目指南。',
-			'iptv.moveUp' => '移動上',
-			'iptv.moveDown' => '移動下',
-			'iptv.choosePlaylist' => '選擇 Playlist 檔案',
-			'iptv.affectedChannels' => ({required Object count}) => '頻道 · ${count}',
 			'accountPreferences.sectionTitle' => '帳戶偏好設定',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '已在 ${account} 上儲存音訊、字幕與媒體庫選項',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '已在 ${count} 個帳戶上儲存音訊、字幕與媒體庫選項',

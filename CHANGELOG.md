@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Remove obsolete podcast import and motion smoothing localization messages.
+
 - Defer playback window-size lookup until Flutter attaches inherited view data, preventing video controls from failing during initialization.
 
 - Apple MPV playback now tries GPU and software frame mixing if the VideoToolbox capability check is unavailable. The Dolby Vision runtime reports its motion support separately. On the iPhone simulator, MPV uses software mixing when the simulated Metal driver cannot copy interpolated frames for display.

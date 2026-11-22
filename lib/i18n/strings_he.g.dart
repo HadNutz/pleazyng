@@ -387,7 +387,6 @@ class _Translations$settings$he extends Translations$settings$en {
 	final TranslationsHe _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'ציר המסך המתקפל';
 	@override String get title => 'הגדרות';
 	@override String get supportDeveloper => 'תמיכה Pleazyng';
 	@override String get supportDeveloperDescription => 'תרומות לתמיכה בפיתוח';
@@ -490,6 +489,7 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get playerBackend => 'שחקן Backend';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'ציר המסך המתקפל';
 	@override String get hardwareDecoding => 'דקורטיבי חומרה';
 	@override String get hardwareDecodingDescription => 'השתמש בהאיץ חומרה כאשר זמין';
 	@override String get playbackBuffer => 'Playback בופר';
@@ -1655,21 +1655,21 @@ class _Translations$iptv$he extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'מקורות גיבוי לפי סדר הפעלה';
+	@override String get exportPrivate => 'כתובות השידורים עשויות להכיל פרטי כניסה לספק. יש לשמור את הרשימה במקום פרטי.';
+	@override String get dynamicStreamExport => 'הפורטל יוצר קישור חדש בכל הפעלה. ניתן לייצא את מדריך השידורים.';
 	@override String get lineupOrder => 'סדר הערוצים';
+	@override String get moveUp => 'תנועות למעלה';
+	@override String get moveDown => 'תנו למטה';
 	@override String get orderChanged => 'סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.';
+	@override String affectedChannels({required Object count}) => 'ערוצים · ${count}';
 	@override String get localPlaylist => 'קובץ M3U';
 	@override String get pastePlaylist => 'הדבקת טקסט של רשימת השמעה';
+	@override String get choosePlaylist => 'בחר קובץ playlist';
 	@override String get playlistBase => 'כתובת בסיס לקישורים יחסיים (רשות)';
 	@override String get localPlaylistHelp => 'ייבוא עותק פרטי של רשימת ערוצי M3U או M3U8. אפשר להחליף אותה בקובץ אחר.';
 	@override String get showMatches => 'הצגת ערוצים תואמים';
 	@override String get hideMatches => 'הסתרת ערוצים תואמים';
 	@override String get pickerCredit => 'בהשראת · M3U Web Picker · Zachary Schmook (@zschmook) ושאר התורמים';
-	@override String get exportPrivate => 'כתובות השידורים עשויות להכיל פרטי כניסה לספק. יש לשמור את הרשימה במקום פרטי.';
-	@override String get dynamicStreamExport => 'הפורטל יוצר קישור חדש בכל הפעלה. ניתן לייצא את מדריך השידורים.';
-	@override String get moveUp => 'תנועות למעלה';
-	@override String get moveDown => 'תנו למטה';
-	@override String get choosePlaylist => 'בחר קובץ playlist';
-	@override String affectedChannels({required Object count}) => 'ערוצים · ${count}';
 }
 
 // Path: accountPreferences
@@ -5899,7 +5899,6 @@ extension on TranslationsHe {
 			'update.viewRelease' => 'ראה שחרור',
 			'update.latestVersion' => 'אתם נמצאים בגרסה האחרונה',
 			'update.checkFailed' => 'לא הצלחתי לבדוק עדכונים',
-			'settings.foldableDisplay' => 'ציר המסך המתקפל',
 			'settings.title' => 'הגדרות',
 			'settings.supportDeveloper' => 'תמיכה Pleazyng',
 			'settings.supportDeveloperDescription' => 'תרומות לתמיכה בפיתוח',
@@ -6002,6 +6001,7 @@ extension on TranslationsHe {
 			'settings.playerBackend' => 'שחקן Backend',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'ציר המסך המתקפל',
 			'settings.hardwareDecoding' => 'דקורטיבי חומרה',
 			'settings.hardwareDecodingDescription' => 'השתמש בהאיץ חומרה כאשר זמין',
 			'settings.playbackBuffer' => 'Playback בופר',
@@ -7053,21 +7053,21 @@ extension on TranslationsHe {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'תגית: Edit ${product} connection',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'הוספת או הסרת כתובת URL עבור ${serverName}. Pleazyng ישתמש כתובת URL הנגיעה עם הריבית הנמוכה ביותר.',
 			'iptv.backupFeeds' => 'מקורות גיבוי לפי סדר הפעלה',
+			'iptv.exportPrivate' => 'כתובות השידורים עשויות להכיל פרטי כניסה לספק. יש לשמור את הרשימה במקום פרטי.',
+			'iptv.dynamicStreamExport' => 'הפורטל יוצר קישור חדש בכל הפעלה. ניתן לייצא את מדריך השידורים.',
 			'iptv.lineupOrder' => 'סדר הערוצים',
+			'iptv.moveUp' => 'תנועות למעלה',
+			'iptv.moveDown' => 'תנו למטה',
 			'iptv.orderChanged' => 'סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.',
+			'iptv.affectedChannels' => ({required Object count}) => 'ערוצים · ${count}',
 			'iptv.localPlaylist' => 'קובץ M3U',
 			'iptv.pastePlaylist' => 'הדבקת טקסט של רשימת השמעה',
+			'iptv.choosePlaylist' => 'בחר קובץ playlist',
 			'iptv.playlistBase' => 'כתובת בסיס לקישורים יחסיים (רשות)',
 			'iptv.localPlaylistHelp' => 'ייבוא עותק פרטי של רשימת ערוצי M3U או M3U8. אפשר להחליף אותה בקובץ אחר.',
 			'iptv.showMatches' => 'הצגת ערוצים תואמים',
 			'iptv.hideMatches' => 'הסתרת ערוצים תואמים',
 			'iptv.pickerCredit' => 'בהשראת · M3U Web Picker · Zachary Schmook (@zschmook) ושאר התורמים',
-			'iptv.exportPrivate' => 'כתובות השידורים עשויות להכיל פרטי כניסה לספק. יש לשמור את הרשימה במקום פרטי.',
-			'iptv.dynamicStreamExport' => 'הפורטל יוצר קישור חדש בכל הפעלה. ניתן לייצא את מדריך השידורים.',
-			'iptv.moveUp' => 'תנועות למעלה',
-			'iptv.moveDown' => 'תנו למטה',
-			'iptv.choosePlaylist' => 'בחר קובץ playlist',
-			'iptv.affectedChannels' => ({required Object count}) => 'ערוצים · ${count}',
 			'accountPreferences.sectionTitle' => 'העדפות חשבון',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'אפשרויות אודיו, תת-כותרת וספריה נשמרו ב- ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'אפשרויות אודיו, תת-כותרת וספריה מאוחסנות על ${count} חשבונות',

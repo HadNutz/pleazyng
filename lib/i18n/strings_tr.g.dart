@@ -387,7 +387,6 @@ class _Translations$settings$tr extends Translations$settings$en {
 	final TranslationsTr _root; // ignore: unused_field
 
 	// Translations
-	@override String get foldableDisplay => 'Katlanabilir ekran menteşesi';
 	@override String get title => 'Ayarlar';
 	@override String get supportDeveloper => 'Pleazyng\'yi Destekleyin';
 	@override String get supportDeveloperDescription => 'Geliştirmeyi desteklemek için bağış yapın';
@@ -490,6 +489,7 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String get playerBackend => 'Oynatıcı Altyapısı';
 	@override String get exoPlayer => 'ExoPlayer';
 	@override String get mpv => 'mpv';
+	@override String get foldableDisplay => 'Katlanabilir ekran menteşesi';
 	@override String get hardwareDecoding => 'Donanım Çözme';
 	@override String get hardwareDecodingDescription => 'Mümkün olduğunda donanım hızlandırmasını kullan';
 	@override String get playbackBuffer => 'Oynatma Tamponu';
@@ -1653,21 +1653,21 @@ class _Translations$iptv$tr extends Translations$iptv$en {
 
 	// Translations
 	@override String get backupFeeds => 'Oynatma sırasına göre yedek kaynaklar';
+	@override String get exportPrivate => 'Yayın adresleri sağlayıcıya ait oturum bilgilerinizi içerebilir. Listeyi özel bir konuma kaydedin.';
+	@override String get dynamicStreamExport => 'Portal her oynatmada yeni bağlantı oluşturur. Yayın rehberini dışa aktarabilirsiniz.';
 	@override String get lineupOrder => 'Kanal sırası';
+	@override String get moveUp => 'yukarı hareket';
+	@override String get moveDown => 'aşağı hareket';
 	@override String get orderChanged => 'Kanal sırası değişti. Gözden geçirip yeniden deneyin.';
+	@override String affectedChannels({required Object count}) => 'Kanallar · ${count}';
 	@override String get localPlaylist => 'M3U dosyası';
 	@override String get pastePlaylist => 'Oynatma listesi metnini yapıştır';
+	@override String get choosePlaylist => 'Playlist dosyasını seçin';
 	@override String get playlistBase => 'Göreli bağlantılar için temel URL (isteğe bağlı)';
 	@override String get localPlaylistHelp => 'M3U veya M3U8 kanal listesinin özel bir kopyasını içe aktarın. Başka bir dosyayla değiştirebilirsiniz.';
 	@override String get showMatches => 'Eşleşen kanalları göster';
 	@override String get hideMatches => 'Eşleşen kanalları gizle';
 	@override String get pickerCredit => 'Esin kaynağı · M3U Web Picker · Zachary Schmook (@zschmook) ve katkıda bulunanlar';
-	@override String get exportPrivate => 'Yayın adresleri sağlayıcıya ait oturum bilgilerinizi içerebilir. Listeyi özel bir konuma kaydedin.';
-	@override String get dynamicStreamExport => 'Portal her oynatmada yeni bağlantı oluşturur. Yayın rehberini dışa aktarabilirsiniz.';
-	@override String get moveUp => 'yukarı hareket';
-	@override String get moveDown => 'aşağı hareket';
-	@override String get choosePlaylist => 'Playlist dosyasını seçin';
-	@override String affectedChannels({required Object count}) => 'Kanallar · ${count}';
 }
 
 // Path: accountPreferences
@@ -5891,7 +5891,6 @@ extension on TranslationsTr {
 			'update.viewRelease' => 'Sürümü Görüntüle',
 			'update.latestVersion' => 'En son sürümü kullanıyorsunuz',
 			'update.checkFailed' => 'Güncellemeler kontrol edilemedi',
-			'settings.foldableDisplay' => 'Katlanabilir ekran menteşesi',
 			'settings.title' => 'Ayarlar',
 			'settings.supportDeveloper' => 'Pleazyng\'yi Destekleyin',
 			'settings.supportDeveloperDescription' => 'Geliştirmeyi desteklemek için bağış yapın',
@@ -5994,6 +5993,7 @@ extension on TranslationsTr {
 			'settings.playerBackend' => 'Oynatıcı Altyapısı',
 			'settings.exoPlayer' => 'ExoPlayer',
 			'settings.mpv' => 'mpv',
+			'settings.foldableDisplay' => 'Katlanabilir ekran menteşesi',
 			'settings.hardwareDecoding' => 'Donanım Çözme',
 			'settings.hardwareDecodingDescription' => 'Mümkün olduğunda donanım hızlandırmasını kullan',
 			'settings.playbackBuffer' => 'Oynatma Tamponu',
@@ -7045,21 +7045,21 @@ extension on TranslationsTr {
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} bağlantısını düzenle',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} için URL ekleyin veya kaldırın. Pleazyng, erişilebilir olan en düşük gecikmeli URL\'yi kullanacak.',
 			'iptv.backupFeeds' => 'Oynatma sırasına göre yedek kaynaklar',
+			'iptv.exportPrivate' => 'Yayın adresleri sağlayıcıya ait oturum bilgilerinizi içerebilir. Listeyi özel bir konuma kaydedin.',
+			'iptv.dynamicStreamExport' => 'Portal her oynatmada yeni bağlantı oluşturur. Yayın rehberini dışa aktarabilirsiniz.',
 			'iptv.lineupOrder' => 'Kanal sırası',
+			'iptv.moveUp' => 'yukarı hareket',
+			'iptv.moveDown' => 'aşağı hareket',
 			'iptv.orderChanged' => 'Kanal sırası değişti. Gözden geçirip yeniden deneyin.',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanallar · ${count}',
 			'iptv.localPlaylist' => 'M3U dosyası',
 			'iptv.pastePlaylist' => 'Oynatma listesi metnini yapıştır',
+			'iptv.choosePlaylist' => 'Playlist dosyasını seçin',
 			'iptv.playlistBase' => 'Göreli bağlantılar için temel URL (isteğe bağlı)',
 			'iptv.localPlaylistHelp' => 'M3U veya M3U8 kanal listesinin özel bir kopyasını içe aktarın. Başka bir dosyayla değiştirebilirsiniz.',
 			'iptv.showMatches' => 'Eşleşen kanalları göster',
 			'iptv.hideMatches' => 'Eşleşen kanalları gizle',
 			'iptv.pickerCredit' => 'Esin kaynağı · M3U Web Picker · Zachary Schmook (@zschmook) ve katkıda bulunanlar',
-			'iptv.exportPrivate' => 'Yayın adresleri sağlayıcıya ait oturum bilgilerinizi içerebilir. Listeyi özel bir konuma kaydedin.',
-			'iptv.dynamicStreamExport' => 'Portal her oynatmada yeni bağlantı oluşturur. Yayın rehberini dışa aktarabilirsiniz.',
-			'iptv.moveUp' => 'yukarı hareket',
-			'iptv.moveDown' => 'aşağı hareket',
-			'iptv.choosePlaylist' => 'Playlist dosyasını seçin',
-			'iptv.affectedChannels' => ({required Object count}) => 'Kanallar · ${count}',
 			'accountPreferences.sectionTitle' => 'Hesap tercihleri',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Ses, altyazı ve kitaplık seçenekleri ${account} hesabına kaydedildi',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Ses, altyazı ve kitaplık seçenekleri ${count} hesaba kaydedildi',
