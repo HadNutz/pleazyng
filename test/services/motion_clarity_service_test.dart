@@ -12,10 +12,23 @@ import 'package:plezy/mpv/mpv.dart';
 import 'package:plezy/services/motion_clarity_service.dart';
 
 void main() {
+  test('Apple uses software without starting GPU readback on an incompatible Metal driver', () async {
+    final player = _RecordingPlayer(60);
+    player._properties['pleazyng-apple-mixer-gpu-supported'] = 'no';
+    await MotionProcessingService.configureAppleMotion(
+      player,
+      MotionProcessingMode.mpv,
+      NeuralInterpolationPreset.balanced,
+    );
+    expect(player.commands.single.last, contains('minterpolate'));
+    expect(MotionProcessingService.observedAppleMixer(player, 24, 60), 'FFmpeg CPU');
+  });
+
   for (final gpuAvailable in [true, false]) {
     test('Apple falls back on the open stream when the VideoToolbox probe is missing (GPU $gpuAvailable)', () async {
       final player = _RecordingPlayer(60)..rejectGpuMixer = !gpuAvailable;
       player._properties['hwdec'] = 'auto';
+      player._properties['pleazyng-apple-mixer-gpu-supported'] = 'yes';
       Future<void> setMode(MotionProcessingMode mode) =>
           MotionProcessingService.configureAppleMotion(player, mode, NeuralInterpolationPreset.balanced);
 

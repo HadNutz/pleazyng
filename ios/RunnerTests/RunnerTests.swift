@@ -275,26 +275,31 @@ final class MpvPlayerContractTests: XCTestCase {
     XCTAssertSuccess(awaitProperty(core, name: "loop-file", value: "inf"))
     _ = try command(["loadfile", clip.path])
     XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
-    let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
-    while Date() < readyBy {
-      if let raw = try? awaitGetProperty(core, name: "time-pos").get(), let seconds = Double(raw), seconds >= 0.1 { break }
-      pump(0.05)
+    func requirePlaybackAdvance(from previous: Double) throws {
+      let deadline = Date().addingTimeInterval(30)
+      repeat {
+        if let raw = try awaitGetProperty(core, name: "time-pos").get(), let seconds = Double(raw),
+          seconds > previous + 0.05 || (seconds > 0 && seconds < previous)
+        {
+          return
+        }
+        RunLoop.current.run(until: Date().addingTimeInterval(0.05))
+      } while Date() < deadline
+      XCTFail("The open clip did not advance from " + String(previous))
     }
-    XCTAssertGreaterThan(try timePos(core), 0)
+    try requirePlaybackAdvance(from: 0)
     XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
     let entry = try XCTUnwrap(try awaitGetProperty(core, name: "playlist/0/id").get())
     for preset in ["performance", "quality"] {
       let before = try timePos(core)
       XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-preset", value: preset))
       XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "yes"))
-      pump(0.35)
-      XCTAssertGreaterThan(try timePos(core), before)
+      try requirePlaybackAdvance(from: before)
       XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
     }
     XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "no"))
     let before = try timePos(core)
-    pump(0.35)
-    XCTAssertGreaterThan(try timePos(core), before)
+    try requirePlaybackAdvance(from: before)
     XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
 
     if try awaitGetProperty(core, name: "pleazyng-vt-motion-supported").get() == "no" {
@@ -305,19 +310,21 @@ final class MpvPlayerContractTests: XCTestCase {
       if originalHwdec != "no" {
         XCTAssertSuccess(awaitProperty(core, name: "hwdec", value: "videotoolbox-copy"))
       }
-      let provider: String
-      do {
-        // MoltenVK's first simulator device and shader setup can take over ten seconds.
-        _ = try command(["vf", "add", "\(label):lavfi=[\(gpu)]"], timeout: 60)
-        provider = "libplacebo GPU"
-      } catch let error as NSError where error.domain == "mpv" {
-        _ = try command(["vf", "add", "\(label):lavfi=[\(cpu)]"])
-        provider = "FFmpeg CPU"
+      var gpuActive = false
+      if try awaitGetProperty(core, name: "pleazyng-apple-mixer-gpu-supported").get() == "yes" {
+        do {
+          _ = try command(["vf", "add", "\(label):lavfi=[\(gpu)]"], timeout: 60)
+          gpuActive = true
+        } catch let error as NSError where error.domain == "mpv" {
+          print("GPU mixer rejected the filter: " + error.localizedDescription)
+        }
       }
-      let deadline = Date().addingTimeInterval(nativeCompletionTimeout)
+      if !gpuActive { _ = try command(["vf", "add", "\(label):lavfi=[\(cpu)]"]) }
+      let provider = gpuActive ? "libplacebo GPU" : "FFmpeg CPU"
+      let deadline = Date().addingTimeInterval(30)
       var measured = 0.0
       repeat {
-        pump(0.1)
+        RunLoop.current.run(until: Date().addingTimeInterval(0.1))
         if let rate = try? awaitGetProperty(core, name: "estimated-vf-fps").get() {
           measured = Double(rate) ?? 0
         }
@@ -330,6 +337,7 @@ final class MpvPlayerContractTests: XCTestCase {
       }
       XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
       XCTAssertFalse((try awaitGetProperty(core, name: "vf").get() ?? "").contains(label))
+      try requirePlaybackAdvance(from: timePos(core))
     }
   }
 

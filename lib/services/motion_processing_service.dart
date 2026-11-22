@@ -870,18 +870,23 @@ abstract final class MotionProcessingService {
     final hwdec = await player.getProperty('hwdec') ?? 'auto';
     try {
       if (hwdec != 'no') await player.setProperty('hwdec', 'videotoolbox-copy');
+      var gpuActive = false;
       try {
-        await player.command([
-          'vf',
-          'add',
-          '@plezy-apple-motion:lavfi=[libplacebo=fps=60:frame_mixer=oversample:format=yuv420p]',
-        ]);
-        _appleMixer[player] = 'libplacebo GPU';
+        if (await player.getProperty('pleazyng-apple-mixer-gpu-supported') == 'yes') {
+          await player.command([
+            'vf',
+            'add',
+            '@plezy-apple-motion:lavfi=[libplacebo=fps=60:frame_mixer=oversample:format=yuv420p]',
+          ]);
+          gpuActive = true;
+        }
       } catch (error) {
-        appLogger.i('Apple GPU mixer rejected this source, trying FFmpeg blending', error: error);
-        await player.command(['vf', 'add', '@plezy-apple-motion:lavfi=[minterpolate=fps=60:mi_mode=blend]']);
-        _appleMixer[player] = 'FFmpeg CPU';
+        appLogger.i('Apple GPU mixer unavailable, trying FFmpeg blending', error: error);
       }
+      if (!gpuActive) {
+        await player.command(['vf', 'add', '@plezy-apple-motion:lavfi=[minterpolate=fps=60:mi_mode=blend]']);
+      }
+      _appleMixer[player] = gpuActive ? 'libplacebo GPU' : 'FFmpeg CPU';
       _appleMixerOriginalHwdec[player] = hwdec;
     } catch (_) {
       await player.setProperty('hwdec', hwdec);

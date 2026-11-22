@@ -1,6 +1,7 @@
 import AVFoundation
 import Foundation
 import Libmpv
+import Metal
 import QuartzCore
 import VideoToolbox
 import PlezyNGDVRuntimeAPI
@@ -1063,6 +1064,18 @@ class MpvPlayerCoreBase: NSObject {
     }
     guard isLifecycleActive else {
       completeOnMain { completion(.failure(self.lifecycleUnavailableError())) }
+      return
+    }
+    if name == "pleazyng-apple-mixer-gpu-supported" {
+      let device = MTLCreateSystemDefaultDevice()
+      #if targetEnvironment(simulator)
+        // MTLSimDriver traps in newBuffer when MoltenVK downloads libplacebo's output.
+        // A GPU exposed directly by the host can still attempt the filter.
+        let supported = device.map { !$0.name.localizedCaseInsensitiveContains("simulator") } ?? false
+      #else
+        let supported = device != nil
+      #endif
+      completeOnMain { completion(.success(supported ? "yes" : "no")) }
       return
     }
     if name == "pleazyng-vt-motion-supported" {

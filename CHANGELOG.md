@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Apple MPV playback now tries GPU and software frame mixing if the VideoToolbox capability check is unavailable. The Dolby Vision runtime reports its motion support separately.
+- Apple MPV playback now tries GPU and software frame mixing if the VideoToolbox capability check is unavailable. The Dolby Vision runtime reports its motion support separately. On the iPhone simulator, MPV uses software mixing when the simulated Metal driver cannot copy interpolated frames for display.
 
 - Xtream connections can use the provider’s live-only catalog, including category names and correctly escaped stream paths. Pleazyng tries the other provider endpoint when the selected API or playlist is unavailable. Inspired by the [M3U Web Picker provider loader](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/core.py) from [Zachary Schmook](https://github.com/zschmook) and contributors.
 - Import provider playlists up to 96 MiB and 50,000 stations and local files up to 50 MiB. Large playlists parse off the UI isolate. Relative guide and stream links follow a provider’s final playlist URL after redirects. These limits follow the [v49 provider settings](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/settings.py) from [Zachary Schmook](https://github.com/zschmook) and the M3U Web Picker contributors.
