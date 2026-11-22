@@ -47,6 +47,8 @@ INSTALLER_CERTIFICATE_TYPE = "MAC_INSTALLER_DISTRIBUTION"
 PROFILE_TYPE = "MAC_APP_STORE"
 APP_KEYCHAIN_NAME = "Pleazyng-Mac-App-Store.keychain-db"
 INSTALLER_KEYCHAIN_NAME = "Pleazyng-Mac-App-Store-Installer-v2.keychain-db"
+KEYCHAIN_PASSWORD_SALT = b"PleazyngMacAppStore:keychain-password:v2"
+KEYCHAIN_PASSWORD_ITERATIONS = 600_000
 PENDING_DIRECTORY = Path("Library/Application Support/Pleazyng/MacAppStoreSigning/pending")
 PROFILE_DIRECTORY = Path("Library/MobileDevice/Provisioning Profiles")
 EXPECTED_ARCHITECTURES = {"arm64", "x86_64"}
@@ -141,7 +143,39 @@ def _keychain_password() -> str:
     team = os.environ.get(TEAM_SECRET, "")
     if not password or not re.fullmatch(r"[A-Z0-9]{10}", team):
         raise ValueError(f"{CERTIFICATE_PASSWORD_SECRET} and {TEAM_SECRET} are required to protect the persistent signing keychain")
+    material = f"{team}\0{password}".encode()
+    return hashlib.pbkdf2_hmac(
+        "sha256", material, KEYCHAIN_PASSWORD_SALT, KEYCHAIN_PASSWORD_ITERATIONS
+    ).hex()
+
+
+def _legacy_keychain_password() -> str:
+    """Derive the prior password only to migrate an existing persistent keychain."""
+    password = os.environ.get(CERTIFICATE_PASSWORD_SECRET, "")
+    team = os.environ.get(TEAM_SECRET, "")
+    if not password or not re.fullmatch(r"[A-Z0-9]{10}", team):
+        raise ValueError(f"{CERTIFICATE_PASSWORD_SECRET} and {TEAM_SECRET} are required to migrate the persistent signing keychain")
+    # Compatibility only: on first unlock, this value immediately rotates to PBKDF2.
+    # codeql[py/weak-sensitive-data-hashing]
     return hashlib.sha256(("PleazyngMacAppStore:" + team + password).encode()).hexdigest()
+
+
+def _unlock_keychain(keychain: Path, password: str) -> None:
+    """Unlock with the current KDF or upgrade a retained keychain from the old one."""
+    command = ["security", "unlock-keychain", "-p", password, str(keychain)]
+    try:
+        signing_run(command)
+        return
+    except RuntimeError:
+        legacy_password = _legacy_keychain_password()
+    try:
+        signing_run(["security", "unlock-keychain", "-p", legacy_password, str(keychain)])
+    except RuntimeError:
+        raise ValueError("Persistent Mac App Store keychain could not be unlocked with current signing credentials") from None
+    signing_run([
+        "security", "set-keychain-password", "-o", legacy_password, "-p", password, str(keychain),
+    ])
+    signing_run(command)
 
 
 def _safe_tag(tag: str) -> None:
@@ -269,7 +303,7 @@ def persistent_signing_keychains(report: dict):
             raise ValueError("Persistent Mac App Store Installer keychain is not a regular file")
         for keychain in (app_keychain, installer_keychain):
             os.chmod(keychain, 0o600)
-            signing_run(["security", "unlock-keychain", "-p", password, str(keychain)])
+            _unlock_keychain(keychain, password)
 
         app_names = _keychain_identity_names(app_keychain)
         installer_names = _keychain_identity_names(installer_keychain)

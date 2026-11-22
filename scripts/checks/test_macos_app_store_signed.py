@@ -152,6 +152,34 @@ class MacAppStoreProfileTests(unittest.TestCase):
 
 
 class MacAppStoreSigningGuardTests(unittest.TestCase):
+    def test_keychain_password_uses_stable_slow_kdf(self):
+        secret = "certificate-password-test-value"
+        with patch.dict(store.os.environ, {
+            store.CERTIFICATE_PASSWORD_SECRET: secret,
+            store.TEAM_SECRET: TEAM,
+        }):
+            first = store._keychain_password()
+            second = store._keychain_password()
+        self.assertEqual(first, second)
+        self.assertEqual(len(first), 64)
+        self.assertNotEqual(first, hashlib.sha256(
+            f"PleazyngMacAppStore:{TEAM}{secret}".encode()
+        ).hexdigest())
+
+    def test_legacy_keychain_password_is_rotated_after_unlock(self):
+        keychain = Path("/tmp/existing.keychain-db")
+        with patch.dict(store.os.environ, {
+            store.CERTIFICATE_PASSWORD_SECRET: "certificate-password-test-value",
+            store.TEAM_SECRET: TEAM,
+        }), patch.object(
+            store, "signing_run",
+            side_effect=[RuntimeError("new password rejected"), b"", b"", b""],
+        ) as run:
+            store._unlock_keychain(keychain, "new-derived-password")
+        self.assertEqual(run.call_count, 4)
+        self.assertEqual(run.call_args_list[1].args[0][1], "unlock-keychain")
+        self.assertEqual(run.call_args_list[2].args[0][1], "set-keychain-password")
+
     def test_capacity_preflight_deduplicates_filesystem_and_rejects_low_space(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
