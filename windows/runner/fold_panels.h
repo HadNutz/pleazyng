@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+
 #include <vector>
 
 // Active embedded panel bounds in desktop physical pixels. External displays

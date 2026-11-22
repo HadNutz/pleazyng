@@ -136,11 +136,9 @@ def api(path):
 
 
 def collection(path, key):
-    result = api(path + ("&" if "?" in path else "?") + "per_page=100")
-    values = result.get(key)
-    if not isinstance(values, list) or result.get("total_count", len(values)) > len(values):
-        raise RecoveryError(f"Incomplete GitHub {key} inventory; refusing recovery.")
-    return values
+    from release_job_inventory import inventory, mac_package_evidence
+    values = inventory(path, key, api, RecoveryError)
+    return mac_package_evidence(values) if key == "jobs" else values
 
 
 def trusted_versioned_release_title(run, version):
@@ -307,8 +305,13 @@ def verify_repaired_run(run_id, head_sha, version, repository, *, allow_pending=
     verify_webos_transport_patch(repository, source_sha, head_sha, files)
     workflows = [immutable_content(repository, revision, ".github/workflows/build.yml") for revision in (source_sha, head_sha)]
     patterns = [r"(?ms)^env:\n.*?(?=^jobs:)"]
-    patterns += [r"(?ms)^  " + job + r":\n.*?(?=^  [a-zA-Z0-9_-]+:|\Z)"
-                 for job in (("build-webos",) if webos_only else ("build-macos", "build-linux"))]
+    compiled_jobs = ["build-webos"] if webos_only else ["build-macos", "build-linux"]
+    if not webos_only:
+        for lane in ("finish-notarization", "linux-bundle", "linux-format", "linux-bundle-arm64",
+                     "linux-format-arm64", "assemble-linux-arm64"):
+            if any(f"\n  {lane}:\n" in workflow for workflow in workflows):
+                compiled_jobs.append(lane)
+    patterns += [r"(?ms)^  " + job + r":\n.*?(?=^  [a-zA-Z0-9_-]+:|\Z)" for job in compiled_jobs]
     for pattern in patterns:
         blocks = [re.findall(pattern, content) for content in workflows]
         if any(len(block) != 1 for block in blocks):
@@ -1152,6 +1155,10 @@ def verify_macos_packaging_recovery(run_id, macos_run, head_sha, version, reposi
     if len(recovered) != 1:
         raise RecoveryError("Mac replacement job is missing or ambiguous.")
     recovered_job = api(f"repos/{repository}/actions/jobs/{recovered[0]['id']}")
+    from release_job_inventory import mac_package_evidence
+    recovered_job = next(job for job in mac_package_evidence(
+        [recovered_job, *(j for j in recovered_jobs if j.get("name") != "build-macos")])
+        if job.get("name") == "build-macos")
     if compilation_reused:
         required_steps = ("Recover verified native macOS compilation", "Import Code Signing Certificate",
                           "Sign Application", "Verify Signature", "Notarize Application",

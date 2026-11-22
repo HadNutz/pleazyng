@@ -341,10 +341,12 @@ flutter::EncodableList FlutterWindow::PanelLayout() {
   POINT origin{};
   if (!ClientToScreen(view, &origin)) return rows;
   for (const RECT& rect : embedded_panels_) {
-    rows.emplace_back(flutter::EncodableList{flutter::EncodableValue(static_cast<int>(rect.left - origin.x)),
-        flutter::EncodableValue(static_cast<int>(rect.top - origin.y)),
-        flutter::EncodableValue(static_cast<int>(rect.right - origin.x)),
-        flutter::EncodableValue(static_cast<int>(rect.bottom - origin.y))});
+    rows.emplace_back(
+        flutter::EncodableList{
+            flutter::EncodableValue(static_cast<int>(rect.left - origin.x)),
+            flutter::EncodableValue(static_cast<int>(rect.top - origin.y)),
+            flutter::EncodableValue(static_cast<int>(rect.right - origin.x)),
+            flutter::EncodableValue(static_cast<int>(rect.bottom - origin.y))});
   }
   return rows;
 }

@@ -1,11 +1,11 @@
 # Pleazyng Apple JIT runner
 
 Apple CI and unsigned packages default to public GitHub-hosted macOS runners.
-A release dispatched through `build.yml` on canonical `main` can explicitly
-select `tvos_runner_pool=private` to run its Apple native reliability job on
-the private Mac and select private iOS/tvOS packaging. The CI job runs the
-iOS, macOS and tvOS suites sequentially with signing disabled. Standalone CI
-uses hosted macOS. Private signing and notarization also require the Mac online.
+iOS, macOS and tvOS qualification run as three independent jobs. For captured
+main releases the repository variable `APPLE_NATIVE_CI_RUNNER_POOL=private`
+selects the private Mac for qualification. Package signing is selected
+independently. Hosted finishers poll Apple's notarization service, staple the
+signed app and deliver an exported Mac App Store package.
 
 Hosted queue delays and build failures never trigger an automatic private retry.
 Preserve active jobs and diagnose the exact failure. Reuse successful immutable
@@ -24,7 +24,7 @@ packages may select private Apple JIT explicitly when the Mac is online.
 `--tvos-runner-pool hosted|private` selects the signed iOS/tvOS package route;
 `--apple-arm-runner-pool hosted|private` selects the signed/notarized macOS
 package route. `--ios-runner-pool private` selects the explicitly requested
-signed Apple route. The embedded CI job uses the run-scoped
+signed Apple route. Each private native CI job uses its run-scoped
 `gha-<run-id>-apple-native-test` label. Hosted CI uses Xcode 26.5. Private CI
 uses Xcode 27.0 with the macOS, iOS Simulator and tvOS Simulator 27.0 SDKs.
 

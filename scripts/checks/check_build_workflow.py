@@ -111,14 +111,14 @@ require(
 )
 ci_apple_pools = re.findall(r"(?m)^      apple_runner_pool:\n((?:        [^\n]+\n)+)", ci_text)
 require(
-    "inputs.include_apple_store_build" in job("release-ci")
-    and "inputs.tvos_runner_pool == 'private'" in job("release-ci")
+    "vars.APPLE_NATIVE_CI_RUNNER_POOL == 'private'" in job("release-ci")
+    and "!inputs.private_apple_signing_unavailable" in job("release-ci")
     and "'private' || 'hosted'" in job("release-ci")
     and len(ci_apple_pools) == 2
     and all("        default: hosted\n" in pool for pool in ci_apple_pools)
     and "        type: string\n" in ci_apple_pools[0]
     and "        options: [hosted]\n" in ci_apple_pools[1],
-    "Only explicitly signed Apple Store releases may route native CI to the selected private Apple JIT",
+    "Only an explicitly configured release qualification pool may route native CI to Apple JIT",
 )
 require(
     "inputs.action == 'release' && format('pleazyng-versioned-release-{0}', inputs.candidate_ref)" in text
@@ -904,7 +904,7 @@ require(
     "Windows native CI must predownload and verify Boost/libtorrent before CMake configures",
 )
 
-linux = job("build-linux")
+linux = job("linux-bundle") + job("linux-bundle-arm64") + job("linux-format") + job("linux-format-arm64") + job("build-linux") + job("assemble-linux-arm64")
 require(
     "matrix.arch == 'x64'" in linux
     and "'ubuntu-24.04-arm'" in linux
@@ -976,7 +976,7 @@ require(
 )
 
 
-package_windows = job("package-windows")
+package_windows = job("package-windows") + job("windows-msix") + job("windows-chocolatey")
 validate_windows_signing(package_windows)
 require(
     "needs: [validate-trusted-ref, build-windows]" in package_windows,
@@ -1264,7 +1264,7 @@ require(
     "the optional Linux package smoke build must not run on pushes",
 )
 
-linux_release = job("build-linux")
+linux_release = linux
 linux_release_sherpa = named_step(
     linux_release, "Install and verify locked Sherpa ONNX libraries"
 )
@@ -1350,15 +1350,19 @@ require(
     and "needs: capture-candidate" in captured_ci
     and "contents: read" in captured_ci and "actions: read" in captured_ci
     and "secrets: inherit" not in captured_ci
-    and "build_linux_packages: true" in captured_ci
+    and "build_linux_packages: false" in captured_ci and "build-linux" in job("record-qualified-source")
     and "execution_profile: hybrid" in captured_ci
     and "github.ref == 'refs/heads/main'" in capture_request
     and "--candidate-only" in capture_request,
     "Captured release CI must reuse the exact local suite on validated main with minimal permissions",
 )
 require(
-    "needs: [capture-candidate, release-ci]" in freeze_source
-    and "needs.release-ci.result == 'success'" in freeze_source
+    "needs: [capture-candidate, release-ci, build-linux, candidate-isolation, candidate-security]" in job("record-qualified-source")
+    and all(f"needs.{lane}.result == 'success'" in job("record-qualified-source") for lane in
+            ("capture-candidate", "release-ci", "build-linux", "candidate-isolation", "candidate-security"))
+    and "--qualification-only --proof" in job("record-qualified-source")
+    and "needs: record-qualified-source" in freeze_source
+    and "needs.record-qualified-source.result == 'success'" in freeze_source
     and "--create-tag" in freeze_source
     and "contents: write" in freeze_source
     and "COMMIT_SHA: ${{ github.sha }}" in freeze_source
@@ -1389,8 +1393,10 @@ require(
     "github.run_attempt > 1" in macos_restore
     and "resume_notarization_checkpoint.py" in macos_restore
     and "steps.restore-notarization.outputs.restored != 'true'" in named_step(job("build-macos"), "Build macOS")
-    and "steps.restore-notarization.outputs.restored == 'true'" in named_step(job("build-macos"), "Upload resumed notarization checkpoint")
-    and "steps.restore-notarization.outputs.submission_id || steps.notarization.outputs.submission_id" in named_step(job("build-macos"), "Wait for notarization acceptance"),
+    and "steps.restore-notarization.outputs.attempt != github.run_attempt" in named_step(job("finish-notarization"), "Upload resumed notarization checkpoint")
+    and "steps.restore-notarization.outputs.submission_id" in named_step(job("finish-notarization"), "Wait for notarization acceptance")
+    and "runs-on: macos-26" in job("finish-notarization")
+    and "--include-current" in job("finish-notarization"),
     "Mac reruns must restore and resume a verified earlier notarization submission without recompiling",
 )
 require(
@@ -1720,7 +1726,7 @@ require(
     "tvOS dependency receipt must be covered by the unsigned package attestation",
 )
 
-unit_tests = job_block(ci_text, "test")
+unit_tests = job_block(ci_text, "test-extras")
 chrome_setup = named_step(unit_tests, "Configure Flutter Chrome executable")
 chrome_test = named_step(unit_tests, "Run wakelock_plus Chrome tests")
 require(
@@ -1834,7 +1840,7 @@ for action_pool_job in (
 
 release = job("create-release")
 require(
-    "needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, build-windows, package-windows, build-linux]"
+    "needs: [freeze-qualified-source, validate-trusted-ref, build-android, build-webos, build-tizen, build-ios, build-tvos, build-macos, finish-notarization, build-windows, package-windows, windows-msix, windows-chocolatey, build-linux, assemble-linux-arm64]"
     in release,
     "release dependencies must include the trust gate, all platform builds, and Windows packaging",
 )
@@ -2130,7 +2136,7 @@ require(
     and '--repaired-run "$REPAIRED_RUN"' in recovery_gate,
     "artifact recovery must distinguish unsigned iOS reuse, signed TV reuse, and legacy Linux/Mac repair reuse",
 )
-ios_worker_stage = named_step(job("build-ios"), "Stage locked iOS worker frameworks for Release")
+ios_worker_stage = named_step(job("build-ios"), "Configure locked iOS worker pods") + named_step(job("build-ios"), "Stage locked iOS worker frameworks for Release")
 require(
     "(inputs.reuse_platform_run_id == '' || inputs.rebuild_ios)" in job("build-ios")
     and "needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.preflight-ios-store-signing.outputs.ios_store_signing_ready == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format(" in job("build-ios")
@@ -2225,11 +2231,11 @@ for protected_job in (
 ):
     require(
         ("needs: validate-trusted-ref" in job(protected_job)
-         or "needs: [validate-trusted-ref, preflight-ios-store-signing]" in job(protected_job)),
+         or re.search(r"^    needs: \[validate-trusted-ref, (preflight-ios-store-signing|android-variant|linux-format)\]$", job(protected_job), re.M)),
         f"{protected_job} must depend on trusted-ref validation",
     )
 
-android_job = job("build-android")
+android_job = job("android-variant") + job("build-android")
 require(
     "android-validation" in android_job
     and "Signed Fire TV release assets require all four Android signing secrets" in android_job

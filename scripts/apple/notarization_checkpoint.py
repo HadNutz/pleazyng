@@ -54,6 +54,10 @@ def accept(archive: Path, response: Path, receipt: Path, submission_id: str) -> 
     result = json.loads(response.read_text())
     if result.get('id') != submission_id or result.get('status') != 'Accepted':
         raise ValueError('Apple has not accepted this exact notarization submission')
+    saved_attempt = int(os.environ.get('GITHUB_RUN_ATTEMPT', value['run_attempt']))
+    if saved_attempt < value['run_attempt']:
+        raise ValueError('Checkpoint cannot predate its Apple submission')
+    value['checkpoint_attempt'] = saved_attempt
     value['status'] = 'Accepted'
     receipt.write_text(json.dumps(value, indent=2) + '\n')
     return value

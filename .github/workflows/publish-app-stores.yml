@@ -65,6 +65,7 @@ permissions:
 concurrency:
   group: app-store-publish-${{ startsWith(inputs.channel, 'google-play') && 'google-play' || inputs.channel }}-${{ startsWith(inputs.channel, 'google-play') && 'org.snapetech.pleazyng' || inputs.release_tag }}
   cancel-in-progress: false
+  queue: max
 
 jobs:
   validate-release:
@@ -153,6 +154,7 @@ jobs:
     name: Upload to Google Play
     needs: validate-release
     if: ${{ startsWith(inputs.channel, 'google-play') }}
+    timeout-minutes: 75
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -271,6 +273,7 @@ jobs:
     name: Upload to Amazon Appstore
     needs: validate-release
     if: ${{ inputs.channel == 'amazon-appstore' }}
+    timeout-minutes: 75
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -374,6 +377,7 @@ jobs:
     name: Upload to Apple App Store Connect
     needs: validate-release
     if: ${{ inputs.channel == 'app-store-ios' || inputs.channel == 'app-store-tvos' }}
+    timeout-minutes: 120
     runs-on: macos-15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

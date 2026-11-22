@@ -271,21 +271,24 @@ private final class ScreenshotDirectory {
           result(FlutterMethodNotImplemented)
         }
       } catch {
-        result(FlutterError(code: "screenshot_directory", message: "Could not access the screenshot folder", details: nil))
+        result(
+          FlutterError(code: "screenshot_directory", message: "Could not access the screenshot folder", details: nil))
       }
     }
   }
 
   private func save(_ url: URL) throws {
-    let bookmark = try url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: nil, relativeTo: nil)
+    let bookmark = try url.bookmarkData(
+      options: [.withSecurityScope], includingResourceValuesForKeys: nil, relativeTo: nil)
     UserDefaults.standard.set(bookmark, forKey: key)
   }
 
   private func resolve() throws -> String? {
     guard let bookmark = UserDefaults.standard.data(forKey: key) else { return nil }
     var stale = false
-    let url = try URL(resolvingBookmarkData: bookmark, options: [.withSecurityScope, .withoutUI],
-                      relativeTo: nil, bookmarkDataIsStale: &stale)
+    let url = try URL(
+      resolvingBookmarkData: bookmark, options: [.withSecurityScope, .withoutUI],
+      relativeTo: nil, bookmarkDataIsStale: &stale)
     if active != url {
       let scoped = url.startAccessingSecurityScopedResource()
       guard scoped || FileManager.default.isWritableFile(atPath: url.path) else { return nil }

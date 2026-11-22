@@ -6,8 +6,8 @@ std::vector<RECT> EmbeddedDisplayPanels() {
     if (GetDisplayConfigBufferSizes(QDC_ONLY_ACTIVE_PATHS, &paths_count, &modes_count) != ERROR_SUCCESS) break;
     std::vector<DISPLAYCONFIG_PATH_INFO> paths(paths_count);
     std::vector<DISPLAYCONFIG_MODE_INFO> modes(modes_count);
-    const LONG status = QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &paths_count, paths.data(), &modes_count,
-                                           modes.data(), nullptr);
+    const LONG status =
+        QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, &paths_count, paths.data(), &modes_count, modes.data(), nullptr);
     if (status == ERROR_INSUFFICIENT_BUFFER) continue;
     if (status != ERROR_SUCCESS) break;
     std::vector<RECT> panels;
@@ -26,8 +26,9 @@ std::vector<RECT> EmbeddedDisplayPanels() {
       const auto& mode = modes[path.sourceInfo.modeInfoIdx];
       if (mode.infoType != DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE) continue;
       const auto& source = mode.sourceMode;
-      RECT rect{source.position.x, source.position.y, source.position.x + static_cast<LONG>(source.width),
-                source.position.y + static_cast<LONG>(source.height)};
+      RECT rect{
+          source.position.x, source.position.y, source.position.x + static_cast<LONG>(source.width),
+          source.position.y + static_cast<LONG>(source.height)};
       bool clone = false;
       for (const RECT& existing : panels) clone |= EqualRect(&rect, &existing) != FALSE;
       if (!clone && !IsRectEmpty(&rect)) panels.push_back(rect);

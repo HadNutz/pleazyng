@@ -64,10 +64,10 @@ def resolve_ref(tag, token, *, missing=False):
     return target['sha']
 
 
-def verify_candidate(token, repository, sha, tag, candidate, *, root=ROOT):
+def verify_candidate(token, repository, sha, tag, candidate, *, root=ROOT, pubspec_text=None):
     if repository != REPOSITORY or re.fullmatch(r'[0-9a-f]{40}', sha) is None:
         raise GateError('Qualification requires the canonical repository and exact source SHA.')
-    version, _ = parse_pubspec_version((root / 'pubspec.yaml').read_text())
+    version, _ = parse_pubspec_version((root / 'pubspec.yaml').read_text() if pubspec_text is None else pubspec_text)
     if tag != 'v' + version.split('+')[0] or candidate != f'{tag}-candidate.{sha}':
         raise GateError('Candidate must bind the checked-out version and exact source SHA.')
     if resolve_ref(candidate, token) != sha:
@@ -80,7 +80,7 @@ def verify_candidate(token, repository, sha, tag, candidate, *, root=ROOT):
         raise GateError('Existing stable release tag is immutable and points to different source.')
 
 
-def verify_jobs(run, jobs, sha, run_id, attempt, required):
+def verify_jobs(run, jobs, sha, run_id, attempt, required, *, require_candidate_guards=False):
     repository = run.get('repository') or {}
     head_repository = run.get('head_repository') or {}
     if (not isinstance(required, list) or not required
@@ -97,12 +97,34 @@ def verify_jobs(run, jobs, sha, run_id, attempt, required):
     records = []
     for name in required:
         matches = [job for job in jobs if job.get('name') == PREFIX + name]
+        if name == 'Linux package smoke build' and len(matches) == 1 and matches[0].get('conclusion') == 'skipped':
+            # Captured candidates run the package checks on the production bundle.
+            for producer, step in (
+                    ('Compile Linux (x64)', 'Verify every unbundled library the bundle needs is declared'),
+                    ('Package Linux (x64, distro)', 'Verify the declared dependencies reached the package metadata'),
+                    ('Build Linux (x64)', 'Upload Linux x64 artifacts')):
+                evidence = [j for j in jobs if j['name'] == producer and j.get('conclusion') == 'success']
+                if len(evidence) != 1 or not any(st.get('name') == step and st.get('conclusion') == 'success'
+                                                for st in evidence[0].get('steps', [])):
+                    raise GateError(f'Release package qualification missing {producer}: {step}')
+                job = evidence[0]
+                records.append({'id': job['id'], 'name': producer, 'attempt': job['run_attempt'],
+                                'status': job['status'], 'conclusion': job['conclusion']})
+            continue
         if (len(matches) != 1 or matches[0].get('status') != 'completed' or matches[0].get('conclusion') != 'success'
                 or not isinstance(matches[0].get('id'), int)):
             raise GateError(f'Required embedded CI job did not pass uniquely: {name}')
         job = matches[0]
         records.append({'id': job['id'], 'name': job['name'], 'attempt': job.get('run_attempt'),
                         'status': job['status'], 'conclusion': job['conclusion']})
+    if require_candidate_guards or any(job.get('name') == 'Record qualified source' for job in jobs):
+        for prefix, minimum in (('Candidate isolation / ', 4), ('Candidate security / ', 2)):
+            guards = sorted((job for job in jobs if job['name'].startswith(prefix)), key=lambda job: job['name'])
+            if len(guards) < minimum or any(job.get('status') != 'completed' or job.get('conclusion') != 'success'
+                                            or type(job.get('id')) is not int for job in guards):
+                raise GateError(f'Candidate qualification is incomplete: {prefix.rstrip(" /")}')
+            records.extend({'id': job['id'], 'name': job['name'], 'attempt': job['run_attempt'],
+                            'status': job['status'], 'conclusion': job['conclusion']} for job in guards)
     for job in jobs:
         if str(job.get('name', '')).startswith(PREFIX) and (job.get('status') != 'completed'
                 or job.get('conclusion') not in ('success', 'skipped')):
@@ -191,6 +213,7 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument('--candidate-only', action='store_true')
     mode.add_argument('--create-tag', action='store_true')
+    mode.add_argument('--qualification-only', action='store_true')
     parser.add_argument('--proof', type=Path)
     args = parser.parse_args()
     token, repository, sha, _ = _required_environment()
@@ -203,10 +226,10 @@ def main():
     run_id, attempt = int(os.environ['GITHUB_RUN_ID']), int(os.environ['GITHUB_RUN_ATTEMPT'])
     run = api(f'actions/runs/{run_id}', token)
     jobs = fetch_attempt_history(run_id, attempt, token)
-    proof = verify_jobs(run, jobs, sha, run_id, attempt, _manifest_gate()['requiredJobs'])
+    proof = verify_jobs(run, jobs, sha, run_id, attempt, _manifest_gate()['requiredJobs'], require_candidate_guards=True)
     if args.create_tag:
         create_stable_tag(token, tag, sha)
-    elif resolve_ref(tag, token) != sha:
+    elif not args.qualification_only and resolve_ref(tag, token) != sha:
         raise GateError('Stable tag does not match the qualified source.')
     proof.update({'tag': tag, 'candidate_ref': candidate})
     if args.proof:

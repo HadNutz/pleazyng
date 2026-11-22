@@ -14,6 +14,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: tv-worker-containment-${{ github.event_name == 'push' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
+
 jobs:
   television:
     strategy:

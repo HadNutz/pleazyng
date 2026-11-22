@@ -7,7 +7,7 @@ and private Linux JIT only for the verified storage-heavy webOS build.
 It uses the operator's authenticated
 `gh` CLI session and never copies credentials into the repos.
 With --publish, it promotes the verified draft and runs every configured
-package/store publication workflow from main, sequentially and idempotently.
+package/store publication workflow from main, with bounded concurrency across independent destinations.
 Both publication modes also run the automatic post-release lanes: configured
 Google Play delivery, aerynOS reconciliation, and the Discord announcement
 unless it is explicitly disabled.
@@ -16,6 +16,7 @@ unless it is explicitly disabled.
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import argparse
 from release_coverage import missing_assets
 import datetime as dt
@@ -739,7 +740,7 @@ def dispatch(repo: str, workflow: str, ref: str, fields: dict[str, str], purpose
             if not wait:
                 return run
             apple_route = fields.get("tvos_runner_pool")
-            private_apple = (fields.get("execution_profile") != "hybrid"
+            private_apple = (bool(fields.get("candidate_ref")) or fields.get("execution_profile") != "hybrid"
                              or fields.get("apple_runner_pool") == "private"
                              or fields.get("apple_runner_pool") == "private-ios"
                              or fields.get("apple_runner_pool") == "split"
@@ -816,10 +817,12 @@ def run_has_successful_step(repo: str, run: dict, job_name: str, step_name: str)
         run_id = run.get("databaseId")
         if not isinstance(run_id, int):
             raise ReleaseError("Cannot inspect a workflow run without its numeric run ID.")
-        details = gh_json("api", f"repos/{repo}/actions/runs/{run_id}/jobs")
-        jobs = details.get("jobs") if isinstance(details, dict) else None
+        from release_job_inventory import inventory
+        jobs = inventory(f"repos/{repo}/actions/runs/{run_id}/jobs", "jobs", lambda p: gh_json("api", p), ReleaseError)
     if not isinstance(jobs, list):
         raise ReleaseError(f"Could not inspect jobs for workflow run {run.get('databaseId')}.")
+    from release_job_inventory import mac_package_evidence
+    jobs = mac_package_evidence(jobs)
     matches = [job for job in jobs if isinstance(job, dict) and job.get("name") == job_name]
     if len(matches) != 1 or not isinstance(matches[0].get("steps"), list):
         return False
@@ -2801,6 +2804,8 @@ def ensure_channel_run(
     purpose: str,
     *,
     release_sha: str,
+    started=None,
+    recorded_run_id=None,
 ) -> dict:
     tag = fields.get("release_tag")
     if not tag:
@@ -2809,7 +2814,20 @@ def ensure_channel_run(
     # release. A release-event metadata commit may advance main between lanes;
     # that does not change the already verified product source or its assets.
     ensure_frozen_release_source(tag, release_sha)
-    for run in workflow_runs(PLEZY_REPO, workflow, ref="main"):
+    if recorded_run_id is None:
+        candidates = workflow_runs(PLEZY_REPO, workflow, ref="main")
+    else:
+        if type(recorded_run_id) is not int or recorded_run_id <= 0:
+            raise ReleaseError(f"{purpose} has an invalid saved run ID")
+        record = gh_json("api", f"repos/{PLEZY_REPO}/actions/runs/{recorded_run_id}")
+        if (record.get("id") != recorded_run_id or record.get("event") != "workflow_dispatch"
+                or record.get("head_branch") != "main" or record.get("display_title") != title
+                or record.get("path", "").split("@", 1)[0] != f".github/workflows/{workflow}"
+                or (record.get("head_repository") or {}).get("full_name") != PLEZY_REPO):
+            raise ReleaseError(f"{purpose} saved run does not match the immutable channel request")
+        candidates = [{"databaseId": record["id"], "displayTitle": title, "url": record["html_url"],
+                       "event": record["event"], "status": record["status"], "conclusion": record["conclusion"]}]
+    for run in candidates:
         if run.get("event") != "workflow_dispatch" or run.get("displayTitle") != title:
             continue
         if run.get("status") == "completed":
@@ -2818,17 +2836,26 @@ def ensure_channel_run(
                     f"Previous {purpose} run {run['databaseId']} concluded "
                     f"{run.get('conclusion')}; inspect its external side effects before retrying."
                 )
+            if started:
+                started(run)
             print(f"Reusing successful {purpose} run {run['databaseId']}.")
             return run
+        if started:
+            started(run)
         return wait_for_run(PLEZY_REPO, run, purpose)
-    return dispatch(
+    run = dispatch(
         PLEZY_REPO,
         workflow,
         "main",
         fields,
         purpose,
         expected_title=title,
+        **({"wait": False} if started else {}),
     )
+    if started:
+        started(run)
+        return wait_for_run(PLEZY_REPO, run, purpose)
+    return run
 
 
 def publish_configured_channels(
@@ -3015,6 +3042,7 @@ def publish_configured_channels(
             "channel": "LG webOS public release",
             "reason": "the webOS IPK is built as a candidate; exact-artifact eligibility is not enabled.",
         })
+    eligible = []
     for spec in specs:
         if spec["fields"].get("channel") == "google-play" and publication_settings.get("GOOGLE_PLAY_AUTOMATIC_RELEASES") == "true":
             skipped.append({"channel": spec["name"], "reason": "Handled by the automatic Google Play release controller and its configured test track."})
@@ -3078,30 +3106,58 @@ def publish_configured_channels(
             except ReleaseError as error:
                 failures.append(f"{spec['name']} candidate attestation: {error}")
                 continue
+        eligible.append(spec)
+
+    def deliver(spec):
+        identity = hashlib.sha256(spec["title"].encode()).hexdigest()[:16]
+        path = scratch_dir / f"channel-{spec['fields']['action']}-{identity}.json" if scratch_dir else None
+
+        def persist(run):
+            if path:
+                temporary = path.with_suffix('.tmp')
+                temporary.write_text(json.dumps({'tag': tag, 'source': release_sha, 'run_id': run['databaseId']}))
+                temporary.replace(path)
         try:
-            result = ensure_channel_run(
-                spec["workflow"],
-                spec["title"],
-                spec["fields"],
-                spec["name"],
-                release_sha=release_sha,
-            )
-            completed.append({"channel": spec["name"], "run_id": result["databaseId"], "url": result.get("url")})
-            optional_mirror = spec.get("optional_mirror")
-            if optional_mirror:
-                if optional_mirror["secrets"] - secrets:
-                    skipped.append({
-                        "channel": optional_mirror["name"],
-                        "reason": "The GHCR publication completed; optional mirror credentials are not configured.",
-                    })
-                else:
-                    completed.append({
-                        "channel": optional_mirror["name"],
-                        "run_id": result["databaseId"],
-                        "url": result.get("url"),
-                    })
-        except ReleaseError as error:
-            failures.append(f"{spec['name']}: {error}")
+            options = {}
+            if path and path.is_file():
+                receipt = json.loads(path.read_text())
+                if receipt.get("tag") != tag or receipt.get("source") != release_sha:
+                    raise ReleaseError("Saved channel run belongs to a different release")
+                options["recorded_run_id"] = receipt["run_id"]
+            result = ensure_channel_run(spec['workflow'], spec['title'], spec['fields'], spec['name'],
+                                        release_sha=release_sha, started=persist, **options)
+        except (ReleaseError, OSError, ValueError, KeyError) as error:
+            return spec, None, str(error)
+        return spec, result, None
+
+    # Two Play variants mutate the same store listing; finish those in order.
+    def destination(spec):
+        channel = spec['fields'].get('channel', '')
+        return 'google-play' if channel.startswith('google-play') else spec['workflow'] + ':' + channel
+
+    groups = {}
+    for spec in eligible:
+        groups.setdefault(destination(spec), []).append(spec)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for results in pool.map(lambda group: [deliver(spec) for spec in group], groups.values()):
+            for spec, result, error in results:
+                if error:
+                    failures.append(f"{spec['name']}: {error}")
+                    continue
+                completed.append({"channel": spec["name"], "run_id": result["databaseId"], "url": result.get("url")})
+                optional_mirror = spec.get("optional_mirror")
+                if optional_mirror:
+                    if optional_mirror["secrets"] - secrets:
+                        skipped.append({
+                            "channel": optional_mirror["name"],
+                            "reason": "The GHCR publication completed; optional mirror credentials are not configured.",
+                        })
+                    else:
+                        completed.append({
+                            "channel": optional_mirror["name"],
+                            "run_id": result["databaseId"],
+                            "url": result.get("url"),
+                        })
     return completed, skipped, failures
 
 

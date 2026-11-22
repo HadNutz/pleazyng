@@ -2,7 +2,6 @@ package com.edde746.plezy
 
 import android.app.ActivityManager
 import android.app.AppOpsManager
-import com.edde746.plezy.shared.PlayerSurfaceHost
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
@@ -47,6 +46,7 @@ import com.edde746.plezy.mpv.MpvWorkspacePlayerPlugin
 import com.edde746.plezy.shared.AssistiveTechnologyMonitor
 import com.edde746.plezy.shared.DeviceQuirks
 import com.edde746.plezy.shared.MediaCodecQuery
+import com.edde746.plezy.shared.PlayerSurfaceHost
 import com.edde746.plezy.shared.ThemeHelper
 import com.edde746.plezy.watchnext.WatchNextPlugin
 import io.flutter.embedding.android.FlutterActivity

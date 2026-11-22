@@ -7,9 +7,9 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 repo_root="$(pwd -P)"
-options=()
+format_args=(--page-width=120)
 if [[ "${1:-}" == --check ]]; then
-  options=(--output=none --set-exit-if-changed)
+  format_args+=(--output=none --set-exit-if-changed)
   shift
 fi
 if [[ "${1:-}" == --help ]]; then
@@ -57,5 +57,5 @@ for path in "${paths[@]}"; do
 done
 
 if [[ ${#files[@]} -gt 0 ]]; then
-  dart format --page-width=120 "${options[@]}" "${files[@]}"
+  dart format "${format_args[@]}" "${files[@]}"
 fi

@@ -3,7 +3,24 @@ name: Native emulator isolation
 on:
   push:
     branches: [main, 'audit-remediation/**']
+    paths:
+      - '.github/workflows/native-emulator-isolation.yml'
+      - '.github/actions/**'
+      - 'native/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'macos/**'
+      - 'tvos/**'
+      - 'linux/**'
+      - 'windows/**'
+      - 'games-native.lock.json'
+      - 'scripts/**'
+      - 'test/android/**'
+      - 'lib/**/romm*/**'
+  workflow_call:
   workflow_dispatch:
+  schedule:
+    - cron: '41 6 * * 1'
 
 permissions:
   contents: read
@@ -13,7 +30,7 @@ jobs:
     # Queue each platform independently. An unavailable runner must not hold
     # up validation on every other operating system, including revised routes.
     concurrency:
-      group: native-emulator-isolation-${{ github.ref }}-${{ matrix.os }}
+      group: native-emulator-isolation-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}-${{ matrix.os }}
       cancel-in-progress: false
     strategy:
       fail-fast: false
@@ -60,7 +77,7 @@ jobs:
 
   android:
     concurrency:
-      group: native-emulator-isolation-${{ github.ref }}-android
+      group: native-emulator-isolation-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}-android
       cancel-in-progress: false
     runs-on: ubuntu-24.04
     timeout-minutes: 40

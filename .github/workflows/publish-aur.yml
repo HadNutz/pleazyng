@@ -28,6 +28,11 @@ permissions:
   contents: read
   attestations: read
 
+concurrency:
+  group: aur-pleazyng-package
+  cancel-in-progress: false
+  queue: max
+
 jobs:
   update-aur:
     name: Update pleazyng-bin on AUR

@@ -132,9 +132,8 @@ HWND MpvPlayerPlugin::GetWindow() { return ::GetAncestor(GetChildWindow(), GA_RO
 HWND MpvPlayerPlugin::PlaybackDisplayWindow() {
   HWND surface = player_ ? player_->GetHwnd() : nullptr;
   RECT rect{};
-  return surface && IsWindowVisible(surface) && GetWindowRect(surface, &rect) && !IsRectEmpty(&rect)
-             ? surface
-             : GetWindow();
+  return surface && IsWindowVisible(surface) && GetWindowRect(surface, &rect) && !IsRectEmpty(&rect) ? surface
+                                                                                                     : GetWindow();
 }
 
 namespace {

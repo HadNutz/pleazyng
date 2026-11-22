@@ -27,6 +27,7 @@ env:
 concurrency:
   group: update-release-packages
   cancel-in-progress: false
+  queue: max
 
 jobs:
   resolve-release:

@@ -14,8 +14,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: decky-security-${{ github.ref }}
-  cancel-in-progress: false
+  group: decky-security-${{ github.event_name == 'push' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
 

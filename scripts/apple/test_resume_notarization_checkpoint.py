@@ -62,6 +62,31 @@ class ResumeNotarizationTests(unittest.TestCase):
             self.assertEqual(result['attempt'], 1)
             self.assertEqual((Path(directory) / 'notarization.zip').read_bytes(), self.archive)
 
+    def test_hosted_finisher_replays_original_and_resaved_submissions(self):
+        for saved, current in [(1, 1), (2, 3), (3, 4)]:
+            with self.subTest(saved=saved, current=current), tempfile.TemporaryDirectory() as directory:
+                receipt = {**self.receipt, 'checkpoint_attempt': saved, 'status': 'Accepted'}
+                data = io.BytesIO()
+                with zipfile.ZipFile(data, 'w') as outer:
+                    outer.writestr('notarization.zip', self.archive)
+                    outer.writestr('notarization-checkpoint.json', json.dumps(receipt))
+                archive = data.getvalue()
+                artifact = {**self.artifact, 'name': f'macos-notarization-checkpoint-42-{saved}',
+                            'digest': 'sha256:' + hashlib.sha256(archive).hexdigest()}
+
+                def run(argv, *, check, stdout=None):
+                    if stdout is not None:
+                        stdout.write(archive)
+                    else:
+                        (Path(argv[-1]) / 'Pleazyng.app').mkdir()
+
+                def api(path):
+                    return artifact if path.endswith('/501') else {'artifacts': [artifact]}
+
+                result = restore(Path(directory), run_id=42, current_attempt=current, include_current=True,
+                                 source_sha=self.source, product_source_sha=self.product_source, api=api, run=run)
+                self.assertEqual((result['attempt'], result['submission_id']), (saved, self.submission))
+
     def test_no_checkpoint_on_first_attempt(self):
         with self.assertRaises(ValueError):
             restore(Path('/tmp/unused'), run_id=42, current_attempt=1,
