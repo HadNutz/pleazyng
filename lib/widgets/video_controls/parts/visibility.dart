@@ -152,12 +152,18 @@ extension _PlexVideoControlsVisibilityMethods on _PlexVideoControlsState {
   /// this toggle or from the settings screen — takes the same path, and
   /// [OrientationHelper] keeps fixed-orientation platforms (car, TV) out of it.
   void _applyRotationLock(bool locked) {
-    unawaited(
-      OrientationHelper.applyPlaybackLock(
-        locked,
-        systemManaged: OrientationHelper.systemManagesPlaybackWindow(context),
-      ),
-    );
+    // Settings bindings can fire immediately from initState. View.of(context)
+    // depends on an inherited widget, so read the view only after the first
+    // frame instead of during the binding's initial callback.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(
+        OrientationHelper.applyPlaybackLock(
+          locked,
+          systemManaged: OrientationHelper.systemManagesPlaybackWindow(context),
+        ),
+      );
+    });
   }
 
   void _toggleRotationLock() {

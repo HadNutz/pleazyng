@@ -1864,9 +1864,9 @@ extension on TranslationsFrCa {
 			'romm.connecting' => 'Connecting…',
 			'romm.busy' => 'The streaming computer is occupied.',
 			'romm.streamEnded' => 'The streaming session ended.',
-			'romm.retry' => 'Try again',
 			_ => null,
 		} ?? switch (path) {
+			'romm.retry' => 'Try again',
 			'romm.disc' => 'Change disc',
 			'romm.memoryCard' => 'Memory card',
 			'romm.multiplayer' => 'Allow players to join',

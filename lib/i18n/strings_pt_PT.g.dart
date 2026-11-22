@@ -1920,9 +1920,9 @@ extension on TranslationsPtPt {
 			'romm.browserUnavailable' => 'An embedded browser player is not available in this build.',
 			'romm.nativeUnavailable' => 'The native emulator core is not installed in this build.',
 			'romm.refreshBeforePlay' => 'Refresh this library to check available players.',
-			'romm.missing' => 'This copy has no game files on the server.',
 			_ => null,
 		} ?? switch (path) {
+			'romm.missing' => 'This copy has no game files on the server.',
 			'romm.noRoute' => 'No compatible in-app player is available for this copy.',
 			'romm.firmware' => 'Firmware',
 			'romm.firmwareHelp' => 'Some systems need firmware. Manage it in RomM; the selected emulator reports any missing requirements at launch.',
