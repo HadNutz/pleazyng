@@ -34,9 +34,8 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
     XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
     let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
     while Date() < readyBy {
-      if let raw = try? awaitGetProperty(core, name: "time-pos").get(),
-        let seconds = Double(raw), seconds >= 0.1
-      {
+      let position = try? awaitGetProperty(core, name: "time-pos").get()
+      if let raw = position, let seconds = Double(raw), seconds >= 0.1 {
         break
       }
       pump(0.05)
