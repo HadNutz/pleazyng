@@ -1243,7 +1243,7 @@ jobs:
           persist-credentials: false
 
       - name: Download verified Android variants
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: android-variant-*
           path: .
@@ -1373,7 +1373,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download verified WebOS dav1d source
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: webos-dav1d-source
           path: ${{ runner.temp }}/webos-dav1d-source
@@ -2953,7 +2953,7 @@ jobs:
 
       - name: Restore recovered compilation identity
         if: inputs.macos_compilation_job_id != ''
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: macos-recovered-identity-${{ github.run_id }}
 
@@ -4058,7 +4058,7 @@ jobs:
           persist-credentials: false
 
       - name: Restore verified bundle
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: linux-bundle-${{ matrix.arch }}
           path: .
@@ -4290,7 +4290,7 @@ jobs:
           persist-credentials: false
 
       - name: Collect verified Linux formats
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: linux-format-${{ matrix.arch }}-*
           path: .
