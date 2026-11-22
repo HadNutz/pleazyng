@@ -125,7 +125,10 @@ class NativePreparationOrderTests(unittest.TestCase):
         selector = re.search(r'-only-testing:RunnerTests/(\w+)/(\w+)', APPLE_SUITE.read_text())
         self.assertIsNotNone(selector)
         suite, method = selector.groups()
-        source = (ROOT / 'ios/RunnerTests/RunnerTests.swift').read_text()
+        source = '\n'.join(
+            path.read_text()
+            for path in (ROOT / 'ios/RunnerTests').glob('*.swift')
+        )
         declaration = re.search(rf'^final class {suite}: XCTestCase \{{.*?^\}}', source, re.M | re.S)
         self.assertIsNotNone(declaration, suite)
         self.assertIn(f'func {method}()', declaration.group())

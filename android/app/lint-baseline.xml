@@ -364,16 +364,6 @@
             column="6"/>
     </issue>
 
-    <issue
-        id="AndroidGradlePluginVersion"
-        message="A newer version of Gradle than 9.6.1 is available: 9.9.2"
-        errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-9.6.1-all.zip"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="$HOME/work/pleazyng/pleazyng/android/gradle/wrapper/gradle-wrapper.properties"
-            line="4"
-            column="17"/>
-    </issue>
 
     <issue
         id="GradleDependency"

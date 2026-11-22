@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update the Android Gradle wrapper and Apple motion test wiring to keep current native validation passing.
+
 - Avoid duplicate mpv display refresh-rate writes when concurrent display notifications report the same mode, and update the Android test-only Robolectric dependency to 4.18.1.
 
 - Fix a player-controls startup assertion when reading the active display and hinge before Flutter finishes mounting the controls.

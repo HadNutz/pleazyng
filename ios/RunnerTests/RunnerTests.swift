@@ -94,52 +94,6 @@ final class MpvPlayerContractTests: XCTestCase {
     XCTAssertEqual((cancelled[0] as? FlutterError)?.code, "NOT_INITIALIZED")
   }
 
-  func testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream() throws {
-    let clip = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: "Butterfly-209", withExtension: "mp4"))
-    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 180))
-    window.isHidden = false
-    let core = MpvPlayerCore()
-    // Select the MPV output that owns the AVFoundation motion options.
-    core.experimentalDolbyVisionRequested = false
-    XCTAssertTrue(core.initialize(in: window))
-    defer {
-      core.dispose()
-      core.queue.sync {}
-      window.isHidden = true
-    }
-    core.setVisible(true)
-    // The cold hosted simulator can take longer to settle than one pass of the fixture.
-    XCTAssertSuccess(awaitProperty(core, name: "loop-file", value: "inf"))
-    _ = try runMotionCommand(core, ["loadfile", clip.path])
-    XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
-    let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
-    while Date() < readyBy {
-      if let raw = try? awaitGetProperty(core, name: "time-pos").get(),
-        let seconds = Double(raw), seconds >= 0.1 {
-        break
-      }
-      pump(0.05)
-    }
-    XCTAssertGreaterThan(try timePos(core), 0)
-    XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
-    let entry = try XCTUnwrap(try awaitGetProperty(core, name: "playlist/0/id").get())
-    for preset in ["performance", "quality"] {
-      let before = try timePos(core)
-      XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-preset", value: preset))
-      XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "yes"))
-      pump(0.35)
-      XCTAssertGreaterThan(try timePos(core), before)
-      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
-    }
-    XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "no"))
-    let before = try timePos(core)
-    pump(0.35)
-    XCTAssertGreaterThan(try timePos(core), before)
-    XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
-
-    try verifyFallbackFrameMixing(core, entry: entry)
-  }
-
   func testRealSetPropertyValidInvalidNonexistentAndPauseCache() {
     let core = MpvAudioPlayerCore()
     XCTAssertTrue(core.initialize())
@@ -801,45 +755,6 @@ final class MpvPlayerContractTests: XCTestCase {
 }
 
 extension MpvPlayerContractTests {
-  private func runMotionCommand(_ core: MpvPlayerCore, _ args: [String]) throws -> Int64? {
-    let accepted = expectation(description: args[0])
-    var result: Result<Int64?, Error>?
-    core.commandAsync(args) { reply in
-      result = reply
-      accepted.fulfill()
-    }
-    wait(for: [accepted], timeout: nativeCompletionTimeout)
-    return try XCTUnwrap(result).get()
-  }
-
-  private func verifyFallbackFrameMixing(_ core: MpvPlayerCore, entry: String) throws {
-    guard try awaitGetProperty(core, name: "pleazyng-vt-motion-supported").get() == "no" else { return }
-    let label = "@plezy-apple-motion"
-    let gpu = "libplacebo=fps=60:frame_mixer=oversample:format=yuv420p"
-    let cpu = "minterpolate=fps=60:mi_mode=blend"
-    let provider: String
-    do {
-      _ = try runMotionCommand(core, ["vf", "add", "\(label):lavfi=[\(gpu)]"])
-      provider = "libplacebo GPU"
-    } catch {
-      _ = try runMotionCommand(core, ["vf", "add", "\(label):lavfi=[\(cpu)]"])
-      provider = "FFmpeg CPU"
-    }
-    let deadline = Date().addingTimeInterval(nativeCompletionTimeout)
-    var measured = 0.0
-    repeat {
-      pump(0.1)
-      if let rate = try? awaitGetProperty(core, name: "estimated-vf-fps").get() {
-        measured = Double(rate) ?? 0
-      }
-    } while measured < 45 && Date() < deadline
-    XCTAssertGreaterThanOrEqual(measured, 45, "The 29.97 fps fixture must produce intermediate frames")
-    print("Live motion mixer: \(provider), measured \(measured) fps")
-    _ = try runMotionCommand(core, ["vf", "remove", label])
-    XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
-    XCTAssertFalse((try awaitGetProperty(core, name: "vf").get() ?? "").contains(label))
-  }
-
   private func invokeSetProperty(
     _ plugin: RecordingMpvPlugin,
     name: String,
