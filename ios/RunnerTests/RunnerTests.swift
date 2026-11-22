@@ -275,10 +275,10 @@ final class MpvPlayerContractTests: XCTestCase {
     XCTAssertSuccess(awaitProperty(core, name: "loop-file", value: "inf"))
     _ = try command(["loadfile", clip.path])
     XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
-    func requirePlaybackAdvance(from previous: Double) throws {
+    func requirePlaybackAdvance(from previous: Double) {
       let deadline = Date().addingTimeInterval(30)
       repeat {
-        if let raw = try awaitGetProperty(core, name: "time-pos").get(), let seconds = Double(raw),
+        if let raw = try? awaitGetProperty(core, name: "time-pos").get(), let seconds = Double(raw),
           seconds > previous + 0.05 || (seconds > 0 && seconds < previous)
         {
           return
@@ -287,19 +287,19 @@ final class MpvPlayerContractTests: XCTestCase {
       } while Date() < deadline
       XCTFail("The open clip did not advance from " + String(previous))
     }
-    try requirePlaybackAdvance(from: 0)
+    requirePlaybackAdvance(from: 0)
     XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
     let entry = try XCTUnwrap(try awaitGetProperty(core, name: "playlist/0/id").get())
     for preset in ["performance", "quality"] {
       let before = try timePos(core)
       XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-preset", value: preset))
       XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "yes"))
-      try requirePlaybackAdvance(from: before)
+      requirePlaybackAdvance(from: before)
       XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
     }
     XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "no"))
     let before = try timePos(core)
-    try requirePlaybackAdvance(from: before)
+    requirePlaybackAdvance(from: before)
     XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
 
     if try awaitGetProperty(core, name: "pleazyng-vt-motion-supported").get() == "no" {
@@ -337,7 +337,7 @@ final class MpvPlayerContractTests: XCTestCase {
       }
       XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
       XCTAssertFalse((try awaitGetProperty(core, name: "vf").get() ?? "").contains(label))
-      try requirePlaybackAdvance(from: timePos(core))
+      requirePlaybackAdvance(from: try timePos(core))
     }
   }
 
