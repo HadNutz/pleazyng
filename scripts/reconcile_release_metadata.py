@@ -6,6 +6,8 @@ import argparse
 import json
 from pathlib import Path
 import subprocess
+import sys
+import time
 
 from nix_release_metadata import METADATA_PATH
 
@@ -27,7 +29,22 @@ def reconcile(repo: Path, scratch: Path, tag: str | None = None) -> str:
                        "--nix-only", "--receipt", str(receipt)]
             if tag:
                 command.extend(["--tag", tag])
-            subprocess.run(command, cwd=checkout, check=True)
+            result = subprocess.run(command, cwd=checkout, capture_output=True, text=True)
+            if result.returncode:
+                output = f"{result.stdout}\n{result.stderr}"
+                if ("Public latest release changed during verification" in output
+                        and number < 3):
+                    print(f"Public latest release changed during attempt {number}; "
+                          "retrying against fresh main and release metadata.", flush=True)
+                    time.sleep(2 ** number)
+                    continue
+                if result.stdout:
+                    sys.stdout.write(result.stdout)
+                if result.stderr:
+                    sys.stderr.write(result.stderr)
+                raise subprocess.CalledProcessError(
+                    result.returncode, command, output=result.stdout, stderr=result.stderr,
+                )
             status = git(checkout, "status", "--porcelain").stdout.splitlines()
             if not status:
                 return "unchanged"

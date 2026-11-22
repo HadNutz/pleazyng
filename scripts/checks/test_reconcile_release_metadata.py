@@ -64,6 +64,29 @@ class MetadataPushTests(unittest.TestCase):
         self.assertEqual((self.other / reconcile.METADATA_PATH).read_text(), "new\n")
         self.assertTrue((self.root / "race/attempt-2.patch").exists())
 
+    def test_latest_release_change_during_verification_is_retried(self):
+        marker = self.root / "latest-release-advanced"
+        script = self.repo / "scripts/refresh_release_facts.py"
+        script.write_text(
+            "from pathlib import Path\n"
+            "import sys\n"
+            f"marker = Path({str(marker)!r})\n"
+            "if not marker.exists():\n"
+            "    marker.write_text('changed')\n"
+            "    print('Public latest release changed during verification', file=sys.stderr)\n"
+            "    raise SystemExit(1)\n"
+            "Path('linux/packaging/nix/release.json').write_text('new\\n')\n"
+        )
+        self.git(self.repo, "add", "scripts/refresh_release_facts.py")
+        self.git(self.repo, "commit", "-m", "simulate a latest-release race")
+        self.git(self.repo, "push", "origin", "main")
+
+        with patch.object(reconcile.time, "sleep") as sleep:
+            self.assertEqual(reconcile.reconcile(self.repo, self.root / "latest-race"), "updated")
+
+        sleep.assert_called_once_with(2)
+        self.assertTrue((self.root / "latest-race/attempt-2.patch").exists())
+
     def test_unrelated_generated_change_is_never_staged_or_pushed(self):
         script = self.repo / "scripts/refresh_release_facts.py"
         script.write_text(script.read_text() + "Path('unrelated.txt').write_text('stop')\n")
