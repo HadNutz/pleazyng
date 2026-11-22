@@ -154,7 +154,7 @@ class DownloadsScreenState extends State<DownloadsScreen>
     try {
       await operation;
     } catch (error) {
-      if (mounted) showErrorSnackBar(context, t.messages.errorLoading(error: error.toString()));
+      if (mounted) showErrorSnackBar(context, t.messages.errorLoading(error: localizedErrorReason(error)));
     }
   }
 

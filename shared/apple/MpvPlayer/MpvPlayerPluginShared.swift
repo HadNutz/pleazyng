@@ -3,6 +3,46 @@
 #elseif os(macOS)
   import FlutterMacOS
 #endif
+import Foundation
+import Metal
+import VideoToolbox
+
+private func appleMotionCapability(_ name: String) -> String? {
+  switch name {
+  case "pleazyng-apple-mixer-gpu-supported":
+    let device = MTLCreateSystemDefaultDevice()
+    #if targetEnvironment(simulator)
+      let supported = device.map { !$0.name.localizedCaseInsensitiveContains("simulator") } ?? false
+    #else
+      let supported = device != nil
+    #endif
+    return supported ? "yes" : "no"
+  case "pleazyng-vt-motion-supported":
+    var supported = false
+    #if !targetEnvironment(simulator) && compiler(>=6.2)
+      #if (os(iOS) && !targetEnvironment(macCatalyst)) || os(macOS)
+        if #available(iOS 26, macOS 15.4, *) {
+          supported = VTFrameRateConversionConfiguration.isSupported
+        }
+      #endif
+      if #available(iOS 26, macOS 26, tvOS 26, *) {
+        supported = supported || VTLowLatencyFrameInterpolationConfiguration.isSupported
+      }
+    #endif
+    return supported ? "yes" : "no"
+  default:
+    return nil
+  }
+}
+
+func handleAppleMotionCapability(
+  _ name: String,
+  completion: @escaping (Result<String?, Error>) -> Void
+) -> Bool {
+  guard let value = appleMotionCapability(name) else { return false }
+  DispatchQueue.main.async { completion(.success(value)) }
+  return true
+}
 
 /// Protocol for shared MpvPlayerPlugin method handlers across iOS, tvOS, and macOS.
 /// Platform-specific methods (PiP, initialization, window finding) remain

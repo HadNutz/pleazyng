@@ -1,7 +1,6 @@
 import AVFoundation
 import Foundation
 import Libmpv
-import Metal
 import QuartzCore
 import VideoToolbox
 import PlezyNGDVRuntimeAPI
@@ -1066,32 +1065,7 @@ class MpvPlayerCoreBase: NSObject {
       completeOnMain { completion(.failure(self.lifecycleUnavailableError())) }
       return
     }
-    if name == "pleazyng-apple-mixer-gpu-supported" {
-      let device = MTLCreateSystemDefaultDevice()
-      #if targetEnvironment(simulator)
-        // MTLSimDriver traps in newBuffer when MoltenVK downloads libplacebo's output.
-        // A GPU exposed directly by the host can still attempt the filter.
-        let supported = device.map { !$0.name.localizedCaseInsensitiveContains("simulator") } ?? false
-      #else
-        let supported = device != nil
-      #endif
-      completeOnMain { completion(.success(supported ? "yes" : "no")) }
-      return
-    }
-    if name == "pleazyng-vt-motion-supported" {
-      var supported = false
-      #if !targetEnvironment(simulator) && compiler(>=6.2)
-        #if (os(iOS) && !targetEnvironment(macCatalyst)) || os(macOS)
-          if #available(iOS 26, macOS 15.4, *) {
-            supported = VTFrameRateConversionConfiguration.isSupported
-          }
-        #endif
-        if #available(iOS 26, macOS 26, tvOS 26, *) {
-          supported = supported || VTLowLatencyFrameInterpolationConfiguration.isSupported
-        }
-      #endif
-      let value = supported ? "yes" : "no"
-      completeOnMain { completion(.success(value)) }
+    if handleAppleMotionCapability(name, completion: completion) {
       return
     }
 

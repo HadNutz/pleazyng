@@ -104,5 +104,17 @@
   },
   "lib/widgets/music/music_device_picker.dart": {
     "https://music.example": "Literal example relay URL; the network address is not translatable language."
+  },
+  "lib/screens/iptv/add_iptv_source_screen.dart": {
+    "${t.common.preview} · IPTV-org (US)": "Localized action plus fixed provider identity for the bundled sample playlist.",
+    "#EXTM3U": "Protocol header shown as an example of a literal M3U file marker."
+  },
+  "lib/screens/iptv/iptv_channels_settings_screen.dart": {
+    "${t.subtitleAiUi.export} XMLTV": "Localized action plus the fixed XMLTV format name.",
+    "${t.metadataEdit.hide} · LOW BANDWIDTH": "Localized action plus a provider-defined channel group name."
+  },
+  "lib/screens/iptv/iptv_picker_credit.dart": {
+    "M3U Web Picker": "Upstream project name displayed in its source credit.",
+    "Zachary Schmook (@zschmook)": "Upstream author credit; preserve the name and handle verbatim."
   }
 }

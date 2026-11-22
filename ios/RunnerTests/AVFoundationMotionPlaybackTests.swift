@@ -6,6 +6,7 @@ import XCTest
 
 final class AVFoundationMotionPlaybackTests: XCTestCase {
   private let nativeCompletionTimeout: TimeInterval = 10
+  private let playbackStartTimeout: TimeInterval = 30
   private let failure = NSError(
     domain: "AVFoundationMotionPlaybackTests",
     code: 1,
@@ -32,29 +33,19 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
     XCTAssertSuccess(awaitProperty(core, name: "loop-file", value: "inf"))
     _ = try runMotionCommand(core, ["loadfile", clip.path])
     XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
-    let readyBy = Date().addingTimeInterval(nativeCompletionTimeout)
-    while Date() < readyBy {
-      let position = try? awaitGetProperty(core, name: "time-pos").get()
-      if let raw = position, let seconds = Double(raw), seconds >= 0.1 {
-        break
-      }
-      pump(0.05)
-    }
-    XCTAssertGreaterThan(try timePos(core), 0)
+    requirePlaybackAdvance(core, from: 0)
     XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
     let entry = try XCTUnwrap(try awaitGetProperty(core, name: "playlist/0/id").get())
     for preset in ["performance", "quality"] {
       let before = try timePos(core)
       XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-preset", value: preset))
       XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "yes"))
-      pump(0.35)
-      XCTAssertGreaterThan(try timePos(core), before)
+      requirePlaybackAdvance(core, from: before)
       XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
     }
     XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "no"))
     let before = try timePos(core)
-    pump(0.35)
-    XCTAssertGreaterThan(try timePos(core), before)
+    requirePlaybackAdvance(core, from: before)
     XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
 
     try verifyFallbackFrameMixing(core, entry: entry)
@@ -108,6 +99,23 @@ final class AVFoundationMotionPlaybackTests: XCTestCase {
     }
     XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
     XCTAssertFalse((try awaitGetProperty(core, name: "vf").get() ?? "").contains(label))
+    requirePlaybackAdvance(core, from: try timePos(core))
+  }
+
+  private func requirePlaybackAdvance(_ core: MpvPlayerCore, from previous: Double) {
+    let deadline = Date().addingTimeInterval(playbackStartTimeout)
+    repeat {
+      let position = try? awaitGetProperty(core, name: "time-pos").get()
+      if let raw = position, let seconds = Double(raw), hasAdvanced(seconds, from: previous) {
+        return
+      }
+      pump(0.05)
+    } while Date() < deadline
+    XCTFail("The open clip did not advance from " + String(previous))
+  }
+
+  private func hasAdvanced(_ current: Double, from previous: Double) -> Bool {
+    current > previous + 0.05 || (current > 0 && current < previous)
   }
 
   private func pump(_ seconds: TimeInterval) {

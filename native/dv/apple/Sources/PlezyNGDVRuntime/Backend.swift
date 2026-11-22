@@ -19,6 +19,7 @@ public func createBackend() -> UnsafeMutableRawPointer {
 
 private let motionCapabilities = [
   "pleazyng-vt-motion-supported": "no",
+  "pleazyng-apple-mixer-gpu-supported": "no",
   "video-out-interpolation": "unavailable"
 ]
 
@@ -317,7 +318,7 @@ private final class AppleDVBackend: DVRuntimeBackend {
   }
 
   @MainActor private func value(_ name: String) -> Any? {
-    guard let engine else { return nil }
+    guard let engine else { return options[name] ?? motionCapabilities[name] }
     switch name {
     case "time-pos": return engine.currentTime
     case "duration": return engine.duration
@@ -332,8 +333,6 @@ private final class AppleDVBackend: DVRuntimeBackend {
     case "container-fps", "estimated-vf-fps": return engine.sourceVideoFrameRate
     case "video-codec": return engine.sourceVideoCodecName
     case "current-vo": return "aether"
-    case "pleazyng-vt-motion-supported", "pleazyng-apple-mixer-gpu-supported": return "no"
-    case "video-out-interpolation": return "unavailable"
     case "hwdec-current": return engine.activeVideoDecoder
     case "plezyng-dv-engine": return "plezyng-apple-dv-runtime-v1"
     case "current-tracks/video/dolby-vision-profile": return engine.sourceDVProfile
