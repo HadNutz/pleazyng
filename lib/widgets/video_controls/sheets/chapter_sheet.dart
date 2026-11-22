@@ -34,6 +34,7 @@ class ChapterSheet extends StatefulWidget {
   final bool canControl;
   final String? serverId; // Server ID for the metadata these chapters belong to
   final String? bookmarkMediaKey;
+  final String? legacyBookmarkKey;
   final bool isLive;
   final Future<void> Function(Duration position)? onSeekRequested;
   final Function(Duration position)? onSeekCompleted;
@@ -46,6 +47,7 @@ class ChapterSheet extends StatefulWidget {
     required this.canControl,
     this.serverId,
     this.bookmarkMediaKey,
+    this.legacyBookmarkKey,
     this.isLive = false,
     this.onSeekRequested,
     this.onSeekCompleted,
@@ -62,6 +64,7 @@ class _ChapterSheetState extends State<ChapterSheet> {
   Duration? _loopEnd;
   bool _loopBusy = false;
   List<MediaBookmark> _bookmarks = const [];
+  List<MediaBookmark> _legacyBookmarks = const [];
   bool _bookmarkBusy = false;
   StreamSubscription<PlayerSourceStarted>? _sourceStartedSubscription;
   StreamSubscription<bool>? _seekableSubscription;
@@ -95,7 +98,8 @@ class _ChapterSheetState extends State<ChapterSheet> {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.player, widget.player) ||
         !identical(oldWidget.chapters, widget.chapters) ||
-        oldWidget.bookmarkMediaKey != widget.bookmarkMediaKey) {
+        oldWidget.bookmarkMediaKey != widget.bookmarkMediaKey ||
+        oldWidget.legacyBookmarkKey != widget.legacyBookmarkKey) {
       _bindChapterIndexStream();
       _loadBookmarks();
       if (!identical(oldWidget.player, widget.player)) {
@@ -172,6 +176,8 @@ class _ChapterSheetState extends State<ChapterSheet> {
 
   void _loadBookmarks() {
     final mediaKey = widget.bookmarkMediaKey;
+    final legacyKey = widget.legacyBookmarkKey;
+    _legacyBookmarks = legacyKey == null ? const [] : MediaBookmarkService.forMedia(legacyKey);
     _bookmarks = mediaKey == null || mediaKey.isEmpty ? const [] : MediaBookmarkService.forMedia(mediaKey);
   }
 
@@ -187,11 +193,11 @@ class _ChapterSheetState extends State<ChapterSheet> {
       initialValue: t.videoControls.bookmarkDefaultName(n: _bookmarks.length + 1),
       validator: (value) => value.trim().isEmpty ? t.videoControls.bookmarkNameRequired : null,
     );
-    if (!mounted || label == null || !_canShowBookmarks) return;
+    if (!mounted || label == null || !_canShowBookmarks || widget.bookmarkMediaKey != mediaKey) return;
     setState(() => _bookmarkBusy = true);
     try {
       final bookmark = await MediaBookmarkService.add(mediaKey, label, currentPosition.inMilliseconds);
-      if (mounted) setState(() => _bookmarks = [..._bookmarks, bookmark]);
+      if (mounted && widget.bookmarkMediaKey == mediaKey) setState(() => _bookmarks = [..._bookmarks, bookmark]);
     } on MediaBookmarkLimitException {
       if (mounted) showSnackBar(context, t.videoControls.bookmarkLimitReached);
     } on Object catch (error, stackTrace) {
@@ -202,13 +208,33 @@ class _ChapterSheetState extends State<ChapterSheet> {
     }
   }
 
-  Future<void> _deleteBookmark(MediaBookmark bookmark) async {
-    final mediaKey = widget.bookmarkMediaKey;
+  bool _canAssign(MediaBookmark mark) =>
+      _canShowBookmarks && widget.player.state.duration.inMilliseconds >= mark.positionMs;
+
+  Future<void> _assignLegacyBookmark(MediaBookmark bookmark) async {
+    final legacyKey = widget.legacyBookmarkKey, versionKey = widget.bookmarkMediaKey;
+    if (legacyKey == null || versionKey == null || _bookmarkBusy) return;
+    setState(() => _bookmarkBusy = true);
+    try {
+      await MediaBookmarkService.assignToVersion(legacyKey, versionKey, bookmark.id);
+      if (mounted) setState(_loadBookmarks);
+    } on MediaBookmarkLimitException {
+      if (mounted) showSnackBar(context, t.videoControls.bookmarkLimitReached);
+    } catch (error, stack) {
+      appLogger.w('Failed to assign media bookmark', error: error, stackTrace: stack);
+      if (mounted) showErrorSnackBar(context, t.videoControls.bookmarkUnavailable);
+    } finally {
+      if (mounted) setState(() => _bookmarkBusy = false);
+    }
+  }
+
+  Future<void> _deleteBookmark(MediaBookmark bookmark, {bool legacy = false}) async {
+    final mediaKey = legacy ? widget.legacyBookmarkKey : widget.bookmarkMediaKey;
     if (mediaKey == null || mediaKey.isEmpty || _bookmarkBusy) return;
     setState(() => _bookmarkBusy = true);
     try {
       await MediaBookmarkService.remove(mediaKey, bookmark.id);
-      if (mounted) setState(() => _bookmarks = _bookmarks.where((value) => value.id != bookmark.id).toList());
+      if (mounted) setState(_loadBookmarks);
     } on Object catch (error, stackTrace) {
       appLogger.w('Failed to delete media bookmark', error: error, stackTrace: stackTrace);
       if (mounted) showErrorSnackBar(context, t.videoControls.bookmarkUnavailable);
@@ -339,6 +365,25 @@ class _ChapterSheetState extends State<ChapterSheet> {
                       : null,
                 ),
             ],
+            if (!widget.isLive && widget.canControl && _legacyBookmarks.isNotEmpty) ...[
+              Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: Text(t.bookmarkMigration.unassigned)),
+              for (final mark in _legacyBookmarks)
+                FocusableListTile(
+                  title: Text(mark.label),
+                  subtitle: Text(
+                    _canAssign(mark)
+                        ? '${formatDurationTimestamp(Duration(milliseconds: mark.positionMs))} · ${t.bookmarkMigration.assignToVersion}'
+                        : formatDurationTimestamp(Duration(milliseconds: mark.positionMs)),
+                  ),
+                  leading: const AppIcon(Symbols.link_rounded),
+                  onTap: !_bookmarkBusy && _canAssign(mark) ? () => unawaited(_assignLegacyBookmark(mark)) : null,
+                  trailing: IconButton(
+                    tooltip: t.videoControls.deleteBookmark,
+                    icon: const AppIcon(Symbols.delete_outline_rounded),
+                    onPressed: _bookmarkBusy ? null : () => unawaited(_deleteBookmark(mark, legacy: true)),
+                  ),
+                ),
+            ],
             if (_canSetSegmentLoop) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -376,7 +421,8 @@ class _ChapterSheetState extends State<ChapterSheet> {
                 child: Center(
                   heightFactor: 1,
                   child: Text(
-                    _canShowBookmarks && _bookmarks.isNotEmpty
+                    (_canShowBookmarks && _bookmarks.isNotEmpty) ||
+                            (!widget.isLive && widget.canControl && _legacyBookmarks.isNotEmpty)
                         ? t.videoControls.noChaptersAvailable
                         : t.videoControls.noChaptersOrBookmarks,
                     style: TextStyle(color: tokens(context).textMuted),

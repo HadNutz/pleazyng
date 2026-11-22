@@ -222,6 +222,73 @@ void main() {
     await db.close();
   });
 
+  for (final emby in [false, true]) {
+    test('MediaBrowser collection index runs once and uses member libraries (Emby: $emby)', () async {
+      var boxIndexRequests = 0;
+      Future<http.Response> respond(http.Request r) async {
+        final q = r.url.queryParameters;
+        if (r.url.path.endsWith('/Views')) {
+          return _json({
+            'Items': [
+              for (final id in ['hidden', 'movies', 'tv'])
+                {'Id': id, 'Name': id, 'Type': 'CollectionFolder', 'CollectionType': id == 'tv' ? 'tvshows' : 'movies'},
+            ],
+          });
+        }
+        if (q['IncludeItemTypes'] == 'BoxSet') {
+          boxIndexRequests++;
+          return _json({
+            'Items': [
+              for (final id in ['private', 'mixed']) {'Id': id, 'Name': id, 'Type': 'BoxSet'},
+            ],
+            'TotalRecordCount': 2,
+          });
+        }
+        if (r.url.path.endsWith('/Ancestors')) {
+          return _json([
+            {'Type': 'CollectionFolder', 'Id': 'tv', 'Name': 'TV'},
+          ]);
+        }
+        if (q['ParentId'] == 'private') {
+          return _json({
+            'Items': [
+              {'Id': 'private-movie', 'Type': 'Movie', 'ParentId': 'hidden'},
+            ],
+            'TotalRecordCount': 1,
+          });
+        }
+        if (q['ParentId'] == 'mixed') {
+          return _json({
+            'Items': [
+              {'Id': 'movie', 'Type': 'Movie', 'ParentId': 'movies'},
+              {'Id': 'series', 'Type': 'Series', 'ParentId': 'nested'},
+            ],
+            'TotalRecordCount': 2,
+          });
+        }
+        fail('Unexpected request: ${r.url}');
+      }
+
+      final client = emby
+          ? testEmbyClient(
+              connection: testEmbyConnection(machineId: 'server'),
+              handler: respond,
+            )
+          : testJellyfinClient(
+              connection: testJellyfinConnection(machineId: 'server'),
+              handler: respond,
+            );
+      manager.debugRegisterJellyfinClientForTesting(client);
+      final result = await service.getCollectionsFromAllServers(hiddenLibraryKeys: {'server:hidden'});
+      expect(boxIndexRequests, 1);
+      expect(
+        result.collections.map((c) => (c.id, c.libraryId)),
+        unorderedEquals([('mixed', 'movies'), ('mixed', 'tv')]),
+      );
+      expect(result.libraryKinds, {'server:movies': MediaKind.movie, 'server:tv': MediaKind.show});
+    });
+  }
+
   /// Registers a Plex server whose `/hubs` answers a single Continue Watching
   /// hub built from [rows]; [metadata] answers `/library/metadata/<ratingKey>`
   /// for the keys it recognises. Any other request is an unexpected one.

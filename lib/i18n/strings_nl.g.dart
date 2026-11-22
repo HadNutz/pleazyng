@@ -66,6 +66,7 @@ class TranslationsNl extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$nl dialog = _Translations$dialog$nl._(_root);
 	@override late final _Translations$profiles$nl profiles = _Translations$profiles$nl._(_root);
 	@override late final _Translations$connections$nl connections = _Translations$connections$nl._(_root);
+	@override late final _Translations$iptv$nl iptv = _Translations$iptv$nl._(_root);
 	@override late final _Translations$accountPreferences$nl accountPreferences = _Translations$accountPreferences$nl._(_root);
 	@override late final _Translations$discover$nl discover = _Translations$discover$nl._(_root);
 	@override late final _Translations$errors$nl errors = _Translations$errors$nl._(_root);
@@ -123,6 +124,7 @@ class TranslationsNl extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$nl musicExperience = _Translations$musicExperience$nl._(_root);
 	@override late final _Translations$musicTools$nl musicTools = _Translations$musicTools$nl._(_root);
 	@override late final _Translations$musicDevices$nl musicDevices = _Translations$musicDevices$nl._(_root);
+	@override late final _Translations$bookmarkMigration$nl bookmarkMigration = _Translations$bookmarkMigration$nl._(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class _Translations$settings$nl extends Translations$settings$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Scharnier van het vouwscherm';
 	@override String get title => 'Instellingen';
 	@override String get supportDeveloper => 'Steun Pleazyng';
 	@override String get supportDeveloperDescription => 'Doneer om de ontwikkeling te steunen';
@@ -574,7 +577,6 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String get importSettings => 'Instellingen importeren';
 	@override String get importSettingsDescription => 'Voorkeuren herstellen vanuit een bestand';
 	@override String get importSettingsConfirm => 'Hiermee worden je huidige instellingen vervangen. Doorgaan?';
-	@override String get importSettingsSuccess => 'Instellingen geïmporteerd';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Toegepaste instellingen: ${applied}. Overgeslagen: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Dit bestand is geen geldige Pleazyng-export';
 	@override String get importSettingsNoUser => 'Meld je aan voordat je instellingen importeert';
@@ -588,7 +590,6 @@ class _Translations$settings$nl extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'De back-up is geüpload. Bewaar deze URL. Voer de URL na een nieuwe installatie in bij de cloudback-up en kies ‘${action}’.';
 	@override String get cloudBackupRestore => 'Herstel backup';
 	@override String get cloudBackupRestoreConfirm => 'Dit zal de overeenkomstige portable instellingen op deze apparaat vervangen.';
-	@override String get cloudBackupRestored => 'Instellingen hersteld van cloud backup';
 	@override String get shortcutsReset => 'Sneltoetsen gereset naar standaard';
 	@override String get resetShortcutsConfirm => 'Hiermee worden je aangepaste sneltoetsen vervangen door de standaardinstellingen. Doorgaan?';
 	@override String get about => 'Over';
@@ -1642,6 +1643,31 @@ class _Translations$connections$nl extends Translations$connections$en {
 	@override String get signInAgain => 'Opnieuw aanmelden';
 	@override String editMediaBrowserTitle({required Object product}) => '${product}-verbinding bewerken';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Voeg URL\'s toe aan ${serverName} of verwijder ze. Pleazyng gebruikt de bereikbare URL met de laagste latentie.';
+}
+
+// Path: iptv
+class _Translations$iptv$nl extends Translations$iptv$en {
+	_Translations$iptv$nl._(TranslationsNl root) : this._root = root, super.internal(root);
+
+	final TranslationsNl _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'Reservebronnen in afspeelvolgorde';
+	@override String get lineupOrder => 'Kanaalvolgorde';
+	@override String get orderChanged => 'De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.';
+	@override String get localPlaylist => 'M3U-bestand';
+	@override String get pastePlaylist => 'Tekst van afspeellijst plakken';
+	@override String get playlistBase => 'Basis-URL voor relatieve links (optioneel)';
+	@override String get localPlaylistHelp => 'Importeer een privékopie van een M3U- of M3U8-kanaallijst. Je kunt deze vervangen door een ander bestand.';
+	@override String get showMatches => 'Overeenkomende kanalen tonen';
+	@override String get hideMatches => 'Overeenkomende kanalen verbergen';
+	@override String get pickerCredit => 'Geïnspireerd door · M3U Web Picker · Zachary Schmook (@zschmook) en bijdragers';
+	@override String get exportPrivate => 'Streamadressen kunnen je inloggegevens bevatten. Bewaar de lijst op een privélocatie.';
+	@override String get dynamicStreamExport => 'Het portaal maakt bij elke afspeelbeurt een nieuwe link. Je kunt de programmagids exporteren.';
+	@override String get moveUp => 'bewegen op';
+	@override String get moveDown => 'Verplaatsen naar beneden';
+	@override String get choosePlaylist => 'Kies een playlist bestand';
+	@override String affectedChannels({required Object count}) => 'Zenders · ${count}';
 }
 
 // Path: accountPreferences
@@ -2723,6 +2749,7 @@ class _Translations$metadataEdit$nl extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Voer de afbeeldings-URL in';
 	@override String get imageUrl => 'Afbeeldings-URL';
 	@override String get metadataUpdated => 'Metadata bijgewerkt';
+	@override String get metadataConflict => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.';
 	@override String get metadataUpdateFailed => 'Metadata bijwerken mislukt';
 	@override String get artworkUpdated => 'Illustraties bijgewerkt';
 	@override String get artworkUpdateFailed => 'Illustraties bijwerken mislukt';
@@ -3123,7 +3150,6 @@ class _Translations$cast$nl extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Geleid naar ${device}';
 	@override String get device => 'Cast apparaat';
 	@override String get readyToCast => 'Bereid om te casten';
-	@override String get subtitle => 'Ondertitels';
 	@override String get serverNotAvailable => 'De media server is niet beschikbaar.';
 	@override String get stopCasting => 'Stop met casting';
 	@override String get startFailed => 'Kan niet beginnen met casting. check the server and try again.';
@@ -4107,6 +4133,7 @@ class _Translations$podcasts$nl extends Translations$podcasts$en {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.';
 	@override String get autoDownloadLatest => 'Nieuwste afleveringen automatisch downloaden';
 	@override String get removeFinishedAfter => 'Voltooide downloads verwijderen na';
 }
@@ -4519,6 +4546,17 @@ class _Translations$musicDevices$nl extends Translations$musicDevices$en {
 	@override String get relay => 'URL van muziekrelais';
 	@override String get relayHint => 'Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.';
 	@override String get relayInvalid => 'Voer een HTTPS-adres voor het relais in.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$nl extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$nl._(TranslationsNl root) : this._root = root, super.internal(root);
+
+	final TranslationsNl _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Bladwijzers uit een onbekende versie';
+	@override String get assignToVersion => 'Aan deze versie koppelen';
 }
 
 // Path: appIcon.names
@@ -5853,6 +5891,7 @@ extension on TranslationsNl {
 			'update.viewRelease' => 'Bekijk release',
 			'update.latestVersion' => 'Je hebt de nieuwste versie',
 			'update.checkFailed' => 'Kon niet controleren op updates',
+			'settings.foldableDisplay' => 'Scharnier van het vouwscherm',
 			'settings.title' => 'Instellingen',
 			'settings.supportDeveloper' => 'Steun Pleazyng',
 			'settings.supportDeveloperDescription' => 'Doneer om de ontwikkeling te steunen',
@@ -6036,7 +6075,6 @@ extension on TranslationsNl {
 			'settings.importSettings' => 'Instellingen importeren',
 			'settings.importSettingsDescription' => 'Voorkeuren herstellen vanuit een bestand',
 			'settings.importSettingsConfirm' => 'Hiermee worden je huidige instellingen vervangen. Doorgaan?',
-			'settings.importSettingsSuccess' => 'Instellingen geïmporteerd',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Toegepaste instellingen: ${applied}. Overgeslagen: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Dit bestand is geen geldige Pleazyng-export',
 			'settings.importSettingsNoUser' => 'Meld je aan voordat je instellingen importeert',
@@ -6050,7 +6088,6 @@ extension on TranslationsNl {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'De back-up is geüpload. Bewaar deze URL. Voer de URL na een nieuwe installatie in bij de cloudback-up en kies ‘${action}’.',
 			'settings.cloudBackupRestore' => 'Herstel backup',
 			'settings.cloudBackupRestoreConfirm' => 'Dit zal de overeenkomstige portable instellingen op deze apparaat vervangen.',
-			'settings.cloudBackupRestored' => 'Instellingen hersteld van cloud backup',
 			'settings.shortcutsReset' => 'Sneltoetsen gereset naar standaard',
 			'settings.resetShortcutsConfirm' => 'Hiermee worden je aangepaste sneltoetsen vervangen door de standaardinstellingen. Doorgaan?',
 			'settings.about' => 'Over',
@@ -6148,9 +6185,9 @@ extension on TranslationsNl {
 			'settings.manageLibrariesDescription' => 'Bibliotheken herordenen en verbergen',
 			'settings.companionRemoteServer' => 'Companion Remote-server',
 			'settings.companionRemoteServerDescription' => 'Sta mobiele apparaten op je netwerk toe om deze app te bedienen',
+			'settings.companionRemoteServerStartFailed' => 'Kan de Companion Remote-server niet starten',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Kan de Companion Remote-server niet starten',
 			'settings.companionRemoteServerStopFailed' => 'Kan de Companion Remote-server niet stoppen',
 			'settings.autoPip' => 'Automatische beeld-in-beeld',
 			'settings.autoPipDescription' => 'Schakel over naar beeld-in-beeld als je tijdens het afspelen de app verlaat',
@@ -6662,9 +6699,9 @@ extension on TranslationsNl {
 			'accessibility.boldTextHint' => 'Gebruik een zwaarder gewicht voor interface labels en berichten om ze gemakkelijker te onderscheiden.',
 			'tooltips.shufflePlay' => 'Willekeurig afspelen',
 			'tooltips.playTrailer' => 'Trailer afspelen',
+			'tooltips.markAsWatched' => 'Als bekeken markeren',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => 'Als bekeken markeren',
 			'tooltips.markAsUnwatched' => 'Als ongekeken markeren',
 			'audioTracks.track' => ({required Object n}) => 'Audiospoor ${n}',
 			'videoControls.audioLabel' => 'Audio',
@@ -7007,6 +7044,22 @@ extension on TranslationsNl {
 			'connections.signInAgain' => 'Opnieuw aanmelden',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product}-verbinding bewerken',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Voeg URL\'s toe aan ${serverName} of verwijder ze. Pleazyng gebruikt de bereikbare URL met de laagste latentie.',
+			'iptv.backupFeeds' => 'Reservebronnen in afspeelvolgorde',
+			'iptv.lineupOrder' => 'Kanaalvolgorde',
+			'iptv.orderChanged' => 'De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.',
+			'iptv.localPlaylist' => 'M3U-bestand',
+			'iptv.pastePlaylist' => 'Tekst van afspeellijst plakken',
+			'iptv.playlistBase' => 'Basis-URL voor relatieve links (optioneel)',
+			'iptv.localPlaylistHelp' => 'Importeer een privékopie van een M3U- of M3U8-kanaallijst. Je kunt deze vervangen door een ander bestand.',
+			'iptv.showMatches' => 'Overeenkomende kanalen tonen',
+			'iptv.hideMatches' => 'Overeenkomende kanalen verbergen',
+			'iptv.pickerCredit' => 'Geïnspireerd door · M3U Web Picker · Zachary Schmook (@zschmook) en bijdragers',
+			'iptv.exportPrivate' => 'Streamadressen kunnen je inloggegevens bevatten. Bewaar de lijst op een privélocatie.',
+			'iptv.dynamicStreamExport' => 'Het portaal maakt bij elke afspeelbeurt een nieuwe link. Je kunt de programmagids exporteren.',
+			'iptv.moveUp' => 'bewegen op',
+			'iptv.moveDown' => 'Verplaatsen naar beneden',
+			'iptv.choosePlaylist' => 'Kies een playlist bestand',
+			'iptv.affectedChannels' => ({required Object count}) => 'Zenders · ${count}',
 			'accountPreferences.sectionTitle' => 'Accountvoorkeuren',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio-, ondertitel- en bibliotheekopties opgeslagen op ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio-, ondertitel- en bibliotheekopties opgeslagen op ${count} accounts',
@@ -7162,6 +7215,8 @@ extension on TranslationsNl {
 			'discover.director' => 'Regisseur',
 			'discover.directors' => 'Regisseurs',
 			'discover.movie' => 'Film',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'Tv-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => 'nog ${minutes} min',
 			'discover.moreLikeThis' => 'Meer zoals dit',
@@ -7176,8 +7231,6 @@ extension on TranslationsNl {
 			'errors.connectionTimeout' => ({required Object context}) => 'Time-out van verbinding tijdens het laden van ${context}',
 			'errors.connectionFailed' => 'Kan geen verbinding maken met mediaserver',
 			'errors.unableToLoad' => ({required Object context}) => 'Kan ${context} niet laden. Probeer het opnieuw.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Geen client beschikbaar',
 			'errors.pleaseEnterToken' => 'Voer een token in',
 			'errors.invalidToken' => 'Ongeldig token',
@@ -7676,6 +7729,8 @@ extension on TranslationsNl {
 			'collections.removedFromCollection' => 'Uit collectie verwijderd',
 			'collections.removeFromCollectionFailed' => 'Verwijderen uit collectie mislukt',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Fout bij verwijderen uit collectie: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => 'Collecties zoeken...',
 			'playlists.title' => 'Afspeellijsten',
 			'playlists.playlist' => 'Afspeellijst',
@@ -7690,8 +7745,6 @@ extension on TranslationsNl {
 			'playlists.emptyPlaylist' => 'Deze afspeellijst is leeg',
 			'playlists.deleteConfirm' => 'Afspeellijst verwijderen?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Weet je zeker dat je "${name}" wilt verwijderen?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Afspeellijst gemaakt',
 			'playlists.deleted' => 'Afspeellijst verwijderd',
 			'playlists.itemAdded' => 'Toegevoegd aan afspeellijst',
@@ -8190,6 +8243,8 @@ extension on TranslationsNl {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-decoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-decoder (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Basislaag',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-basislaag',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-basislaag',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-basislaag',
@@ -8204,8 +8259,6 @@ extension on TranslationsNl {
 			'performanceOverlay.transfer' => 'Overdracht',
 			'performanceOverlay.renderFps' => 'Render-FPS',
 			'performanceOverlay.displayFps' => 'Scherm-FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-sync',
 			'performanceOverlay.dropped' => 'Gedropt',
 			'performanceOverlay.dvRpus' => 'DV RPU’s',
@@ -8281,6 +8334,7 @@ extension on TranslationsNl {
 			'metadataEdit.enterImageUrl' => 'Voer de afbeeldings-URL in',
 			'metadataEdit.imageUrl' => 'Afbeeldings-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata bijgewerkt',
+			'metadataEdit.metadataConflict' => 'Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.',
 			'metadataEdit.metadataUpdateFailed' => 'Metadata bijwerken mislukt',
 			'metadataEdit.artworkUpdated' => 'Illustraties bijgewerkt',
 			'metadataEdit.artworkUpdateFailed' => 'Illustraties bijwerken mislukt',
@@ -8638,7 +8692,6 @@ extension on TranslationsNl {
 			'cast.connectedTo' => ({required Object device}) => 'Geleid naar ${device}',
 			'cast.device' => 'Cast apparaat',
 			'cast.readyToCast' => 'Bereid om te casten',
-			'cast.subtitle' => 'Ondertitels',
 			'cast.serverNotAvailable' => 'De media server is niet beschikbaar.',
 			'cast.stopCasting' => 'Stop met casting',
 			'cast.startFailed' => 'Kan niet beginnen met casting. check the server and try again.',
@@ -8704,6 +8757,8 @@ extension on TranslationsNl {
 			'homeLayout.autoSlideDescription' => 'Ook slides op zichzelf elke paar seconden. Arrows (PC) en d-pad (TV) werken altijd en herstarten de timer.',
 			'homeLayout.autoSlideEditDescription' => 'Ook slides op zichzelf elke paar seconden. Off: bewegt alleen wanneer u een pijl (PC) klikt of links/rijk op de afstand (TV) druk.',
 			'homeLayout.enableHeroFirst' => 'Helden eerst mogelijk maken',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'Show op Home Screen',
 			'homeLayout.home' => 'Home →',
 			'homeLayout.removeFromHome' => 'Verwijder van huis',
@@ -8718,8 +8773,6 @@ extension on TranslationsNl {
 			'homeLayout.customPlexRow' => 'Kijk naar Plex',
 			'homeLayout.heroNeedsLibrary' => 'Check Library first — Hero heeft ergens nodig om te tonen',
 			'homeLayout.heroNeedsSurface' => 'Check Library or Home first — Hero heeft ergens nodig om te tonen',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Verwijder Hub',
 			'homeLayout.noPlexRows' => 'Nr. Plex-geheerd rijen teruggekeerd voor deze bibliotheek.',
 			'homeLayout.openDetails' => 'Open details',
@@ -9218,6 +9271,8 @@ extension on TranslationsNl {
 			'audiobook.librarySort' => 'Sorte boeken',
 			'audiobook.sortTitle' => 'Titel',
 			'audiobook.sortAuthor' => 'Schrijver',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => 'De narrator',
 			'audiobook.sortSeries' => 'Serie bevel',
 			'audiobook.sortRecent' => 'Onlangs geopend',
@@ -9232,8 +9287,6 @@ extension on TranslationsNl {
 			'audiobook.recoveryExport' => 'Export versleutelde herstel bestanden',
 			'audiobook.recoveryImport' => 'Geïmporteerde versleutelde herstelbestanden',
 			'audiobook.recoveryImportConfirm' => 'Combineer deze versleutelde herstelbestand met de huidige leesposities en noten? bestaande geschiedenis zal worden bewaard. gedeelde bibliotheek en item-ID\'s zijn niet opgenomen; set matching ID\'s on each device before importing.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Encrypt herstel bestand is opgeslagen.',
 			'audiobook.recoveryImported' => 'Recovery data samengesteld.',
 			'sourceSetup.bookorbitHelp' => 'Meld je aan met je eigen BookOrbit-account om de boeken daar te bekijken en af te spelen. Aanvragen voor ontbrekende titels worden nog steeds via je gekoppelde SeerrNG-instantie verstuurd.',
@@ -9452,6 +9505,7 @@ extension on TranslationsNl {
 			'issueReport.privacy' => 'Het concept bevat de appversie, het platform en het aantal verbindingen. Serveradressen, account- en profielnamen, mediatitels en bestandspaden worden weggelaten.',
 			'issueReport.logPrivacy' => 'Logboeken zijn optioneel. Controleer ze voordat je ze uploadt. Hun ID wordt toegevoegd aan het concept, dat openbaar kan zijn.',
 			'issueReport.openDraft' => 'GitHub-concept openen',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Nieuwste afleveringen automatisch downloaden',
 			'podcasts.removeFinishedAfter' => 'Voltooide downloads verwijderen na',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Voorbeeld van ondertitelcodering',
@@ -9731,6 +9785,8 @@ extension on TranslationsNl {
 			'musicTools.guestDj' => 'Gast-dj',
 			'musicTools.charts' => 'Luisterlijsten',
 			'musicTools.rediscover' => 'Herontdekken',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => 'Muziekstations',
 			'musicTools.prompt' => 'Afspeellijst uit beschrijving',
 			'musicTools.provider' => 'Generatie-URL van aanbieder',
@@ -9746,8 +9802,6 @@ extension on TranslationsNl {
 			'musicTools.apiKey' => 'API-sleutel',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minuten',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => 'Filters',
 			'musicTools.exclusiveOutput' => 'Exclusieve audio-uitvoer',
 			'musicTools.preamp' => 'Voorversterking',
@@ -9803,6 +9857,8 @@ extension on TranslationsNl {
 			'musicDevices.relay' => 'URL van muziekrelais',
 			'musicDevices.relayHint' => 'Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.',
 			'musicDevices.relayInvalid' => 'Voer een HTTPS-adres voor het relais in.',
+			'bookmarkMigration.unassigned' => 'Bladwijzers uit een onbekende versie',
+			'bookmarkMigration.assignToVersion' => 'Aan deze versie koppelen',
 			_ => null,
 		};
 	}

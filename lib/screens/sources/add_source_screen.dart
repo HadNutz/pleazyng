@@ -18,6 +18,7 @@ import '../../sources/dlna_discovery.dart';
 import '../../sources/adapters/bookorbit_source.dart';
 import '../../sources/adapters/s3_source.dart';
 import '../../sources/kavita_opds.dart';
+import '../../sources/podcast_opml.dart';
 import '../../sources/publication_shelf.dart';
 import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
@@ -311,12 +312,7 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
 
   String? _validatePodcastFeedUrl(String? value) {
     final uri = Uri.tryParse(value?.trim() ?? '');
-    if (uri == null ||
-        uri.host.isEmpty ||
-        uri.userInfo.isNotEmpty ||
-        uri.hasFragment ||
-        (uri.scheme != 'https' && !(uri.scheme == 'http' && _allowHttp)) ||
-        uri.toString().length > 8192) {
+    if (!PodcastSubscription.acceptsUrl(uri, allowHttp: _allowHttp)) {
       return t.fileSources.errorInvalidData;
     }
     return null;

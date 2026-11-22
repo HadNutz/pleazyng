@@ -129,6 +129,44 @@ void main() {
     expect(lease.canPersistForBackgroundTransfer, isFalse);
   });
 
+  test('resolves an evicted file directly from a large authenticated inventory', () async {
+    final inventory = List.generate(
+      501,
+      (i) => RemoteCloudItem(
+        id: 'pm:file:$i',
+        name: 'Film $i.mkv',
+        service: RemoteStreamService.premiumize,
+        kind: RemoteCloudItemKind.file,
+        accountId: 'account-1',
+        uri: Uri.https('cdn.example', 'fresh/$i.mkv'),
+      ),
+    );
+    final indexed = <String, SourceEntry>{};
+    var reads = 0;
+    final sourceAdapter = RemoteCloudSourceAdapter(
+      source,
+      SourceTransport(),
+      service: RemoteStreamService.premiumize,
+      accountId: 'account-1',
+      loadEntryById: (id) async => indexed[id],
+      loadPage: ({parentId, cursor}) async {
+        reads++;
+        return RemoteCloudPage(items: inventory);
+      },
+      resolveContent: (item) async => ContentLease(item.uri!),
+    );
+    addTearDown(sourceAdapter.close);
+    final listed = await sourceAdapter.browse();
+    indexed.addEntries(listed.entries.map((entry) => MapEntry(entry.id, entry)));
+    expect(indexed, hasLength(501));
+    final first = indexed['pm:file:0']!;
+    expect((await sourceAdapter.resolve(first.files.single)).uri.path, '/fresh/0.mkv');
+    expect(reads, 2);
+    expect((await sourceAdapter.hydrate(first)).id, first.id);
+    expect((await sourceAdapter.resolve(first.files.single)).uri.path, '/fresh/0.mkv');
+    expect(reads, 3);
+  });
+
   test('refuses to browse a folder that is not owned by this account page', () async {
     final sourceAdapter = adapter(page: ({parentId, cursor}) => const RemoteCloudPage(items: []));
     addTearDown(sourceAdapter.close);

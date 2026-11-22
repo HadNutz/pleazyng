@@ -1610,7 +1610,7 @@ jobs:
     timeout-minutes: 240
     outputs:
       ios_store_package_available: ${{ steps.ios-store-package.outcome == 'success' }}
-    runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.preflight-ios-store-signing.outputs.ios_store_signing_ready == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'macos-26-intel' }}
+    runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.preflight-ios-store-signing.outputs.ios_store_signing_ready == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-ios"]}}', github.run_id)) || 'xcode-27' }}
     permissions:
       id-token: write
       attestations: write
@@ -1631,6 +1631,8 @@ jobs:
       - name: Setup Flutter
         uses: ./.github/actions/setup-flutter-apple
         with:
+          hosted-xcode-version: '27.1'
+          require-duo-sdk: 'true'
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Cache Pub dependencies
@@ -1880,6 +1882,7 @@ jobs:
           mkdir -p Payload
           cp -r build/ios/iphoneos/Pleazyng.app Payload/
           zip -r pleazyng-ios-unsigned.ipa Payload
+          python3 scripts/apple/verify_duo_sdk.py pleazyng-ios-unsigned.ipa
 
 
       - name: Checkpoint unsigned iOS developer IPA

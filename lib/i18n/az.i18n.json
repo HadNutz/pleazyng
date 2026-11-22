@@ -244,6 +244,7 @@
     "checkFailed": "Yenilənmələr yoxlanıla bilmədi"
   },
   "settings": {
+    "foldableDisplay": "Qatlanan ekranın menteşəsi",
     "title": "Tənzimləmələr",
     "supportDeveloper": "Pleazyng-yə dəstək ol",
     "supportDeveloperDescription": "İnkişafı dəstəkləmək üçün ianə edin",
@@ -433,7 +434,6 @@
     "importSettings": "Tənzimləmələri idxal et",
     "importSettingsDescription": "Seçimləri fayldan bərpa edin",
     "importSettingsConfirm": "Bu cari tənzimləmələrinizin üzərinə yazacaq. Davam edilsin?",
-    "importSettingsSuccess": "Tənzimləmələr idxal edildi",
     "importSettingsCounts": "Tətbiq olunan ayarlar: ${applied}. Buraxılan: ${skipped}.",
     "importSettingsInvalidFile": "Bu fayl düzgün Pleazyng tənzimləmələr faylı deyil",
     "importSettingsNoUser": "Tənzimləmələri idxal etməzdən əvvəl daxil olun",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "Ehtiyat nüsxə yükləndi. Bu URL-i saxlayın. Tətbiqi yenidən quraşdırdıqdan sonra URL-i bulud ehtiyat nüsxəsi bölməsinə daxil edin və “${action}” seçin.",
     "cloudBackupRestore": "Backup qayıtmaq",
     "cloudBackupRestoreConfirm": "Bu, bu cihazda uyumlu mobil ayarların yerini alacaq.",
-    "cloudBackupRestored": "“Cloud Backup”dan qayıtılmış ayarlar",
     "shortcutsReset": "Qısayollar defolt vəziyyətə sıfırlandı",
     "resetShortcutsConfirm": "Bu, xüsusi qısayollarınızı defolt qısayollarla əvəz edəcək. Davam edilsin?",
     "about": "Haqqında",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "${serverName} üçün URL-lər əlavə edin və ya silin. Pleazyng əlçatan olan ən aşağı gecikməli URL-i istifadə edəcək."
   },
   "iptv": {
+    "backupFeeds": "Oxutma sırasına görə ehtiyat mənbələr",
+    "lineupOrder": "Kanalların sırası",
+    "orderChanged": "Kanal sırası dəyişib. Yoxlayıb yenidən cəhd edin.",
+    "localPlaylist": "M3U faylı",
+    "pastePlaylist": "Pleylist mətnini yapışdır",
+    "playlistBase": "Nisbi keçidlər üçün əsas URL (istəyə bağlı)",
+    "localPlaylistHelp": "M3U və ya M3U8 kanal siyahısının şəxsi surətini idxal edin. Onu başqa faylla əvəz edə bilərsiniz.",
+    "showMatches": "Uyğun kanalları göstər",
+    "hideMatches": "Uyğun kanalları gizlət",
+    "pickerCredit": "İlham mənbəyi · M3U Web Picker · Zachary Schmook (@zschmook) və digər iştirakçılar",
+    "exportPrivate": "Yayım keçidlərində provayderin giriş məlumatları ola bilər. Siyahını şəxsi yerdə saxlayın.",
+    "dynamicStreamExport": "Portal hər oxutma üçün yeni keçid yaradır. Proqram bələdçisini ixrac edə bilərsiniz.",
+    "moveUp": "Yüksək",
+    "moveDown": "aşağı doğru hareket",
+    "choosePlaylist": "Playlist filləri seçin",
+    "affectedChannels": "Kanallar · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "Şəkil URL-i daxil edin",
     "imageUrl": "Şəkil URL-i",
     "metadataUpdated": "Meta-məlumatlar yeniləndi",
+    "metadataConflict": "Başqa bir redaktor eyni sahəni dəyişib. Yadda saxlamazdan əvvəl son dəyərləri nəzərdən keçirmək üçün redaktoru yenidən açın.",
     "metadataUpdateFailed": "Meta-məlumatlar yenilənə bilmədi",
     "artworkUpdated": "Şəkillər yeniləndi",
     "artworkUpdateFailed": "Şəkillər yenilənə bilmədi",
@@ -3676,7 +3692,6 @@
     "connectedTo": "Qəzaqə ${device}",
     "device": "Xatırma aparatı",
     "readyToCast": "Hazır atmaq",
-    "subtitle": "Altyazılar",
     "serverNotAvailable": "Medya serveri yoxdur.",
     "stopCasting": "Qısağı durdurma",
     "startFailed": "Yayımı başlatmaq mümkün olmadı. Serveri yoxlayın və yenidən cəhd edin."
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "İdxal edilən abunəliklər: ${imported}. Təkrarlar: ${duplicates}. Ötürülənlər: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "Musiqi rele ünvanı",
     "relayHint": "Qəbul edən cihazda aktivləşdirin, sonra eyni şəbəkədə bir dəfə qoşalaşdırın. Pleazyng açıq qalsın. Rele şifrələnmiş musiqi əmrlərini ötürür və şəbəkə ünvanlarını görür. Hər pleyer öz media serverindən yayımlayır.",
     "relayInvalid": "HTTPS rele ünvanı daxil edin."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Naməlum versiyadan əlfəcinlər",
+    "assignToVersion": "Bu versiyaya təyin et"
   }
 }

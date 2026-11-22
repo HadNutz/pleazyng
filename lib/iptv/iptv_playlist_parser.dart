@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
@@ -68,8 +69,9 @@ class IptvPlaylistParseResult {
 /// playback presentation headers. Playlist-supplied auth headers, commands,
 /// player properties and local paths are ignored.
 class IptvPlaylistParser {
-  static const maxCharacters = 8 * 1024 * 1024;
-  static const maxEntries = 20_000;
+  static const maxCharacters = 96 * 1024 * 1024;
+  static const maxUploadedBytes = 50 * 1024 * 1024;
+  static const maxEntries = 50_000;
   static const maxLineLength = 16 * 1024;
   static final _secretQueryKey = RegExp(
     r'(token|password|signature|credential|authorization|secret|api[_-]?key|^auth$|^key$|^code$|x-amz-|x-goog-|^(expires|expiry|expiration|policy|key-pair-id|sig|se|sp|sv|sr|st|skoid|sktid|skt|ske|sks|skv|rscc|rscd|rsct)$)',
@@ -94,22 +96,53 @@ class IptvPlaylistParser {
     return 'feed-${sha256.convert(utf8.encode(jsonEncode(identity)))}';
   }
 
-  static IptvPlaylistParseResult parse(String body, {required Uri base, required bool allowHttp}) {
-    if (body.length > maxCharacters) throw const SourceException(SourceFailure.invalidData);
-    final lines = body.replaceFirst('\uFEFF', '').replaceAll('\r\n', '\n').replaceAll('\r', '\n').split('\n');
-    if (lines.any((line) => line.length > maxLineLength)) throw const SourceException(SourceFailure.invalidData);
-    if (lines.any((line) => line.trimLeft().toUpperCase().startsWith('#EXT-X-'))) {
-      return const IptvPlaylistParseResult(entries: [], skipped: 0, isHls: true);
-    }
-    Uri? guideUri;
-    String? header;
-    for (final line in lines) {
-      final candidate = line.trim();
-      if (candidate.toUpperCase().startsWith('#EXTM3U')) {
-        header = candidate;
-        break;
+  static Future<IptvPlaylistParseResult> load(
+    String body, {
+    required Uri base,
+    required bool allowHttp,
+    int byteLimit = maxCharacters,
+  }) async {
+    if (body.length < 256 * 1024) return parse(body, base: base, allowHttp: allowHttp, byteLimit: byteLimit);
+    return Isolate.run(() => parse(body, base: base, allowHttp: allowHttp, byteLimit: byteLimit));
+  }
+
+  static IptvPlaylistParseResult parse(
+    String body, {
+    required Uri base,
+    required bool allowHttp,
+    int byteLimit = maxCharacters,
+  }) {
+    if (body.length > byteLimit) throw const SourceException(SourceFailure.invalidData);
+    // Each UTF-16 code unit produces at most three UTF-8 bytes. Only large
+    // inputs need a byte count, and counting avoids another playlist-sized copy.
+    if (body.length > byteLimit ~/ 3) {
+      var bytes = 0;
+      for (final rune in body.runes) {
+        bytes += switch (rune) {
+          <= 0x7f => 1,
+          <= 0x7ff => 2,
+          <= 0xffff => 3,
+          _ => 4,
+        };
+        if (bytes > byteLimit) throw const SourceException(SourceFailure.invalidData);
       }
     }
+    final begin = body.startsWith('\uFEFF') ? 1 : 0;
+    final lines = LineSplitter.split(body, begin);
+    Uri? guideUri;
+    String? header;
+    var declared = 0;
+    var hls = false;
+    for (final raw in lines) {
+      if (raw.length > maxLineLength) throw const SourceException(SourceFailure.invalidData);
+      final line = raw.trimLeft();
+      if (!line.startsWith('#') || line.length < 7) continue;
+      final directive = line.substring(0, 7).toUpperCase();
+      if (directive == '#EXT-X-') hls = true;
+      if (directive == '#EXTM3U') header ??= line;
+      if (directive == '#EXTINF' && ++declared > maxEntries) throw const SourceException(SourceFailure.invalidData);
+    }
+    if (hls) return const IptvPlaylistParseResult(entries: [], skipped: 0, isHls: true);
     if (header != null) {
       final guideAddress = _first(_parseAttributes(header.substring(7)), const ['url-tvg', 'x-tvg-url', 'tvg-url']);
       if (guideAddress != null) {
@@ -192,7 +225,7 @@ class IptvPlaylistParser {
         final tvgId = _cleanNullable(_first(attributes, const ['tvg-id', 'tvgid']), 180);
         final number = _cleanNullable(_first(attributes, const ['tvg-chno', 'channel-number']), 32);
         final group = _cleanNullable(_first(attributes, const ['group-title', 'group']), 120);
-        final logo = _safeLogo(_first(attributes, const ['tvg-logo', 'logo']), base, allowHttp);
+        final logo = safeLogo(_first(attributes, const ['tvg-logo', 'logo']), base, allowHttp);
         final id = feedId(uri, displayTitle, tvgId, number, group);
         if (!feedIds.add(id)) {
           skipped++;
@@ -274,7 +307,7 @@ class IptvPlaylistParser {
 
   static String? _cleanNullable(String? value, int max) => value == null ? null : _clean(value, max).ifNotEmpty;
 
-  static String? _safeLogo(String? value, Uri base, bool allowHttp) {
+  static String? safeLogo(String? value, Uri base, bool allowHttp) {
     if (value == null || value.length > 2048) return null;
     try {
       final uri = UniversalMediaAddress.parse(value, allowHttp: allowHttp, base: base);
@@ -407,14 +440,38 @@ class IptvXmltvParser {
 
     final programmes = <IptvXmltvProgramme>[];
     var skipped = 0;
-    for (final node in document.rootElement.findElements('programme')) {
+    final nodes = document.rootElement.findElements('programme');
+    final inferredStops = <(String, int), int>{};
+    if (nodes.any((node) => node.getAttribute('stop') == null)) {
+      // XMLTV does not require programme order or stop times. Use only the
+      // next distinct start on this same channel to bound an open airing.
+      final byChannel = <String, Set<int>>{};
+      for (final node in nodes) {
+        final channel = node.getAttribute('channel')?.trim();
+        final start = _xmltvEpoch(node.getAttribute('start'));
+        if (channel != null && start != null) (byChannel[channel] ??= {}).add(start);
+      }
+      for (final entry in byChannel.entries) {
+        final starts = entry.value.toList()..sort();
+        for (var i = 1; i < starts.length; i++) {
+          inferredStops[(entry.key, starts[i - 1])] = starts[i];
+        }
+      }
+    }
+    for (final node in nodes) {
       if (programmes.length >= maxProgrammes) throw const SourceException(SourceFailure.invalidData);
       final channelId = node.getAttribute('channel')?.trim();
       final beginsAt = _xmltvEpoch(node.getAttribute('start'));
-      final endsAt = _xmltvEpoch(node.getAttribute('stop'));
+      final stop = node.getAttribute('stop');
+      final endsAt = stop == null ? inferredStops[(channelId, beginsAt)] : _xmltvEpoch(stop);
       final title = _cleanXml(node.findElements('title').firstOrNull?.innerText ?? '', 240);
       final icon = node.findElements('icon').firstOrNull?.getAttribute('src');
-      if (channelId == null || beginsAt == null || endsAt == null || endsAt <= beginsAt || title.isEmpty) {
+      if (channelId == null ||
+          channelId.isEmpty ||
+          beginsAt == null ||
+          endsAt == null ||
+          endsAt <= beginsAt ||
+          title.isEmpty) {
         skipped++;
         continue;
       }
@@ -427,7 +484,7 @@ class IptvXmltvParser {
           summary: _cleanXmlNullable(node.findElements('desc').firstOrNull?.innerText, 1200),
           category: _cleanXmlNullable(node.findElements('category').firstOrNull?.innerText, 100),
           episodeId: _cleanXmlNullable(node.findElements('episode-num').firstOrNull?.innerText, 180),
-          thumb: IptvPlaylistParser._safeLogo(icon, base, allowHttp),
+          thumb: IptvPlaylistParser.safeLogo(icon, base, allowHttp),
         ),
       );
     }
@@ -438,11 +495,17 @@ class IptvXmltvParser {
     );
   }
 
+  static final _xmltvDate = RegExp(
+    r'^(\d{4}(?:\d{2}){0,5})(?:\s*(?:([+-])(\d{2})(\d{2})|(UTC|GMT|BST)))?$',
+    caseSensitive: false,
+  );
+
   static int? _xmltvEpoch(String? value) {
     if (value == null) return null;
-    final match = RegExp(r'^(\d{14})(?:\s*([+-])(\d{2})(\d{2}))?$').firstMatch(value.trim());
+    final match = _xmltvDate.firstMatch(value.trim());
     if (match == null) return null;
-    final raw = match.group(1)!;
+    final prefix = match.group(1)!;
+    final raw = prefix + '00000101000000'.substring(prefix.length);
     final year = int.parse(raw.substring(0, 4));
     final month = int.parse(raw.substring(4, 6));
     final day = int.parse(raw.substring(6, 8));
@@ -457,7 +520,10 @@ class IptvXmltvParser {
     // That would silently place a malformed guide entry at a different time.
     if (wall.year != year || wall.month != month || wall.day != day) return null;
     final sign = match.group(2);
-    if (sign == null) return wall.millisecondsSinceEpoch ~/ 1000;
+    if (sign == null) {
+      final offset = match.group(5)?.toUpperCase() == 'BST' ? 3600 : 0;
+      return wall.millisecondsSinceEpoch ~/ 1000 - offset;
+    }
     final offsetHours = int.parse(match.group(3)!);
     final offsetMinutes = int.parse(match.group(4)!);
     if (offsetHours > 23 || offsetMinutes > 59) return null;

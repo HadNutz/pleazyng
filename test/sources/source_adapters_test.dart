@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -7,6 +8,7 @@ import 'package:plezy/sources/adapters/cloud_sources.dart';
 import 'package:plezy/sources/adapters/opds_source.dart';
 import 'package:plezy/sources/adapters/s3_source.dart';
 import 'package:plezy/sources/adapters/webdav_source.dart';
+import 'package:plezy/sources/source_database.dart';
 import 'package:plezy/sources/source_models.dart';
 import 'package:plezy/sources/source_transport.dart';
 
@@ -75,6 +77,69 @@ void main() {
     );
     transport.close();
   });
+  test('cached browsing recovers the same default and configured roots for every cloud drive', () async {
+    final repository = SourceRepository(SourceDatabase(NativeDatabase.memory()));
+    addTearDown(repository.database.close);
+    for (final kind in [FileSourceKind.googleDrive, FileSourceKind.oneDrive, FileSourceKind.dropbox]) {
+      for (final root in ['', kind == FileSourceKind.dropbox ? '/selected' : 'selected-id']) {
+        final source = FileSource(id: '${kind.name}:$root', name: 'Drive', kind: kind, profileId: 'p', root: root);
+        final transport = SourceTransport(
+          client: MockClient(
+            (_) async => http.Response(
+              jsonEncode(switch (kind) {
+                FileSourceKind.googleDrive => {
+                  'files': [
+                    {'id': 'book', 'name': 'Issue.cbz', 'mimeType': 'application/zip'},
+                  ],
+                },
+                FileSourceKind.oneDrive => {
+                  'value': [
+                    {
+                      'id': 'book',
+                      'name': 'Issue.cbz',
+                      'file': {'mimeType': 'application/zip'},
+                    },
+                  ],
+                },
+                _ => {
+                  'entries': [
+                    {'id': 'book', 'name': 'Issue.cbz', '.tag': 'file'},
+                  ],
+                },
+              }),
+              200,
+            ),
+          ),
+        );
+        Future<String> token({bool refresh = false}) async => 'fixture';
+        final adapter = switch (kind) {
+          FileSourceKind.googleDrive => GoogleDriveSourceAdapter(source, transport, token),
+          FileSourceKind.oneDrive => OneDriveSourceAdapter(source, transport, token),
+          _ => DropboxSourceAdapter(source, transport, token),
+        };
+        addTearDown(adapter.close);
+        final rootEntries = (await adapter.browse()).entries;
+        expect(rootEntries.single.title, 'Issue.cbz');
+        await repository.cacheEntries('p', rootEntries);
+        final other = SourceEntry(
+          sourceId: source.id,
+          id: 'nested',
+          title: 'Other',
+          kind: SourceItemKind.folder,
+          parentId: 'some-child-folder',
+        );
+        await repository.cacheEntries('p', [other]);
+        final restored = await repository.entriesPage(
+          'p',
+          source: source.id,
+          parent: source.indexedRootParent,
+          filterParent: true,
+        );
+        expect(restored.items.map((item) => item.id), ['book'], reason: '${kind.name}: $root');
+      }
+    }
+  });
+
   test('OneDrive resolves fresh download URL without passing Graph credentials to CDN', () async {
     var calls = 0;
     final transport = SourceTransport(

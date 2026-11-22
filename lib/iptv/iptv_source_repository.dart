@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
@@ -15,10 +16,15 @@ import '../services/credential_vault.dart';
 import '../sources/source_models.dart';
 import '../sources/source_transport.dart';
 import '../sources/universal_media_input.dart';
+import 'iptv_guide_merge.dart';
+import 'iptv_backup_match.dart';
+import 'iptv_lineup_export.dart';
+import 'iptv_series_rules.dart';
 import 'iptv_live_tv_session.dart';
 import 'dispatcharr_dvr_client.dart';
 import 'stalker_portal_client.dart';
 import 'iptv_models.dart';
+import 'iptv_xtream_live_catalog.dart';
 import 'iptv_hls_archive.dart';
 import 'iptv_playlist_parser.dart';
 
@@ -36,8 +42,10 @@ class IptvSourceRepository {
   IptvSourceRepository(this._database);
 
   final AppDatabase _database;
+  late final seriesRules = IptvSeriesRules(_database, (profile, source) => channels(profile, sourceId: source));
   static const _uuid = Uuid();
   static const maxPlaylistBytes = IptvPlaylistParser.maxCharacters;
+  static const maxUploadedBytes = IptvPlaylistParser.maxUploadedBytes;
   static const maxXmltvBytes = IptvXmltvParser.maxCharacters;
 
   Future<String> createSource({
@@ -45,8 +53,10 @@ class IptvSourceRepository {
     required String displayName,
     required IptvInputKind kind,
     required String endpoint,
+    String? playlistContents,
     String guideEndpoint = '',
     List<String> additionalGuideEndpoints = const [],
+    List<String> backupSourceIds = const [],
     String username = '',
     String password = '',
     String macAddress = '',
@@ -62,6 +72,7 @@ class IptvSourceRepository {
       kind: kind,
       endpoint: endpoint.trim(),
       guideEndpoint: guideEndpoint.trim(),
+      backupSourceIds: backupSourceIds.toSet().toList(),
       additionalGuideEndpoints: additionalGuideEndpoints
           .map((value) => value.trim())
           .where((value) => value.isNotEmpty)
@@ -75,16 +86,19 @@ class IptvSourceRepository {
       allowHttp: allowHttp,
     );
     _validate(config);
+    final protectedPlaylist = await _protectPlaylist(config, playlistContents);
+    if (kind == IptvInputKind.m3uFile && protectedPlaylist == null) throw const IptvImportException('source_invalid');
     final protectedConfig = await CredentialVault.protect(jsonEncode(config.toJson()));
     await _database.runIdentityMutation(
       () => _database.customStatement(
-        'INSERT INTO iptv_sources(id, profile_id, display_name, kind, config_ciphertext, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+        'INSERT INTO iptv_sources(id, profile_id, display_name, kind, config_ciphertext, playlist_ciphertext, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [
           config.id,
           config.profileId,
           config.displayName,
           config.kind.name,
           protectedConfig,
+          protectedPlaylist,
           DateTime.now().millisecondsSinceEpoch,
         ],
       ),
@@ -92,18 +106,48 @@ class IptvSourceRepository {
     return config.id;
   }
 
-  Future<void> updateSource(IptvSourceConfiguration config) async {
+  Future<String?> _protectPlaylist(IptvSourceConfiguration config, String? contents) async {
+    if (contents == null) return null;
+    if (config.kind != IptvInputKind.m3uFile || contents.length > maxUploadedBytes) {
+      throw const IptvImportException('source_invalid');
+    }
+    late final IptvPlaylistParseResult parsed;
+    try {
+      parsed = await IptvPlaylistParser.load(
+        contents,
+        base: config.playlistUri(),
+        allowHttp: config.allowHttp,
+        byteLimit: maxUploadedBytes,
+      );
+    } on SourceException catch (error) {
+      throw IptvImportException(_iptvCodeForSourceFailure(error));
+    }
+    if (parsed.isHls) throw const IptvImportException('playlist_is_stream');
+    if (parsed.entries.isEmpty) throw const IptvImportException('invalid_data');
+    return CredentialVault.protect(contents);
+  }
+
+  Future<void> updateSource(IptvSourceConfiguration config, {String? playlistContents}) async {
     _validate(config);
+    final isFile = config.kind == IptvInputKind.m3uFile;
+    final protectedPlaylist = await _protectPlaylist(config, playlistContents);
     final protectedConfig = await CredentialVault.protect(jsonEncode(config.toJson()));
     final changed = await _database.runIdentityMutation(
       () => _database.customUpdate(
-        'UPDATE iptv_sources SET display_name=?, kind=?, config_ciphertext=?, revision=revision+1, last_error_code=NULL WHERE id=? AND profile_id=?',
+        '''UPDATE iptv_sources SET display_name=?, kind=?, config_ciphertext=?,
+        playlist_ciphertext=CASE WHEN ? THEN COALESCE(?, playlist_ciphertext) END,
+        revision=revision+1, last_error_code=NULL WHERE id=? AND profile_id=?
+        AND (?=0 OR ?=1 OR playlist_ciphertext IS NOT NULL)''',
         variables: [
           Variable(config.displayName.trim()),
           Variable(config.kind.name),
           Variable(protectedConfig),
+          Variable(isFile ? 1 : 0),
+          Variable(protectedPlaylist),
           Variable(config.id),
           Variable(config.profileId),
+          Variable(isFile ? 1 : 0),
+          Variable(protectedPlaylist != null ? 1 : 0),
         ],
       ),
     );
@@ -163,11 +207,11 @@ class IptvSourceRepository {
     ];
   }
 
-  Future<List<LiveTvChannel>> channels(String profileId) async {
+  Future<List<LiveTvChannel>> channels(String profileId, {String? sourceId}) async {
     final sourceRows = await _database
         .customSelect(
-          'SELECT id, display_name FROM iptv_sources WHERE profile_id=? ORDER BY created_at',
-          variables: [Variable(profileId)],
+          'SELECT id, display_name FROM iptv_sources WHERE profile_id=? AND (? IS NULL OR id=?) ORDER BY created_at',
+          variables: [Variable(profileId), Variable(sourceId), Variable(sourceId)],
         )
         .get();
     final channels = <LiveTvChannel>[];
@@ -181,7 +225,7 @@ class IptvSourceRepository {
           .get();
       final overrideRows = await _database
           .customSelect(
-            'SELECT channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked FROM iptv_channel_overrides WHERE profile_id=? AND source_id=?',
+            'SELECT channel_id, favorite, favorite_order, lineup_order, hidden, custom_title, group_override, guide_id_override, parental_locked FROM iptv_channel_overrides WHERE profile_id=? AND source_id=?',
             variables: [Variable(profileId), Variable(sourceId)],
           )
           .get();
@@ -220,6 +264,7 @@ class IptvSourceRepository {
             radio: row.read<int>('is_radio') == 1,
             hasCatchup: row.readNullable<String>('catchup_source_ciphertext') != null,
             catchupDays: row.readNullable<int>('catchup_days'),
+            lineupOrder: override?.readNullable<int>('lineup_order'),
             favorite: override?.read<int>('favorite') == 1,
             favoriteOrder: override?.read<int>('favorite_order') ?? 0,
             parentalLocked:
@@ -228,6 +273,8 @@ class IptvSourceRepository {
         );
       }
       snapshots.sort((a, b) {
+        final rank = (a.lineupOrder ?? 0x7fffffff).compareTo(b.lineupOrder ?? 0x7fffffff);
+        if (rank != 0) return rank;
         final number = (double.tryParse(a.number ?? '') ?? double.infinity).compareTo(
           double.tryParse(b.number ?? '') ?? double.infinity,
         );
@@ -237,6 +284,50 @@ class IptvSourceRepository {
     }
     return channels;
   }
+
+  /// Take one consistent snapshot, including profile visibility and group locks.
+  Future<String> exportLineup(
+    String profileId,
+    String sourceId,
+    Set<String> selected, {
+    required bool guide,
+  }) => _database.transaction(() async {
+    final source = await _source(profileId, sourceId);
+    if (source == null) throw const IptvImportException('source_missing');
+    final visible = (await channels(
+      profileId,
+      sourceId: sourceId,
+    )).where((channel) => !channel.iptvParentalLocked && selected.contains(channel.iptvChannelId)).toList();
+    if (guide) {
+      final programmes = await schedule(profileId, DateTime.utc(1970), DateTime.utc(9999), sourceId: sourceId);
+      return xmltvLineup(visible, programmes);
+    }
+    // A Stalker portal issues a new play link on demand for each tuning session.
+    if (source.kind == IptvInputKind.stalker.name) throw const IptvImportException('dynamic_stream');
+    final rows = await _database
+        .customSelect(
+          'SELECT channel_id,stream_url_ciphertext,stream_headers_ciphertext,catchup_source_ciphertext FROM iptv_channels WHERE source_id=?',
+          variables: [Variable(sourceId)],
+        )
+        .get();
+    final byId = {for (final row in rows) row.read<String>('channel_id'): row};
+    Future<String?> decrypt(String? ciphertext) async {
+      if (ciphertext == null) return null;
+      final value = await CredentialVault.reveal(ciphertext);
+      if (value == null) throw const IptvImportException('credential_unavailable');
+      return value;
+    }
+
+    final output = StringBuffer('#EXTM3U\n');
+    for (final channel in visible) {
+      final row = byId[channel.iptvChannelId]!;
+      final url = await decrypt(row.read<String>('stream_url_ciphertext'));
+      final headers = await decrypt(row.readNullable<String>('stream_headers_ciphertext'));
+      final catchup = await decrypt(row.readNullable<String>('catchup_source_ciphertext'));
+      output.write(m3uStation(channel, url!, headers: headers, catchup: catchup));
+    }
+    return output.toString();
+  });
 
   Future<List<IptvEditableChannel>> editableChannels(String profileId, String sourceId) async {
     final source = await _source(profileId, sourceId);
@@ -251,7 +342,7 @@ class IptvSourceRepository {
              COALESCE(o.parental_locked, 0) AS parental_locked
       FROM iptv_channels c LEFT JOIN iptv_channel_overrides o
         ON o.profile_id=? AND o.source_id=c.source_id AND o.channel_id=c.channel_id
-      WHERE c.source_id=? ORDER BY c.number, c.title
+      WHERE c.source_id=? ORDER BY o.lineup_order IS NULL, o.lineup_order, c.number IS NULL, CAST(c.number AS REAL), c.title COLLATE NOCASE, c.channel_id
     ''',
           variables: [Variable(profileId), Variable(sourceId)],
         )
@@ -272,6 +363,147 @@ class IptvSourceRepository {
           parentalLocked: row.read<int>('parental_locked') == 1,
         ),
     ];
+  }
+
+  Future<List<IptvLineupGroup>> lineupGroups(String profileId, String sourceId) async {
+    final rows = await _database
+        .customSelect(
+          'SELECT g.id,g.name,g.members,g.revision FROM iptv_lineup_groups g JOIN iptv_sources s ON s.id=g.source_id WHERE s.profile_id=? AND s.id=? ORDER BY g.name COLLATE NOCASE,g.id',
+          variables: [Variable(profileId), Variable(sourceId)],
+        )
+        .get();
+    return [
+      for (final row in rows)
+        (
+          id: row.read<String>('id'),
+          name: row.read<String>('name'),
+          members: (jsonDecode(row.read<String>('members')) as List).cast<String>().toSet(),
+          revision: row.read<int>('revision'),
+        ),
+    ];
+  }
+
+  /// An absent feed keeps its memberships across outages. New memberships must
+  /// identify a channel in this source's current catalog.
+  Future<void> editLineupGroup(
+    String profileId,
+    String sourceId, {
+    IptvLineupGroup? original,
+    required String name,
+    Set<String> add = const {},
+    Set<String> remove = const {},
+    bool delete = false,
+  }) async {
+    final title = name.trim();
+    if (title.isEmpty || title.length > 120) throw const IptvImportException('source_invalid');
+    await _database.runIdentityMutation(
+      () => _database.transaction(() async {
+        if (await _source(profileId, sourceId) == null) throw const IptvImportException('source_missing');
+        final groups = await lineupGroups(profileId, sourceId);
+        final current = groups.where((g) => g.id == original?.id).firstOrNull;
+        if (original != null && original.revision != current?.revision) {
+          throw const IptvImportException('source_changed');
+        }
+        if (delete && current != null) {
+          await _database.customStatement('DELETE FROM iptv_lineup_groups WHERE source_id=? AND id=?', [
+            sourceId,
+            current.id,
+          ]);
+          return;
+        }
+        if (groups.any((g) => g.id != current?.id && g.name.toLowerCase() == title.toLowerCase())) {
+          throw const IptvImportException('source_changed');
+        }
+        if (add.isNotEmpty) {
+          final catalog = await _database
+              .customSelect('SELECT channel_id FROM iptv_channels WHERE source_id=?', variables: [Variable(sourceId)])
+              .get();
+          if (!catalog.map((row) => row.read<String>('channel_id')).toSet().containsAll(add)) {
+            throw const IptvImportException('source_changed');
+          }
+        }
+        final members = {...?current?.members, ...add}..removeAll(remove);
+        final encoded = jsonEncode(members.toList()..sort());
+        if (current == null) {
+          await _database.customStatement(
+            'INSERT INTO iptv_lineup_groups(id,source_id,name,members) VALUES (?,?,?,?)',
+            [_uuid.v4(), sourceId, title, encoded],
+          );
+        } else {
+          await _database.customStatement(
+            'UPDATE iptv_lineup_groups SET name=?,members=?,revision=revision+1 WHERE source_id=? AND id=?',
+            [title, encoded, sourceId, current.id],
+          );
+        }
+      }),
+    );
+  }
+
+  /// Persist only visibility so concurrent edits to station names, locks and favorites survive.
+  Future<void> setChannelsHidden(
+    String profileId,
+    String sourceId,
+    Iterable<String> channelIds,
+    bool hidden, {
+    bool? expectedHidden,
+  }) async {
+    final ids = channelIds.toSet().toList();
+    if (ids.isEmpty) return;
+    await _database.runIdentityMutation(
+      () => _database.transaction(() async {
+        if (await _source(profileId, sourceId) == null) throw const IptvImportException('source_missing');
+        for (var offset = 0; offset < ids.length; offset += 400) {
+          final group = ids.skip(offset).take(400).toList();
+          final placeholders = List.filled(group.length, '?').join(',');
+          if (expectedHidden != null) {
+            final rows = await _database
+                .customSelect(
+                  'SELECT COUNT(*) AS matches FROM iptv_channels c LEFT JOIN iptv_channel_overrides o ON o.source_id=c.source_id AND o.channel_id=c.channel_id AND o.profile_id=? WHERE c.source_id=? AND COALESCE(o.hidden,0)=? AND c.channel_id IN ($placeholders)',
+                  variables: [
+                    Variable(profileId),
+                    Variable(sourceId),
+                    Variable(expectedHidden ? 1 : 0),
+                    for (final id in group) Variable(id),
+                  ],
+                )
+                .getSingle();
+            if (rows.read<int>('matches') != group.length) throw const IptvImportException('source_changed');
+          }
+          await _database.customStatement(
+            'INSERT INTO iptv_channel_overrides(profile_id,source_id,channel_id,hidden) '
+            'SELECT ?,source_id,channel_id,? FROM iptv_channels WHERE source_id=? AND channel_id IN ($placeholders) '
+            'ON CONFLICT(profile_id,source_id,channel_id) DO UPDATE SET hidden=excluded.hidden',
+            [profileId, hidden ? 1 : 0, sourceId, ...group],
+          );
+        }
+      }),
+    );
+  }
+
+  /// Compare the full order inside the transaction to detect a refresh or another editor.
+  Future<void> saveLineupOrder(String profileId, String sourceId, List<String> original, List<String> ordered) async {
+    final ids = ordered.toSet();
+    if (ids.length != original.length || ids.length != ordered.length || !ids.containsAll(original)) {
+      throw const IptvImportException('source_changed');
+    }
+    await _database.runIdentityMutation(
+      () => _database.transaction(() async {
+        final current = await editableChannels(profileId, sourceId);
+        if (current.length != original.length) throw const IptvImportException('source_changed');
+        for (var i = 0; i < current.length; i++) {
+          if (current[i].id != original[i]) throw const IptvImportException('source_changed');
+        }
+        await _database.batch((batch) {
+          for (var i = 0; i < ordered.length; i++) {
+            batch.customStatement(
+              'INSERT INTO iptv_channel_overrides(profile_id,source_id,channel_id,lineup_order) VALUES (?,?,?,?) '
+              'ON CONFLICT(profile_id,source_id,channel_id) DO UPDATE SET lineup_order=excluded.lineup_order',
+              [profileId, sourceId, ordered[i], i],
+            );
+          }
+        });
+      }),
+    );
   }
 
   Future<void> saveChannelPresentation({
@@ -424,6 +656,7 @@ class IptvSourceRepository {
     DateTime to, {
     String? sourceId,
     String? channelId,
+    bool matchupsOnly = false,
   }) async {
     final rows = await _database
         .customSelect(
@@ -432,6 +665,7 @@ class IptvSourceRepository {
       FROM iptv_programmes p JOIN iptv_sources s ON s.id=p.source_id
       WHERE s.profile_id=? AND p.begins_at < ? AND p.ends_at > ?
         AND (? IS NULL OR p.source_id=?) AND (? IS NULL OR p.channel_id=?)
+      ${matchupsOnly ? "AND (p.title LIKE '% vs %' OR p.title LIKE '% vs. %' OR p.title LIKE '% v %' OR p.title LIKE '% v. %' OR p.title LIKE '% at %' OR p.title LIKE '% @ %' OR p.title LIKE '% contre %' OR p.title LIKE '% gegen %' OR p.title LIKE '% contra %')" : ''}
       ORDER BY p.begins_at
     ''',
           variables: [
@@ -1060,13 +1294,15 @@ class IptvSourceRepository {
     final channelId = channel.iptvChannelId;
     final startsAt = program.beginsAt;
     final endsAt = program.endsAt;
-    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     if (sourceId == null ||
         channelId == null ||
         startsAt == null ||
         endsAt == null ||
-        endsAt <= now ||
-        endsAt <= startsAt) {
+        !IptvLocalRecordingSchedule.canSchedule(
+          start: DateTime.fromMillisecondsSinceEpoch(startsAt * 1000),
+          end: DateTime.fromMillisecondsSinceEpoch(endsAt * 1000),
+          now: DateTime.now(),
+        )) {
       throw const IptvImportException('recording_schedule_invalid');
     }
     if (await _source(profileId, sourceId) == null) {
@@ -1359,12 +1595,39 @@ class IptvSourceRepository {
   }
 
   Future<void> deleteLocalRecording(String profileId, String recordingId) async {
-    await _database.runIdentityMutation(
-      () => _database.customStatement('DELETE FROM iptv_recordings WHERE profile_id=? AND id=?', [
-        profileId,
-        recordingId,
-      ]),
+    final row = await _database
+        .customSelect(
+          'SELECT file_path FROM iptv_recordings WHERE profile_id=? AND id=?',
+          variables: [Variable(profileId), Variable(recordingId)],
+        )
+        .getSingleOrNull();
+    if (row == null) return;
+    final path = row.read<String>('file_path');
+    final support = await getApplicationSupportDirectory();
+    await IptvHlsArchive.deleteRecordingFiles(
+      root: Directory(p.join(support.path, 'iptv-recordings')),
+      profileFolders: {iptvRecordingSlug(profileId), iptvManualRecordingFolder(profileId)},
+      manifest: File(path),
+      recordingId: recordingId,
     );
+    // A concurrent recorder may have published its final path in the meantime.
+    // Keep that catalog entry available to the next cleanup attempt.
+    final removed = await _database.runIdentityMutation(
+      () => _database.customUpdate(
+        'DELETE FROM iptv_recordings WHERE profile_id=? AND id=? AND file_path=?',
+        variables: [Variable(profileId), Variable(recordingId), Variable(path)],
+      ),
+    );
+    if (removed == 0 &&
+        await _database
+                .customSelect(
+                  'SELECT 1 FROM iptv_recordings WHERE profile_id=? AND id=?',
+                  variables: [Variable(profileId), Variable(recordingId)],
+                )
+                .getSingleOrNull() !=
+            null) {
+      throw const IptvImportException('recording_changed');
+    }
   }
 
   Future<List<IptvDispatcharrRecording>> dispatcharrRecordings(String profileId) async {
@@ -1597,6 +1860,51 @@ class IptvSourceRepository {
     String channelId, {
     LiveTvProgram? program,
   }) async {
+    final primary = await configuration(profileId, sourceId);
+    if (primary == null) return null;
+    if (program != null || primary.backupSourceIds.isEmpty) {
+      return _openChannel(profileId, sourceId, channelId, program: program);
+    }
+    final ids = [sourceId, ...primary.backupSourceIds.where((id) => id != sourceId).toSet()];
+    var index = 0;
+    Future<LiveTvPlaybackSession?> next() async {
+      final original = (await channels(
+        profileId,
+        sourceId: sourceId,
+      )).where((c) => c.iptvChannelId == channelId).firstOrNull;
+      if (original == null) return null;
+      final latest = await configuration(profileId, sourceId);
+      if (latest == null) return null;
+      for (var attempts = 0; attempts < ids.length; attempts++) {
+        final candidateId = ids[index++ % ids.length];
+        if (candidateId != sourceId && !latest.backupSourceIds.contains(candidateId)) continue;
+        LiveTvChannel? candidate = original;
+        if (candidateId != sourceId) {
+          candidate = matchIptvBackup(original, await channels(profileId, sourceId: candidateId));
+        }
+        if (candidate == null) continue;
+        try {
+          final session = await _openChannel(profileId, candidateId, candidate.iptvChannelId!, reopen: next);
+          if (session != null) return session;
+        } on IptvImportException {
+          continue;
+        } on SourceException {
+          continue;
+        }
+      }
+      return null;
+    }
+
+    return next();
+  }
+
+  Future<LiveTvPlaybackSession?> _openChannel(
+    String profileId,
+    String sourceId,
+    String channelId, {
+    LiveTvProgram? program,
+    Future<LiveTvPlaybackSession?> Function()? reopen,
+  }) async {
     final config = await configuration(profileId, sourceId);
     if (config == null) {
       return null;
@@ -1686,6 +1994,7 @@ class IptvSourceRepository {
     return IptvLiveTvPlaybackSession(
       initialUrl: url,
       refreshUrl: resolve,
+      reopen: reopen,
       streamHeaders: Map.unmodifiable(headers),
       localTimeShiftEnabled: config.localTimeShiftEnabled,
       isCatchup: program != null && catchupTemplate != null,
@@ -1736,36 +2045,26 @@ class IptvSourceRepository {
   }
 
   Future<void> deleteProfile(String profileId) async {
-    List<IptvLocalRecording> recordings = const [];
-    try {
-      recordings = await localRecordings(profileId);
-    } on Object {
-      // Profile removal can continue if the recording catalog is unavailable.
-    }
-    await _database.runIdentityMutation(() async {
-      await _database.customStatement('DELETE FROM iptv_recordings WHERE profile_id=?', [profileId]);
-      await _database.customUpdate('DELETE FROM iptv_sources WHERE profile_id=?', variables: [Variable(profileId)]);
-    });
-    try {
-      final appSupport = await getApplicationSupportDirectory();
-      final recordingRoot = p.normalize(p.join(appSupport.path, 'iptv-recordings'));
-      for (final recording in recordings) {
-        final path = p.normalize(recording.filePath);
-        if (!p.isWithin(recordingRoot, path)) {
-          continue;
-        }
-        try {
-          final file = File(path);
-          if (await file.exists()) {
-            await file.delete();
-          }
-        } on Object {
-          // A stale file is safer than blocking profile removal.
-        }
+    final recordings = await localRecordings(profileId);
+    Object? failure;
+    for (final recording in recordings) {
+      try {
+        await deleteLocalRecording(profileId, recording.id);
+      } on Object catch (error) {
+        // Keep the row (including its path) so a retry can finish cleanup.
+        failure ??= error;
       }
-    } on Object {
-      // The user can still remove orphaned storage outside this profile.
     }
+    if (failure != null) throw failure;
+    await _database.runIdentityMutation(
+      () => _database.transaction(() async {
+        final remaining = await _database
+            .customSelect('SELECT 1 FROM iptv_recordings WHERE profile_id=? LIMIT 1', variables: [Variable(profileId)])
+            .getSingleOrNull();
+        if (remaining != null) throw const IptvImportException('recording_changed');
+        await _database.customUpdate('DELETE FROM iptv_sources WHERE profile_id=?', variables: [Variable(profileId)]);
+      }),
+    );
   }
 
   Future<int> refresh(String profileId, String sourceId) async {
@@ -1782,27 +2081,14 @@ class IptvSourceRepository {
     final transport = SourceTransport(allowHttp: config.allowHttp);
     StalkerPortalClient? stalker;
     try {
-      late final Uri playlistUri;
       late final List<IptvPlaylistEntry> playlistEntries;
       Uri? playlistGuideUri;
       if (config.kind == IptvInputKind.stalker) {
         stalker = StalkerPortalClient(config);
-        playlistUri = stalker.loadUri;
         playlistEntries = await stalker.channels();
       } else {
-        playlistUri = config.playlistUri();
-        transport.validate(playlistUri);
-        final playlistBody = await transport.text(
-          'GET',
-          playlistUri,
-          limit: maxPlaylistBytes,
-          redirects: true,
-          headers: const {'Accept': 'audio/x-mpegurl, application/vnd.apple.mpegurl, text/plain, */*'},
-        );
-        final playlist = IptvPlaylistParser.parse(playlistBody, base: playlistUri, allowHttp: config.allowHttp);
-        if (playlist.isHls) {
-          throw const IptvImportException('playlist_is_stream');
-        }
+        final playlist = await _loadChannelCatalog(config, transport);
+        if (playlist.isHls) throw const IptvImportException('playlist_is_stream');
         playlistEntries = playlist.entries;
         playlistGuideUri = playlist.guideUri;
       }
@@ -1827,13 +2113,16 @@ class IptvSourceRepository {
           guideUris.add(uri);
         }
       }
-      final programmes = <IptvXmltvProgramme>[];
+      final guideSources = <List<IptvXmltvProgramme>>[];
+      var programmeCount = 0;
       final guideLogos = <String, String>{};
       final freshGuides = <String, IptvXmltvParseResult>{};
       final guideKeys = <String>{};
       var guideFailed = false;
+      var retainPublished = false;
       void mergeGuide(IptvXmltvParseResult guide) {
-        programmes.addAll(guide.programmes);
+        if (guide.programmes.isNotEmpty) guideSources.add(guide.programmes);
+        programmeCount += guide.programmes.length;
         for (final entry in guide.channelLogos.entries) {
           guideLogos.putIfAbsent(entry.key, () => entry.value);
         }
@@ -1844,20 +2133,23 @@ class IptvSourceRepository {
         guideKeys.add(key);
         try {
           final guide = await IptvXmltvParser.fetch(transport, guideUri);
-          if (programmes.length + guide.programmes.length > IptvXmltvParser.maxProgrammes) {
+          if ((guide.programmes.isEmpty && guide.skipped != 0) ||
+              programmeCount + guide.programmes.length > IptvXmltvParser.maxProgrammes) {
             throw const IptvImportException('invalid_data');
           }
           freshGuides[key] = guide;
           mergeGuide(guide);
         } on Object {
           guideFailed = true;
-          mergeGuide(await _cachedGuide(source.id, key, IptvXmltvParser.maxProgrammes - programmes.length));
+          final cached = await _cachedGuide(source.id, key, IptvXmltvParser.maxProgrammes - programmeCount);
+          if (cached.programmes.isEmpty) retainPublished = true;
+          mergeGuide(cached);
         }
       }
       if (guideFailed) {
         // v37 stored a single merged snapshot without the original feed ID.
         guideKeys.add('');
-        mergeGuide(await _cachedGuide(source.id, '', IptvXmltvParser.maxProgrammes - programmes.length));
+        mergeGuide(await _cachedGuide(source.id, '', IptvXmltvParser.maxProgrammes - programmeCount));
       }
       final overrideRows = await _database
           .customSelect(
@@ -1880,13 +2172,21 @@ class IptvSourceRepository {
           tvgToChannelIds.putIfAbsent(tvgId, () => []).add(channel.id);
         }
       }
-      final mappedPrograms = _mapGuideProgrammes(programmes, tvgToChannelIds);
+      final mappedPrograms = _mapGuideProgrammes(mergeIptvGuideProgrammes(guideSources), tvgToChannelIds);
       final fallbackLogos = <String, String>{
         for (final channel in channels)
           if (channel.logoUrl == null)
             if (guideLogos[effectiveTvgIds[channel.id]] case final String logo) channel.id: logo,
       };
-      await _publishGuide(expected, mappedPrograms, guideKeys, freshGuides, fallbackLogos, guideFailed);
+      await _publishGuide(
+        expected,
+        mappedPrograms,
+        guideKeys,
+        freshGuides,
+        fallbackLogos,
+        guideFailed,
+        retainPublished,
+      );
       return channels.length;
     } on IptvImportException catch (error) {
       await _recordError(expected, error.code);
@@ -1908,6 +2208,48 @@ class IptvSourceRepository {
       stalker?.close();
       transport.close();
     }
+  }
+
+  Future<IptvPlaylistParseResult> _loadChannelCatalog(IptvSourceConfiguration config, SourceTransport transport) async {
+    final uri = config.playlistUri();
+    if (config.kind == IptvInputKind.m3uFile) {
+      final row = await _database
+          .customSelect(
+            'SELECT playlist_ciphertext FROM iptv_sources WHERE id=? AND profile_id=?',
+            variables: [Variable(config.id), Variable(config.profileId)],
+          )
+          .getSingleOrNull();
+      final ciphertext = row?.readNullable<String>('playlist_ciphertext');
+      if (ciphertext == null) throw const IptvImportException('playlist_missing');
+      final contents = await CredentialVault.reveal(ciphertext);
+      if (contents == null) throw const IptvImportException('credential_unavailable');
+      return IptvPlaylistParser.load(contents, base: uri, allowHttp: config.allowHttp);
+    }
+
+    Future<IptvPlaylistParseResult> readPlaylist() async {
+      final document = await transport.textDocument(
+        'GET',
+        uri,
+        limit: maxPlaylistBytes,
+        redirects: true,
+        headers: const {'Accept': 'audio/x-mpegurl, application/vnd.apple.mpegurl, text/plain, */*'},
+      );
+      return IptvPlaylistParser.load(document.body, base: document.uri, allowHttp: config.allowHttp);
+    }
+
+    if (config.kind != IptvInputKind.xtream) return readPlaylist();
+    final apiFirst = Uri.parse(config.endpoint).pathSegments.lastOrNull?.toLowerCase() == 'player_api.php';
+    Future<IptvPlaylistParseResult> readLiveApi() => IptvXtreamLiveCatalog.load(transport, config);
+    try {
+      final result = await (apiFirst ? readLiveApi() : readPlaylist());
+      if (!result.isHls) return result;
+    } on SourceDocumentLimit {
+      if (apiFirst) rethrow;
+      // A combined M3U may be too large while the provider's live-only list fits.
+    } on Object {
+      if (transport.isClosed) throw const SourceException(SourceFailure.cancelled);
+    }
+    return apiFirst ? readPlaylist() : readLiveApi();
   }
 
   // Reuse each previously published channel ID when its feed can be matched.
@@ -1948,6 +2290,12 @@ class IptvSourceRepository {
           variables: [Variable(sourceId)],
         )
         .get();
+    if (rows.isEmpty) {
+      for (final feed in feeds) {
+        result.putIfAbsent(feed.id, () => feed.id);
+      }
+      return result;
+    }
     String metadata(String? tvg, String title, String? number, String? group) =>
         jsonEncode([tvg, title.trim().toLowerCase(), number, group]);
     final byMetadata = <String, List<QueryRow>>{};
@@ -2099,7 +2447,7 @@ class IptvSourceRepository {
   /// overlapping channel/start slot. Later guides can fill gaps without
   /// duplicating schedule rows or violating the programme table's primary key.
   List<IptvProgrammeSnapshot> _mapGuideProgrammes(
-    List<IptvXmltvProgramme> programmes,
+    Iterable<IptvXmltvProgramme> programmes,
     Map<String, List<String>> tvgToChannelIds,
   ) {
     final seenChannelStarts = <(String, int)>{};
@@ -2225,6 +2573,7 @@ class IptvSourceRepository {
     Map<String, IptvXmltvParseResult> freshGuides,
     Map<String, String> fallbackLogos,
     bool guideFailed,
+    bool retainPublished,
   ) async {
     await _database.runIdentityMutation(
       () => _database.transaction(() async {
@@ -2233,7 +2582,20 @@ class IptvSourceRepository {
           throw const IptvImportException('source_changed');
         }
         await _publishGuideCache(expected.id, guideKeys, freshGuides);
-        await _database.customStatement('DELETE FROM iptv_programmes WHERE source_id=?', [expected.id]);
+        if (retainPublished) {
+          // A failed feed has no per-feed snapshot. Retain existing listings
+          // outside known coverage without resurrecting airings replaced there.
+          await _database.batch((batch) {
+            for (final item in programmes) {
+              batch.customStatement(
+                'DELETE FROM iptv_programmes WHERE source_id=? AND channel_id=? AND ends_at>? AND begins_at<?',
+                [expected.id, item.channelId, item.beginsAt, item.endsAt],
+              );
+            }
+          });
+        } else {
+          await _database.customStatement('DELETE FROM iptv_programmes WHERE source_id=?', [expected.id]);
+        }
         final programmeRows = [
           for (final item in programmes)
             [
@@ -2273,6 +2635,7 @@ class IptvSourceRepository {
             }
           });
         }
+        await seriesRules.reconcile(expected.profileId, expected.id);
         await _database.customStatement('UPDATE iptv_sources SET last_error_code=? WHERE id=?', [
           guideFailed ? 'guide_unavailable' : null,
           expected.id,
@@ -2404,12 +2767,12 @@ class IptvSourceRepository {
     final body = await transport.text(
       'GET',
       uri,
-      limit: 32 * 1024 * 1024,
+      limit: maxPlaylistBytes,
       redirects: true,
       headers: const {'Accept': 'application/json, text/plain, */*'},
     );
     try {
-      return jsonDecode(body);
+      return body.length < 256 * 1024 ? jsonDecode(body) : await Isolate.run(() => jsonDecode(body));
     } on FormatException {
       throw const IptvImportException('invalid_data');
     }
@@ -2683,7 +3046,7 @@ class IptvSourceRepository {
       throw const IptvImportException('source_invalid');
     }
     for (final value in [
-      config.endpoint,
+      if (config.kind != IptvInputKind.m3uFile || config.endpoint.isNotEmpty) config.endpoint,
       if (config.guideEndpoint.isNotEmpty) config.guideEndpoint,
       ...config.additionalGuideEndpoints,
     ]) {

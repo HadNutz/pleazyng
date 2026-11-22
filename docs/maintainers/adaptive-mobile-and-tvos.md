@@ -34,3 +34,47 @@ or endorsement of this fork.
 - [tvOS trailer and link actions](https://github.com/edde746/plezy/commit/16d5b404cb14163a776b701265e55b6f66cdfc34) by [@moust4ki](https://github.com/moust4ki).
 
 See the [source ledger](../../UPSTREAM_ATTRIBUTION.md).
+
+## Foldable release qualification
+
+The live playback route owns the decoder across pane changes. The Flutter geometry tests exercise flat and half-open folds, opaque hinges, two hinges, right-to-left placement, cropped windows and camera insets. The browse test keeps an editable detail mounted while closing and reopening the device. These are simulated inputs. Native output and lifecycle behavior require separate evidence.
+
+| Target | Checks to record on a release candidate |
+|---|---|
+| iPhone Duo | Outer → inner → tabletop → PiP → return. Check camera clearance, both rail edges, paused and playing video, subtitles and OS Split View. Open a second window, browse music, switch profiles and verify that only one session owns transport. |
+| Android book and dual-screen devices | Galaxy Fold, Pixel Fold, another OEM and a spanned physical hinge. Switch displays with the taskbar shown and hidden while seeking, changing subtitles and using live time-shift. |
+| Flip and Razr | Continue inside after using transport on the cover. On Samsung add the Flex Window widget and check play, skip and open. Test both OEM continue-on-cover settings. |
+| Multi-fold, tablet and standard phone | TriFold outer and fully open, narrow split-screen, compact phone and tablet. Check RTL manga, an EPUB reading anchor, PDF zoom, keyboard focus, large text and TalkBack or VoiceOver. |
+| Steam streaming and native output | While streaming, fold and rotate, check touch coordinates against all four video corners and test the controller. Repeat video transitions with offline and streamed media, Watch Together, supported HDR formats and each available engine. |
+| HarmonyOS NEXT | Build and sign the [native player](../../harmonyos/README.md). Test authenticated and local video, HDR and SDR, paused playback, tabletop, both creases on tri-fold hardware, PiP controls and return. |
+| Windows foldable | Resize, span and unspan, test touch and keyboard, and verify the physical video rectangle and audible session. |
+
+Record the commit, device model, OS, player backend, content mode, starting posture, final posture, observed position, audio and focus. An unrecorded case is unqualified.
+
+The iOS native reliability job runs the phone-scene contract on the Duo simulator. On a hosted runner it also installs the built simulator app on an iOS 26 phone and checks that its process remains alive after launch. For Android, dispatch **Android foldable qualification** with the release workflow run ID. It installs that run's x86_64 APK on a Pixel Fold emulator and verifies the resumed activity and process identity across the supported closed, open and half-open states. Neither launch check substitutes for a media playback run on hardware.
+
+## Playback evidence on the candidate device
+
+For Android, start a movie on the desired engine, enable automatic PiP in the app and allow PiP in system settings. Use the device picker provided by standard ADB (for example, set `ANDROID_SERIAL`) when several devices are connected. Run these passes once while playing and again while paused. Enable and disable each OEM’s continue-on-cover setting in separate runs. A cover that the OS reserves for widgets must be recorded as such.
+
+```sh
+python3 scripts/qa/android_fold_smoke.py --playback --manual 'cover,inner,tabletop,inner' --commit "$(git rev-parse HEAD)" --evidence fold.json
+python3 scripts/qa/android_fold_smoke.py --playback --pip --commit "$(git rev-parse HEAD)" --evidence pip.json
+```
+
+Use `--states` with a comma-separated list of supported IDs on emulators or devices that allow shell posture overrides. The script checks the foreground activity, process identity and one active media session. It records transport and position and checks the pinned task for PiP. Inspect the picture and subtitles on the actual panel, check for duplicate audio and compare the HDR output using a known SDR/HDR pair. A capability flag alone cannot establish panel output.
+
+On Windows, span embedded panels, move the window until only one panel is visible, and repeat at different DPI and orientations. For a continuous internal panel, select the physical hinge direction under Settings → Playback → Foldable display hinge. Automatic uses the actual embedded-panel layout. On a spanned window or a detached mini-player, check that HDR and refresh-rate matching apply to the monitor containing the video and that both monitors recover their original settings. Normal external monitors and mirrored clones should not add hinges.
+
+For cold recovery, background a paused tuner or catch-up programme, allow the OS to save the task, then terminate the background process (on Android use `adb shell am kill org.snapetech.pleazyng`). Reopen from Recents. Verify the same channel, broadcast time and pause intent. Repeat after the broadcast has fallen outside the available buffer. A fresh tuner can only seek within its newly reported window. A memory-only buffer that died with the process falls back to live. Repeat with a locked Watch Together room as both host and guest, then after changing the profile, leaving the room or letting its server-side reconnect lease expire. Record room member identity and host control without recording the reconnect token.
+
+### Checks run on November 21, 2026
+
+| Candidate check | Observed result |
+|---|---|
+| Flutter live TV and Watch Together | 113 tests passed across saved video tasks, live playback sessions, accumulated seeks and room membership. A local upstream Go relay accepted a new host client and a new guest client back into the same locked room with their original peer IDs and authority. |
+| Flutter pane and decoder continuity | Eight tests passed with bundled test assets, including Windows panel coordinates, two hinges, RTL, editable content and one paused native-player instance through Duo posture changes. The native player channels were simulated. Five profile-shell tests also passed, including PIN-protected startup, profile switching and focus restoration. |
+| Windows native code | The Win32 runner, embedded-panel enumeration and MPV plug-in compiled for x64. The display-mode manager passed a Windows-target syntax check. Full application installation and display output await Windows hardware. |
+| Android ARM64 APK | Gradle assembled the full debug APK and its ARM64 split from `f88bbfc2dab6086abfe6c9aeff1617e7a99ce2f9`. Android build tools verified the debug signature and the split’s package `org.snapetech.pleazyng`, version 3.0.47 (split code 2206), minimum API 25 and sole ABI `arm64-v8a`. The archive passed its integrity check and includes the Flutter kernel and 51 native libraries, including MPV and MilkRust. Split APK SHA-256 is `53c533e23a677a0bc63cc0c7c99364e1fff1d6953b9ed8035a67f2c4afb4e5db`. Use the ADB procedure above to qualify playback on each OEM. |
+| HarmonyOS NEXT | The API 21 SDK produced an unsigned Stage HAP with compiled ArkTS and the launchable EntryAbility. The native pane algorithm passed tabletop, dual-crease and off-window checks. Device signing and playback are pending. |
+| Apple | The three Duo SDK archive-checker fixture tests passed. An Xcode archive and physical playback remain unverified for this candidate. |

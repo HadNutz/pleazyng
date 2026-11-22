@@ -1,3 +1,6 @@
+import 'package:http/http.dart' as http;
+import '../test_helpers/backend_client_fixtures.dart';
+import '../test_helpers/http_fixtures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/media/ids.dart';
 import 'package:plezy/media/library_query.dart';
@@ -68,6 +71,48 @@ class _Client implements MediaServerClient {
 }
 
 void main() {
+  for (final type in ['Audio', null, '', ' Unknown ']) {
+    test('Jellyfin audio playlist detail and bulk removal agree (MediaType: $type)', () async {
+      final dto = {'Id': 'list1', 'Type': 'Playlist', 'MediaType': ?type, 'Name': 'Chill', 'ChildCount': 2};
+      final removed = <String?>[];
+      final client = testJellyfinClient(
+        handler: (request) async {
+          if (request.method == 'DELETE') {
+            removed.add(request.url.queryParameters['entryIds']);
+            return http.Response('', 204);
+          }
+          if (request.url.path == '/Items') {
+            return jsonResponse({
+              'Items': [dto],
+              'TotalRecordCount': 1,
+            });
+          }
+          if (request.url.path == '/Playlists/list1/Items') {
+            return jsonResponse({
+              'Items': [
+                for (final id in ['one', 'two']) {'Id': id, 'Type': 'Audio', 'Name': id, 'PlaylistItemId': 'entry-$id'},
+              ],
+              'TotalRecordCount': 2,
+            });
+          }
+          return jsonResponse(dto);
+        },
+      );
+      addTearDown(client.close);
+      final listed = (await client.fetchPlaylistsPage(playlistType: 'audio')).items.single;
+      final tracks = (await client.fetchPlaylistPage('list1')).items;
+      expect((await client.fetchPlaylistMetadata('list1'))?.playlistType, 'audio');
+      final result = await removePlaylistOccurrences(
+        client: client,
+        playlist: listed,
+        selected: tracks,
+        isCurrent: () => true,
+      );
+      expect(result.succeeded, isTrue);
+      expect(removed, ['entry-one', 'entry-two']);
+    });
+  }
+
   for (final backend in MediaBackend.values) {
     test('removes only selected occurrences on $backend, preserving repeated songs', () async {
       final client = _Client(backend, List.generate(4, (i) => track(i + 1, backend: backend)));

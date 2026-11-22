@@ -1,4 +1,22 @@
 {
+  "iptv": {
+    "backupFeeds": "Fontes alternativas por ordem de reprodução",
+    "lineupOrder": "Ordem dos canais",
+    "orderChanged": "A ordem dos canais mudou. Confira e tente novamente.",
+    "localPlaylist": "Arquivo M3U",
+    "pastePlaylist": "Colar o texto da playlist",
+    "playlistBase": "URL base para links relativos (opcional)",
+    "localPlaylistHelp": "Importe uma cópia privada de uma lista de canais M3U ou M3U8. Você pode substituí-la por outro arquivo.",
+    "showMatches": "Mostrar canais correspondentes",
+    "hideMatches": "Ocultar canais correspondentes",
+    "pickerCredit": "Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores",
+    "exportPrivate": "Os endereços das transmissões podem incluir suas credenciais. Salve a lista em um local privado.",
+    "dynamicStreamExport": "O portal cria um link novo a cada reprodução. Você pode exportar o guia.",
+    "moveUp": "Move em cima",
+    "moveDown": "Move abaixo",
+    "choosePlaylist": "Escolha o arquivo de playlist",
+    "affectedChannels": "Canais · ${count}"
+  },
   "mediaConveniences": {
     "readNext": "Ler o próximo",
     "showRotation": "Rodízio de séries",
@@ -16,9 +34,6 @@
     "pairPage": "Voltar a agrupar esta página",
     "listenPhone": "Ouvir neste celular",
     "audioUnavailable": "O arquivo ou a faixa de áudio não está disponível neste celular."
-  },
-  "cast": {
-    "subtitle": "Legendas"
   },
   "appIcon": {
     "defaultIcon": "Padrão"
@@ -74,6 +89,7 @@
     "logs": "Registros"
   },
   "settings": {
+    "foldableDisplay": "Dobradiça da tela dobrável",
     "title": "Configurações",
     "language": "Idioma",
     "theme": "Tema",

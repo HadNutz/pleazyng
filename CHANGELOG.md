@@ -2,6 +2,49 @@
 
 ## [Unreleased]
 
+- Apple MPV playback now tries GPU and software frame mixing if the VideoToolbox capability check is unavailable. The Dolby Vision runtime reports its motion support separately. On the iPhone simulator, MPV uses software mixing when the simulated Metal driver cannot copy interpolated frames for display.
+
+- Xtream connections can use the provider’s live-only catalog, including category names and correctly escaped stream paths. Pleazyng tries the other provider endpoint when the selected API or playlist is unavailable. Inspired by the [M3U Web Picker provider loader](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/core.py) from [Zachary Schmook](https://github.com/zschmook) and contributors.
+- Import provider playlists up to 96 MiB and 50,000 stations and local files up to 50 MiB. Large playlists parse off the UI isolate. Relative guide and stream links follow a provider’s final playlist URL after redirects. These limits follow the [v49 provider settings](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/settings.py) from [Zachary Schmook](https://github.com/zschmook) and the M3U Web Picker contributors.
+- Schedule recurring IPTV programmes on this device from the native guide and manage the rules in Recordings. The scheduler matches guide updates, avoids duplicate episodes and preserves one-off or active captures when a rule is removed. Independently implemented from the [M3U Web Picker DVR](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/dvr.py) behavior by [Zachary Schmook](https://github.com/zschmook) and contributors.
+
+- Browse upcoming guide-listed sports fixtures, choose among simultaneous feeds and follow teams per profile. Organize stations into overlapping custom groups, filter by provider group or low bandwidth, and export matching unlocked channels. Choose ordered backup sources for live playback. Recovery matches station IDs or compatible full names and opens each backup with its own playback headers. Inspired by [M3U Web Picker v49](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897) by [Zachary Schmook](https://github.com/zschmook) and contributors.
+- Import or paste local M3U playlists, curate filtered channel sets, reorder the lineup independently of favorites, and export visible, unlocked channels as M3U and XMLTV. Higher-priority XMLTV sources own the full airing window. Independently implemented in Pleazyng, inspired by [M3U Web Picker](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897) by [Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors.
+- Restore the active live channel, pause intent and available broadcast time after mobile process loss. Reconnect the original Watch Together member using the authenticated room protocol from [@edde746’s upstream OpenWatchParty SDK](https://github.com/edde746/openwatchparty/tree/main/sdk/dart).
+- Adapt Android PiP transitions and HDR decisions to the active pane, keep iPhone external playback on its own screen, and recognize embedded Windows display panels. A Windows playback setting lets owners identify a continuous folding panel’s hinge direction.
+- Add a native HarmonyOS NEXT player for local files, direct media URLs and direct-play Plex, Jellyfin and Emby libraries. It supports fold and tri-fold layouts and system picture in picture.
+
+- Try the next available OpenCL device when a TV motion kernel fails during playback, then use software if the remaining devices fail.
+- Provision the matching Samsung SDK for x64 emulator tester builds and link host build tools with the host compiler.
+- Restore an interrupted mobile movie or episode from OS-saved state, including its position, edition and pause intent, after checking access for the active profile. A normal Back or replacement discards the old playback task.
+
+- Keep Watch Together invitations in the initiating profile, honor Stop during a pending selection, and close the guest player when reconnecting to a room the host cleared.
+- Preserve completed plays and explicit watch choices across reconnects. Keep RomM checkpoints and automatic cloud resume on the newest save when older conflicts or uploads are retried.
+- Respect library and server visibility in saved Home collections, assign Jellyfin collections to their members’ libraries, and show music pins from every eligible account.
+- Honor Pause during phone interruptions, show playable downloads on Android Auto, and clear stale Linux track artwork and metadata. Restore cached cloud folders, open videos in large Premiumize folders and honor ComicInfo page order and deletion flags.
+- Keep WebVTT word timestamps and adjacent cues aligned through subtitle corrections. Apply LRC offsets throughout the song and let users approve individual HTTP podcast subscriptions during OPML restore.
+- Cancel settings imports when their initiating profile changes, relocate Linux image loaders with a portable installation, and show skipped releases when checking for updates manually.
+
+- Allow a manual iPhone-only motion test and prefetch its checksum-pinned SQLite simulator library.
+- Add an iPhone simulator regression test for changing motion presets and turning smoothing off during AVFoundation playback.
+
+- Fix Linux Neural falling back to CPU on systems where the bundled WebGPU provider can run the model.
+
+- Protect shared episode downloads when deleting media or signing out of Plex. Retain failed cleanup for retry, remove cancelled multipart downloads, and release local HLS archives when a profile is removed.
+- Preserve existing anime tracker entries when toggling watchlists, merge independent Jellyfin metadata edits, and keep video bookmarks with their editions. Older bookmarks can be assigned to a version explicitly.
+- Preserve manually grouped audiobooks through rescans. Sync reading progress, EPUB completion and WebDAV bookmark changes without letting a single invalid progress record block other titles.
+- Keep the previous TV guide after an unusable refresh, honor schedule corrections and recording windows, and check recording duration before accepting a timer.
+- Route mixes, radio and sleep timers to the selected music receiver, count listening once, and keep a paused queue paused when removing its current song. Restore Jellyfin audio playlist removal and collection pagination on capped servers.
+- Preserve non-ASCII settings in WebDAV restores, overlapping TV subtitles and delayed Samsung captions. Discard cancelled virtual-keyboard edits and retain selected lyrics when importing MIDI karaoke.
+- Enable motion processing during eligible playback on Android and Fire OS, desktop MPV, and LG and Samsung TV MPV. Change TV mixer strength while watching. On LG, the original hardware plane keeps playing while the filtered texture prepares.
+
+- Add an experimental direct-URL motion player for Amazon Vega OS with WebGL and CPU blending. Vega device playback still needs verification.
+- Apply decoder motion-vector settings before switching decoders when changing Neural during Android or desktop playback.
+- Include FFmpeg motion-compensated interpolation in the bundled Linux, Android and Apple playback engines for eligible motion presets.
+- Apply MPV smoothing toggles and Motion clarity preset changes during eligible Linux and Windows playback, including titles started with smoothing off.
+- Adapt video, music, Steam streaming, browsing and reading to separating folds and physical hinges. Keep the active player and detail view during live window resizing. Add compact cover controls and a Samsung Flex Window music widget.
+- Build iPhone releases with the Duo SDK and validate the SDK inside the IPA. A second iOS app window can browse the active audio catalog and send playback to the existing session.
+
 - Fix a webOS MPV crash when the Flutter renderer requests a retired video texture. Apply the OLED motion preset to eligible TV MPV sources and retry playback without smoothing if the first filtered frame fails.
 
 - Add hardware-probed motion blending to the LG webOS and Samsung Tizen MPV players, with software fallback and provider diagnostics. Add a libplacebo GPU route for Apple MPV smoothing and for devices without VideoToolbox interpolation support. Try software neural inference after eligible hardware providers on Android, Fire OS, Windows and Linux.
@@ -12,6 +55,7 @@
 
 - Keep manual app-store review submissions tracked separately from successful artifact uploads.
 - Reuse completed Apple, Android, Windows and Linux jobs across release retries. Package formats, relay architectures and independent store deliveries can proceed in parallel.
+- Remove unused download and music helpers and restore a clean analyzer run. Behaviour is unchanged.
 
 ## [3.0.47] - 2026-11-21
 

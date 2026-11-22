@@ -221,6 +221,17 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
                   ..start();
               }
             });
+            final restore = _lateLiveRestore;
+            final window = _liveSeekBounds();
+            if (restore != null && window != null && _transitionGate.transition == PlaybackTransition.idle) {
+              _lateLiveRestore = null;
+              if (identical(restore.session, requestSession) &&
+                  restore.intent == _liveSeek.intentGeneration &&
+                  restore.epoch >= window.startEpoch &&
+                  restore.epoch <= window.endEpoch) {
+                _liveSeek.seekTo(restore.epoch.toDouble());
+              }
+            }
             // Time-shift arrived with this heartbeat (Plex publishes the
             // capture buffer a beat after the tune): the session can now
             // advertise ±skip through it.
@@ -691,11 +702,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
     BufferedIptvCapture? buffered;
     try {
       final folder = Directory(
-        p.join(
-          (await getApplicationSupportDirectory()).path,
-          'iptv-recordings',
-          profileId.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_'),
-        ),
+        p.join((await getApplicationSupportDirectory()).path, 'iptv-recordings', iptvManualRecordingFolder(profileId)),
       );
       final recordingTarget = File(
         p.join(
@@ -935,8 +942,9 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
         settingsService: SettingsService.instance,
         plan: plan,
         isCurrent: () => _isCurrentPlaybackGeneration(generation, currentPlayer) && _live.streamGeneration == stream,
-        resumeAfterStartupGate: (reason) =>
-            _resumeAfterFrameRateStartupGate(currentPlayer: currentPlayer, reason: reason),
+        resumeAfterStartupGate: (reason) => _playbackIntentShouldPlay
+            ? _resumeAfterFrameRateStartupGate(currentPlayer: currentPlayer, reason: reason)
+            : Future<void>.value(),
       );
     } finally {
       _frameRate.endDisplayNegotiation(plan.displayNegotiation);
@@ -1011,6 +1019,7 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
       channel: channel,
       fromEpoch: from,
       toEpoch: now + 6 * 3600,
+      nowEpoch: now,
       fetch: (from, to) {
         if (iptvSourceId != null && profileId != null) {
           return context.read<IptvSourceRepository>().schedule(
@@ -1130,7 +1139,8 @@ extension _VideoPlayerLiveTvMethods on VideoPlayerScreenState {
             currentPlayer,
             request.url,
             targetEpoch: request.effectiveTargetEpoch,
-            awaitClock: currentPlayer is PlayerNative,
+            awaitClock: currentPlayer is PlayerNative && _playbackIntentShouldPlay,
+            play: _playbackIntentShouldPlay && automotivePlaybackAllowedNow(),
             isCurrent: isCurrent,
             timeShifted: targetEpochSeconds != null,
             openingSession: session,

@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../connection/connection.dart';
 import '../../connection/connection_registry.dart';
 import '../../database/app_database.dart';
 import '../../iptv/iptv_source_repository.dart';
+import '../../iptv/iptv_recording_scheduler.dart';
 import '../../database/download_collection_operations.dart';
 import '../../database/download_operations.dart';
 import '../../i18n/strings.g.dart';
@@ -53,6 +55,14 @@ class SessionTeardownScope {
   final NavigatorState navigator;
   final SystemShelfService shelf;
   final SourceController? sources;
+  final IptvRecordingScheduler? iptvScheduler;
+
+  Future<void> deleteProfileIptv({String? profileId}) {
+    final scheduler = iptvScheduler;
+    if (scheduler != null) return scheduler.deleteProfileRecordings(profileId: profileId);
+    final repository = IptvSourceRepository(database);
+    return profileId == null ? repository.deleteAllProfiles() : repository.deleteProfile(profileId);
+  }
 
   MultiServerManager get serverManager => multiServer.serverManager;
 
@@ -78,6 +88,7 @@ class SessionTeardownScope {
       storage = context.read<StorageService>(),
       shelf = SystemShelfService(),
       sources = context.read<SourceController?>(),
+      iptvScheduler = context.read<IptvRecordingScheduler?>(),
       navigator = Navigator.of(context, rootNavigator: true);
 }
 
@@ -210,7 +221,7 @@ Future<void> deleteProfile(BuildContext context, Profile profile) async {
     await scope.database.deleteWatchActionsForProfile(profile.id);
     await scope.database.deleteMusicSessionForProfile(profile.id);
     await scope.database.deleteMusicRecipesForProfile(profile.id);
-    await IptvSourceRepository(scope.database).deleteProfile(profile.id);
+    await scope.deleteProfileIptv(profileId: profile.id);
     await scope.sources?.forgetProfile(profile.id);
     await scope.cleanup.removeAllProfileConnections(profile.id);
     await scope.profileRegistry.remove(profile.id);
@@ -256,16 +267,14 @@ Future<T> withEndedProfileSession<T>(SessionTeardownScope scope, String? endedOw
 /// Returns true when the sign-out ran, false when cancelled or the account
 /// no longer exists.
 Future<bool> confirmAndSignOutPlexAccount(BuildContext context, {required String accountConnectionId}) async {
-  final account = await context.read<ConnectionRegistry>().getPlexAccount(accountConnectionId);
+  final scope = SessionTeardownScope.of(context);
+  final account = await scope.connections.getPlexAccount(accountConnectionId);
   if (account == null || !context.mounted) return false;
-  final accountServerIds = {for (final server in account.servers) server.clientIdentifier};
-
-  final database = context.read<AppDatabase>();
   final plannedForPrompt = await planPlexAccountConnectionRemoval(
     account: account,
-    profileConnections: context.read<ProfileConnectionRegistry>(),
+    profileConnections: scope.profileConnections,
   );
-  final hasDownloads = await _plexAccountRemovalOwnsDownloads(database, plannedForPrompt, accountServerIds);
+  final hasDownloads = await _plexAccountRemovalOwnsDownloads(scope, plannedForPrompt, account);
   if (!context.mounted) return false;
 
   final title = t.profiles.signOutPlexTitle;
@@ -295,11 +304,13 @@ Future<bool> confirmAndSignOutPlexAccount(BuildContext context, {required String
   }
   if (!context.mounted) return false;
 
-  final scope = SessionTeardownScope.of(context);
   try {
-    // Re-plan: Plex Home refreshes can add join rows while the dialog is open.
+    // Re-read the account and its joins: the server listing or a borrower's
+    // other connections may have changed while the dialog was open.
+    final currentAccount = await scope.connections.getPlexAccount(accountConnectionId);
+    if (currentAccount == null) return false;
     final removal = await planPlexAccountConnectionRemoval(
-      account: account,
+      account: currentAccount,
       profileConnections: scope.profileConnections,
     );
     final endedOwner = await _activeProfileUsingConnection(scope, accountConnectionId);
@@ -312,18 +323,24 @@ Future<bool> confirmAndSignOutPlexAccount(BuildContext context, {required String
           await scope.downloads.deleteDownloadsForProfile(profileId);
         }
         for (final profileId in removal.borrowerProfileIds) {
-          await scope.downloads.releaseDownloadsForProfileServers(profileId, accountServerIds);
+          final lostServers = await scope.cleanup.downloadServersLostByProfile(
+            profileId: profileId,
+            connection: currentAccount,
+          );
+          if (lostServers.isNotEmpty) await scope.downloads.releaseDownloadsForProfileServers(profileId, lostServers);
         }
       }
 
-      await scope.cleanup.removePlexAccountConnection(account, plannedRemoval: removal);
+      for (final profileId in removal.removedVirtualProfileIds) {
+        await scope.deleteProfileIptv(profileId: profileId);
+      }
+      await scope.cleanup.removePlexAccountConnection(currentAccount, plannedRemoval: removal);
       for (final profileId in removal.removedVirtualProfileIds) {
         await scope.database.deleteSyncRulesForProfile(profileId);
         await scope.database.deleteDownloadCollectionsForProfile(profileId);
         await scope.database.deleteWatchActionsForProfile(profileId);
         await scope.database.deleteMusicSessionForProfile(profileId);
         await scope.database.deleteMusicRecipesForProfile(profileId);
-        await IptvSourceRepository(scope.database).deleteProfile(profileId);
         await scope.sources?.forgetProfile(profileId);
       }
 
@@ -346,17 +363,18 @@ Future<bool> confirmAndSignOutPlexAccount(BuildContext context, {required String
 /// everything the account's Plex Home profiles own, plus borrowers'
 /// downloads from the account's servers.
 Future<bool> _plexAccountRemovalOwnsDownloads(
-  AppDatabase database,
+  SessionTeardownScope scope,
   PlexAccountRemoval removal,
-  Set<String> accountServerIds,
+  PlexAccountConnection account,
 ) async {
   for (final profileId in removal.removedVirtualProfileIds) {
-    if ((await database.getDownloadOwnerKeysForProfile(profileId)).isNotEmpty) return true;
+    if ((await scope.database.getDownloadOwnerKeysForProfile(profileId)).isNotEmpty) return true;
   }
   for (final profileId in removal.borrowerProfileIds) {
-    for (final globalKey in await database.getDownloadOwnerKeysForProfile(profileId)) {
+    final lostServers = await scope.cleanup.downloadServersLostByProfile(profileId: profileId, connection: account);
+    for (final globalKey in await scope.database.getDownloadOwnerKeysForProfile(profileId)) {
       final parsed = parseGlobalKey(globalKey);
-      if (parsed != null && accountServerIds.contains(parsed.serverId)) return true;
+      if (parsed != null && lostServers.contains(parsed.serverId)) return true;
     }
   }
   return false;
@@ -376,6 +394,8 @@ Future<void> logoutAllProfiles(BuildContext context) async {
     await scope.shelf.endProfileSession(activeOwner);
   }
 
+  // A storage failure leaves its catalog and the account available for retry.
+  await scope.deleteProfileIptv();
   await companionRemote.resetForLogout();
   // Credentials and the signed-out users' preferences go first so nothing
   // below can read them back as the next sign-in's defaults.
@@ -396,7 +416,6 @@ Future<void> logoutAllProfiles(BuildContext context) async {
   // Drop the profile/connection rows so the next sign-in starts clean and
   // doesn't bind to stale tokens or orphaned profile rows.
   await scope.profileConnections.clear();
-  await IptvSourceRepository(scope.database).deleteAllProfiles();
   await scope.profileRegistry.clear();
   await scope.connections.clear();
   await scope.plexHome.clearAll();

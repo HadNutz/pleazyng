@@ -1,0 +1,25 @@
+{
+  "target": "x64",
+  "target_api": "8.0",
+  "compatibility": "Tizen 8.0 x64 emulator",
+  "packages": [
+    {
+      "name": "cross-x86-64-gcc-9.2",
+      "version": "0.1.9",
+      "url": "https://download.tizen.org/sdk/tizenstudio/official/binary/cross-x86-64-gcc-9.2_0.1.9_ubuntu-64.zip",
+      "sha256": "aad547fe3504ba080086b450c409e9c501dace091c806a3c657dca2f68e35761"
+    },
+    {
+      "name": "tizen-8.0-core-add-ons",
+      "version": "0.0.337",
+      "url": "https://download.tizen.org/sdk/tizenstudio/official/binary/tizen-8.0-core-add-ons_0.0.337_ubuntu-64.zip",
+      "sha256": "81c5c60f5a5cf3bfebda9e1868738d06928836442abed7bf8d9f67cc0345a2d8"
+    },
+    {
+      "name": "tizen-8.0-rs-emulator64.core",
+      "version": "0.0.145",
+      "url": "https://download.tizen.org/sdk/tizenstudio/official/binary/tizen-8.0-rs-emulator64.core_0.0.145_ubuntu-64.zip",
+      "sha256": "d7118b4043ff530923c8bfc4155486cf9c44bc979103bd4dc45db8efd6bc816c"
+    }
+  ]
+}

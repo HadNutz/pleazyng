@@ -144,6 +144,8 @@ import '../providers/account_preferences_controller.dart';
 import '../utils/app_logger.dart';
 import '../utils/dialogs.dart';
 import '../utils/iphone_duo.dart';
+import '../widgets/fold_regions.dart';
+import '../navigation/video_task_restoration.dart';
 import '../utils/log_redaction_manager.dart';
 import '../utils/immersive_mode_guard.dart';
 import '../utils/live_tv_player_navigation.dart';
@@ -586,6 +588,7 @@ class VideoPlayerScreen extends StatefulWidget {
   /// for it.
   final WatchCopy? watchTogetherCopy;
   final Duration? initialPosition;
+  final bool initiallyPaused;
   final bool strictMediaSelection;
   final bool Function()? isLaunchCurrent;
   final PlaybackLaunchObserver? launchObserver;
@@ -625,6 +628,7 @@ class VideoPlayerScreen extends StatefulWidget {
     this.isPreroll = false,
     this.watchTogetherCopy,
     this.initialPosition,
+    this.initiallyPaused = false,
     this.strictMediaSelection = false,
     this.isLaunchCurrent,
     this.launchObserver,
@@ -976,6 +980,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   LiveTvPlaybackSession? _liveGuideSession;
   final _liveGuideAge = Stopwatch();
   final _liveBufferAge = Stopwatch();
+  ({LiveTvPlaybackSession session, int intent, int epoch})? _lateLiveRestore;
   bool _liveGuideLoading = false;
   int _lastLiveIntent = 0;
 
@@ -1751,6 +1756,7 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   @override
   void initState() {
     super.initState();
+    _playbackIntentShouldPlay = !widget.initiallyPaused;
     _activeExternalPlaybackSource = widget.externalPlaybackSource;
     try {
       _externalSourceController = context.read<SourceController?>();
@@ -1993,9 +1999,22 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
     }
   }
 
+  bool? _systemManagedWindow;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Reevaluate when view metrics change, including Android feature-only updates.
+    MediaQuery.sizeOf(context);
+    MediaQuery.displayFeaturesOf(context);
+    final managed = OrientationHelper.systemManagesPlaybackWindow(context);
+    final settings = SettingsService.instanceOrNull;
+    if (_systemManagedWindow != managed && _isPlayerInitialized && !_workspaceSurfaceDetached && settings != null) {
+      unawaited(
+        OrientationHelper.applyPlaybackLock(settings.read(SettingsService.rotationLocked), systemManaged: managed),
+      );
+    }
+    _systemManagedWindow = managed;
     final route = ModalRoute.of(context);
     _videoPlayerRoute = route is VideoPlayerRoute ? route : null;
 
@@ -2935,17 +2954,13 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
       initPhase = 'applying orientation';
       if (mounted) {
         try {
-          // Check rotation lock setting before applying orientation
-          final isRotationLocked = settingsService.read(SettingsService.rotationLocked);
-
-          if (isRotationLocked) {
-            // Locked: Apply landscape orientation only
-            OrientationHelper.setLandscapeOrientation();
-          } else {
-            // Unlocked: Allow all orientations immediately
-            unawaited(OrientationHelper.restoreDefaultOrientations());
-            unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky));
-          }
+          unawaited(
+            OrientationHelper.applyPlaybackLock(
+              settingsService.read(SettingsService.rotationLocked),
+              systemManaged: _systemManagedWindow ?? false,
+            ),
+          );
+          unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky));
           // Immersive mode is requested once; a fold/unfold or display switch
           // keeps the activity resumed and lets Android re-show the bars. The
           // guard answers the engine's re-show callback until release.

@@ -68,3 +68,12 @@ set(os_media_controls_bundled_libraries
   ""
   PARENT_SCOPE
 )
+
+if(PLEZY_BUILD_MPV_RELIABILITY_TESTS)
+  add_executable(mpris_metadata_test
+    "${CMAKE_SOURCE_DIR}/../test/native/mpris_metadata_test.cc"
+    os_media_controls_plugin.cpp)
+  target_include_directories(mpris_metadata_test PRIVATE include)
+  target_link_libraries(mpris_metadata_test PRIVATE flutter PkgConfig::GTK)
+  add_test(NAME mpris_metadata_test COMMAND dbus-run-session -- $<TARGET_FILE:mpris_metadata_test>)
+endif()

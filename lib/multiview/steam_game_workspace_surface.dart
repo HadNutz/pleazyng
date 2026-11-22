@@ -1,3 +1,4 @@
+import '../widgets/fold_regions.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -1187,144 +1188,162 @@ class _SteamGameWorkspaceSurfaceState extends State<SteamGameWorkspaceSurface> {
     if (!Platform.isAndroid && !Platform.isLinux && !Platform.isMacOS && !Platform.isIOS && !Platform.isWindows) {
       return session.build();
     }
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        session.build(),
-        if (_touchVisible)
-          ValueListenableBuilder<bool>(
-            valueListenable: session.inputAvailable,
-            builder: (_, enabled, _) => !enabled
-                ? const SizedBox.shrink()
-                : ValueListenableBuilder<int>(
-                    valueListenable: session.inputResets,
-                    builder: (_, revision, _) => Opacity(
-                      opacity: session.touchOpacity / 100,
-                      child: SteamTouchControls(
-                        key: ValueKey(revision),
-                        swapSides: session.swapTouchSides,
-                        layout: session.touchLayout,
-                        onButton: session.handleTouchButton,
-                        onStick: session.handleTouchStick,
-                        onRelease: session.releaseTouchControls,
-                      ),
-                    ),
-                  ),
-          ),
-        ValueListenableBuilder<String>(
-          valueListenable: session.sessionState,
-          builder: (context, state, _) {
-            if (state == 'playing') return const SizedBox.shrink();
-            return GameStreamStatus(
-              state: state,
-              gameName: session.game.name,
-              computerName: session.host.name,
-              onReconnect: session.reconnect,
-              onDisconnect: session.disconnect,
-            );
-          },
-        ),
-        if (session.controllerOnly)
-          PositionedDirectional(
-            top: 8,
-            start: 8,
-            child: ValueListenableBuilder<String>(
-              valueListenable: session.sessionState,
-              builder: (context, state, _) => state != 'playing'
-                  ? const SizedBox.shrink()
-                  : Material(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const AppIcon(Symbols.sports_esports_rounded, size: 18),
-                            const SizedBox(width: 8),
-                            Text(t.games.touchControls, style: Theme.of(context).textTheme.labelMedium),
-                          ],
-                        ),
-                      ),
-                    ),
-            ),
-          ),
-        PositionedDirectional(
-          top: 8,
-          end: 8,
-          child: ValueListenableBuilder<String>(
-            valueListenable: session.sessionState,
-            builder: (context, state, _) => state != 'playing'
-                ? const SizedBox.shrink()
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (!session.controllerOnly)
-                        ValueListenableBuilder<int>(
-                          valueListenable: session.microphoneState,
-                          builder: (_, microphone, _) {
-                            final active = microphone >= 2;
-                            final label = switch (microphone) {
-                              2 => t.games.microphoneStarting,
-                              3 => t.games.microphoneActive,
-                              _ => t.games.microphoneMuted,
-                            };
-                            final callback = active || !_detailsOpen ? _toggleMicrophone : null;
-                            return Semantics(
-                              liveRegion: true,
-                              child: FocusableButton(
-                                onPressed: callback,
-                                child: IconButton.filledTonal(
-                                  tooltip: '$label\n${active ? t.games.microphoneMute : t.games.microphoneEnable}',
-                                  isSelected: active,
-                                  onPressed: callback,
-                                  icon: AppIcon(active ? Symbols.mic_rounded : Symbols.mic_off_rounded),
+    return FoldRegionBuilder(
+      builder: (context, regions) {
+        final usable = regions.usable(width: 220, height: 150);
+        final split = !session.controllerOnly && usable.length > 1;
+        final video = split ? usable.first : regions.largest;
+        final controls = split ? usable.last : video;
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            regions.place(context, video, session.build()),
+            regions.place(
+              context,
+              controls,
+              Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (_touchVisible)
+                    ValueListenableBuilder<bool>(
+                      valueListenable: session.inputAvailable,
+                      builder: (_, enabled, _) => !enabled
+                          ? const SizedBox.shrink()
+                          : ValueListenableBuilder<int>(
+                              valueListenable: session.inputResets,
+                              builder: (_, revision, _) => Opacity(
+                                opacity: session.touchOpacity / 100,
+                                child: SteamTouchControls(
+                                  key: ValueKey(revision),
+                                  swapSides: session.swapTouchSides,
+                                  layout: session.touchLayout,
+                                  onButton: session.handleTouchButton,
+                                  onStick: session.handleTouchStick,
+                                  onRelease: session.releaseTouchControls,
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      FocusableButton(
-                        onPressed: _detailsOpen ? null : _showSteamTools,
-                        child: IconButton.filledTonal(
-                          tooltip: t.games.steamTools,
-                          onPressed: _detailsOpen ? null : _showSteamTools,
-                          icon: const AppIcon(Symbols.more_horiz_rounded),
-                        ),
-                      ),
-                      ValueListenableBuilder<bool>(
-                        valueListenable: session.mappingFailed,
-                        builder: (_, failed, _) => FocusableButton(
-                          onPressed: _detailsOpen ? null : _showInputLayout,
-                          child: IconButton.filledTonal(
-                            tooltip: failed ? t.games.controllerLayoutFailed : t.games.controllerLayout,
-                            onPressed: _detailsOpen ? null : _showInputLayout,
-                            icon: AppIcon(failed ? Symbols.warning_rounded : Symbols.tune_rounded),
-                          ),
-                        ),
-                      ),
-                      FocusableButton(
-                        onPressed: () => setState(() => _touchVisible = !_touchVisible),
-                        child: IconButton.filledTonal(
-                          tooltip: t.games.touchControls,
-                          isSelected: _touchVisible,
-                          onPressed: () => setState(() => _touchVisible = !_touchVisible),
-                          icon: const AppIcon(Symbols.sports_esports_rounded),
-                        ),
-                      ),
-                      FocusableButton(
-                        onPressed: _detailsOpen ? null : _showDetails,
-                        child: IconButton.filledTonal(
-                          tooltip: '${t.games.streamDetails}\n${t.games.inputReleaseHint}',
-                          onPressed: _detailsOpen ? null : _showDetails,
-                          icon: const AppIcon(Symbols.monitoring_rounded),
-                        ),
-                      ),
-                    ],
+                            ),
+                    ),
+                  ValueListenableBuilder<String>(
+                    valueListenable: session.sessionState,
+                    builder: (context, state, _) {
+                      if (state == 'playing') return const SizedBox.shrink();
+                      return GameStreamStatus(
+                        state: state,
+                        gameName: session.game.name,
+                        computerName: session.host.name,
+                        onReconnect: session.reconnect,
+                        onDisconnect: session.disconnect,
+                      );
+                    },
                   ),
-          ),
-        ),
-      ],
+                  if (session.controllerOnly)
+                    PositionedDirectional(
+                      top: 8,
+                      start: 8,
+                      child: ValueListenableBuilder<String>(
+                        valueListenable: session.sessionState,
+                        builder: (context, state, _) => state != 'playing'
+                            ? const SizedBox.shrink()
+                            : Material(
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.92),
+                                borderRadius: BorderRadius.circular(20),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const AppIcon(Symbols.sports_esports_rounded, size: 18),
+                                      const SizedBox(width: 8),
+                                      Text(t.games.touchControls, style: Theme.of(context).textTheme.labelMedium),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  PositionedDirectional(
+                    top: 8,
+                    end: 8,
+                    child: ValueListenableBuilder<String>(
+                      valueListenable: session.sessionState,
+                      builder: (context, state, _) => state != 'playing'
+                          ? const SizedBox.shrink()
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (!session.controllerOnly)
+                                  ValueListenableBuilder<int>(
+                                    valueListenable: session.microphoneState,
+                                    builder: (_, microphone, _) {
+                                      final active = microphone >= 2;
+                                      final label = switch (microphone) {
+                                        2 => t.games.microphoneStarting,
+                                        3 => t.games.microphoneActive,
+                                        _ => t.games.microphoneMuted,
+                                      };
+                                      final callback = active || !_detailsOpen ? _toggleMicrophone : null;
+                                      return Semantics(
+                                        liveRegion: true,
+                                        child: FocusableButton(
+                                          onPressed: callback,
+                                          child: IconButton.filledTonal(
+                                            tooltip:
+                                                '$label\n${active ? t.games.microphoneMute : t.games.microphoneEnable}',
+                                            isSelected: active,
+                                            onPressed: callback,
+                                            icon: AppIcon(active ? Symbols.mic_rounded : Symbols.mic_off_rounded),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                FocusableButton(
+                                  onPressed: _detailsOpen ? null : _showSteamTools,
+                                  child: IconButton.filledTonal(
+                                    tooltip: t.games.steamTools,
+                                    onPressed: _detailsOpen ? null : _showSteamTools,
+                                    icon: const AppIcon(Symbols.more_horiz_rounded),
+                                  ),
+                                ),
+                                ValueListenableBuilder<bool>(
+                                  valueListenable: session.mappingFailed,
+                                  builder: (_, failed, _) => FocusableButton(
+                                    onPressed: _detailsOpen ? null : _showInputLayout,
+                                    child: IconButton.filledTonal(
+                                      tooltip: failed ? t.games.controllerLayoutFailed : t.games.controllerLayout,
+                                      onPressed: _detailsOpen ? null : _showInputLayout,
+                                      icon: AppIcon(failed ? Symbols.warning_rounded : Symbols.tune_rounded),
+                                    ),
+                                  ),
+                                ),
+                                FocusableButton(
+                                  onPressed: () => setState(() => _touchVisible = !_touchVisible),
+                                  child: IconButton.filledTonal(
+                                    tooltip: t.games.touchControls,
+                                    isSelected: _touchVisible,
+                                    onPressed: () => setState(() => _touchVisible = !_touchVisible),
+                                    icon: const AppIcon(Symbols.sports_esports_rounded),
+                                  ),
+                                ),
+                                FocusableButton(
+                                  onPressed: _detailsOpen ? null : _showDetails,
+                                  child: IconButton.filledTonal(
+                                    tooltip: '${t.games.streamDetails}\n${t.games.inputReleaseHint}',
+                                    onPressed: _detailsOpen ? null : _showDetails,
+                                    icon: const AppIcon(Symbols.monitoring_rounded),
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

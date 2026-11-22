@@ -66,6 +66,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$fa dialog = _Translations$dialog$fa._(_root);
 	@override late final _Translations$profiles$fa profiles = _Translations$profiles$fa._(_root);
 	@override late final _Translations$connections$fa connections = _Translations$connections$fa._(_root);
+	@override late final _Translations$iptv$fa iptv = _Translations$iptv$fa._(_root);
 	@override late final _Translations$accountPreferences$fa accountPreferences = _Translations$accountPreferences$fa._(_root);
 	@override late final _Translations$discover$fa discover = _Translations$discover$fa._(_root);
 	@override late final _Translations$errors$fa errors = _Translations$errors$fa._(_root);
@@ -123,6 +124,7 @@ class TranslationsFa extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$fa musicExperience = _Translations$musicExperience$fa._(_root);
 	@override late final _Translations$musicTools$fa musicTools = _Translations$musicTools$fa._(_root);
 	@override late final _Translations$musicDevices$fa musicDevices = _Translations$musicDevices$fa._(_root);
+	@override late final _Translations$bookmarkMigration$fa bookmarkMigration = _Translations$bookmarkMigration$fa._(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class _Translations$settings$fa extends Translations$settings$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'لولای نمایشگر تاشو';
 	@override String get title => 'تنظیمات';
 	@override String get supportDeveloper => 'پشتیبانی Pleazyng';
 	@override String get supportDeveloperDescription => 'کمک های مالی برای حمایت از توسعه';
@@ -574,7 +577,6 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get importSettings => 'تنظیمات واردات';
 	@override String get importSettingsDescription => 'بازگرداندن ترجیحات از یک فایل';
 	@override String get importSettingsConfirm => 'این کار جایگزین تنظیمات فعلی شما خواهد شد. ادامه دهید؟';
-	@override String get importSettingsSuccess => 'تنظیمات وارداتی';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'تنظیمات اعمال‌شده: ${applied}. ردشده: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'این فایل معتبر نیست Pleazyng تنظیمات صادرات';
 	@override String get importSettingsNoUser => 'قبل از واردات تنظیمات را وارد کنید';
@@ -588,7 +590,6 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'نسخهٔ پشتیبان بارگذاری شد. این نشانی را ذخیره کنید. پس از نصب دوباره، آن را در بخش پشتیبان‌گیری ابری وارد کنید و «${action}» را انتخاب کنید.';
 	@override String get cloudBackupRestore => 'بازگرداندن Backup';
 	@override String get cloudBackupRestoreConfirm => 'این جایگزین تنظیمات قابل حمل مطابقت در این دستگاه خواهد بود.';
-	@override String get cloudBackupRestored => 'تنظیمات بازگردانده شده از پشتیبان ابر';
 	@override String get shortcutsReset => 'تعویض کوتاه به تعویضات';
 	@override String get resetShortcutsConfirm => 'این کار کوتاه کردن های سفارشی شما را با کوتاه کردن های پیش فرض جایگزین می کند.';
 	@override String get about => 'درباره';
@@ -1642,6 +1643,31 @@ class _Translations$connections$fa extends Translations$connections$en {
 	@override String get signInAgain => 'دوباره وارد شوید';
 	@override String editMediaBrowserTitle({required Object product}) => 'ویرایش ${product} اتصال';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'اضافه کردن یا حذف URL برای ${serverName}. Pleazyng از URL قابل دسترسی با پایین ترین تاخیر استفاده می کند.';
+}
+
+// Path: iptv
+class _Translations$iptv$fa extends Translations$iptv$en {
+	_Translations$iptv$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'منابع پشتیبان به ترتیب پخش';
+	@override String get lineupOrder => 'ترتیب کانال‌ها';
+	@override String get orderChanged => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.';
+	@override String get localPlaylist => 'فایل M3U';
+	@override String get pastePlaylist => 'چسباندن متن فهرست پخش';
+	@override String get playlistBase => 'نشانی پایه برای پیوندهای نسبی (اختیاری)';
+	@override String get localPlaylistHelp => 'یک نسخهٔ خصوصی از فهرست کانال‌های M3U یا M3U8 وارد کنید. می‌توانید آن را با فایل دیگری جایگزین کنید.';
+	@override String get showMatches => 'نمایش کانال‌های مطابق';
+	@override String get hideMatches => 'پنهان کردن کانال‌های مطابق';
+	@override String get pickerCredit => 'با الهام از · M3U Web Picker · Zachary Schmook (@zschmook) و مشارکت‌کنندگان';
+	@override String get exportPrivate => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.';
+	@override String get dynamicStreamExport => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.';
+	@override String get moveUp => 'حرکت بالا';
+	@override String get moveDown => 'حرکت به پایین';
+	@override String get choosePlaylist => 'انتخاب فایل playlist';
+	@override String affectedChannels({required Object count}) => 'کانالها · ${count}';
 }
 
 // Path: accountPreferences
@@ -2723,6 +2749,7 @@ class _Translations$metadataEdit$fa extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'URL تصویر را وارد کنید';
 	@override String get imageUrl => 'تصویر URL';
 	@override String get metadataUpdated => 'Metadata به روز شده';
+	@override String get metadataConflict => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید تا آخرین مقادیر را بررسی کنید.';
 	@override String get metadataUpdateFailed => 'عدم به روز رسانی متا';
 	@override String get artworkUpdated => 'هنر به روز شده';
 	@override String get artworkUpdateFailed => 'به روز رسانی هنرهای هنری';
@@ -3123,7 +3150,6 @@ class _Translations$cast$fa extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'به ${device} متصل شده است.';
 	@override String get device => 'دستگاه پخش';
 	@override String get readyToCast => 'آمادهٔ پخش روی دستگاه';
-	@override String get subtitle => 'زیرنویس‌ها';
 	@override String get serverNotAvailable => 'سرور رسانه ای در دسترس نیست.';
 	@override String get stopCasting => 'توقف پخش روی دستگاه';
 	@override String get startFailed => 'نمی توانم شروع به کاستینگ کنم، سرور را چک کنید و دوباره امتحان کنید.';
@@ -4107,6 +4133,7 @@ class _Translations$podcasts$fa extends Translations$podcasts$en {
 	final TranslationsFa _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'اشتراک‌های واردشده: ${imported}، تکراری: ${duplicates}، ردشده: ${skipped}.';
 	@override String get autoDownloadLatest => 'بارگیری خودکار تازه‌ترین قسمت‌ها';
 	@override String get removeFinishedAfter => 'حذف بارگیری‌های تمام‌شده پس از';
 }
@@ -4519,6 +4546,17 @@ class _Translations$musicDevices$fa extends Translations$musicDevices$en {
 	@override String get relay => 'نشانی رلهٔ موسیقی';
 	@override String get relayHint => 'در دستگاه گیرنده فعال کنید و یک بار در همان شبکه جفت کنید. Pleazyng را باز نگه دارید. رله فرمان‌های رمزگذاری‌شدهٔ موسیقی را منتقل می‌کند و نشانی‌های شبکه را می‌بیند. هر پخش‌کننده از سرور رسانهٔ خودش پخش می‌کند.';
 	@override String get relayInvalid => 'نشانی HTTPS رله را وارد کنید.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$fa extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$fa._(TranslationsFa root) : this._root = root, super.internal(root);
+
+	final TranslationsFa _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'نشانک‌های نسخه‌ای ناشناخته';
+	@override String get assignToVersion => 'اختصاص به این نسخه';
 }
 
 // Path: appIcon.names
@@ -5853,6 +5891,7 @@ extension on TranslationsFa {
 			'update.viewRelease' => 'مشاهده انتشارات',
 			'update.latestVersion' => 'شما در آخرین نسخه هستید',
 			'update.checkFailed' => 'نتوانستیم به روز رسانی ها را بررسی کنیم',
+			'settings.foldableDisplay' => 'لولای نمایشگر تاشو',
 			'settings.title' => 'تنظیمات',
 			'settings.supportDeveloper' => 'پشتیبانی Pleazyng',
 			'settings.supportDeveloperDescription' => 'کمک های مالی برای حمایت از توسعه',
@@ -6036,7 +6075,6 @@ extension on TranslationsFa {
 			'settings.importSettings' => 'تنظیمات واردات',
 			'settings.importSettingsDescription' => 'بازگرداندن ترجیحات از یک فایل',
 			'settings.importSettingsConfirm' => 'این کار جایگزین تنظیمات فعلی شما خواهد شد. ادامه دهید؟',
-			'settings.importSettingsSuccess' => 'تنظیمات وارداتی',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'تنظیمات اعمال‌شده: ${applied}. ردشده: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'این فایل معتبر نیست Pleazyng تنظیمات صادرات',
 			'settings.importSettingsNoUser' => 'قبل از واردات تنظیمات را وارد کنید',
@@ -6050,7 +6088,6 @@ extension on TranslationsFa {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'نسخهٔ پشتیبان بارگذاری شد. این نشانی را ذخیره کنید. پس از نصب دوباره، آن را در بخش پشتیبان‌گیری ابری وارد کنید و «${action}» را انتخاب کنید.',
 			'settings.cloudBackupRestore' => 'بازگرداندن Backup',
 			'settings.cloudBackupRestoreConfirm' => 'این جایگزین تنظیمات قابل حمل مطابقت در این دستگاه خواهد بود.',
-			'settings.cloudBackupRestored' => 'تنظیمات بازگردانده شده از پشتیبان ابر',
 			'settings.shortcutsReset' => 'تعویض کوتاه به تعویضات',
 			'settings.resetShortcutsConfirm' => 'این کار کوتاه کردن های سفارشی شما را با کوتاه کردن های پیش فرض جایگزین می کند.',
 			'settings.about' => 'درباره',
@@ -6148,9 +6185,9 @@ extension on TranslationsFa {
 			'settings.manageLibrariesDescription' => 'کتابخانه ها را ذخیره و پنهان کنید',
 			'settings.companionRemoteServer' => 'سرورهای از راه دور',
 			'settings.companionRemoteServerDescription' => 'اجازه دهید دستگاه های تلفن همراه در شبکه شما این برنامه را کنترل کنند',
+			'settings.companionRemoteServerStartFailed' => 'نمی توانم سرور همراه را راه اندازی کنم.',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'نمی توانم سرور همراه را راه اندازی کنم.',
 			'settings.companionRemoteServerStopFailed' => 'نمی توانم سرور همراه را متوقف کنم.',
 			'settings.autoPip' => 'عکس های خودکار در تصویر',
 			'settings.autoPipDescription' => 'به طور خودکار تصویر-در-تصویر را وارد کنید هنگامی که برنامه را در طول پخش ترک می کنید',
@@ -6662,9 +6699,9 @@ extension on TranslationsFa {
 			'accessibility.boldTextHint' => 'از یک وزن سنگین تر برای برچسب های رابط و پیام ها استفاده کنید تا آنها را آسان تر تشخیص دهند.',
 			'tooltips.shufflePlay' => 'بازی شوفلی',
 			'tooltips.playTrailer' => 'بازی تریلر',
+			'tooltips.markAsWatched' => 'مارک به نظر می رسد',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => 'مارک به نظر می رسد',
 			'tooltips.markAsUnwatched' => 'مارک ناشناخته',
 			'audioTracks.track' => ({required Object n}) => 'ترافیک صوتی ${n}',
 			'videoControls.audioLabel' => 'صدا',
@@ -7007,6 +7044,22 @@ extension on TranslationsFa {
 			'connections.signInAgain' => 'دوباره وارد شوید',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'ویرایش ${product} اتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'اضافه کردن یا حذف URL برای ${serverName}. Pleazyng از URL قابل دسترسی با پایین ترین تاخیر استفاده می کند.',
+			'iptv.backupFeeds' => 'منابع پشتیبان به ترتیب پخش',
+			'iptv.lineupOrder' => 'ترتیب کانال‌ها',
+			'iptv.orderChanged' => 'ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.',
+			'iptv.localPlaylist' => 'فایل M3U',
+			'iptv.pastePlaylist' => 'چسباندن متن فهرست پخش',
+			'iptv.playlistBase' => 'نشانی پایه برای پیوندهای نسبی (اختیاری)',
+			'iptv.localPlaylistHelp' => 'یک نسخهٔ خصوصی از فهرست کانال‌های M3U یا M3U8 وارد کنید. می‌توانید آن را با فایل دیگری جایگزین کنید.',
+			'iptv.showMatches' => 'نمایش کانال‌های مطابق',
+			'iptv.hideMatches' => 'پنهان کردن کانال‌های مطابق',
+			'iptv.pickerCredit' => 'با الهام از · M3U Web Picker · Zachary Schmook (@zschmook) و مشارکت‌کنندگان',
+			'iptv.exportPrivate' => 'نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.',
+			'iptv.dynamicStreamExport' => 'درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.',
+			'iptv.moveUp' => 'حرکت بالا',
+			'iptv.moveDown' => 'حرکت به پایین',
+			'iptv.choosePlaylist' => 'انتخاب فایل playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'کانالها · ${count}',
 			'accountPreferences.sectionTitle' => 'حسابداری ترجیحات',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'گزینه های صوتی، زیرنویس و کتابخانه در ${account} ذخیره شده است',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'گزینه های صوتی، زیرنویس و کتابخانه در حساب های ${count} ذخیره شده است',
@@ -7162,6 +7215,8 @@ extension on TranslationsFa {
 			'discover.director' => 'کارگردان',
 			'discover.directors' => 'کارگردانان',
 			'discover.movie' => 'فیلم',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'نمایش تلویزیونی',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} دقیقه باقی مانده',
 			'discover.moreLikeThis' => 'موارد مشابه با این',
@@ -7176,8 +7231,6 @@ extension on TranslationsFa {
 			'errors.connectionTimeout' => ({required Object context}) => 'زمان اتصال در هنگام بارگذاری ${context}',
 			'errors.connectionFailed' => 'عدم امکان اتصال به سرورهای رسانه ای',
 			'errors.unableToLoad' => ({required Object context}) => 'قابل بارگذاری نیست ${context}.لطفا دوباره امتحان کنید.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'هیچ مشتری در دسترس نیست',
 			'errors.pleaseEnterToken' => 'لطفا یک توکن وارد کنید.',
 			'errors.invalidToken' => 'توکین نادرست',
@@ -7676,6 +7729,8 @@ extension on TranslationsFa {
 			'collections.removedFromCollection' => 'حذف از جمع آوری',
 			'collections.removeFromCollectionFailed' => 'از جمع آوری خارج نشود',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'خطای حذف از مجموعه: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => 'جمع آوری جستجو...',
 			'playlists.title' => 'لیست‌های پخش',
 			'playlists.playlist' => 'لیست پخش',
@@ -7690,8 +7745,6 @@ extension on TranslationsFa {
 			'playlists.emptyPlaylist' => 'این لیست خالی است',
 			'playlists.deleteConfirm' => 'لیست بازی را حذف کنید؟',
 			'playlists.deleteMessage' => ({required Object name}) => 'آیا مطمئن هستید که می خواهید "${name}" را حذف کنید؟',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist ایجاد شده',
 			'playlists.deleted' => 'Playlist حذف شده',
 			'playlists.itemAdded' => 'اضافه شده به playlist',
@@ -8190,6 +8243,8 @@ extension on TranslationsFa {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision دکوراسیون',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision دکوراسیون (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'لایه پایه',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 لایه پایه',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'لایه پایه HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR لایه پایه',
@@ -8204,8 +8259,6 @@ extension on TranslationsFa {
 			'performanceOverlay.transfer' => 'انتقال',
 			'performanceOverlay.renderFps' => 'رندر FPS',
 			'performanceOverlay.displayFps' => 'نمایش FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V همگام سازی',
 			'performanceOverlay.dropped' => 'سقوط',
 			'performanceOverlay.dvRpus' => 'DV RPU',
@@ -8281,6 +8334,7 @@ extension on TranslationsFa {
 			'metadataEdit.enterImageUrl' => 'URL تصویر را وارد کنید',
 			'metadataEdit.imageUrl' => 'تصویر URL',
 			'metadataEdit.metadataUpdated' => 'Metadata به روز شده',
+			'metadataEdit.metadataConflict' => 'ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید تا آخرین مقادیر را بررسی کنید.',
 			'metadataEdit.metadataUpdateFailed' => 'عدم به روز رسانی متا',
 			'metadataEdit.artworkUpdated' => 'هنر به روز شده',
 			'metadataEdit.artworkUpdateFailed' => 'به روز رسانی هنرهای هنری',
@@ -8638,7 +8692,6 @@ extension on TranslationsFa {
 			'cast.connectedTo' => ({required Object device}) => 'به ${device} متصل شده است.',
 			'cast.device' => 'دستگاه پخش',
 			'cast.readyToCast' => 'آمادهٔ پخش روی دستگاه',
-			'cast.subtitle' => 'زیرنویس‌ها',
 			'cast.serverNotAvailable' => 'سرور رسانه ای در دسترس نیست.',
 			'cast.stopCasting' => 'توقف پخش روی دستگاه',
 			'cast.startFailed' => 'نمی توانم شروع به کاستینگ کنم، سرور را چک کنید و دوباره امتحان کنید.',
@@ -8704,6 +8757,8 @@ extension on TranslationsFa {
 			'homeLayout.autoSlideDescription' => 'همچنین هر چند ثانیه به خودی خود اسلاید می کند. Arrows (PC) و d-pad (TV) همیشه کار می کنند و تایمر را دوباره راه اندازی می کنند.',
 			'homeLayout.autoSlideEditDescription' => 'همچنین هر چند ثانیه به خودی خود اسلاید می کند. خاموش: فقط زمانی که بر روی یک شلیک (PC) کلیک کنید یا چپ / راست را روی دوربین (TV) فشار دهید حرکت می کند.',
 			'homeLayout.enableHeroFirst' => 'قهرمانان اول',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'نمایش در صفحه اصلی',
 			'homeLayout.home' => 'خانه',
 			'homeLayout.removeFromHome' => 'حذف از خانه',
@@ -8718,8 +8773,6 @@ extension on TranslationsFa {
 			'homeLayout.customPlexRow' => 'مشخصات Plex خط',
 			'homeLayout.heroNeedsLibrary' => 'نگاهی به کتابخانه اول – قهرمان نیاز به جایی برای نشان دادن',
 			'homeLayout.heroNeedsSurface' => 'کتابخانه یا خانه را اول ببینید – قهرمان باید جایی برای نشان دادن',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'حذف هاب',
 			'homeLayout.noPlexRows' => 'شماره Plex ردیف های مدیریت شده برای این کتابخانه بازگردانده شده است.',
 			'homeLayout.openDetails' => 'جزئیات باز',
@@ -9218,6 +9271,8 @@ extension on TranslationsFa {
 			'audiobook.librarySort' => 'انواع کتاب ها',
 			'audiobook.sortTitle' => 'عنوان',
 			'audiobook.sortAuthor' => 'نویسنده',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => 'سخنران',
 			'audiobook.sortSeries' => 'سری سفارش',
 			'audiobook.sortRecent' => 'اخیرا باز شد',
@@ -9232,8 +9287,6 @@ extension on TranslationsFa {
 			'audiobook.recoveryExport' => 'صادرات رمزگذاری شده بازگرداندن فایل',
 			'audiobook.recoveryImport' => 'واردات فایل های رمزگذاری شده',
 			'audiobook.recoveryImportConfirm' => 'آیا این فایل بازگرداندن رمزگذاری شده با موقعیت های خواندن فعلی و یادداشت ها ترکیب می شود؟ تاریخچه موجود حفظ خواهد شد. کتابخانه به اشتراک گذاشته شده و شناسه آیتم شامل نمی شود؛ قبل از واردات، شناسه های مطابقت را بر روی هر دستگاه تنظیم کنید.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'فایل بازگرداندن رمزگذاری شده ذخیره شده است.',
 			'audiobook.recoveryImported' => 'بازگرداندن اطلاعات جمع آوری شده است.',
 			'sourceSetup.bookorbitHelp' => 'برای مرور و پخش کتاب‌های BookOrbit، با حساب شخصی خود وارد شوید. درخواست عنوان‌های موجودنبود همچنان از نمونهٔ متصل SeerrNG شما انجام می‌شود.',
@@ -9452,6 +9505,7 @@ extension on TranslationsFa {
 			'issueReport.privacy' => 'پیش‌نویس نسخه برنامه، پلتفرم و تعداد اتصال‌ها را دارد. نشانی سرورها، نام حساب‌ها و پروفایل‌ها، عنوان رسانه‌ها و مسیر فایل‌ها در آن نیست.',
 			'issueReport.logPrivacy' => 'گزارش‌ها اختیاری‌اند. پیش از بارگذاری آن‌ها را بررسی کنید. شناسه گزارش به پیش‌نویس اضافه می‌شود و ممکن است عمومی باشد.',
 			'issueReport.openDraft' => 'باز کردن پیش‌نویس GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'اشتراک‌های واردشده: ${imported}، تکراری: ${duplicates}، ردشده: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'بارگیری خودکار تازه‌ترین قسمت‌ها',
 			'podcasts.removeFinishedAfter' => 'حذف بارگیری‌های تمام‌شده پس از',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'پیش‌نمایش کدگذاری زیرنویس',
@@ -9731,6 +9785,8 @@ extension on TranslationsFa {
 			'musicTools.guestDj' => 'دی‌جی مهمان',
 			'musicTools.charts' => 'آمار شنیدن',
 			'musicTools.rediscover' => 'کشف دوباره',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => 'ایستگاه‌های موسیقی',
 			'musicTools.prompt' => 'فهرست پخش از توضیح',
 			'musicTools.provider' => 'نشانی تولید ارائه‌دهنده',
@@ -9746,8 +9802,6 @@ extension on TranslationsFa {
 			'musicTools.apiKey' => 'کلید API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'دقیقه ها',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => 'صافی‌ها',
 			'musicTools.exclusiveOutput' => 'خروجی صدای انحصاری',
 			'musicTools.preamp' => 'پیش‌تقویت',
@@ -9803,6 +9857,8 @@ extension on TranslationsFa {
 			'musicDevices.relay' => 'نشانی رلهٔ موسیقی',
 			'musicDevices.relayHint' => 'در دستگاه گیرنده فعال کنید و یک بار در همان شبکه جفت کنید. Pleazyng را باز نگه دارید. رله فرمان‌های رمزگذاری‌شدهٔ موسیقی را منتقل می‌کند و نشانی‌های شبکه را می‌بیند. هر پخش‌کننده از سرور رسانهٔ خودش پخش می‌کند.',
 			'musicDevices.relayInvalid' => 'نشانی HTTPS رله را وارد کنید.',
+			'bookmarkMigration.unassigned' => 'نشانک‌های نسخه‌ای ناشناخته',
+			'bookmarkMigration.assignToVersion' => 'اختصاص به این نسخه',
 			_ => null,
 		};
 	}

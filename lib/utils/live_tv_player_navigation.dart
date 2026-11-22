@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import '../widgets/fold_browser.dart';
 import '../media/ids.dart';
 import '../media/media_backend.dart';
 
@@ -36,6 +38,9 @@ Future<void> navigateToLiveTv(
   bool Function()? isLaunchCurrent,
   LiveTvStartPosition startPosition = LiveTvStartPosition.ask,
   LiveTvProgram? program,
+  int? restoredBroadcastEpoch,
+  bool initiallyPaused = false,
+  bool Function()? canPresent,
 }) async {
   if (!(isLaunchCurrent?.call() ?? true) || !(launchObserver?.isCurrent ?? true)) return;
   if (!await IptvParentalAccessService.ensureAllowed(context, channel)) {
@@ -43,6 +48,7 @@ Future<void> navigateToLiveTv(
     return;
   }
   if (!context.mounted || !(isLaunchCurrent?.call() ?? true) || !(launchObserver?.isCurrent ?? true)) return;
+  if (canPresent?.call() == false) return;
   final directIptv = channel.iptvSourceId != null && channel.iptvChannelId != null;
   final serverInfo = directIptv ? null : liveTvServerInfoForChannel(multiServer, channel);
   if (!directIptv && serverInfo == null) {
@@ -58,7 +64,7 @@ Future<void> navigateToLiveTv(
     return;
   }
 
-  final navigator = Navigator.of(context);
+  final navigator = FoldBrowserScope.of(context)?.owner ?? Navigator.of(context);
   appLogger.d('Navigating to live channel: ${channel.displayName} (${channel.key})');
 
   // The placeholder carries the actual backend through so any in-player
@@ -87,12 +93,14 @@ Future<void> navigateToLiveTv(
   final route = VideoPlayerRoute(
     builder: (_) => VideoPlayerScreen(
       metadata: placeholder,
+      initiallyPaused: initiallyPaused,
       live: LiveTvSessionArgs(
         channel: channel,
         channels: normalizedChannels,
         currentChannelIndex: currentChannelIndex,
         startPosition: startPosition,
         initialProgram: program,
+        restoredBroadcastEpoch: restoredBroadcastEpoch,
       ),
       launchObserver: launchObserver,
       isLaunchCurrent: isLaunchCurrent,

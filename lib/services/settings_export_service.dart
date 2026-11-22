@@ -66,8 +66,9 @@ class _PendingImport {
 class _StoredPreferenceValue {
   final bool existed;
   final Object? value;
+  final Object? importedValue;
 
-  const _StoredPreferenceValue({required this.existed, required this.value});
+  const _StoredPreferenceValue({required this.existed, required this.value, required this.importedValue});
 }
 
 /// Serializes / restores user-facing SharedPreferences to a JSON file.
@@ -77,6 +78,7 @@ class _StoredPreferenceValue {
 /// re-applied with the current user's prefix on import, so preferences follow
 /// whichever account is signed in on the target device.
 class SettingsExportService {
+  static const _profileChanged = SettingsExportException('The active profile changed during settings import');
   static const int formatVersion = 1;
   static const String fileExtension = 'json';
 
@@ -249,7 +251,7 @@ class SettingsExportService {
   }) async {
     void checkCurrent() {
       if (isCurrent != null && !isCurrent()) {
-        throw const SettingsExportException('The active profile changed during settings import');
+        throw _profileChanged;
       }
     }
 
@@ -333,17 +335,12 @@ class SettingsExportService {
     }
 
     final snapshots = <String, _StoredPreferenceValue>{};
-    for (final mutation in pending) {
-      snapshots[mutation.targetKey] = _StoredPreferenceValue(
-        existed: prefs.containsKey(mutation.targetKey),
-        value: prefs.get(mutation.targetKey),
+    void snapshot(String key, Object? importedValue) {
+      snapshots[key] = _StoredPreferenceValue(
+        existed: prefs.containsKey(key),
+        value: prefs.get(key),
+        importedValue: importedValue,
       );
-      if (mutation.obsoleteKey case final obsoleteKey?) {
-        snapshots[obsoleteKey] = _StoredPreferenceValue(
-          existed: prefs.containsKey(obsoleteKey),
-          value: prefs.get(obsoleteKey),
-        );
-      }
     }
 
     try {
@@ -351,11 +348,13 @@ class SettingsExportService {
         checkCurrent();
         await debugBeforeImportWrite?.call(mutation.targetKey);
         checkCurrent();
+        snapshot(mutation.targetKey, mutation.value);
         await _writeTyped(prefs, mutation.targetKey, mutation.type, mutation.value);
         checkCurrent();
         if (mutation.obsoleteKey case final obsoleteKey?) {
           await debugBeforeImportWrite?.call(obsoleteKey);
           checkCurrent();
+          snapshot(obsoleteKey, null);
           await prefs.remove(obsoleteKey);
           checkCurrent();
         }
@@ -426,6 +425,11 @@ class SettingsExportService {
   ) async {
     for (final entry in snapshots.entries) {
       final snapshot = entry.value;
+      final current = prefs.get(entry.key);
+      final imported = snapshot.importedValue;
+      // Another settings write can supersede this one before rollback.
+      final matches = current is List && imported is List ? listEquals(current, imported) : current == imported;
+      if (!matches) continue;
       if (!snapshot.existed) {
         await prefs.remove(entry.key);
         continue;
@@ -504,12 +508,19 @@ class SettingsExportService {
   /// Returns `null` if the user cancelled. Malformed files throw
   /// [InvalidExportFileException]; platform and filesystem failures retain
   /// their original exception types.
-  static Future<ImportResult?> importFromFile() async {
+  static Future<ImportResult?> importFromFile({bool Function(String profileId)? isCurrentSession}) async {
     final storage = await StorageService.getInstance();
+    final profileId = storage.getActiveProfileId();
     final uuid = storage.activeUserScope();
-    if (uuid == null || uuid.isEmpty) {
+    if (profileId == null || uuid == null || uuid.isEmpty) {
       throw const NoUserSignedInException();
     }
+
+    bool isCurrent() =>
+        storage.getActiveProfileId() == profileId &&
+        storage.activeUserScope() == uuid &&
+        (isCurrentSession?.call(profileId) ?? true);
+    if (!isCurrent()) throw _profileChanged;
 
     final picked = await FilePickerService.instance.pickFiles(
       type: FileType.custom,
@@ -518,6 +529,7 @@ class SettingsExportService {
     );
     if (picked == null || picked.files.isEmpty) return null;
 
+    if (!isCurrent()) throw _profileChanged;
     final file = picked.files.first;
     String contents;
     final bytes = file.bytes;
@@ -545,6 +557,6 @@ class SettingsExportService {
     final data = decoded;
 
     final prefs = (await SettingsService.getInstance()).prefs;
-    return applyImportMap(data, prefs, currentUserUuid: uuid);
+    return applyImportMap(data, prefs, currentUserUuid: uuid, isCurrent: isCurrent);
   }
 }

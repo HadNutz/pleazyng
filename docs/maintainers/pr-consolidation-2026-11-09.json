@@ -845,7 +845,7 @@
     "open_code_scanning": 0,
     "open_secret_scanning": 0,
     "resolved_dependabot_alert": 57,
-    "codeql_execution": "disabled per owner directive"
+    "codeql_execution": "not run at the time; on 2026-11-21 the owner withdrew the disable and directed that CodeQL remain enabled; GitHub default setup is configured"
   },
   "legacy_feed_tag": {
     "tag": "appcast",

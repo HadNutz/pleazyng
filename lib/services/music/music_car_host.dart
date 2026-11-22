@@ -1891,6 +1891,22 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
         _folder('downloads', t.navigation.downloads),
       ];
     }
+    if (id == 'carEmpty') return [];
+    if (id == 'rootPlayable') {
+      final owned = await _visibleDownloads();
+      if (!_current) return [];
+      return [
+        if (_music.currentTrack != null || _spoken != null)
+          {'id': 'resume', 'title': t.common.resume, 'playable': true},
+        if (owned.isNotEmpty)
+          {
+            'id': 'downloadMix:$_itemScope',
+            'title': '${t.common.shuffle} · ${t.navigation.downloads}',
+            'playable': true,
+          },
+        for (final track in owned.take(4)) _item(track, offline: true),
+      ];
+    }
     if (id == 'rating' && _ratingState?.kind == 'rating') {
       final state = _ratingState!;
       return [
@@ -2385,22 +2401,6 @@ class _MusicCarHostState extends State<MusicCarHost> with WidgetsBindingObserver
             'subtitle': t.livingRoom.jukeboxInfo,
             'playable': true,
           },
-        ];
-      }
-      if (id == 'carEmpty') return [];
-      if (id == 'rootPlayable') {
-        final owned = await _visibleDownloads();
-        if (!_current) return [];
-        return [
-          if (_music.currentTrack != null || _spoken != null)
-            {'id': 'resume', 'title': t.common.resume, 'playable': true},
-          if (owned.isNotEmpty)
-            {
-              'id': 'downloadMix:$_itemScope',
-              'title': '${t.common.shuffle} · ${t.navigation.downloads}',
-              'playable': true,
-            },
-          for (final track in owned.take(4)) _item(track, offline: true),
         ];
       }
       if (id == 'guest') {

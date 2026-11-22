@@ -66,6 +66,7 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$sv dialog = _Translations$dialog$sv._(_root);
 	@override late final _Translations$profiles$sv profiles = _Translations$profiles$sv._(_root);
 	@override late final _Translations$connections$sv connections = _Translations$connections$sv._(_root);
+	@override late final _Translations$iptv$sv iptv = _Translations$iptv$sv._(_root);
 	@override late final _Translations$accountPreferences$sv accountPreferences = _Translations$accountPreferences$sv._(_root);
 	@override late final _Translations$discover$sv discover = _Translations$discover$sv._(_root);
 	@override late final _Translations$errors$sv errors = _Translations$errors$sv._(_root);
@@ -123,6 +124,7 @@ class TranslationsSv extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$sv musicExperience = _Translations$musicExperience$sv._(_root);
 	@override late final _Translations$musicTools$sv musicTools = _Translations$musicTools$sv._(_root);
 	@override late final _Translations$musicDevices$sv musicDevices = _Translations$musicDevices$sv._(_root);
+	@override late final _Translations$bookmarkMigration$sv bookmarkMigration = _Translations$bookmarkMigration$sv._(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class _Translations$settings$sv extends Translations$settings$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Gångjärn på vikbar skärm';
 	@override String get title => 'Inställningar';
 	@override String get supportDeveloper => 'Stöd Pleazyng';
 	@override String get supportDeveloperDescription => 'Donera för att stödja utvecklingen';
@@ -574,7 +577,6 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String get importSettings => 'Importera inställningar';
 	@override String get importSettingsDescription => 'Återställ inställningar från en fil';
 	@override String get importSettingsConfirm => 'Detta ersätter dina nuvarande inställningar. Fortsätta?';
-	@override String get importSettingsSuccess => 'Inställningar importerade';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Filen är inte en giltig export av Pleazyng-inställningar';
 	@override String get importSettingsNoUser => 'Logga in innan du importerar inställningar';
@@ -588,7 +590,6 @@ class _Translations$settings$sv extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.';
 	@override String get cloudBackupRestore => 'Återställ backup';
 	@override String get cloudBackupRestoreConfirm => 'Detta kommer att ersätta matchande bärbara inställningar på denna enhet.';
-	@override String get cloudBackupRestored => 'Inställningar återställda från moln backup';
 	@override String get shortcutsReset => 'Genvägarna har återställts till standard';
 	@override String get resetShortcutsConfirm => 'Detta ersätter dina anpassade genvägar med standardgenvägarna. Fortsätta?';
 	@override String get about => 'Om';
@@ -1642,6 +1643,31 @@ class _Translations$connections$sv extends Translations$connections$en {
 	@override String get signInAgain => 'Logga in igen';
 	@override String editMediaBrowserTitle({required Object product}) => 'Redigera ${product}-anslutning';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Lägg till eller ta bort URL:er för ${serverName}. Pleazyng använder den nåbara URL:en med lägst latens.';
+}
+
+// Path: iptv
+class _Translations$iptv$sv extends Translations$iptv$en {
+	_Translations$iptv$sv._(TranslationsSv root) : this._root = root, super.internal(root);
+
+	final TranslationsSv _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'Reservkällor i uppspelningsordning';
+	@override String get lineupOrder => 'Kanalordning';
+	@override String get orderChanged => 'Kanalordningen har ändrats. Granska den och försök igen.';
+	@override String get localPlaylist => 'M3U-fil';
+	@override String get pastePlaylist => 'Klistra in spellistans text';
+	@override String get playlistBase => 'Bas-URL för relativa länkar (valfritt)';
+	@override String get localPlaylistHelp => 'Importera en privat kopia av en M3U- eller M3U8-kanallista. Du kan ersätta den med en annan fil.';
+	@override String get showMatches => 'Visa matchande kanaler';
+	@override String get hideMatches => 'Dölj matchande kanaler';
+	@override String get pickerCredit => 'Inspirerat av · M3U Web Picker · Zachary Schmook (@zschmook) och medverkande';
+	@override String get exportPrivate => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.';
+	@override String get dynamicStreamExport => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.';
+	@override String get moveUp => 'rör sig upp';
+	@override String get moveDown => 'Flytta ner';
+	@override String get choosePlaylist => 'Välj Playlist fil';
+	@override String affectedChannels({required Object count}) => 'Kanaler · ${count}';
 }
 
 // Path: accountPreferences
@@ -2723,6 +2749,7 @@ class _Translations$metadataEdit$sv extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Ange bild-URL';
 	@override String get imageUrl => 'Bild-URL';
 	@override String get metadataUpdated => 'Metadata har uppdaterats';
+	@override String get metadataConflict => 'Någon annan har ändrat samma fält. Öppna redigeraren igen och kontrollera de senaste värdena innan du sparar.';
 	@override String get metadataUpdateFailed => 'Det gick inte att uppdatera metadata';
 	@override String get artworkUpdated => 'Bildmaterialet har uppdaterats';
 	@override String get artworkUpdateFailed => 'Det gick inte att uppdatera bildmaterialet';
@@ -3123,7 +3150,6 @@ class _Translations$cast$sv extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Anslut till ${device}';
 	@override String get device => 'Castanläggning';
 	@override String get readyToCast => 'Redo att kasta';
-	@override String get subtitle => 'Undertexter';
 	@override String get serverNotAvailable => 'Media server är inte tillgänglig.';
 	@override String get stopCasting => 'Sluta casting';
 	@override String get startFailed => 'Kan inte börja kastar. kontrollera serveren och försök igen.';
@@ -4107,6 +4133,7 @@ class _Translations$podcasts$sv extends Translations$podcasts$en {
 	final TranslationsSv _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.';
 	@override String get autoDownloadLatest => 'Ladda ned de senaste avsnitten automatiskt';
 	@override String get removeFinishedAfter => 'Ta bort färdiglyssnade nedladdningar efter';
 }
@@ -4519,6 +4546,17 @@ class _Translations$musicDevices$sv extends Translations$musicDevices$en {
 	@override String get relay => 'URL till musikrelä';
 	@override String get relayHint => 'Aktivera på mottagaren och parkoppla en gång på samma nätverk. Håll Pleazyng öppet. Reläet skickar krypterade musikkommandon och ser nätverksadresser. Varje spelare strömmar från sin egen medieserver.';
 	@override String get relayInvalid => 'Ange en HTTPS-adress till reläet.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$sv extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$sv._(TranslationsSv root) : this._root = root, super.internal(root);
+
+	final TranslationsSv _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Bokmärken från en okänd version';
+	@override String get assignToVersion => 'Koppla till den här versionen';
 }
 
 // Path: appIcon.names
@@ -5853,6 +5891,7 @@ extension on TranslationsSv {
 			'update.viewRelease' => 'Visa versionsinformation',
 			'update.latestVersion' => 'Du har den senaste versionen',
 			'update.checkFailed' => 'Det gick inte att söka efter uppdateringar',
+			'settings.foldableDisplay' => 'Gångjärn på vikbar skärm',
 			'settings.title' => 'Inställningar',
 			'settings.supportDeveloper' => 'Stöd Pleazyng',
 			'settings.supportDeveloperDescription' => 'Donera för att stödja utvecklingen',
@@ -6036,7 +6075,6 @@ extension on TranslationsSv {
 			'settings.importSettings' => 'Importera inställningar',
 			'settings.importSettingsDescription' => 'Återställ inställningar från en fil',
 			'settings.importSettingsConfirm' => 'Detta ersätter dina nuvarande inställningar. Fortsätta?',
-			'settings.importSettingsSuccess' => 'Inställningar importerade',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Filen är inte en giltig export av Pleazyng-inställningar',
 			'settings.importSettingsNoUser' => 'Logga in innan du importerar inställningar',
@@ -6050,7 +6088,6 @@ extension on TranslationsSv {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.',
 			'settings.cloudBackupRestore' => 'Återställ backup',
 			'settings.cloudBackupRestoreConfirm' => 'Detta kommer att ersätta matchande bärbara inställningar på denna enhet.',
-			'settings.cloudBackupRestored' => 'Inställningar återställda från moln backup',
 			'settings.shortcutsReset' => 'Genvägarna har återställts till standard',
 			'settings.resetShortcutsConfirm' => 'Detta ersätter dina anpassade genvägar med standardgenvägarna. Fortsätta?',
 			'settings.about' => 'Om',
@@ -6148,9 +6185,9 @@ extension on TranslationsSv {
 			'settings.manageLibrariesDescription' => 'Ordna om och dölj bibliotek',
 			'settings.companionRemoteServer' => 'Server för fjärrkontroll',
 			'settings.companionRemoteServerDescription' => 'Tillåt att mobila enheter i nätverket styr appen',
+			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
 			'settings.autoPip' => 'Automatisk bild-i-bild',
 			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
@@ -6662,9 +6699,9 @@ extension on TranslationsSv {
 			'accessibility.boldTextHint' => 'Använd en tyngre vikt för gränssnittets etiketter och meddelanden för att göra dem lättare att skilja.',
 			'tooltips.shufflePlay' => 'Blanda uppspelning',
 			'tooltips.playTrailer' => 'Spela trailer',
+			'tooltips.markAsWatched' => 'Markera som sedd',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => 'Markera som sedd',
 			'tooltips.markAsUnwatched' => 'Markera som osedd',
 			'audioTracks.track' => ({required Object n}) => 'Ljudspår ${n}',
 			'videoControls.audioLabel' => 'Ljud',
@@ -7007,6 +7044,22 @@ extension on TranslationsSv {
 			'connections.signInAgain' => 'Logga in igen',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Redigera ${product}-anslutning',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Lägg till eller ta bort URL:er för ${serverName}. Pleazyng använder den nåbara URL:en med lägst latens.',
+			'iptv.backupFeeds' => 'Reservkällor i uppspelningsordning',
+			'iptv.lineupOrder' => 'Kanalordning',
+			'iptv.orderChanged' => 'Kanalordningen har ändrats. Granska den och försök igen.',
+			'iptv.localPlaylist' => 'M3U-fil',
+			'iptv.pastePlaylist' => 'Klistra in spellistans text',
+			'iptv.playlistBase' => 'Bas-URL för relativa länkar (valfritt)',
+			'iptv.localPlaylistHelp' => 'Importera en privat kopia av en M3U- eller M3U8-kanallista. Du kan ersätta den med en annan fil.',
+			'iptv.showMatches' => 'Visa matchande kanaler',
+			'iptv.hideMatches' => 'Dölj matchande kanaler',
+			'iptv.pickerCredit' => 'Inspirerat av · M3U Web Picker · Zachary Schmook (@zschmook) och medverkande',
+			'iptv.exportPrivate' => 'Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.',
+			'iptv.dynamicStreamExport' => 'Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.',
+			'iptv.moveUp' => 'rör sig upp',
+			'iptv.moveDown' => 'Flytta ner',
+			'iptv.choosePlaylist' => 'Välj Playlist fil',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kanaler · ${count}',
 			'accountPreferences.sectionTitle' => 'Kontoinställningar',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Ljud-, undertext- och biblioteksalternativ sparade på ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Ljud-, undertext- och biblioteksalternativ sparade på ${count} konton',
@@ -7162,6 +7215,8 @@ extension on TranslationsSv {
 			'discover.director' => 'Regissör',
 			'discover.directors' => 'Regissörer',
 			'discover.movie' => 'Film',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'TV-serie',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min kvar',
 			'discover.moreLikeThis' => 'Mer liknande innehåll',
@@ -7176,8 +7231,6 @@ extension on TranslationsSv {
 			'errors.connectionTimeout' => ({required Object context}) => 'Anslutningen tog för lång tid när ${context} lästes in',
 			'errors.connectionFailed' => 'Det gick inte att ansluta till medieservern',
 			'errors.unableToLoad' => ({required Object context}) => 'Det gick inte att läsa in ${context}. Försök igen.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Ingen klient är tillgänglig',
 			'errors.pleaseEnterToken' => 'Ange en token',
 			'errors.invalidToken' => 'Ogiltig token',
@@ -7676,6 +7729,8 @@ extension on TranslationsSv {
 			'collections.removedFromCollection' => 'Objektet har tagits bort från samlingen',
 			'collections.removeFromCollectionFailed' => 'Det gick inte att ta bort objektet från samlingen',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Fel när objektet skulle tas bort från samlingen: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => 'Sök samlingar...',
 			'playlists.title' => 'Spellistor',
 			'playlists.playlist' => 'Spellista',
@@ -7690,8 +7745,6 @@ extension on TranslationsSv {
 			'playlists.emptyPlaylist' => 'Denna spellista är tom',
 			'playlists.deleteConfirm' => 'Ta bort spellista?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Är du säker på att du vill ta bort "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Spellistan har skapats',
 			'playlists.deleted' => 'Spellistan har tagits bort',
 			'playlists.itemAdded' => 'Objektet har lagts till i spellistan',
@@ -8190,6 +8243,8 @@ extension on TranslationsSv {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision-dekoder',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision-dekoder (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Baslager',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10-baslager',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG-baslager',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR-baslager',
@@ -8204,8 +8259,6 @@ extension on TranslationsSv {
 			'performanceOverlay.transfer' => 'Överföring',
 			'performanceOverlay.renderFps' => 'Renderings-FPS',
 			'performanceOverlay.displayFps' => 'Skärm-FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V-synk',
 			'performanceOverlay.dropped' => 'Tappade bildrutor',
 			'performanceOverlay.dvRpus' => 'DV-RPU:er',
@@ -8281,6 +8334,7 @@ extension on TranslationsSv {
 			'metadataEdit.enterImageUrl' => 'Ange bild-URL',
 			'metadataEdit.imageUrl' => 'Bild-URL',
 			'metadataEdit.metadataUpdated' => 'Metadata har uppdaterats',
+			'metadataEdit.metadataConflict' => 'Någon annan har ändrat samma fält. Öppna redigeraren igen och kontrollera de senaste värdena innan du sparar.',
 			'metadataEdit.metadataUpdateFailed' => 'Det gick inte att uppdatera metadata',
 			'metadataEdit.artworkUpdated' => 'Bildmaterialet har uppdaterats',
 			'metadataEdit.artworkUpdateFailed' => 'Det gick inte att uppdatera bildmaterialet',
@@ -8638,7 +8692,6 @@ extension on TranslationsSv {
 			'cast.connectedTo' => ({required Object device}) => 'Anslut till ${device}',
 			'cast.device' => 'Castanläggning',
 			'cast.readyToCast' => 'Redo att kasta',
-			'cast.subtitle' => 'Undertexter',
 			'cast.serverNotAvailable' => 'Media server är inte tillgänglig.',
 			'cast.stopCasting' => 'Sluta casting',
 			'cast.startFailed' => 'Kan inte börja kastar. kontrollera serveren och försök igen.',
@@ -8704,6 +8757,8 @@ extension on TranslationsSv {
 			'homeLayout.autoSlideDescription' => 'Låtar (PC) och d-pad (TV) fungerar alltid och startar timern om.',
 			'homeLayout.autoSlideEditDescription' => 'Slides också på egen hand varje några sekunder. Off: rör sig endast när du klickar på en pil (PC) eller trycker vänster/rät mot fjärr (TV).',
 			'homeLayout.enableHeroFirst' => 'Hjälten först',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'Visa på hemskärmen',
 			'homeLayout.home' => 'Hem',
 			'homeLayout.removeFromHome' => 'Ta bort från hemmet',
@@ -8718,8 +8773,6 @@ extension on TranslationsSv {
 			'homeLayout.customPlexRow' => 'Anpassad Plex rad',
 			'homeLayout.heroNeedsLibrary' => 'Kolla biblioteket först – Hero behöver någonstans att visa',
 			'homeLayout.heroNeedsSurface' => 'Kolla biblioteket eller hemmet först – Hero behöver någonstans att visa',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Ta bort Hub',
 			'homeLayout.noPlexRows' => 'Nr Plex-hanterade rader återvände till denna bibliotek.',
 			'homeLayout.openDetails' => 'Öppna detaljer',
@@ -9218,6 +9271,8 @@ extension on TranslationsSv {
 			'audiobook.librarySort' => 'Sorterade böcker',
 			'audiobook.sortTitle' => 'Titeln',
 			'audiobook.sortAuthor' => 'Författare',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => 'berättare',
 			'audiobook.sortSeries' => 'Serien order',
 			'audiobook.sortRecent' => 'Nyligen öppnade',
@@ -9232,8 +9287,6 @@ extension on TranslationsSv {
 			'audiobook.recoveryExport' => 'Export krypterad återhämtningsfil',
 			'audiobook.recoveryImport' => 'Import krypterad återhämtningsfil',
 			'audiobook.recoveryImportConfirm' => 'Kombinera denna krypterade återställningsfil med aktuella läsplatser och anteckningar? befintlig historia kommer att behållas. Delade bibliotek och objekt ID ingår inte; ställa in matchande ID på varje enhet innan import.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Den krypterade återhämtningsfilen sparas.',
 			'audiobook.recoveryImported' => 'Data återhämtning sammansatt.',
 			'sourceSetup.bookorbitHelp' => 'Logga in med ditt eget BookOrbit-konto för att bläddra bland och spela upp dina böcker. Begäranden om saknade titlar går fortfarande via din anslutna SeerrNG-instans.',
@@ -9452,6 +9505,7 @@ extension on TranslationsSv {
 			'issueReport.privacy' => 'Utkastet innehåller appversion, plattform och antal anslutningar. Serveradresser, konto- och profilnamn, medietitlar och filsökvägar utelämnas.',
 			'issueReport.logPrivacy' => 'Loggar är valfria. Granska dem före uppladdning. Deras ID läggs till i utkastet, som kan vara offentligt.',
 			'issueReport.openDraft' => 'Öppna GitHub-utkast',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Ladda ned de senaste avsnitten automatiskt',
 			'podcasts.removeFinishedAfter' => 'Ta bort färdiglyssnade nedladdningar efter',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Förhandsgranska undertextkodning',
@@ -9731,6 +9785,8 @@ extension on TranslationsSv {
 			'musicTools.guestDj' => 'Gäst-DJ',
 			'musicTools.charts' => 'Lyssningslistor',
 			'musicTools.rediscover' => 'Återupptäck',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => 'Musikstationer',
 			'musicTools.prompt' => 'Spellista från beskrivning',
 			'musicTools.provider' => 'Leverantörens genererings-URL',
@@ -9746,8 +9802,6 @@ extension on TranslationsSv {
 			'musicTools.apiKey' => 'API-nyckel',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Minuter',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => 'Filter',
 			'musicTools.exclusiveOutput' => 'Exklusiv ljudutgång',
 			'musicTools.preamp' => 'Förförstärkning',
@@ -9803,6 +9857,8 @@ extension on TranslationsSv {
 			'musicDevices.relay' => 'URL till musikrelä',
 			'musicDevices.relayHint' => 'Aktivera på mottagaren och parkoppla en gång på samma nätverk. Håll Pleazyng öppet. Reläet skickar krypterade musikkommandon och ser nätverksadresser. Varje spelare strömmar från sin egen medieserver.',
 			'musicDevices.relayInvalid' => 'Ange en HTTPS-adress till reläet.',
+			'bookmarkMigration.unassigned' => 'Bokmärken från en okänd version',
+			'bookmarkMigration.assignToVersion' => 'Koppla till den här versionen',
 			_ => null,
 		};
 	}

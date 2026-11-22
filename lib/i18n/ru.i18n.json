@@ -244,6 +244,7 @@
     "checkFailed": "Не удалось проверить обновления"
   },
   "settings": {
+    "foldableDisplay": "Шарнир складного экрана",
     "title": "Настройки",
     "supportDeveloper": "Поддержать Pleazyng",
     "supportDeveloperDescription": "Поддержите разработку пожертвованием",
@@ -437,7 +438,6 @@
     "importSettings": "Импорт настроек",
     "importSettingsDescription": "Восстановить настройки из файла",
     "importSettingsConfirm": "Это заменит ваши текущие настройки. Продолжить?",
-    "importSettingsSuccess": "Настройки импортированы",
     "importSettingsCounts": "Применено настроек: ${applied}. Пропущено: ${skipped}.",
     "importSettingsInvalidFile": "Этот файл не является действительным экспортом настроек Pleazyng",
     "importSettingsNoUser": "Войдите в систему перед импортом настроек",
@@ -451,7 +451,6 @@
     "cloudBackupComplete": "Резервная копия загружена. Сохраните этот URL. После новой установки введите его в разделе резервного копирования в облаке и выберите «${action}».",
     "cloudBackupRestore": "восстановление резервного копирования",
     "cloudBackupRestoreConfirm": "Это заменит соответствующие портативные настройки на этом устройстве.",
-    "cloudBackupRestored": "Настройки восстановлены из облачной резервной копии",
     "shortcutsReset": "Горячие клавиши сброшены по умолчанию",
     "resetShortcutsConfirm": "Это заменит ваши горячие клавиши стандартными. Продолжить?",
     "about": "О приложении",
@@ -1516,6 +1515,22 @@
     "editMediaBrowserIntro": "Добавьте или удалите URL-адреса для ${serverName}. Pleazyng будет использовать доступный URL с наименьшей задержкой."
   },
   "iptv": {
+    "backupFeeds": "Резервные источники в порядке воспроизведения",
+    "lineupOrder": "Порядок каналов",
+    "orderChanged": "Порядок каналов изменился. Проверьте его и повторите попытку.",
+    "localPlaylist": "Файл M3U",
+    "pastePlaylist": "Вставить текст плейлиста",
+    "playlistBase": "Базовый URL для относительных ссылок (необязательно)",
+    "localPlaylistHelp": "Импортируйте личную копию списка каналов M3U или M3U8. Её можно заменить другим файлом.",
+    "showMatches": "Показать подходящие каналы",
+    "hideMatches": "Скрыть подходящие каналы",
+    "pickerCredit": "Источник вдохновения · M3U Web Picker · Zachary Schmook (@zschmook) и другие участники",
+    "exportPrivate": "Адреса потоков могут содержать данные для входа к провайдеру. Сохраните список в закрытом месте.",
+    "dynamicStreamExport": "Портал создаёт новую ссылку при каждом запуске. Телепрограмму можно экспортировать.",
+    "moveUp": "Перемещаться",
+    "moveDown": "Переместите вниз",
+    "choosePlaylist": "Выберите файл playlist",
+    "affectedChannels": "Каналы · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3298,6 +3313,7 @@
     "enterImageUrl": "Введите URL изображения",
     "imageUrl": "URL изображения",
     "metadataUpdated": "Метаданные обновлены",
+    "metadataConflict": "Кто-то ещё изменил это же поле. Перед сохранением откройте редактор заново и проверьте актуальные значения.",
     "metadataUpdateFailed": "Не удалось обновить метаданные",
     "artworkUpdated": "Обложка обновлена",
     "artworkUpdateFailed": "Не удалось обновить обложку",
@@ -3718,7 +3734,6 @@
     "connectedTo": "Подключен к ${device}",
     "device": "Кастинг устройства",
     "readyToCast": "Готов выпустить",
-    "subtitle": "Субтитры",
     "serverNotAvailable": "Медийный сервер не доступен.",
     "stopCasting": "Спрете кастировать",
     "startFailed": "Нельзя начать кастинг. проверьте сервер и попробуйте снова."
@@ -4945,6 +4960,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Импортировано подписок: ${imported}. Дубликатов: ${duplicates}. Пропущено: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5759,5 +5775,9 @@
     "relay": "URL музыкального ретранслятора",
     "relayHint": "Включите на принимающем устройстве и один раз выполните сопряжение в одной сети. Оставьте Pleazyng открытым. Ретранслятор передаёт зашифрованные команды и видит сетевые адреса. Каждый плеер использует свой медиасервер.",
     "relayInvalid": "Введите HTTPS-адрес ретранслятора."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Закладки из неопределённой версии",
+    "assignToVersion": "Привязать к этой версии"
   }
 }

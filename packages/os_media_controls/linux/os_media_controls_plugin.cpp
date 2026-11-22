@@ -918,7 +918,9 @@ void OsMediaControlsPluginImpl::SetMetadata(FlValue* args) {
   std::string album_artist = GetStringFromFlValue(args, "albumArtist");
   double duration = GetDoubleFromFlValue(args, "duration");
 
-  // Update metadata map
+  // Every setMetadata call is a complete snapshot, including the follow-up
+  // with fetched artwork for the same item.
+  metadata_.clear();
   if (!title.empty()) metadata_["title"] = title;
   if (!artist.empty()) metadata_["artist"] = artist;
   if (!album.empty()) metadata_["album"] = album;
@@ -926,13 +928,13 @@ void OsMediaControlsPluginImpl::SetMetadata(FlValue* args) {
   if (duration > 0) metadata_["duration"] = std::to_string(duration);
 
   // Handle artwork - clean up old file first
-  std::string old_artwork_path = artwork_path_;
+  std::string old_artwork_path;
+  old_artwork_path.swap(artwork_path_);
 
   // Match MediaMetadata's portable contract: caller-provided bytes take
   // precedence over a URL when both are present.
   auto artwork = GetBytesFromFlValue(args, "artwork");
   if (!artwork.empty()) {
-    artwork_data_ = artwork;
     artwork_path_ = SaveArtworkToFile(artwork);
   } else {
     std::string artwork_url = GetStringFromFlValue(args, "artworkUrl");
@@ -943,12 +945,10 @@ void OsMediaControlsPluginImpl::SetMetadata(FlValue* args) {
           artwork_url.find("http://") == 0 ||
           artwork_url.find("https://") == 0) {
         artwork_path_ = artwork_url;
-        artwork_data_.clear();
       } else {
         // If it's not a proper URL, try to make it a file:// URL
         if (artwork_url[0] == '/') {
           artwork_path_ = "file://" + artwork_url;
-          artwork_data_.clear();
         }
       }
     }
@@ -1094,7 +1094,6 @@ void OsMediaControlsPluginImpl::SetQueueInfo(FlValue* args) {
 // Clear all media info
 void OsMediaControlsPluginImpl::Clear() {
   metadata_.clear();
-  artwork_data_.clear();
 
   // Clean up artwork file using helper function
   CleanupArtworkFile(artwork_path_);

@@ -15,12 +15,22 @@ enum VerticalBarEdge { left, right }
 enum HingeStatus { closed, partiallyOpen, fullyOpen, unknown }
 
 /// iPhone Duo layout signals bridged from `PlezyFlutterViewController`.
-/// Empty on every other device and on iOS before 27.1.
+/// Fold geometry is empty on other devices and on iOS before 27.1.
 @immutable
 class IphoneDuoState {
-  const IphoneDuoState({this.verticalBarEdge, this.hingeStatus, this.folds = const [], this.occlusions = const []});
+  const IphoneDuoState({
+    this.phoneWindowAttached = false,
+    this.verticalBarEdge,
+    this.hingeStatus,
+    this.folds = const [],
+    this.occlusions = const [],
+  });
 
   static const empty = IphoneDuoState();
+
+  /// True when the shared iOS engine has a phone or iPad window. A CarPlay-only
+  /// launch can service the native catalog before UIKit attaches a phone.
+  final bool phoneWindowAttached;
 
   /// The system's preferred bar edge. The bar is only present when the safe
   /// area on that edge is non-zero — see [IphoneDuo.verticalBarEdgeOf].
@@ -46,6 +56,7 @@ class IphoneDuoState {
     ];
 
     return IphoneDuoState(
+      phoneWindowAttached: map['phoneWindowAttached'] == true,
       verticalBarEdge: switch (map['verticalBarEdge']) {
         'left' => VerticalBarEdge.left,
         'right' => VerticalBarEdge.right,
@@ -66,13 +77,15 @@ class IphoneDuoState {
   @override
   bool operator ==(Object other) =>
       other is IphoneDuoState &&
+      other.phoneWindowAttached == phoneWindowAttached &&
       other.verticalBarEdge == verticalBarEdge &&
       other.hingeStatus == hingeStatus &&
       listEquals(other.folds, folds) &&
       listEquals(other.occlusions, occlusions);
 
   @override
-  int get hashCode => Object.hash(verticalBarEdge, hingeStatus, Object.hashAll(folds), Object.hashAll(occlusions));
+  int get hashCode =>
+      Object.hash(phoneWindowAttached, verticalBarEdge, hingeStatus, Object.hashAll(folds), Object.hashAll(occlusions));
 }
 
 /// Owner of the `com.plezy/iphone_duo` channel.
@@ -191,24 +204,32 @@ class _IphoneDuoScopeState extends State<IphoneDuoScope> {
       valueListenable: IphoneDuo.instance.state,
       child: widget.child,
       builder: (context, state, child) {
-        Widget result = child!;
-        if (state.folds.isNotEmpty) {
-          final media = MediaQuery.of(context);
-          result = MediaQuery(
-            data: media.copyWith(
-              displayFeatures: [
-                ...media.displayFeatures,
-                for (final fold in state.folds)
-                  DisplayFeature(
-                    bounds: fold,
-                    type: DisplayFeatureType.fold,
-                    state: DisplayFeatureState.postureHalfOpened,
-                  ),
-              ],
-            ),
-            child: result,
-          );
-        }
+        // Keep the inherited widget chain stable when moving between the
+        // cover and inner display. Inserting MediaQuery only when a hinge
+        // appears would unmount the entire running Flutter application.
+        final media = MediaQuery.of(context);
+        final result = MediaQuery(
+          data: state.folds.isEmpty && state.occlusions.isEmpty
+              ? media
+              : media.copyWith(
+                  displayFeatures: [
+                    ...media.displayFeatures,
+                    for (final fold in state.folds)
+                      DisplayFeature(
+                        bounds: fold,
+                        type: DisplayFeatureType.fold,
+                        state: switch (state.hingeStatus) {
+                          HingeStatus.partiallyOpen => DisplayFeatureState.postureHalfOpened,
+                          HingeStatus.fullyOpen => DisplayFeatureState.postureFlat,
+                          _ => DisplayFeatureState.unknown,
+                        },
+                      ),
+                    for (final area in state.occlusions)
+                      DisplayFeature(bounds: area, type: DisplayFeatureType.cutout, state: DisplayFeatureState.unknown),
+                  ],
+                ),
+          child: child!,
+        );
         return _IphoneDuoInherited(state: state, child: result);
       },
     );

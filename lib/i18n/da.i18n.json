@@ -244,6 +244,7 @@
     "checkFailed": "Kunne ikke søge efter opdateringer"
   },
   "settings": {
+    "foldableDisplay": "Hængsel på foldbar skærm",
     "title": "Indstillinger",
     "supportDeveloper": "Støt Pleazyng",
     "supportDeveloperDescription": "Donér for at støtte udviklingen",
@@ -433,7 +434,6 @@
     "importSettings": "Importér indstillinger",
     "importSettingsDescription": "Gendan præferencer fra en fil",
     "importSettingsConfirm": "Dette vil erstatte dine nuværende indstillinger. Fortsæt?",
-    "importSettingsSuccess": "Indstillinger importeret",
     "importSettingsCounts": "Anvendte indstillinger: ${applied}. Sprunget over: ${skipped}.",
     "importSettingsInvalidFile": "Denne fil er ikke en gyldig eksport af Pleazyng-indstillinger",
     "importSettingsNoUser": "Log ind før import af indstillinger",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "Sikkerhedskopien er uploadet. Gem denne URL. Indtast den under sikkerhedskopiering i skyen efter en ny installation, og vælg »${action}«.",
     "cloudBackupRestore": "Giv backup tilbage",
     "cloudBackupRestoreConfirm": "Dette vil erstatte matching bærbare indstillinger på denne enhed.",
-    "cloudBackupRestored": "Indstillinger tilbagevendt fra cloud backup",
     "shortcutsReset": "Genveje nulstillet til standard",
     "resetShortcutsConfirm": "Dette vil erstatte dine tilpassede genveje med standardgenvejene. Fortsæt?",
     "about": "Om",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "Tilføj eller fjern URL'er for ${serverName}. Pleazyng bruger den tilgængelige URL med laveste latenstid."
   },
   "iptv": {
+    "backupFeeds": "Reservekilder i afspilningsrækkefølge",
+    "lineupOrder": "Kanalrækkefølge",
+    "orderChanged": "Kanalrækkefølgen er ændret. Gennemse den og prøv igen.",
+    "localPlaylist": "M3U-fil",
+    "pastePlaylist": "Indsæt afspilningslistens tekst",
+    "playlistBase": "Basis-URL til relative links (valgfri)",
+    "localPlaylistHelp": "Importér en privat kopi af en M3U- eller M3U8-kanalliste. Vælg en anden fil for at erstatte den.",
+    "showMatches": "Vis matchende kanaler",
+    "hideMatches": "Skjul matchende kanaler",
+    "pickerCredit": "Inspireret af · M3U Web Picker · Zachary Schmook (@zschmook) og bidragydere",
+    "exportPrivate": "Streamadresserne kan indeholde dine loginoplysninger. Gem listen et privat sted.",
+    "dynamicStreamExport": "Portalen opretter et nyt link ved hver afspilning. Programguiden kan eksporteres.",
+    "moveUp": "Flyt op",
+    "moveDown": "Flyt ned",
+    "choosePlaylist": "Vælg Playlist fil",
+    "affectedChannels": "Kanaler · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "Indtast billed-URL",
     "imageUrl": "Billed-URL",
     "metadataUpdated": "Metadata opdateret",
+    "metadataConflict": "En anden har ændret det samme felt. Åbn editoren igen, og gennemgå de seneste værdier, før du gemmer.",
     "metadataUpdateFailed": "Kunne ikke opdatere metadata",
     "artworkUpdated": "Grafik opdateret",
     "artworkUpdateFailed": "Kunne ikke opdatere grafik",
@@ -3676,7 +3692,6 @@
     "connectedTo": "Tilslut til ${device}",
     "device": "Cast udstyr",
     "readyToCast": "Klar til at kastes",
-    "subtitle": "Undertekster",
     "serverNotAvailable": "Media server er ikke tilgængelig.",
     "stopCasting": "Stop med casting",
     "startFailed": "Kan ikke begynde at kaste. tjek serveren og prøv igen."
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Importerede abonnementer: ${imported}. Dubletter: ${duplicates}. Sprunget over: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "URL til musikrelæ",
     "relayHint": "Aktivér på modtageren, og par én gang på samme netværk. Hold Pleazyng åben. Relæet sender krypteret musikstyring og ser netværksadresser. Hver afspiller streamer fra sin egen medieserver.",
     "relayInvalid": "Indtast en HTTPS-adresse til relæet."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Bogmærker fra en ukendt version",
+    "assignToVersion": "Knyt til denne version"
   }
 }

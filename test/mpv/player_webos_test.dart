@@ -260,6 +260,28 @@ void main() {
     expect(backend.disposed, [1, 2]);
   });
 
+  test('overlapping webOS VTT cues preserve both lines in order and expire independently', () async {
+    final backend = _LGPlayer()..position = const Duration(milliseconds: 2500);
+    native.VideoPlayerPlatform.instance = backend;
+    final player = PlayerWebOS();
+    final directory = await Directory.systemTemp.createTemp('pleazyng-subtitles-');
+    addTearDown(() async {
+      await player.dispose();
+      await directory.delete(recursive: true);
+    });
+    final file = await File(
+      '${directory.path}/overlap.vtt',
+    ).writeAsString('WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nStation\n\n00:00:02.000 --> 00:00:03.000\nAll aboard!\n');
+    await player.open(Media('/movie.mkv'));
+    await player.selectSubtitleTrack(SubtitleTrack.uri(file.uri.toString(), codec: 'vtt'));
+    await Future<void>.delayed(const Duration(milliseconds: 350));
+    expect(player.caption.value, 'Station\nAll aboard!');
+    await player.setProperty('sub-delay', '-0.5');
+    expect(player.caption.value, 'Station');
+    await player.setProperty('sub-delay', '0');
+    expect(player.caption.value, 'Station\nAll aboard!');
+  });
+
   test('local PGS follows media position, delay, visibility and subtitle-off', () async {
     final backend = _LGPlayer()..position = const Duration(seconds: 1);
     native.VideoPlayerPlatform.instance = backend;

@@ -244,6 +244,7 @@
     "checkFailed": "לא הצלחתי לבדוק עדכונים"
   },
   "settings": {
+    "foldableDisplay": "ציר המסך המתקפל",
     "title": "הגדרות",
     "supportDeveloper": "תמיכה Pleazyng",
     "supportDeveloperDescription": "תרומות לתמיכה בפיתוח",
@@ -435,7 +436,6 @@
     "importSettings": "הגדרות ייבוא",
     "importSettingsDescription": "לשחזר העדפות מתוך קובץ",
     "importSettingsConfirm": "זה יחליף את ההגדרות הנוכחיות שלך.",
-    "importSettingsSuccess": "הגדרות ייבוא",
     "importSettingsCounts": "הגדרות שהוחלו: ${applied}. הגדרות שדולגו: ${skipped}.",
     "importSettingsInvalidFile": "קובץ זה אינו ייצוא של הגדרות Pleazyng בתוקף",
     "importSettingsNoUser": "הקלד לפני ייבוא ההגדרות",
@@ -449,7 +449,6 @@
     "cloudBackupComplete": "הגיבוי הועלה. יש לשמור את הכתובת הזו. לאחר התקנה חדשה, יש להזין אותה במסך הגיבוי בענן ולבחור באפשרות „${action}”.",
     "cloudBackupRestore": "לשחזר גיבוי",
     "cloudBackupRestoreConfirm": "זה יחליף את ההגדרות הניידות המתאימות במכשיר זה.",
-    "cloudBackupRestored": "הגדרות שחוזרות מענן גיבוי",
     "shortcutsReset": "קצוות מחדש לתוך הפסקות",
     "resetShortcutsConfirm": "זה יחליף את הקצוות המותאמים אישית שלך עם הפסקות.",
     "about": "אודות",
@@ -1504,6 +1503,22 @@
     "editMediaBrowserIntro": "הוספת או הסרת כתובת URL עבור ${serverName}. Pleazyng ישתמש כתובת URL הנגיעה עם הריבית הנמוכה ביותר."
   },
   "iptv": {
+    "backupFeeds": "מקורות גיבוי לפי סדר הפעלה",
+    "lineupOrder": "סדר הערוצים",
+    "orderChanged": "סדר הערוצים השתנה. יש לבדוק אותו ולנסות שוב.",
+    "localPlaylist": "קובץ M3U",
+    "pastePlaylist": "הדבקת טקסט של רשימת השמעה",
+    "playlistBase": "כתובת בסיס לקישורים יחסיים (רשות)",
+    "localPlaylistHelp": "ייבוא עותק פרטי של רשימת ערוצי M3U או M3U8. אפשר להחליף אותה בקובץ אחר.",
+    "showMatches": "הצגת ערוצים תואמים",
+    "hideMatches": "הסתרת ערוצים תואמים",
+    "pickerCredit": "בהשראת · M3U Web Picker · Zachary Schmook (@zschmook) ושאר התורמים",
+    "exportPrivate": "כתובות השידורים עשויות להכיל פרטי כניסה לספק. יש לשמור את הרשימה במקום פרטי.",
+    "dynamicStreamExport": "הפורטל יוצר קישור חדש בכל הפעלה. ניתן לייצא את מדריך השידורים.",
+    "moveUp": "תנועות למעלה",
+    "moveDown": "תנו למטה",
+    "choosePlaylist": "בחר קובץ playlist",
+    "affectedChannels": "ערוצים · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3260,6 +3275,7 @@
     "enterImageUrl": "כניסת תמונה URL",
     "imageUrl": "תמונה URL",
     "metadataUpdated": "נתונים מתעדכנים",
+    "metadataConflict": "אותו שדה שונה בעריכה אחרת. יש לפתוח מחדש את העורך ולבדוק את הערכים העדכניים לפני השמירה.",
     "metadataUpdateFailed": "לא הצלחתי לעדכן את הנתונים",
     "artworkUpdated": "ארכיון עדכונים",
     "artworkUpdateFailed": "לא הצלחתי לעדכן את האמנות",
@@ -3680,7 +3696,6 @@
     "connectedTo": "חיבור ל- ${device}",
     "device": "מכשיר לשידור",
     "readyToCast": "מוכן לשידור",
-    "subtitle": "כתוביות",
     "serverNotAvailable": "שרת התקשורת אינו זמין.",
     "stopCasting": "הפסקת השידור",
     "startFailed": "לא יכול להתחיל לגרד.בדוק את השרת ולנסות שוב."
@@ -4901,6 +4916,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "מינויים שיובאו: ${imported}. כפילויות: ${duplicates}. רשומות שדולגו: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5715,5 +5731,9 @@
     "relay": "כתובת ממסר המוזיקה",
     "relayHint": "יש להפעיל במכשיר המקבל ולצמד פעם אחת באותה רשת. יש להשאיר את Pleazyng פתוח. הממסר מעביר פקודות מוזיקה מוצפנות ורואה כתובות רשת. כל נגן מזרים משרת המדיה שלו.",
     "relayInvalid": "יש להזין כתובת HTTPS של הממסר."
+  },
+  "bookmarkMigration": {
+    "unassigned": "סימניות מגרסה לא מזוהה",
+    "assignToVersion": "שיוך לגרסה זו"
   }
 }

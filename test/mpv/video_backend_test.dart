@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/models/video_backend.dart';
+import 'package:plezy/models/motion_processing_mode.dart';
 import 'package:plezy/models/player_setting_scope.dart';
 import 'package:plezy/services/player_sync_offsets.dart';
 import 'package:plezy/services/scoped_player_prefs.dart';
@@ -150,6 +151,63 @@ void main() {
       messenger.setMockMethodCallHandler(channel, null);
     }
   });
+
+  for (final plane in [false, true]) {
+    for (final failPreroll in (plane ? [false, true] : [false])) {
+      test('live TV motion transition, plane=$plane prerollFailure=$failPreroll', () async {
+        final calls = <MethodCall>[];
+        int? candidate;
+        messenger.setMockMethodCallHandler(channel, (call) async {
+          calls.add(call);
+          switch (call.method) {
+            case 'create':
+              return plane ? -2 : 24;
+            case 'prepareMotionTexture':
+              candidate = call.arguments['candidate'] as int;
+              return 24;
+            case 'state':
+              if (call.arguments['id'] == candidate && failPreroll) return {'failed': true};
+              return {'ready': true, 'frame': true, 'width': 640, 'height': 360};
+            case 'tracks':
+              return [];
+          }
+          return null;
+        });
+        final player = PlayerSystem('tvmpv');
+        try {
+          player.prepareTvMotion(false);
+          await player.open(Media('file:///movie.mp4'));
+          final original = calls.firstWhere((c) => c.method == 'create').arguments['id'];
+          calls.clear();
+          final toggle = player.setTvMotion(true, preset: NeuralInterpolationPreset.quality);
+          if (failPreroll) {
+            await expectLater(toggle, throwsStateError);
+            expect(player.tvMotionRequested, isFalse);
+            expect(player.activeTvMotionPreset, isNull);
+            expect(calls.where((c) => c.method == 'commitMotionTexture'), isEmpty);
+          } else {
+            await toggle;
+            expect(player.activeTvMotionPreset, NeuralInterpolationPreset.quality);
+            await player.setTvMotion(true, preset: NeuralInterpolationPreset.performance);
+            expect(player.activeTvMotionPreset, NeuralInterpolationPreset.performance);
+            await player.disableTvMotion();
+            expect(player.activeTvMotionPreset, isNull);
+            final presets = calls.where((c) => c.method == 'enableMotion').map((c) => c.arguments['value']);
+            expect(presets, [if (!plane) 'quality', 'performance']);
+            expect(calls.where((c) => c.method == 'commitMotionTexture').length, plane ? 1 : 0);
+          }
+          expect(calls.where((c) => {'create', 'stop', 'seek', 'play'}.contains(c.method)), isEmpty);
+          expect(calls.where((c) => c.method == 'dispose').map((c) => c.arguments['id']), [if (plane) candidate]);
+          expect(player.canChangeTvMotion, isTrue);
+          await player.pause();
+          expect(calls.last.arguments['id'], original);
+        } finally {
+          await player.dispose();
+          messenger.setMockMethodCallHandler(channel, null);
+        }
+      });
+    }
+  }
 
   test('TV exposes surface dimensions while waiting for the first frame', () async {
     final waiting = Completer<void>();

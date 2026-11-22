@@ -8,6 +8,7 @@ import '../../../focus/dpad_navigator.dart';
 import '../../../mpv/mpv.dart';
 import '../../../models/motion_clarity.dart';
 import '../../../models/player_setting_scope.dart';
+import '../../../services/media_bookmark_service.dart';
 import '../../../services/motion_clarity_service.dart';
 import '../../../services/scoped_player_prefs.dart';
 import '../../../services/settings_service.dart';
@@ -387,12 +388,24 @@ class TrackChapterControls extends StatelessWidget {
             buttonIndex++;
           }
 
-          final bookmarkMediaKey = state.isLive ? null : state.metadata?.globalKey;
-          final hasBookmarkMediaKey = bookmarkMediaKey != null && bookmarkMediaKey.isNotEmpty;
+          final item = state.metadata;
+          final bookmarkMediaKey = state.isLive || item == null
+              ? null
+              : MediaBookmarkService.timelineKey(
+                  item,
+                  state.availableVersions.isNotEmpty ? state.availableVersions : item.mediaVersions ?? const [],
+                  state.selectedMediaIndex,
+                );
+          final legacyBookmarkKey = !state.isLive && item != null && item.globalKey != bookmarkMediaKey
+              ? item.globalKey
+              : null;
+          final hasBookmarks =
+              bookmarkMediaKey != null ||
+              (legacyBookmarkKey != null && MediaBookmarkService.forMedia(legacyBookmarkKey).isNotEmpty);
           final showChaptersButton =
-              (chapters.isNotEmpty || (player.playerType == 'mpv' && seekable) || (hasBookmarkMediaKey && seekable)) &&
+              (chapters.isNotEmpty || (player.playerType == 'mpv' && seekable) || (hasBookmarks && seekable)) &&
               !hideChaptersAndQueue;
-          final showBookmarksButton = hideChaptersAndQueue && seekable && hasBookmarkMediaKey;
+          final showBookmarksButton = hideChaptersAndQueue && seekable && hasBookmarks;
           if (showChaptersButton || showBookmarksButton) {
             final currentIndex = buttonIndex;
             buttons.add(
@@ -414,6 +427,7 @@ class TrackChapterControls extends StatelessWidget {
                           serverId: state.serverId,
                           isLive: state.isLive,
                           bookmarkMediaKey: bookmarkMediaKey,
+                          legacyBookmarkKey: legacyBookmarkKey,
                           onSeekRequested: onSeekRequested,
                           onSeekCompleted: onSeekCompleted,
                         ),

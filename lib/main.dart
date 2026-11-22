@@ -57,6 +57,7 @@ import 'services/agent_control_service.dart';
 import 'widgets/agent_control_scope.dart';
 import 'widgets/settings_builder.dart';
 import 'utils/iphone_duo.dart';
+import 'widgets/windows_fold_scope.dart';
 import 'utils/platform_detector.dart';
 import 'utils/pointer_scroll_axis.dart';
 import 'services/apple_tv_remote_touch_service.dart';
@@ -2472,12 +2473,14 @@ class _AppShell extends StatelessWidget {
 /// interface grew.
 Widget rootShell(Widget? child) {
   return AppSystemUiStyle(
-    child: IphoneDuoScope(
-      child: ProjectorViewport(
-        child: FormFactorScale(
-          child: ScaffoldMessenger(
-            key: rootScaffoldMessengerKey,
-            child: Scaffold(backgroundColor: Colors.transparent, body: child),
+    child: WindowsFoldScope(
+      child: IphoneDuoScope(
+        child: ProjectorViewport(
+          child: FormFactorScale(
+            child: ScaffoldMessenger(
+              key: rootScaffoldMessengerKey,
+              child: Scaffold(backgroundColor: Colors.transparent, body: child),
+            ),
           ),
         ),
       ),
@@ -2848,8 +2851,9 @@ class _SetupScreenState extends State<SetupScreen> with MountedSetStateMixin {
 
       var bindingSucceeded = activeProfile.lastBindingSucceeded;
       if (shouldPrompt) {
-        await Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const ProfileSwitchScreen(requireSelection: true)));
+        await Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const ProfileSwitchScreen(requireSelection: true)));
         if (!mounted) {
           return;
         }

@@ -110,6 +110,62 @@ void main() {
     expect(utf8.decode(source), contains('Early cue'));
   });
 
+  test('adjacent cues on a cut use the clock on their own side', () {
+    final result = SubtitleRetimer.retimePiecewise(
+      sourceBytes: utf8.encode('1\n00:03:59,000 --> 00:04:00,000\nLeft\n\n2\n00:04:00,000 --> 00:04:01,000\nRight\n'),
+      extension: '.srt',
+      mapping: SubtitlePiecewiseClockMap.fromObservations(cutAnchors()),
+    );
+    expect(utf8.decode(result.bytes), contains('00:04:00,000 --> 00:04:01,000\nLeft'));
+    expect(utf8.decode(result.bytes), contains('00:03:40,000 --> 00:03:41,000\nRight'));
+  });
+
+  test('calibration ZIP and affine export move inline VTT timestamps with their cue', () {
+    final original = utf8.encode(
+      'WEBVTT\n\n00:01:00.000 --> 00:01:04.000 align:start\n'
+      '<b>One</b> <01:02.000>two\n<00:01:03.000>three\n\n00:03:00.000 --> 00:03:04.000\nLast\n',
+    );
+    final observations = [
+      for (final cue in SubtitleRetimer.parseCues(sourceBytes: original, extension: '.vtt'))
+        SubtitleSyncObservation(cueId: cue.id, subtitleTimeMs: cue.startMs, playbackTimeMs: cue.startMs + 3000),
+    ];
+    final zip = ZipDecoder().decodeBytes(
+      SubtitleCalibrationExport.create(
+        originalBytes: original,
+        fileName: 'words.vtt',
+        extension: '.vtt',
+        identity: _identity(SubtitleCalibrationIdentity.digestBytes(original)),
+        mapping: SubtitlePiecewiseClockMap.fromObservations(observations),
+        observations: observations,
+        fit: null,
+        previousRate: 1,
+        previousDelayMs: 0,
+      ),
+    );
+    expect(zip.findFile('original/words.vtt')!.content, original);
+    final affine = SubtitleRetimer.retime(sourceBytes: original, extension: '.vtt', delayMs: 3000, rate: 1);
+    for (final corrected in [zip.findFile('corrected/words.vtt')!.content as List<int>, affine.bytes]) {
+      expect(
+        utf8.decode(corrected),
+        contains(
+          '00:01:03.000 --> 00:01:07.000 align:start\n'
+          '<b>One</b> <01:05.000>two\n<00:01:06.000>three',
+        ),
+      );
+    }
+  });
+
+  test('clipping VTT timestamps preserves words active at the new start', () {
+    List<int> correct(String words) => SubtitleRetimer.retime(
+      sourceBytes: utf8.encode('WEBVTT\n\n00:00.500 --> 00:03.000\n$words\n'),
+      extension: '.vtt',
+      delayMs: -1000,
+      rate: 1,
+    ).bytes;
+    expect(utf8.decode(correct('A<00:00.750>B<00:01.000>C<00:01.750>D')), contains('ABC<00:00.750>D'));
+    expect(() => correct('A<00:02.500>B<00:02.000>C'), throwsFormatException);
+  });
+
   test('piecewise export refuses cues that span an explicit cut boundary', () {
     final source = utf8.encode('1\n00:03:59,000 --> 00:04:01,000\nCrosses cut\n');
 

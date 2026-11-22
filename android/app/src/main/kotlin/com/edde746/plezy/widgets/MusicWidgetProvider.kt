@@ -1,5 +1,8 @@
 package com.edde746.plezy.widgets
 
+import android.app.ActivityOptions
+import android.os.Build
+import android.view.Display
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -15,7 +18,7 @@ import com.edde746.os_media_controls.MusicCarApi
 import com.edde746.plezy.PlezyActivity
 import com.edde746.plezy.R
 
-class MusicWidgetProvider : AppWidgetProvider() {
+open class MusicWidgetProvider : AppWidgetProvider() {
   companion object {
     private const val TRANSPORT = "com.edde746.plezy.MUSIC_WIDGET_TRANSPORT"
     private var attached = false
@@ -30,13 +33,14 @@ class MusicWidgetProvider : AppWidgetProvider() {
 
     private fun refresh(context: Context) {
       val manager = AppWidgetManager.getInstance(context)
-      val ids = manager.getAppWidgetIds(ComponentName(context, MusicWidgetProvider::class.java))
+      val homeIds = manager.getAppWidgetIds(ComponentName(context, MusicWidgetProvider::class.java))
+      val coverIds = manager.getAppWidgetIds(ComponentName(context, CoverMusicWidgetProvider::class.java)).toSet()
       val snapshot = MusicCarApi.snapshot
       val scope = snapshot["scope"] as? String
       val revision = (snapshot["revision"] as? Number)?.toLong()
       val available = MusicCarApi.ready && scope != null && revision != null && snapshot["title"] is String
       val labels = snapshot["labels"] as? Map<*, *>
-      for (id in ids) {
+      for (id in homeIds.toList() + coverIds) {
         val views = RemoteViews(context.packageName, R.layout.music_widget)
         views.setTextViewText(R.id.music_widget_title, if (available) snapshot["title"] as String else context.applicationInfo.loadLabel(context.packageManager))
         views.setTextViewText(R.id.music_widget_artist, if (available) snapshot["artist"] as? String ?: "" else "")
@@ -47,7 +51,10 @@ class MusicWidgetProvider : AppWidgetProvider() {
           Intent(context, PlezyActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
           },
-          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+          if (id in coverIds && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            ActivityOptions.makeBasic().apply { launchDisplayId = Display.DEFAULT_DISPLAY }.toBundle()
+          else null
         )
         views.setOnClickPendingIntent(R.id.music_widget_title, open)
         views.setOnClickPendingIntent(R.id.music_widget_artist, open)
@@ -103,3 +110,5 @@ class MusicWidgetProvider : AppWidgetProvider() {
     }
   }
 }
+
+class CoverMusicWidgetProvider : MusicWidgetProvider()

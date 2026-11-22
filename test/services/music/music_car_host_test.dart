@@ -1254,6 +1254,31 @@ void main() {
     downloads.dispose();
   });
 
+  testWidgets('playable-only root exposes visible downloads and observes the same profile lock as root', (
+    tester,
+  ) async {
+    final music = Music(), profiles = Profiles(), hidden = CatalogHidden(), downloads = CatalogDownloads();
+    final song = musicTrack('one', album: 'first');
+    hidden.hiddenLibraryKeys.add('s:hidden');
+    downloads.tracks = [song, song.copyWith(id: 'hidden', title: 'Hidden', libraryId: 'hidden')];
+    await mount(tester, music, profiles, downloads: downloads, hidden: hidden, libraries: CatalogLibraries());
+
+    final root = await native('browse', {'id': 'root'}) as List;
+    expect(root.map((row) => row['id']), contains('downloads'));
+    final playable = await native('browse', {'id': 'rootPlayable'}) as List;
+    expect(playable.map((row) => row['playable']), everyElement(true));
+    expect(playable.map((row) => row['title']), contains(song.displayTitle));
+    expect(playable.map((row) => row['title']), isNot(contains('Hidden')));
+    final mix = playable.singleWhere((row) => (row['id'] as String).startsWith('downloadMix:'));
+    expect(await native('playItem', {'id': mix['id']}), isTrue);
+    expect(music.started?.map((item) => item.id), ['one']);
+
+    profiles.succeeded = false;
+    for (final id in ['root', 'rootPlayable']) {
+      await expectLater(native('browse', {'id': id}), throwsA(isA<PlatformException>()));
+    }
+  });
+
   testWidgets('download browsing groups owned visible tracks and plays genres offline', (tester) async {
     final music = Music(), profiles = Profiles(), downloads = CatalogDownloads(), hidden = CatalogHidden();
     final database = AppDatabase.forTesting(NativeDatabase.memory());

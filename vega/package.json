@@ -1,0 +1,13 @@
+{
+  "name": "pleazyng-vega-player",
+  "private": true,
+  "scripts": {
+    "bundle": "esbuild web/player.js --bundle --minify --format=iife --target=chrome109 --outfile=web/bundle.js"
+  },
+  "dependencies": {
+    "mediabunny": "1.66.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

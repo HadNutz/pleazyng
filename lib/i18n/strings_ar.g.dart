@@ -66,6 +66,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$ar dialog = _Translations$dialog$ar._(_root);
 	@override late final _Translations$profiles$ar profiles = _Translations$profiles$ar._(_root);
 	@override late final _Translations$connections$ar connections = _Translations$connections$ar._(_root);
+	@override late final _Translations$iptv$ar iptv = _Translations$iptv$ar._(_root);
 	@override late final _Translations$accountPreferences$ar accountPreferences = _Translations$accountPreferences$ar._(_root);
 	@override late final _Translations$discover$ar discover = _Translations$discover$ar._(_root);
 	@override late final _Translations$errors$ar errors = _Translations$errors$ar._(_root);
@@ -123,6 +124,7 @@ class TranslationsAr extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ar musicExperience = _Translations$musicExperience$ar._(_root);
 	@override late final _Translations$musicTools$ar musicTools = _Translations$musicTools$ar._(_root);
 	@override late final _Translations$musicDevices$ar musicDevices = _Translations$musicDevices$ar._(_root);
+	@override late final _Translations$bookmarkMigration$ar bookmarkMigration = _Translations$bookmarkMigration$ar._(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class _Translations$settings$ar extends Translations$settings$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'مفصلة الشاشة القابلة للطي';
 	@override String get title => 'الإعدادات';
 	@override String get supportDeveloper => 'دعم Pleazyng';
 	@override String get supportDeveloperDescription => 'التبرع بدعم التنمية';
@@ -582,7 +585,6 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get importSettings => 'إعدادات الواردات';
 	@override String get importSettingsDescription => 'استعادة تفضيلات من ملف';
 	@override String get importSettingsConfirm => 'هذا سيحل محل إعداداتك الحالية.مواصلة؟';
-	@override String get importSettingsSuccess => 'الإعدادات المستوردة';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'هذا الملف غير صالحة Pleazyng إعدادات تصدير';
 	@override String get importSettingsNoUser => 'تسجيل الدخول قبل استيراد الإعدادات';
@@ -596,7 +598,6 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».';
 	@override String get cloudBackupRestore => 'استعادة النسخ الاحتياطي';
 	@override String get cloudBackupRestoreConfirm => 'هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.';
-	@override String get cloudBackupRestored => 'إعدادات استعادة من النسخ الاحتياطي السحابية';
 	@override String get shortcutsReset => 'إعادة تعيين القصص إلى الافتراضات';
 	@override String get resetShortcutsConfirm => 'هذا سوف يحل محل اختصاراتك المخصصة مع الافتراضات.';
 	@override String get about => 'حول';
@@ -1670,6 +1671,31 @@ class _Translations$connections$ar extends Translations$connections$en {
 	@override String get signInAgain => 'اكتب مرة أخرى';
 	@override String editMediaBrowserTitle({required Object product}) => 'تحرير ${product} الاتصال';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير.';
+}
+
+// Path: iptv
+class _Translations$iptv$ar extends Translations$iptv$en {
+	_Translations$iptv$ar._(TranslationsAr root) : this._root = root, super.internal(root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'المصادر الاحتياطية بترتيب التشغيل';
+	@override String get lineupOrder => 'ترتيب القنوات';
+	@override String get orderChanged => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.';
+	@override String get localPlaylist => 'ملف M3U';
+	@override String get pastePlaylist => 'لصق نص قائمة التشغيل';
+	@override String get playlistBase => 'عنوان أساسي للروابط النسبية (اختياري)';
+	@override String get localPlaylistHelp => 'استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.';
+	@override String get showMatches => 'إظهار القنوات المطابقة';
+	@override String get hideMatches => 'إخفاء القنوات المطابقة';
+	@override String get pickerCredit => 'مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين';
+	@override String get exportPrivate => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.';
+	@override String get dynamicStreamExport => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.';
+	@override String get moveUp => 'تحرك إلى الأعلى';
+	@override String get moveDown => 'تحرك إلى أسفل';
+	@override String get choosePlaylist => 'اختيار ملف Playlist';
+	@override String affectedChannels({required Object count}) => 'القنوات · ${count}';
 }
 
 // Path: accountPreferences
@@ -2799,6 +2825,7 @@ class _Translations$metadataEdit$ar extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'إدخال صورة URL';
 	@override String get imageUrl => 'صورة URL';
 	@override String get metadataUpdated => 'متاجدات تحديثات';
+	@override String get metadataConflict => 'عدّل محرر آخر الحقل نفسه. افتح المحرر من جديد لمراجعة أحدث القيم قبل الحفظ.';
 	@override String get metadataUpdateFailed => 'فشل في تحديث البيانات الميتا';
 	@override String get artworkUpdated => 'الفنون المحدثة';
 	@override String get artworkUpdateFailed => 'فشل في تحديث أعمال الفن';
@@ -3199,7 +3226,6 @@ class _Translations$cast$ar extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'متصل بـ ${device}';
 	@override String get device => 'جهاز البث';
 	@override String get readyToCast => 'جاهز للبث';
-	@override String get subtitle => 'الترجمة';
 	@override String get serverNotAvailable => 'خادم الوسائط غير متاح.';
 	@override String get stopCasting => 'إيقاف البث';
 	@override String get startFailed => 'تعذر بدء البث. تحقق من الخادم وحاول مرة أخرى.';
@@ -4199,6 +4225,7 @@ class _Translations$podcasts$ar extends Translations$podcasts$en {
 	final TranslationsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'الاشتراكات المستوردة: ${imported}. المكررة: ${duplicates}. التي تم تخطيها: ${skipped}.';
 	@override String get autoDownloadLatest => 'تنزيل أحدث الحلقات تلقائيًا';
 	@override String get removeFinishedAfter => 'إزالة التنزيلات المنتهية بعد';
 }
@@ -4611,6 +4638,17 @@ class _Translations$musicDevices$ar extends Translations$musicDevices$en {
 	@override String get relay => 'عنوان مرحّل الموسيقى';
 	@override String get relayHint => 'فعّل هذا على جهاز الاستقبال، ثم أقرن الجهازين مرة واحدة على الشبكة نفسها. أبقِ Pleazyng مفتوحًا. ينقل المرحّل أوامر الموسيقى المشفّرة ويرى عناوين الشبكة. يبث كل مشغّل من خادم الوسائط الخاص به.';
 	@override String get relayInvalid => 'أدخل عنوان مرحّل يستخدم HTTPS.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$ar extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$ar._(TranslationsAr root) : this._root = root, super.internal(root);
+
+	final TranslationsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'إشارات مرجعية من نسخة غير معروفة';
+	@override String get assignToVersion => 'إسناد إلى هذه النسخة';
 }
 
 // Path: appIcon.names
@@ -5953,6 +5991,7 @@ extension on TranslationsAr {
 			'update.viewRelease' => 'مشاهدة الإصدار',
 			'update.latestVersion' => 'أنت في أحدث النسخة',
 			'update.checkFailed' => 'فشل في التحقق من التحديثات',
+			'settings.foldableDisplay' => 'مفصلة الشاشة القابلة للطي',
 			'settings.title' => 'الإعدادات',
 			'settings.supportDeveloper' => 'دعم Pleazyng',
 			'settings.supportDeveloperDescription' => 'التبرع بدعم التنمية',
@@ -6136,7 +6175,6 @@ extension on TranslationsAr {
 			'settings.importSettings' => 'إعدادات الواردات',
 			'settings.importSettingsDescription' => 'استعادة تفضيلات من ملف',
 			'settings.importSettingsConfirm' => 'هذا سيحل محل إعداداتك الحالية.مواصلة؟',
-			'settings.importSettingsSuccess' => 'الإعدادات المستوردة',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'هذا الملف غير صالحة Pleazyng إعدادات تصدير',
 			'settings.importSettingsNoUser' => 'تسجيل الدخول قبل استيراد الإعدادات',
@@ -6150,7 +6188,6 @@ extension on TranslationsAr {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».',
 			'settings.cloudBackupRestore' => 'استعادة النسخ الاحتياطي',
 			'settings.cloudBackupRestoreConfirm' => 'هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.',
-			'settings.cloudBackupRestored' => 'إعدادات استعادة من النسخ الاحتياطي السحابية',
 			'settings.shortcutsReset' => 'إعادة تعيين القصص إلى الافتراضات',
 			'settings.resetShortcutsConfirm' => 'هذا سوف يحل محل اختصاراتك المخصصة مع الافتراضات.',
 			'settings.about' => 'حول',
@@ -6248,9 +6285,9 @@ extension on TranslationsAr {
 			'settings.manageLibrariesDescription' => 'إعادة ترتيب وإخفاء المكتبات',
 			'settings.companionRemoteServer' => 'الخادم عن بعد',
 			'settings.companionRemoteServerDescription' => 'السماح للأجهزة المحمولة على شبكتك بالتحكم في هذا التطبيق',
+			'settings.companionRemoteServerStartFailed' => 'لا يمكن إطلاق الخادم المرافق',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'لا يمكن إطلاق الخادم المرافق',
 			'settings.companionRemoteServerStopFailed' => 'لا يمكن إيقاف الخادم المرافق',
 			'settings.autoPip' => 'صورة في صورة Auto Picture',
 			'settings.autoPipDescription' => 'إدخال صورة في الصورة تلقائيًا عند مغادرة التطبيق أثناء تشغيل',
@@ -6762,9 +6799,9 @@ extension on TranslationsAr {
 			'accessibility.boldTextHint' => 'استخدم وزنًا أثقل لعلامات الواجهة والرسائل لجعلها أسهل في التمييز.',
 			'tooltips.shufflePlay' => 'لعبة Shuffle',
 			'tooltips.playTrailer' => 'لعبة تريلر',
+			'tooltips.markAsWatched' => 'مارك كما شاهدت',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => 'مارك كما شاهدت',
 			'tooltips.markAsUnwatched' => 'مارك غير ملاحظة',
 			'audioTracks.track' => ({required Object n}) => 'سياق الصوت ${n}',
 			'videoControls.audioLabel' => 'الصوت',
@@ -7107,6 +7144,22 @@ extension on TranslationsAr {
 			'connections.signInAgain' => 'اكتب مرة أخرى',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'تحرير ${product} الاتصال',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير.',
+			'iptv.backupFeeds' => 'المصادر الاحتياطية بترتيب التشغيل',
+			'iptv.lineupOrder' => 'ترتيب القنوات',
+			'iptv.orderChanged' => 'تغيّر ترتيب القنوات. راجعه وحاول مجددًا.',
+			'iptv.localPlaylist' => 'ملف M3U',
+			'iptv.pastePlaylist' => 'لصق نص قائمة التشغيل',
+			'iptv.playlistBase' => 'عنوان أساسي للروابط النسبية (اختياري)',
+			'iptv.localPlaylistHelp' => 'استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.',
+			'iptv.showMatches' => 'إظهار القنوات المطابقة',
+			'iptv.hideMatches' => 'إخفاء القنوات المطابقة',
+			'iptv.pickerCredit' => 'مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين',
+			'iptv.exportPrivate' => 'قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.',
+			'iptv.dynamicStreamExport' => 'تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.',
+			'iptv.moveUp' => 'تحرك إلى الأعلى',
+			'iptv.moveDown' => 'تحرك إلى أسفل',
+			'iptv.choosePlaylist' => 'اختيار ملف Playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'القنوات · ${count}',
 			'accountPreferences.sectionTitle' => 'تفضيلات الحساب',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'تم حفظ خيارات الصوت والعنوان والمكتبة على ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'تم حفظ خيارات الصوت والعنوان والمكتبة على حسابات ${count}',
@@ -7262,6 +7315,8 @@ extension on TranslationsAr {
 			'discover.director' => 'المخرج',
 			'discover.directors' => 'المخرجون',
 			'discover.movie' => 'فيلم',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'عرض التلفزيون',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} دقيقة متبقية',
 			'discover.moreLikeThis' => 'مشابه لهذا',
@@ -7276,8 +7331,6 @@ extension on TranslationsAr {
 			'errors.connectionTimeout' => ({required Object context}) => 'اتصال الوقت أثناء التحميل ${context}',
 			'errors.connectionFailed' => 'عدم القدرة على الاتصال بـ Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'لا يمكن تحميل ${context}. يرجى المحاولة مرة أخرى.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'لا يوجد عميل متاح',
 			'errors.pleaseEnterToken' => 'يرجى إدخال علامة',
 			'errors.invalidToken' => 'الرموز المعاقبة',
@@ -7776,6 +7829,8 @@ extension on TranslationsAr {
 			'collections.removedFromCollection' => 'إزالة من المجموعة',
 			'collections.removeFromCollectionFailed' => 'فشل في إزالتها من المجموعة',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'أخطاء إزالة من المجموعة: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => 'البحث عن مجموعات...',
 			'playlists.title' => 'قوائم التشغيل',
 			'playlists.playlist' => 'قائمة التشغيل',
@@ -7790,8 +7845,6 @@ extension on TranslationsAr {
 			'playlists.emptyPlaylist' => 'هذه القائمة فارغة',
 			'playlists.deleteConfirm' => 'إلغاء اللعب؟',
 			'playlists.deleteMessage' => ({required Object name}) => 'هل أنت متأكد من أنك تريد إزالة "${name}"؟',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'لعبة تم إنشاءها',
 			'playlists.deleted' => 'Playlist حذف',
 			'playlists.itemAdded' => 'إضافة إلى playlist',
@@ -8290,6 +8343,8 @@ extension on TranslationsAr {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision الخصم',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision التخزين (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'طبقة قاعدة',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 طبقة أساسية',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'طبقة قاعدة HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR طبقة أساسية',
@@ -8304,8 +8359,6 @@ extension on TranslationsAr {
 			'performanceOverlay.transfer' => 'نقل',
 			'performanceOverlay.renderFps' => 'رينجر FPS',
 			'performanceOverlay.displayFps' => 'عرض FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V التزامن',
 			'performanceOverlay.dropped' => 'انقطاع',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
@@ -8381,6 +8434,7 @@ extension on TranslationsAr {
 			'metadataEdit.enterImageUrl' => 'إدخال صورة URL',
 			'metadataEdit.imageUrl' => 'صورة URL',
 			'metadataEdit.metadataUpdated' => 'متاجدات تحديثات',
+			'metadataEdit.metadataConflict' => 'عدّل محرر آخر الحقل نفسه. افتح المحرر من جديد لمراجعة أحدث القيم قبل الحفظ.',
 			'metadataEdit.metadataUpdateFailed' => 'فشل في تحديث البيانات الميتا',
 			'metadataEdit.artworkUpdated' => 'الفنون المحدثة',
 			'metadataEdit.artworkUpdateFailed' => 'فشل في تحديث أعمال الفن',
@@ -8738,7 +8792,6 @@ extension on TranslationsAr {
 			'cast.connectedTo' => ({required Object device}) => 'متصل بـ ${device}',
 			'cast.device' => 'جهاز البث',
 			'cast.readyToCast' => 'جاهز للبث',
-			'cast.subtitle' => 'الترجمة',
 			'cast.serverNotAvailable' => 'خادم الوسائط غير متاح.',
 			'cast.stopCasting' => 'إيقاف البث',
 			'cast.startFailed' => 'تعذر بدء البث. تحقق من الخادم وحاول مرة أخرى.',
@@ -8804,6 +8857,8 @@ extension on TranslationsAr {
 			'homeLayout.autoSlideDescription' => 'ينتقل أيضًا تلقائيًا كل بضع ثوانٍ. تعمل الأسهم على الكمبيوتر وأزرار الاتجاهات على التلفزيون دائمًا، وتعيد بدء المؤقّت.',
 			'homeLayout.autoSlideEditDescription' => 'ينتقل أيضًا تلقائيًا كل بضع ثوانٍ. عند الإيقاف، يتنقّل فقط عند النقر على سهم في الكمبيوتر أو الضغط على اليمين أو اليسار في جهاز التحكم. تعمل الأسهم وأزرار الاتجاهات في الحالتين.',
 			'homeLayout.enableHeroFirst' => 'فعّل البطاقة البارزة أولًا',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'إظهار في الصفحة الرئيسية',
 			'homeLayout.home' => 'الرئيسية',
 			'homeLayout.removeFromHome' => 'إزالة من الصفحة الرئيسية',
@@ -8818,8 +8873,6 @@ extension on TranslationsAr {
 			'homeLayout.customPlexRow' => 'صف Plex مخصّص',
 			'homeLayout.heroNeedsLibrary' => 'حدّد المكتبة أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
 			'homeLayout.heroNeedsSurface' => 'حدّد المكتبة أو الصفحة الرئيسية أولًا ليكون للبطاقة البارزة مكان تظهر فيه',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'إزالة قسم المحتوى',
 			'homeLayout.noPlexRows' => 'لم يُرجع Plex أي صفوف يديرها لهذه المكتبة.',
 			'homeLayout.openDetails' => 'فتح التفاصيل',
@@ -9318,6 +9371,8 @@ extension on TranslationsAr {
 			'audiobook.librarySort' => 'الكتب المختلفة',
 			'audiobook.sortTitle' => 'العنوان',
 			'audiobook.sortAuthor' => 'الكاتب',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => 'القارئ',
 			'audiobook.sortSeries' => 'سلسلة الأوامر',
 			'audiobook.sortRecent' => 'افتتح مؤخرا',
@@ -9332,8 +9387,6 @@ extension on TranslationsAr {
 			'audiobook.recoveryExport' => 'تصدير ملف استرداد مشفرة',
 			'audiobook.recoveryImport' => 'استيراد ملف إعادة التدوير المشفرة',
 			'audiobook.recoveryImportConfirm' => 'هل يجمع هذا ملف إعادة التأهيل المشفر مع مواقف القراءة الحالية والملاحظات؟ سيتم الحفاظ على التاريخ الحالي. لا يتم تضمين المكتبة المشتركة ومعارف العناصر؛ قم بتعيين المعارف المقابلة على كل جهاز قبل الاستيراد.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'تم حفظ ملف الاسترداد المشفر.',
 			'audiobook.recoveryImported' => 'استرداد البيانات مترابطة.',
 			'sourceSetup.bookorbitHelp' => 'سجّل الدخول باستخدام حساب BookOrbit الخاص بك لتصفح كتبه وتشغيلها. تظل طلبات العناوين غير المتوفرة تمر عبر مثيل SeerrNG المتصل بك.',
@@ -9552,6 +9605,7 @@ extension on TranslationsAr {
 			'issueReport.privacy' => 'تتضمن المسودة إصدار التطبيق والمنصة وأعداد الاتصالات. لا تتضمن عناوين الخوادم أو أسماء الحسابات والملفات الشخصية أو عناوين الوسائط أو مسارات الملفات.',
 			'issueReport.logPrivacy' => 'السجلات اختيارية. راجعها قبل رفعها. يُضاف معرّف السجل إلى المسودة، وقد تكون المشكلة عامة.',
 			'issueReport.openDraft' => 'فتح مسودة GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'الاشتراكات المستوردة: ${imported}. المكررة: ${duplicates}. التي تم تخطيها: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'تنزيل أحدث الحلقات تلقائيًا',
 			'podcasts.removeFinishedAfter' => 'إزالة التنزيلات المنتهية بعد',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'معاينة ترميز الترجمة',
@@ -9831,6 +9885,8 @@ extension on TranslationsAr {
 			'musicTools.guestDj' => 'منسق موسيقى ضيف',
 			'musicTools.charts' => 'إحصاءات الاستماع',
 			'musicTools.rediscover' => 'إعادة الاكتشاف',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => 'محطات موسيقية',
 			'musicTools.prompt' => 'قائمة من وصف',
 			'musicTools.provider' => 'رابط التوليد لدى المزود',
@@ -9846,8 +9902,6 @@ extension on TranslationsAr {
 			'musicTools.apiKey' => 'مفتاح API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'دقائق',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => 'الفلاتر',
 			'musicTools.exclusiveOutput' => 'إخراج صوت حصري',
 			'musicTools.preamp' => 'التضخيم المسبق',
@@ -9903,6 +9957,8 @@ extension on TranslationsAr {
 			'musicDevices.relay' => 'عنوان مرحّل الموسيقى',
 			'musicDevices.relayHint' => 'فعّل هذا على جهاز الاستقبال، ثم أقرن الجهازين مرة واحدة على الشبكة نفسها. أبقِ Pleazyng مفتوحًا. ينقل المرحّل أوامر الموسيقى المشفّرة ويرى عناوين الشبكة. يبث كل مشغّل من خادم الوسائط الخاص به.',
 			'musicDevices.relayInvalid' => 'أدخل عنوان مرحّل يستخدم HTTPS.',
+			'bookmarkMigration.unassigned' => 'إشارات مرجعية من نسخة غير معروفة',
+			'bookmarkMigration.assignToVersion' => 'إسناد إلى هذه النسخة',
 			_ => null,
 		};
 	}

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B73AE10600B1000000000001 /* Butterfly-209.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = B73AE10600B1000000000002 /* Butterfly-209.mp4 */; };
 		138ACE6B564FC257008E4FBA /* PlezyNGDVRuntimeAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 4B2CBC0E0628AF24BF5712E8 /* PlezyNGDVRuntimeAPI */; };
 		B1D51A6A2F00110000000091 /* MilkRustNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = B1D51A6A2F00110000000090 /* MilkRustNativeHost.mm */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
@@ -71,6 +72,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B73AE10600B1000000000002 /* Butterfly-209.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Butterfly-209.mp4"; path = "../packages/webos_plugins/video_player_drm/example/assets/Butterfly-209.mp4"; sourceTree = SOURCE_ROOT; };
 		B1D51A6A2F00110000000090 /* MilkRustNativeHost.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = MilkRustNativeHost.mm; path = ../shared/apple/MpvPlayer/MilkRustNativeHost.mm; sourceTree = SOURCE_ROOT; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 		331C8082294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				B73AE10600B1000000000002 /* Butterfly-209.mp4 */,
 				331C807B294A618700263BE5 /* RunnerTests.swift */,
 				F10A7D902EB7100000000008 /* MusicWidgetSnapshotTests.swift */,
 			);
@@ -432,6 +435,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B73AE10600B1000000000001 /* Butterfly-209.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1081,7 +1085,7 @@
 			repositoryURL = "https://github.com/snapetech-org/mpv-build";
 			requirement = {
 				kind = revision;
-				revision = e6a33c8605f80e88883f88b8e9d91e0e6c2df07c;
+				revision = 0ee870c7dc712b422b51455c5ab496dd3d889c37;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

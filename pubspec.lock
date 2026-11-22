@@ -1315,10 +1315,9 @@ packages:
   openwatchparty:
     dependency: "direct main"
     description:
-      name: openwatchparty
-      sha256: c557ede0201079af2ef54b6a06c6016d4cb2bd446fb7c9ba90561f8e595c87db
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/openwatchparty"
+      relative: true
+    source: path
     version: "1.1.0"
   os_media_controls:
     dependency: "direct main"

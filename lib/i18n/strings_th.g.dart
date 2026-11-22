@@ -66,6 +66,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$th dialog = _Translations$dialog$th._(_root);
 	@override late final _Translations$profiles$th profiles = _Translations$profiles$th._(_root);
 	@override late final _Translations$connections$th connections = _Translations$connections$th._(_root);
+	@override late final _Translations$iptv$th iptv = _Translations$iptv$th._(_root);
 	@override late final _Translations$accountPreferences$th accountPreferences = _Translations$accountPreferences$th._(_root);
 	@override late final _Translations$discover$th discover = _Translations$discover$th._(_root);
 	@override late final _Translations$errors$th errors = _Translations$errors$th._(_root);
@@ -123,6 +124,7 @@ class TranslationsTh extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$th musicExperience = _Translations$musicExperience$th._(_root);
 	@override late final _Translations$musicTools$th musicTools = _Translations$musicTools$th._(_root);
 	@override late final _Translations$musicDevices$th musicDevices = _Translations$musicDevices$th._(_root);
+	@override late final _Translations$bookmarkMigration$th bookmarkMigration = _Translations$bookmarkMigration$th._(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class _Translations$settings$th extends Translations$settings$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'บานพับของหน้าจอพับได้';
 	@override String get title => 'การตั้งค่า';
 	@override String get supportDeveloper => 'สนับสนุน Pleazyng';
 	@override String get supportDeveloperDescription => 'การสนับสนุนการพัฒนา';
@@ -572,7 +575,6 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String get importSettings => 'การตั้งค่าการนําเข้า';
 	@override String get importSettingsDescription => 'การกู้คืนความต้องการจากไฟล์';
 	@override String get importSettingsConfirm => 'สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?';
-	@override String get importSettingsSuccess => 'การตั้งค่าที่นําเข้า';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ';
 	@override String get importSettingsInvalidFile => 'ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng';
 	@override String get importSettingsNoUser => 'ลงทะเบียนก่อนนําเข้าการตั้งค่า';
@@ -586,7 +588,6 @@ class _Translations$settings$th extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'อัปโหลดข้อมูลสำรองแล้ว โปรดเก็บ URL นี้ไว้ หลังจากติดตั้งแอปใหม่ ให้ป้อน URL นี้ในหน้าสำรองข้อมูลบนคลาวด์ แล้วเลือก “${action}”';
 	@override String get cloudBackupRestore => 'การกู้คืน Backup';
 	@override String get cloudBackupRestoreConfirm => 'สิ่งนี้จะแทนที่การตั้งค่าแบบพกพาที่ตรงกับอุปกรณ์นี้. ต่อไป?';
-	@override String get cloudBackupRestored => 'การตั้งค่าที่ได้รับการกู้คืนจาก Cloud Backup';
 	@override String get shortcutsReset => 'ระยะสั้นที่กําหนดเอง';
 	@override String get resetShortcutsConfirm => 'นี่จะแทนที่การสั้น ๆ ที่กําหนดเองของคุณด้วยข้อกําหนดต่อไปหรือไม่?';
 	@override String get about => 'เกี่ยวกับ';
@@ -1635,6 +1636,31 @@ class _Translations$connections$th extends Translations$connections$en {
 	@override String get signInAgain => 'ลงทะเบียนอีกครั้ง';
 	@override String editMediaBrowserTitle({required Object product}) => 'Edit ${product} การเชื่อมต่อ';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด';
+}
+
+// Path: iptv
+class _Translations$iptv$th extends Translations$iptv$en {
+	_Translations$iptv$th._(TranslationsTh root) : this._root = root, super.internal(root);
+
+	final TranslationsTh _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'แหล่งสำรองตามลำดับการเล่น';
+	@override String get lineupOrder => 'ลำดับช่อง';
+	@override String get orderChanged => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง';
+	@override String get localPlaylist => 'ไฟล์ M3U';
+	@override String get pastePlaylist => 'วางข้อความเพลย์ลิสต์';
+	@override String get playlistBase => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)';
+	@override String get localPlaylistHelp => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้';
+	@override String get showMatches => 'แสดงช่องที่ตรงกัน';
+	@override String get hideMatches => 'ซ่อนช่องที่ตรงกัน';
+	@override String get pickerCredit => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา';
+	@override String get exportPrivate => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว';
+	@override String get dynamicStreamExport => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้';
+	@override String get moveUp => 'ขึ้นไป';
+	@override String get moveDown => 'การเคลื่อนไหวลง';
+	@override String get choosePlaylist => 'เลือกไฟล์ Playlist';
+	@override String affectedChannels({required Object count}) => 'ช่อง · ${count}';
 }
 
 // Path: accountPreferences
@@ -2704,6 +2730,7 @@ class _Translations$metadataEdit$th extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'หมายเลข URL';
 	@override String get imageUrl => 'ภาพ URL';
 	@override String get metadataUpdated => 'ข้อมูลอัปเดต';
+	@override String get metadataConflict => 'มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก';
 	@override String get metadataUpdateFailed => 'ไม่สามารถปรับปรุงข้อมูล metadata';
 	@override String get artworkUpdated => 'อัพเดทศิลปะ';
 	@override String get artworkUpdateFailed => 'ไม่สามารถปรับปรุงงานศิลปะได้';
@@ -3104,7 +3131,6 @@ class _Translations$cast$th extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'เชื่อมต่อ ${device}';
 	@override String get device => 'อุปกรณ์แคสต์';
 	@override String get readyToCast => 'พร้อมแคสต์';
-	@override String get subtitle => 'คำบรรยาย';
 	@override String get serverNotAvailable => 'เซิร์ฟเวอร์สื่อไม่สามารถใช้ได้';
 	@override String get stopCasting => 'หยุดแคสต์';
 	@override String get startFailed => 'ไม่สามารถเริ่ม casting ตรวจสอบเซิร์ฟเวอร์และลองอีกครั้ง';
@@ -4084,6 +4110,7 @@ class _Translations$podcasts$th extends Translations$podcasts$en {
 	final TranslationsTh _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ';
 	@override String get autoDownloadLatest => 'ดาวน์โหลดตอนล่าสุดโดยอัตโนมัติ';
 	@override String get removeFinishedAfter => 'ลบไฟล์ดาวน์โหลดที่ฟังจบแล้วหลังจาก';
 }
@@ -4496,6 +4523,17 @@ class _Translations$musicDevices$th extends Translations$musicDevices$en {
 	@override String get relay => 'URL รีเลย์เพลง';
 	@override String get relayHint => 'เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง';
 	@override String get relayInvalid => 'ป้อนที่อยู่รีเลย์ HTTPS';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$th extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$th._(TranslationsTh root) : this._root = root, super.internal(root);
+
+	final TranslationsTh _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้';
+	@override String get assignToVersion => 'เชื่อมโยงกับเวอร์ชันนี้';
 }
 
 // Path: appIcon.names
@@ -5828,6 +5866,7 @@ extension on TranslationsTh {
 			'update.viewRelease' => 'ดูการปล่อย',
 			'update.latestVersion' => 'คุณอยู่ในเวอร์ชันล่าสุด',
 			'update.checkFailed' => 'ไม่สามารถตรวจสอบอัปเดตได้',
+			'settings.foldableDisplay' => 'บานพับของหน้าจอพับได้',
 			'settings.title' => 'การตั้งค่า',
 			'settings.supportDeveloper' => 'สนับสนุน Pleazyng',
 			'settings.supportDeveloperDescription' => 'การสนับสนุนการพัฒนา',
@@ -6011,7 +6050,6 @@ extension on TranslationsTh {
 			'settings.importSettings' => 'การตั้งค่าการนําเข้า',
 			'settings.importSettingsDescription' => 'การกู้คืนความต้องการจากไฟล์',
 			'settings.importSettingsConfirm' => 'สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?',
-			'settings.importSettingsSuccess' => 'การตั้งค่าที่นําเข้า',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ',
 			'settings.importSettingsInvalidFile' => 'ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng',
 			'settings.importSettingsNoUser' => 'ลงทะเบียนก่อนนําเข้าการตั้งค่า',
@@ -6025,7 +6063,6 @@ extension on TranslationsTh {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'อัปโหลดข้อมูลสำรองแล้ว โปรดเก็บ URL นี้ไว้ หลังจากติดตั้งแอปใหม่ ให้ป้อน URL นี้ในหน้าสำรองข้อมูลบนคลาวด์ แล้วเลือก “${action}”',
 			'settings.cloudBackupRestore' => 'การกู้คืน Backup',
 			'settings.cloudBackupRestoreConfirm' => 'สิ่งนี้จะแทนที่การตั้งค่าแบบพกพาที่ตรงกับอุปกรณ์นี้. ต่อไป?',
-			'settings.cloudBackupRestored' => 'การตั้งค่าที่ได้รับการกู้คืนจาก Cloud Backup',
 			'settings.shortcutsReset' => 'ระยะสั้นที่กําหนดเอง',
 			'settings.resetShortcutsConfirm' => 'นี่จะแทนที่การสั้น ๆ ที่กําหนดเองของคุณด้วยข้อกําหนดต่อไปหรือไม่?',
 			'settings.about' => 'เกี่ยวกับ',
@@ -6123,9 +6160,9 @@ extension on TranslationsTh {
 			'settings.manageLibrariesDescription' => 'การจัดเก็บและซ่อนห้องสมุด',
 			'settings.companionRemoteServer' => 'เซิร์ฟเวอร์ระยะไกล',
 			'settings.companionRemoteServerDescription' => 'ให้อุปกรณ์มือถือบนเครือข่ายของคุณควบคุมแอปนี้',
+			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
 			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
@@ -6637,9 +6674,9 @@ extension on TranslationsTh {
 			'accessibility.boldTextHint' => 'ใช้น้ําหนักที่หนักขึ้นสําหรับแท็กอินเตอร์เฟซและข้อความเพื่อให้ง่ายต่อการแยกต่างหาก',
 			'tooltips.shufflePlay' => 'เล่น Shuffle',
 			'tooltips.playTrailer' => 'เล่น Trailer',
+			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => 'Mark ตามที่มองเห็น',
 			'tooltips.markAsUnwatched' => 'หมายเลขรุ่น: Unwatched',
 			'audioTracks.track' => ({required Object n}) => 'ลวดเสียง ${n}',
 			'videoControls.audioLabel' => 'เสียง',
@@ -6982,6 +7019,22 @@ extension on TranslationsTh {
 			'connections.signInAgain' => 'ลงทะเบียนอีกครั้ง',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} การเชื่อมต่อ',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด',
+			'iptv.backupFeeds' => 'แหล่งสำรองตามลำดับการเล่น',
+			'iptv.lineupOrder' => 'ลำดับช่อง',
+			'iptv.orderChanged' => 'ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง',
+			'iptv.localPlaylist' => 'ไฟล์ M3U',
+			'iptv.pastePlaylist' => 'วางข้อความเพลย์ลิสต์',
+			'iptv.playlistBase' => 'URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)',
+			'iptv.localPlaylistHelp' => 'นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้',
+			'iptv.showMatches' => 'แสดงช่องที่ตรงกัน',
+			'iptv.hideMatches' => 'ซ่อนช่องที่ตรงกัน',
+			'iptv.pickerCredit' => 'ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา',
+			'iptv.exportPrivate' => 'ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว',
+			'iptv.dynamicStreamExport' => 'พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้',
+			'iptv.moveUp' => 'ขึ้นไป',
+			'iptv.moveDown' => 'การเคลื่อนไหวลง',
+			'iptv.choosePlaylist' => 'เลือกไฟล์ Playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'ช่อง · ${count}',
 			'accountPreferences.sectionTitle' => 'การตั้งค่าบัญชี',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'ออฟต์แวร์เสียงและตัวเลือกห้องสมุดที่บันทึกไว้บน ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'ออฟต์แวร์อัตโนมัติและตัวเลือกห้องสมุดที่บันทึกไว้ในบัญชี ${count}',
@@ -7137,6 +7190,8 @@ extension on TranslationsTh {
 			'discover.director' => 'ผู้กำกับ',
 			'discover.directors' => 'ผู้กำกับ',
 			'discover.movie' => 'ภาพยนตร์',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'แสดงทีวี',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} นาที left',
 			'discover.moreLikeThis' => 'มากกว่าเช่นนี้',
@@ -7151,8 +7206,6 @@ extension on TranslationsTh {
 			'errors.connectionTimeout' => ({required Object context}) => 'เวลาการเชื่อมต่อเมื่อโหลด ${context}',
 			'errors.connectionFailed' => 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์สื่อ',
 			'errors.unableToLoad' => ({required Object context}) => 'ไม่สามารถโหลด ${context} โปรดลองอีกครั้ง',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'ไม่มีลูกค้า',
 			'errors.pleaseEnterToken' => 'กรุณาใส่ token',
 			'errors.invalidToken' => 'โค้นที่ผิดพลาด',
@@ -7651,6 +7704,8 @@ extension on TranslationsTh {
 			'collections.removedFromCollection' => 'การกําจัดจากการเก็บรวบรวม',
 			'collections.removeFromCollectionFailed' => 'ไม่สามารถถอดออกจากการเก็บรวบรวม',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'ความผิดพลาดในการลบจากการเก็บรวบรวม: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => 'ค้นหาคอลเลกชัน',
 			'playlists.title' => 'เพลย์ลิสต์',
 			'playlists.playlist' => 'เพลย์ลิสต์',
@@ -7665,8 +7720,6 @@ extension on TranslationsTh {
 			'playlists.emptyPlaylist' => 'รายการเล่นนี้ว่างเปล่า',
 			'playlists.deleteConfirm' => 'ลบ Playlist',
 			'playlists.deleteMessage' => ({required Object name}) => 'คุณแน่ใจว่าคุณต้องการลบ "${name}"',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist สร้างขึ้น',
 			'playlists.deleted' => 'Playlist ลบ',
 			'playlists.itemAdded' => 'เพิ่มขึ้นใน Playlist',
@@ -8165,6 +8218,8 @@ extension on TranslationsTh {
 			'performanceOverlay.dvRouteDecoder' => 'ตัวถอดรหัส Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'ตัวถอดรหัส Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'ฐานชั้น',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 ชั้นฐาน',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG ฐานชั้น',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR ฐานชั้น',
@@ -8179,8 +8234,6 @@ extension on TranslationsTh {
 			'performanceOverlay.transfer' => 'การถ่ายโอน',
 			'performanceOverlay.renderFps' => 'ฟิล์ม',
 			'performanceOverlay.displayFps' => 'แสดง FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A / V Sync',
 			'performanceOverlay.dropped' => 'ละลาย',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
@@ -8256,6 +8309,7 @@ extension on TranslationsTh {
 			'metadataEdit.enterImageUrl' => 'หมายเลข URL',
 			'metadataEdit.imageUrl' => 'ภาพ URL',
 			'metadataEdit.metadataUpdated' => 'ข้อมูลอัปเดต',
+			'metadataEdit.metadataConflict' => 'มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก',
 			'metadataEdit.metadataUpdateFailed' => 'ไม่สามารถปรับปรุงข้อมูล metadata',
 			'metadataEdit.artworkUpdated' => 'อัพเดทศิลปะ',
 			'metadataEdit.artworkUpdateFailed' => 'ไม่สามารถปรับปรุงงานศิลปะได้',
@@ -8613,7 +8667,6 @@ extension on TranslationsTh {
 			'cast.connectedTo' => ({required Object device}) => 'เชื่อมต่อ ${device}',
 			'cast.device' => 'อุปกรณ์แคสต์',
 			'cast.readyToCast' => 'พร้อมแคสต์',
-			'cast.subtitle' => 'คำบรรยาย',
 			'cast.serverNotAvailable' => 'เซิร์ฟเวอร์สื่อไม่สามารถใช้ได้',
 			'cast.stopCasting' => 'หยุดแคสต์',
 			'cast.startFailed' => 'ไม่สามารถเริ่ม casting ตรวจสอบเซิร์ฟเวอร์และลองอีกครั้ง',
@@ -8679,6 +8732,8 @@ extension on TranslationsTh {
 			'homeLayout.autoSlideDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที Arrows (PC) และ d-pad (TV) ทํางานเสมอและเปิดตัวใหม่ชั่วโมง',
 			'homeLayout.autoSlideEditDescription' => 'นอกจากนี้ยังสไลด์ด้วยตัวเองทุกวินาที ปิด: เท่านั้นเคลื่อนที่เมื่อคุณคลิกปืน (พีซี) หรือกดซ้าย / ขวาบนระยะไกล (ทีวี) สไลด์และ d-pad ทํางานเสมอในทางใด ๆ',
 			'homeLayout.enableHeroFirst' => 'อนุญาตให้ฮีโร่แรก',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'แสดงบนหน้าจอบ้าน',
 			'homeLayout.home' => 'บ้าน',
 			'homeLayout.removeFromHome' => 'เอาจากบ้าน',
@@ -8693,8 +8748,6 @@ extension on TranslationsTh {
 			'homeLayout.customPlexRow' => 'คู่มือ Plex รอบ',
 			'homeLayout.heroNeedsLibrary' => 'ตรวจสอบห้องสมุดแรก — Hero ต้องการที่ไหนที่จะแสดง',
 			'homeLayout.heroNeedsSurface' => 'ตรวจสอบห้องสมุดหรือบ้านแรก — สัตว์ประหลาดต้องการที่ไหนที่จะแสดง',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'ลบ Hub',
 			'homeLayout.noPlexRows' => 'หมายเลข Plex-จัดการสายกลับสําหรับห้องสมุดนี้',
 			'homeLayout.openDetails' => 'รายละเอียดเปิด',
@@ -9193,6 +9246,8 @@ extension on TranslationsTh {
 			'audiobook.librarySort' => 'โคตรหนังสือ',
 			'audiobook.sortTitle' => 'ชื่อ',
 			'audiobook.sortAuthor' => 'ผู้เขียน',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => 'พูดคุย',
 			'audiobook.sortSeries' => 'ชุดคําสั่ง',
 			'audiobook.sortRecent' => 'กุมภาพันธ์',
@@ -9207,8 +9262,6 @@ extension on TranslationsTh {
 			'audiobook.recoveryExport' => 'การส่งออกไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImport' => 'นําเข้าไฟล์การกู้คืนที่เข้ารหัส',
 			'audiobook.recoveryImportConfirm' => 'ผสมไฟล์การกู้คืนที่เข้ารหัสนี้กับตําแหน่งอ่านปัจจุบันและบันทึก? ประวัติศาสตร์ที่มีอยู่จะถูกเก็บไว้. หมายเลขห้องสมุดร่วมกันและรายการไม่รวม; การตั้งค่าหมายเลขที่เกี่ยวข้องในแต่ละอุปกรณ์ก่อนที่จะนําเข้า',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'ไฟล์การกู้คืนที่เข้ารหัสถูกบันทึก',
 			'audiobook.recoveryImported' => 'ข้อมูลการกู้คืนรวม',
 			'sourceSetup.bookorbitHelp' => 'ลงชื่อเข้าใช้บัญชี BookOrbit ของคุณเพื่อเรียกดูและเล่นหนังสือ คำขอสำหรับเรื่องที่ไม่มีให้บริการยังคงส่งผ่าน SeerrNG ที่เชื่อมต่อไว้',
@@ -9427,6 +9480,7 @@ extension on TranslationsTh {
 			'issueReport.privacy' => 'ฉบับร่างมีเวอร์ชันแอป แพลตฟอร์ม และจำนวนการเชื่อมต่อ โดยไม่รวมที่อยู่เซิร์ฟเวอร์ ชื่อบัญชีหรือโปรไฟล์ ชื่อสื่อ หรือเส้นทางไฟล์',
 			'issueReport.logPrivacy' => 'บันทึกเป็นทางเลือก โปรดตรวจสอบก่อนอัปโหลด ID ของบันทึกจะเพิ่มลงในฉบับร่าง ซึ่งอาจเปิดเผยต่อสาธารณะ',
 			'issueReport.openDraft' => 'เปิดฉบับร่าง GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ',
 			'podcasts.autoDownloadLatest' => 'ดาวน์โหลดตอนล่าสุดโดยอัตโนมัติ',
 			'podcasts.removeFinishedAfter' => 'ลบไฟล์ดาวน์โหลดที่ฟังจบแล้วหลังจาก',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'ตัวอย่างการเข้ารหัสคำบรรยาย',
@@ -9706,6 +9760,8 @@ extension on TranslationsTh {
 			'musicTools.guestDj' => 'ดีเจรับเชิญ',
 			'musicTools.charts' => 'อันดับการฟัง',
 			'musicTools.rediscover' => 'ค้นพบอีกครั้ง',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => 'สถานีเพลง',
 			'musicTools.prompt' => 'เพลย์ลิสต์จากคำอธิบาย',
 			'musicTools.provider' => 'URL สร้างรายการของผู้ให้บริการ',
@@ -9721,8 +9777,6 @@ extension on TranslationsTh {
 			'musicTools.apiKey' => 'คีย์ API',
 			'musicTools.missing' => 'หมายเลขรุ่น: A',
 			'musicTools.minutes' => 'นาที',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => 'ฟิล์ม',
 			'musicTools.exclusiveOutput' => 'เอาต์พุตเสียงแบบเอกสิทธิ์',
 			'musicTools.preamp' => 'ปรีแอมป์',
@@ -9778,6 +9832,8 @@ extension on TranslationsTh {
 			'musicDevices.relay' => 'URL รีเลย์เพลง',
 			'musicDevices.relayHint' => 'เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง',
 			'musicDevices.relayInvalid' => 'ป้อนที่อยู่รีเลย์ HTTPS',
+			'bookmarkMigration.unassigned' => 'บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้',
+			'bookmarkMigration.assignToVersion' => 'เชื่อมโยงกับเวอร์ชันนี้',
 			_ => null,
 		};
 	}

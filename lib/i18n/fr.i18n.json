@@ -244,6 +244,7 @@
     "checkFailed": "Échec de la vérification des mises à jour"
   },
   "settings": {
+    "foldableDisplay": "Charnière de l’écran pliable",
     "title": "Paramètres",
     "supportDeveloper": "Soutenir Pleazyng",
     "supportDeveloperDescription": "Faites un don pour soutenir le développement",
@@ -435,7 +436,6 @@
     "importSettings": "Importer les paramètres",
     "importSettingsDescription": "Restaurer les préférences depuis un fichier",
     "importSettingsConfirm": "Cela remplacera vos paramètres actuels. Continuer ?",
-    "importSettingsSuccess": "Paramètres importés",
     "importSettingsCounts": "Paramètres appliqués : ${applied}. Ignorés : ${skipped}.",
     "importSettingsInvalidFile": "Ce fichier n’est pas une exportation valide des paramètres de Pleazyng",
     "importSettingsNoUser": "Connectez-vous avant d’importer les paramètres",
@@ -449,7 +449,6 @@
     "cloudBackupComplete": "Sauvegarde envoyée. Conservez cette URL. Après une nouvelle installation, saisissez-la dans la rubrique de sauvegarde en ligne et choisissez « ${action} ».",
     "cloudBackupRestore": "Récupérer Backup",
     "cloudBackupRestoreConfirm": "Cela remplacera les paramètres portables correspondants sur ce dispositif.",
-    "cloudBackupRestored": "Récupération de la récupération de la sauvegarde cloud",
     "shortcutsReset": "Raccourcis réinitialisés aux valeurs par défaut",
     "resetShortcutsConfirm": "Cela remplacera vos raccourcis personnalisés par les raccourcis par défaut. Continuer ?",
     "about": "À propos",
@@ -1504,6 +1503,22 @@
     "editMediaBrowserIntro": "Ajoutez ou retirez des URL pour ${serverName}. Pleazyng utilisera l'URL joignable avec la latence la plus faible."
   },
   "iptv": {
+    "backupFeeds": "Sources de secours par ordre de lecture",
+    "lineupOrder": "Ordre des chaînes",
+    "orderChanged": "L’ordre des chaînes a changé. Vérifiez-le et réessayez.",
+    "localPlaylist": "Fichier M3U",
+    "pastePlaylist": "Coller le texte de la liste",
+    "playlistBase": "URL de base pour les liens relatifs (facultatif)",
+    "localPlaylistHelp": "Importez une copie privée d’une liste de chaînes M3U ou M3U8. Vous pouvez la remplacer par un autre fichier.",
+    "showMatches": "Afficher les chaînes correspondantes",
+    "hideMatches": "Masquer les chaînes correspondantes",
+    "pickerCredit": "Inspiré de · M3U Web Picker · Zachary Schmook (@zschmook) et des contributeurs",
+    "exportPrivate": "Les adresses des flux peuvent contenir vos identifiants. Enregistrez la liste dans un emplacement privé.",
+    "dynamicStreamExport": "Le portail crée un nouveau lien à chaque lecture. Vous pouvez exporter le guide.",
+    "moveUp": "Mouvement en haut",
+    "moveDown": "Mouvez-vous en bas",
+    "choosePlaylist": "Choisissez le fichier playlist",
+    "affectedChannels": "Chaînes · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3259,6 +3274,7 @@
     "enterImageUrl": "Entrer l'URL de l'image",
     "imageUrl": "URL de l'image",
     "metadataUpdated": "Métadonnées mises à jour",
+    "metadataConflict": "Une autre personne a modifié le même champ. Rouvrez l’éditeur pour vérifier les valeurs actuelles avant d’enregistrer.",
     "metadataUpdateFailed": "Échec de la mise à jour des métadonnées",
     "artworkUpdated": "Illustrations mises à jour",
     "artworkUpdateFailed": "Échec de la mise à jour des illustrations",
@@ -3679,7 +3695,6 @@
     "connectedTo": "Connectez-vous à ${device}",
     "device": "Dispositif de casting",
     "readyToCast": "Prêt à lancer",
-    "subtitle": "Sous-titres",
     "serverNotAvailable": "Le serveur de médias n’est pas disponible.",
     "stopCasting": "Arrêter de casting",
     "startFailed": "Je ne peux pas commencer à lancer. vérifier le serveur et essayer à nouveau."
@@ -4900,6 +4915,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Abonnements importés : ${imported}. Doublons : ${duplicates}. Ignorés : ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5714,5 +5730,9 @@
     "relay": "URL du relais musical",
     "relayHint": "Activez sur l’appareil récepteur, puis associez une fois sur le même réseau. Gardez Pleazyng ouvert. Le relais transmet les commandes musicales chiffrées et voit les adresses réseau. Chaque lecteur utilise son propre serveur multimédia.",
     "relayInvalid": "Saisissez une adresse HTTPS pour le relais."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Signets d’une version non identifiée",
+    "assignToVersion": "Associer à cette version"
   }
 }

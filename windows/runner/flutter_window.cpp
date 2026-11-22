@@ -199,6 +199,7 @@ bool FlutterWindow::OnCreate() {
       flutter_controller_->engine()->GetRegistrarForPlugin("MpvAudioGroupOutputPlugin"));
 
   workspace_views_ = std::make_unique<WorkspaceViews>(flutter_controller_->engine());
+  embedded_panels_ = EmbeddedDisplayPanels();
   RegisterWindowChannel();
   RegisterDeepLinkChannel();
   RegisterCredentialKeyStore();
@@ -282,6 +283,8 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam
 
   switch (message) {
     case WM_DISPLAYCHANGE:
+      embedded_panels_ = EmbeddedDisplayPanels();
+      NotifyPanelLayout();
       // One bounded, serialized retry for a display that may have reconnected.
       mpv::DisplayModeManager::RecoverIfNeeded();
       break;
@@ -291,6 +294,7 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message, WPARAM const wparam
       }
       break;
     case WM_WINDOWPOSCHANGED:
+      NotifyPanelLayout();
       // Don't persist placement while fullscreen, mid-toggle, or hidden — the
       // rect would overwrite the user's real window position or show state.
       if (flutter_controller_ && !is_fullscreen_ && !g_suppressPlacementSave && IsWindowVisible(hwnd)) {
@@ -330,6 +334,29 @@ void FlutterWindow::RegisterDeepLinkChannel() {
 // The channel also carries setDarkMode, the app's frame theme: window_manager's
 // setBrightness cannot make the caption darker than the OS app theme.
 // ---------------------------------------------------------------------------
+flutter::EncodableList FlutterWindow::PanelLayout() {
+  flutter::EncodableList rows;
+  if (!flutter_controller_ || !flutter_controller_->view()) return rows;
+  const HWND view = flutter_controller_->view()->GetNativeWindow();
+  POINT origin{};
+  if (!ClientToScreen(view, &origin)) return rows;
+  for (const RECT& rect : embedded_panels_) {
+    rows.emplace_back(flutter::EncodableList{flutter::EncodableValue(static_cast<int>(rect.left - origin.x)),
+        flutter::EncodableValue(static_cast<int>(rect.top - origin.y)),
+        flutter::EncodableValue(static_cast<int>(rect.right - origin.x)),
+        flutter::EncodableValue(static_cast<int>(rect.bottom - origin.y))});
+  }
+  return rows;
+}
+
+void FlutterWindow::NotifyPanelLayout() {
+  if (!window_channel_) return;
+  auto rows = PanelLayout();
+  if (rows == last_panel_layout_) return;
+  last_panel_layout_ = rows;
+  window_channel_->InvokeMethod("onPanelLayout", std::make_unique<flutter::EncodableValue>(rows));
+}
+
 void FlutterWindow::RegisterWindowChannel() {
   auto messenger = flutter_controller_->engine()->messenger();
   window_channel_ = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
@@ -339,7 +366,9 @@ void FlutterWindow::RegisterWindowChannel() {
                                             const flutter::MethodCall<flutter::EncodableValue>& call,
                                             std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
     const std::string& name = call.method_name();
-    if (name == "decoderInventory") {
+    if (name == "getPanelLayout") {
+      result->Success(flutter::EncodableValue(PanelLayout()));
+    } else if (name == "decoderInventory") {
       result->Success(MediaFoundationDecoderInventory());
     } else if (name == "setFullScreen") {
       bool value = false;

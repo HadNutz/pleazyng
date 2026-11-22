@@ -57,6 +57,23 @@ class ProfileConnectionCleanup {
   final StorageService storage;
   final MultiServerManager? serverManager;
 
+  /// Downloads use physical server ids. A second connection or an implicit
+  /// Plex Home parent may still give this profile access to the same server.
+  Future<Set<ServerId>> downloadServersLostByProfile({
+    required String profileId,
+    required Connection connection,
+  }) async {
+    final retainedConnections = {
+      for (final row in await profileConnections.listForProfile(profileId)) row.connectionId,
+      ?parsePlexHomeProfileId(profileId)?.accountConnectionId,
+    }..remove(connection.id);
+    final lost = _serverIdsForConnection(connection);
+    for (final other in await connections.list()) {
+      if (retainedConnections.contains(other.id)) lost.removeAll(_serverIdsForConnection(other));
+    }
+    return lost;
+  }
+
   Future<void> removeProfileConnection({required String profileId, required Connection connection}) async {
     final removedServerIds = _serverIdsForConnection(connection);
     await profileConnections.remove(profileId, connection.id);
@@ -252,9 +269,6 @@ class ProfileConnectionCleanup {
   }
 }
 
-// [ServerId]-typed for the preference APIs, which drops ids that fail to
-// parse; the twin in profile_detail_screen.dart stays raw so it can be
-// differenced against download keys.
 Set<ServerId> _serverIdsForConnection(Connection connection) {
   return switch (connection) {
     PlexAccountConnection(:final servers) => {

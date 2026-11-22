@@ -46,7 +46,7 @@ class MusicDeviceController extends ChangeNotifier {
     final from = source?.request ?? local.handleLocal;
     final to = target?.request ?? local.handleLocal;
     try {
-      final state = await from({'op': 'state'});
+      final state = await from({'op': 'state', 'radio': true});
       if (_closed || state?['ok'] != true) return MusicDeviceMoveResult.rejected;
       if (state?['empty'] == true) {
         if (target != null && !await target.refresh(full: true)) return MusicDeviceMoveResult.rejected;

@@ -299,6 +299,7 @@ class IptvSources extends Table {
   TextColumn get displayName => text()();
   TextColumn get kind => text()();
   TextColumn get configCiphertext => text()();
+  TextColumn get playlistCiphertext => text().nullable()();
   IntColumn get revision => integer().withDefault(const Constant(1))();
   IntColumn get generation => integer().withDefault(const Constant(0))();
   IntColumn get createdAt => integer()();
@@ -362,6 +363,7 @@ class IptvChannelOverrides extends Table {
   TextColumn get sourceId => text().references(IptvSources, #id, onDelete: KeyAction.cascade)();
   TextColumn get channelId => text()();
   BoolColumn get favorite => boolean().withDefault(const Constant(false))();
+  IntColumn get lineupOrder => integer().nullable()();
   IntColumn get favoriteOrder => integer().withDefault(const Constant(0))();
   BoolColumn get hidden => boolean().withDefault(const Constant(false))();
   TextColumn get customTitle => text().nullable()();

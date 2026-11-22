@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/media/ids.dart';
+import 'package:plezy/media/library_query.dart';
+import 'package:plezy/models/home_section_config.dart';
+import 'package:plezy/utils/media_server_http_client.dart';
 import 'package:plezy/media/media_backend.dart';
 import 'package:plezy/media/media_hub.dart';
 import 'package:plezy/media/media_item.dart';
@@ -86,6 +89,20 @@ class _FakeAggregationService extends DataAggregationService {
   Completer<void>? onDeckStarted;
   Completer<void>? hubStarted;
 
+  List<MediaItem> collections = [];
+  @override
+  Future<CollectionAggregationResult> getCollectionsFromAllServers({
+    Set<String>? hiddenLibraryKeys,
+    Set<String>? serverIds,
+    Set<String>? collectionKeys,
+  }) async => (
+    collections: collections.where((c) => hiddenLibraryKeys?.contains(c.libraryGlobalKey) != true).toList(),
+    libraryKinds: {'server_1:99': MediaKind.movie},
+    succeededServerIds: {'server_1'},
+    cancelledServerIds: <String>{},
+    failedServerIds: <String>{},
+  );
+
   @override
   Future<OnDeckAggregationResult> getOnDeckFromAllServers({
     int? limit,
@@ -144,6 +161,25 @@ class _FakeClient implements MediaServerClient {
   final List<String> fetchedItemIds = [];
   MediaItem? itemResult;
   Future<void>? itemGate;
+  List<MediaItem> collectionItems = [];
+  int collectionRequests = 0;
+  Completer<void>? childrenRequested;
+  Future<void>? childrenGate;
+  @override
+  Future<LibraryPage<MediaItem>> fetchCollectionPage(
+    String collectionId, {
+    int? start,
+    int? size,
+    AbortController? abort,
+    String? libraryId,
+    String? libraryTitle,
+  }) async {
+    collectionRequests++;
+    if (childrenRequested?.isCompleted == false) childrenRequested!.complete();
+    await childrenGate;
+    return LibraryPage(items: collectionItems, totalCount: collectionItems.length, offset: start ?? 0);
+  }
+
   final _PushChannel channel = _PushChannel();
 
   @override
@@ -247,6 +283,52 @@ void main() {
 
   setUp(initializeFixture);
   tearDown(disposeFixture);
+
+  for (final hideServer in [false, true]) {
+    test(
+      'collection Home rows clear and ignore in-flight children when hiding ${hideServer ? 'server' : 'library'}',
+      () async {
+        final collection = _item('42', kind: MediaKind.collection).copyWith(libraryId: '99');
+        aggregation.collections = [collection];
+        client.collectionItems = [
+          _item('film', kind: MediaKind.movie).copyWith(libraryId: '99'),
+          _item('other', kind: MediaKind.movie).copyWith(libraryId: 'other'),
+        ];
+        await SettingsService.instance.write(SettingsService.homeSections, [
+          HomeSectionConfig(
+            id: 'custom',
+            title: 'Collection',
+            kind: HomeSectionKind.movieCollections,
+            collectionKeys: [collection.globalKey],
+          ),
+        ]);
+        await provider.load();
+        expect(provider.hubs.singleWhere((hub) => hub.id == 'custom').items.map((m) => m.id), ['film']);
+        final gate = Completer<void>();
+        client.childrenRequested = Completer<void>();
+        client.childrenGate = gate.future;
+        final refresh = provider.load();
+        await client.childrenRequested!.future;
+        if (hideServer) {
+          manager.setVisibleServerIds({});
+          await Future<void>.delayed(Duration.zero);
+        } else {
+          await hiddenLibraries.hideLibrary('server_1:99');
+        }
+        expect(
+          provider.hubs.where((hub) => hub.id == 'custom'),
+          isEmpty,
+          reason: 'old children must disappear before the response',
+        );
+        final requests = client.collectionRequests;
+        gate.complete();
+        await refresh;
+        await provider.load();
+        expect(client.collectionRequests, requests, reason: 'a hidden collection must not be fetched again');
+        expect(provider.hubs.where((hub) => hub.id == 'custom'), isEmpty);
+      },
+    );
+  }
 
   test('load publishes on-deck and hubs; concurrent calls coalesce', () async {
     aggregation.onDeckResult = () => [_item('a')];

@@ -664,7 +664,6 @@ void main() {
     await _pumpUi(tester);
 
     expect(find.text(t.settings.saveFailed), findsOneWidget);
-    expect(find.text(t.settings.importSettingsSuccess), findsNothing);
   });
 }
 

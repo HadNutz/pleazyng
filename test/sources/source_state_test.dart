@@ -239,8 +239,9 @@ void main() {
     expect(jsonDecode(event['payload'] as String)['deleted'], isTrue);
   });
   test('unknown-duration multipart cursor preserves source and file time', () {
-    final value = cursor(mode: PublicationMode.listening)
-        .copyWith(positionMs: 65000, filePositionMs: 5000, fileIndex: 1, speed: 1.75);
+    final value = cursor(
+      mode: PublicationMode.listening,
+    ).copyWith(positionMs: 65000, filePositionMs: 5000, fileIndex: 1, speed: 1.75);
     final copy = PublicationProgress.fromJson(jsonDecode(jsonEncode(value.toJson())) as Map<String, dynamic>);
     expect(copy.positionMs, 65000);
     expect(copy.filePositionMs, 5000);

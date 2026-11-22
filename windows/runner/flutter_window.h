@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "fold_panels.h"
 #include "win32_window.h"
 #include "workspace_views.h"
 
@@ -40,6 +41,10 @@ class FlutterWindow : public Win32Window {
   LONG_PTR style_before_fullscreen_ = 0;
   LONG_PTR ex_style_before_fullscreen_ = 0;
 
+  std::vector<RECT> embedded_panels_;
+  flutter::EncodableList last_panel_layout_;
+  flutter::EncodableList PanelLayout();
+  void NotifyPanelLayout();
   void RegisterWindowChannel();
   void RegisterDeepLinkChannel();
   void RegisterCredentialKeyStore();

@@ -33,6 +33,19 @@ extension PlayerAudioDelaySupport on Player {
   }
 }
 
+/// A backend that receives embedded cues only as they fall due can still
+/// advance a parsed sidecar, whose future cues are already available.
+abstract interface class SubtitleAdvanceCapability {
+  bool get supportsSubtitleAdvance;
+}
+
+extension PlayerSubtitleAdvanceSupport on Player {
+  bool get canAdvanceSubtitles {
+    final player = this;
+    return player is! SubtitleAdvanceCapability || (player as SubtitleAdvanceCapability).supportsSubtitleAdvance;
+  }
+}
+
 /// Optional capability for player implementations that can apply the
 /// device-local ten-band equalizer.
 abstract interface class AudioEqualizerCapable {

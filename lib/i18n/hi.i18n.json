@@ -244,6 +244,7 @@
     "checkFailed": "अद्यतन की जांच नहीं कर पाया"
   },
   "settings": {
+    "foldableDisplay": "फ़ोल्ड होने वाली स्क्रीन का हिंज",
     "title": "सेटिंग्स",
     "supportDeveloper": "समर्थन Pleazyng",
     "supportDeveloperDescription": "विकास का समर्थन करने के लिए दान",
@@ -433,7 +434,6 @@
     "importSettings": "आयात सेटिंग्स",
     "importSettingsDescription": "फ़ाइल से प्राथमिकताओं को पुनर्स्थापित करें",
     "importSettingsConfirm": "यह आपके वर्तमान सेटिंग्स को प्रतिस्थापित करेगा. आगे?",
-    "importSettingsSuccess": "आयातित सेटिंग्स",
     "importSettingsCounts": "लागू की गई सेटिंग: ${applied}। छोड़ी गई सेटिंग: ${skipped}।",
     "importSettingsInvalidFile": "यह फ़ाइल एक वैध Pleazyng सेटिंग्स निर्यात नहीं है",
     "importSettingsNoUser": "आयात से पहले इनपुट करें",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "बैकअप अपलोड हो गया है। यह URL सहेज लें। नई स्थापना के बाद इसे क्लाउड बैकअप में दर्ज करें और “${action}” चुनें।",
     "cloudBackupRestore": "बैकअप पुनर्स्थापित करें",
     "cloudBackupRestoreConfirm": "यह इस डिवाइस पर फिट पोर्टेबल सेटिंग्स को प्रतिस्थापित करेगा. आगे?",
-    "cloudBackupRestored": "Cloud Backup से पुनर्स्थापित सेटिंग्स",
     "shortcutsReset": "डिफ़ॉल्ट में पुनर्स्थापित करें",
     "resetShortcutsConfirm": "यह आपके कस्टम छूट को डिफ़ॉल्ट के साथ प्रतिस्थापित करेगा. आगे?",
     "about": "के बारे",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "${serverName} के लिए URL जोड़ें या हटा दें. Pleazyng सबसे कम देरी के साथ पहुंचने योग्य URL का उपयोग करेगा."
   },
   "iptv": {
+    "backupFeeds": "प्लेबैक क्रम में वैकल्पिक स्रोत",
+    "lineupOrder": "चैनलों का क्रम",
+    "orderChanged": "चैनलों का क्रम बदल गया है। जाँचकर फिर से कोशिश करें।",
+    "localPlaylist": "M3U फ़ाइल",
+    "pastePlaylist": "प्लेलिस्ट का टेक्स्ट पेस्ट करें",
+    "playlistBase": "सापेक्ष लिंक के लिए आधार URL (वैकल्पिक)",
+    "localPlaylistHelp": "M3U या M3U8 चैनल सूची की निजी प्रति आयात करें। इसे दूसरी फ़ाइल से बदल सकते हैं।",
+    "showMatches": "मेल खाने वाले चैनल दिखाएँ",
+    "hideMatches": "मेल खाने वाले चैनल छिपाएँ",
+    "pickerCredit": "प्रेरणा स्रोत · M3U Web Picker · Zachary Schmook (@zschmook) और योगदानकर्ता",
+    "exportPrivate": "स्ट्रीम पतों में आपके सेवा प्रदाता की लॉगिन जानकारी हो सकती है। सूची को किसी निजी स्थान पर सहेजें।",
+    "dynamicStreamExport": "पोर्टल हर बार चलाने पर नया लिंक बनाता है। आप कार्यक्रम गाइड निर्यात कर सकते हैं।",
+    "moveUp": "ऊपर चलना",
+    "moveDown": "नीचे उतरना",
+    "choosePlaylist": "Playlist फ़ाइल का चयन करें",
+    "affectedChannels": "चैनल · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "इमेज URL",
     "imageUrl": "इमेज URL",
     "metadataUpdated": "मेटाडेटा अपडेट",
+    "metadataConflict": "किसी और ने इसी फ़ील्ड को बदला है। सहेजने से पहले नवीनतम मान देखने के लिए संपादक फिर से खोलें।",
     "metadataUpdateFailed": "मेटाडेटा अपडेट करने में असफल",
     "artworkUpdated": "Artwork अद्यतन",
     "artworkUpdateFailed": "कला के काम को अपडेट करने में विफलता",
@@ -3676,7 +3692,6 @@
     "connectedTo": "${device} पर कनेक्ट करें",
     "device": "कास्ट डिवाइस",
     "readyToCast": "कास्ट करने के लिए तैयार",
-    "subtitle": "उपशीर्षक",
     "serverNotAvailable": "मीडिया सर्वर उपलब्ध नहीं है।",
     "stopCasting": "कास्ट करना बंद करें",
     "startFailed": "सर्वर की जांच करें और फिर से कोशिश करें।"
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "आयात की गई सदस्यताएँ: ${imported}। डुप्लिकेट: ${duplicates}। छोड़ी गईं: ${skipped}।",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "संगीत रिले URL",
     "relayHint": "प्राप्त करने वाले डिवाइस पर चालू करें, फिर एक ही नेटवर्क पर एक बार पेयर करें। Pleazyng खुला रखें। रिले एन्क्रिप्टेड संगीत नियंत्रण भेजता है और नेटवर्क पते देखता है। हर प्लेयर अपने मीडिया सर्वर से स्ट्रीम करता है।",
     "relayInvalid": "HTTPS रिले पता दर्ज करें।"
+  },
+  "bookmarkMigration": {
+    "unassigned": "अज्ञात संस्करण के बुकमार्क",
+    "assignToVersion": "इस संस्करण से जोड़ें"
   }
 }

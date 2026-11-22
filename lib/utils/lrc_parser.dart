@@ -15,9 +15,17 @@ final RegExp _wordTimestamp = RegExp(r'<(\d{1,3}):(\d{1,2})(?:\.(\d{1,3}))?>');
 Lyrics? parseLrc(String raw) {
   final lines = <LyricLine>[];
   final plain = <String>[];
+  final input = raw.split(RegExp(r'\r?\n'));
+  // LRC offsets apply to the whole file. The last valid declaration wins.
   var offsetMs = 0;
+  for (final line in input) {
+    final tag = _idTag.firstMatch(line.trim());
+    if (tag != null && tag[1]!.toLowerCase() == 'offset') {
+      offsetMs = int.tryParse(tag[2]!.trim()) ?? offsetMs;
+    }
+  }
 
-  for (final rawLine in raw.split(RegExp(r'\r?\n'))) {
+  for (final rawLine in input) {
     final line = rawLine.trim();
     if (line.isEmpty) {
       continue;
@@ -25,9 +33,6 @@ Lyrics? parseLrc(String raw) {
 
     final idTag = _idTag.firstMatch(line);
     if (idTag != null && !_timestamp.hasMatch(line)) {
-      if (idTag.group(1)!.toLowerCase() == 'offset') {
-        offsetMs = int.tryParse(idTag.group(2)!.trim()) ?? 0;
-      }
       continue;
     }
 

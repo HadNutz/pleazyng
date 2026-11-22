@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plezy/sources/source_controller.dart';
 import 'package:plezy/sources/source_database.dart';
+import 'package:plezy/sources/podcast_opml.dart';
 import 'package:plezy/sources/source_models.dart';
 
 import '../test_helpers/io_fakes.dart';
@@ -87,6 +88,50 @@ void main() {
       // dispose queues shutdown after outstanding source writers settle.
       await Future<void>.delayed(Duration.zero);
       await controller.repository.database.close();
+      PathProviderPlatform.instance = previous;
+      root.deleteSync(recursive: true);
+    }
+  });
+
+  test('HTTP feed restore requires explicit approval for that exact address and profile session', () async {
+    final root = Directory.systemTemp.createTempSync('podcast-restore-');
+    final previous = PathProviderPlatform.instance;
+    PathProviderPlatform.instance = FakePathProvider(root);
+    final repository = SourceRepository(
+      SourceDatabase(NativeDatabase.memory()),
+      protect: (s) async => s,
+      reveal: (s) async => s,
+    );
+    final controller = SourceController(repository: repository);
+    try {
+      await controller.ready;
+      controller.attachProfile('alice', blocked: false);
+      await controller.reload();
+      final epoch = controller.generation;
+      final local = PodcastSubscription(title: 'Approved', url: Uri.parse('http://192.168.1.25/feed?a=1'));
+      final other = PodcastSubscription(title: 'Other', url: Uri.parse('http://192.168.1.25/feed?a=2'));
+      await expectLater(
+        controller.importPodcastSubscriptions([local, other], approvedHttpFeeds: {local.url}),
+        throwsA(isA<SourceException>()),
+      );
+      expect(await repository.sources('alice'), isEmpty);
+      expect(
+        await controller.importPodcastSubscriptions([local], expectedGeneration: epoch, approvedHttpFeeds: {local.url}),
+        1,
+      );
+      expect((await repository.sources('alice')).single.options['allowHttp'], 'true');
+      expect((await controller.podcastSubscriptions()).single.url, local.url);
+      expect(await controller.importPodcastSubscriptions([local], approvedHttpFeeds: {local.url}), 0);
+      controller.attachProfile('bob', blocked: false);
+      await expectLater(
+        controller.importPodcastSubscriptions([local], expectedGeneration: epoch, approvedHttpFeeds: {local.url}),
+        throwsA(isA<SourceException>()),
+      );
+      expect(await repository.sources('bob'), isEmpty);
+    } finally {
+      controller.dispose();
+      await Future<void>.delayed(Duration.zero);
+      await repository.database.close();
       PathProviderPlatform.instance = previous;
       root.deleteSync(recursive: true);
     }

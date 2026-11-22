@@ -244,6 +244,7 @@
     "checkFailed": "無法檢查更新"
   },
   "settings": {
+    "foldableDisplay": "摺疊螢幕鉸鏈",
     "title": "設定",
     "supportDeveloper": "贊助 Pleazyng",
     "supportDeveloperDescription": "捐款支持開發",
@@ -431,7 +432,6 @@
     "importSettings": "匯入設定",
     "importSettingsDescription": "從檔案還原偏好設定",
     "importSettingsConfirm": "這將覆蓋您目前的設定。要繼續嗎？",
-    "importSettingsSuccess": "設定已匯入",
     "importSettingsCounts": "已套用設定：${applied} 項。已略過：${skipped} 項。",
     "importSettingsInvalidFile": "此檔案不是有效的 Pleazyng 設定匯出檔",
     "importSettingsNoUser": "匯入設定前請先登入",
@@ -445,7 +445,6 @@
     "cloudBackupComplete": "備份已上傳。請儲存這個網址。重新安裝後，在雲端備份中輸入這個網址，再選擇「${action}」。",
     "cloudBackupRestore": "恢復備份",
     "cloudBackupRestoreConfirm": "此將取代該裝置上的相匹配移動設定。",
-    "cloudBackupRestored": "從雲端儲備恢復的設定",
     "shortcutsReset": "快速鍵已重設為預設值",
     "resetShortcutsConfirm": "這會將您的自訂快速鍵替換為預設值。要繼續嗎？",
     "about": "關於",
@@ -1500,6 +1499,22 @@
     "editMediaBrowserIntro": "為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。"
   },
   "iptv": {
+    "backupFeeds": "依播放順序排列的備用來源",
+    "lineupOrder": "頻道順序",
+    "orderChanged": "頻道順序已變更。請檢查後再試一次。",
+    "localPlaylist": "M3U 檔案",
+    "pastePlaylist": "貼上播放清單文字",
+    "playlistBase": "相對連結的基底 URL（選填）",
+    "localPlaylistHelp": "匯入 M3U 或 M3U8 頻道清單的私人副本。可以選擇其他檔案取代。",
+    "showMatches": "顯示相符的頻道",
+    "hideMatches": "隱藏相符的頻道",
+    "pickerCredit": "靈感來源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他貢獻者",
+    "exportPrivate": "串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。",
+    "dynamicStreamExport": "此入口每次播放都會產生新連結。您可以匯出節目指南。",
+    "moveUp": "移動上",
+    "moveDown": "移動下",
+    "choosePlaylist": "選擇 Playlist 檔案",
+    "affectedChannels": "頻道 · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3252,6 +3267,7 @@
     "enterImageUrl": "輸入圖片 URL",
     "imageUrl": "圖片 URL",
     "metadataUpdated": "中繼資料已更新",
+    "metadataConflict": "其他人已修改了同一欄位。請重新開啟編輯器，確認最新的值後再儲存。",
     "metadataUpdateFailed": "中繼資料更新失敗",
     "artworkUpdated": "封面圖片已更新",
     "artworkUpdateFailed": "封面圖片更新失敗",
@@ -3672,7 +3688,6 @@
     "connectedTo": "連線到 ${device}",
     "device": "加密裝置",
     "readyToCast": "準備放",
-    "subtitle": "字幕",
     "serverNotAvailable": "媒體伺服器不適用。",
     "stopCasting": "停止加密",
     "startFailed": "無法開始投射,檢查伺服器並嘗試一次。"
@@ -4886,6 +4901,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "已匯入訂閱：${imported}。重複：${duplicates}。已略過：${skipped}。",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5700,5 +5716,9 @@
     "relay": "音樂中繼 URL",
     "relayHint": "在接收裝置上啟用，然後在同一網路中配對一次。保持 Pleazyng 開啟。中繼傳遞加密的音樂控制，並能看到網路位址。每個播放器從自己的媒體伺服器串流。",
     "relayInvalid": "請輸入 HTTPS 中繼位址。"
+  },
+  "bookmarkMigration": {
+    "unassigned": "來自不明版本的書籤",
+    "assignToVersion": "指派給此版本"
   }
 }

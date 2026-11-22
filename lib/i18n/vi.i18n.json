@@ -244,6 +244,7 @@
     "checkFailed": "Không kiểm tra cho các bản cập nhật"
   },
   "settings": {
+    "foldableDisplay": "Bản lề màn hình gập",
     "title": "Cài đặt",
     "supportDeveloper": "Hỗ trợ Pleazyng",
     "supportDeveloperDescription": "Ưu đãi để hỗ trợ phát triển",
@@ -431,7 +432,6 @@
     "importSettings": "Cài đặt Import",
     "importSettingsDescription": "khôi phục các tùy chọn từ một tệp",
     "importSettingsConfirm": "Điều này sẽ thay thế cài đặt hiện tại của bạn. tiếp tục?",
-    "importSettingsSuccess": "Cài đặt nhập khẩu",
     "importSettingsCounts": "Cài đặt đã áp dụng: ${applied}. Đã bỏ qua: ${skipped}.",
     "importSettingsInvalidFile": "Tệp này không phải là một hợp lệ Pleazyng cài đặt xuất khẩu",
     "importSettingsNoUser": "Đăng nhập trước khi nhập cài đặt",
@@ -445,7 +445,6 @@
     "cloudBackupComplete": "Đã tải bản sao lưu lên. Hãy lưu URL này. Sau khi cài đặt lại, nhập URL này vào mục sao lưu đám mây rồi chọn “${action}”.",
     "cloudBackupRestore": "khôi phục backup",
     "cloudBackupRestoreConfirm": "Điều này sẽ thay thế các cài đặt di động phù hợp trên thiết bị này.",
-    "cloudBackupRestored": "Cài đặt khôi phục từ Cloud Backup",
     "shortcutsReset": "Tải về Shortcuts to defaults",
     "resetShortcutsConfirm": "Điều này sẽ thay thế các shortcuts tùy chỉnh của bạn với các default.",
     "about": "Về",
@@ -1495,6 +1494,22 @@
     "editMediaBrowserIntro": "Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất."
   },
   "iptv": {
+    "backupFeeds": "Nguồn dự phòng theo thứ tự phát",
+    "lineupOrder": "Thứ tự kênh",
+    "orderChanged": "Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.",
+    "localPlaylist": "Tệp M3U",
+    "pastePlaylist": "Dán văn bản danh sách phát",
+    "playlistBase": "URL cơ sở cho liên kết tương đối (không bắt buộc)",
+    "localPlaylistHelp": "Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.",
+    "showMatches": "Hiện kênh phù hợp",
+    "hideMatches": "Ẩn kênh phù hợp",
+    "pickerCredit": "Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp",
+    "exportPrivate": "Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.",
+    "dynamicStreamExport": "Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.",
+    "moveUp": "chuyển lên",
+    "moveDown": "di chuyển xuống",
+    "choosePlaylist": "Chọn playlist file",
+    "affectedChannels": "Kênh · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3235,6 +3250,7 @@
     "enterImageUrl": "Nhập hình ảnh URL",
     "imageUrl": "Ảnh URL",
     "metadataUpdated": "Metadata cập nhật",
+    "metadataConflict": "Người khác đã thay đổi cùng trường này. Hãy mở lại trình chỉnh sửa để kiểm tra các giá trị mới nhất trước khi lưu.",
     "metadataUpdateFailed": "Không cập nhật metadata",
     "artworkUpdated": "Artwork cập nhật",
     "artworkUpdateFailed": "Không cập nhật tác phẩm nghệ thuật",
@@ -3655,7 +3671,6 @@
     "connectedTo": "Kết nối với ${device}",
     "device": "Thiết bị truyền",
     "readyToCast": "Sẵn sàng truyền",
-    "subtitle": "Phụ đề",
     "serverNotAvailable": "Server phương tiện truyền thông không sẵn dùng.",
     "stopCasting": "Dừng truyền",
     "startFailed": "Không thể bắt đầu casting. kiểm tra máy chủ và thử lại."
@@ -4864,6 +4879,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Số lượt đăng ký đã nhập: ${imported}. Trùng lặp: ${duplicates}. Đã bỏ qua: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5678,5 +5694,9 @@
     "relay": "URL chuyển tiếp nhạc",
     "relayHint": "Bật trên thiết bị nhận rồi ghép đôi một lần trên cùng mạng. Giữ Pleazyng mở. Máy chuyển tiếp truyền lệnh nhạc được mã hóa và thấy địa chỉ mạng. Mỗi trình phát truyền từ máy chủ phương tiện riêng.",
     "relayInvalid": "Nhập địa chỉ chuyển tiếp HTTPS."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Dấu trang từ phiên bản chưa xác định",
+    "assignToVersion": "Gán cho phiên bản này"
   }
 }

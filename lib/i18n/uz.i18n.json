@@ -244,6 +244,7 @@
     "checkFailed": "Yangilanishlarni tekshirish imkoni boʻlmadi"
   },
   "settings": {
+    "foldableDisplay": "Buklanadigan ekran sharniri",
     "title": "Sozlamalar",
     "supportDeveloper": "Pleazyng-ni qoʻllab-quvvatlash",
     "supportDeveloperDescription": "Rivojlanishni qoʻllab-quvvatlash uchun xayriya qiling",
@@ -433,7 +434,6 @@
     "importSettings": "Sozlamalarni import qilish",
     "importSettingsDescription": "Parametrlarni fayldan tiklang",
     "importSettingsConfirm": "Bu joriy sozlamalaringiz ustidan yoziladi. Davom etasizmi?",
-    "importSettingsSuccess": "Sozlamalar import qilindi",
     "importSettingsCounts": "Qo‘llangan sozlamalar: ${applied}. O‘tkazib yuborilgan: ${skipped}.",
     "importSettingsInvalidFile": "Ushbu fayl toʻgʻri Pleazyng sozlamalar fayli emas",
     "importSettingsNoUser": "Sozlamalarni import qilishdan oldin tizimga kiring",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "Zaxira nusxasi yuklandi. Ushbu URL manzilini saqlang. Ilovani qayta oʻrnatgach, uni bulutga zaxiralash boʻlimiga kiriting va “${action}” bandini tanlang.",
     "cloudBackupRestore": "Backup qaytarga",
     "cloudBackupRestoreConfirm": "Bu ayarlar bu cihazda uyumlanga mobil ayarlar qaytadi.",
-    "cloudBackupRestored": "Uqqqqlarlar bilan qaytarga qotlar.",
     "shortcutsReset": "Tugmalar birlashmasi standart holatga qaytarildi",
     "resetShortcutsConfirm": "Bu oʻzingiz sozlagan tugmalar birlashmalarini standart holatga qaytaradi. Davom etasizmi?",
     "about": "Dastur haqida",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "${serverName} uchun URL-larni qoʻshing yoki olib tashlang. Pleazyng eng kam kechikishga ega boʻlgan mavjud URL-dan foydalanadi."
   },
   "iptv": {
+    "backupFeeds": "Ijro tartibidagi zaxira manbalar",
+    "lineupOrder": "Kanallar tartibi",
+    "orderChanged": "Kanallar tartibi o‘zgardi. Tekshirib, qayta urinib ko‘ring.",
+    "localPlaylist": "M3U fayli",
+    "pastePlaylist": "Pleylist matnini joylash",
+    "playlistBase": "Nisbiy havolalar uchun asosiy URL (ixtiyoriy)",
+    "localPlaylistHelp": "M3U yoki M3U8 kanallar ro‘yxatining shaxsiy nusxasini import qiling. Uni boshqa fayl bilan almashtirish mumkin.",
+    "showMatches": "Mos kanallarni ko‘rsatish",
+    "hideMatches": "Mos kanallarni yashirish",
+    "pickerCredit": "Ilhom manbai · M3U Web Picker · Zachary Schmook (@zschmook) va hissa qo‘shganlar",
+    "exportPrivate": "Oqim manzillarida provayderga kirish ma’lumotlari bo‘lishi mumkin. Ro‘yxatni shaxsiy joyda saqlang.",
+    "dynamicStreamExport": "Portal har bir ijro uchun yangi havola yaratadi. Dasturlar jadvalini eksport qilish mumkin.",
+    "moveUp": "Tadiqga",
+    "moveDown": "Tadiqni",
+    "choosePlaylist": "Playlist fildi seçin",
+    "affectedChannels": "Kanallar · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "Rasm URL-manzilini kiriting",
     "imageUrl": "Rasm URL-manzili",
     "metadataUpdated": "Metamaʼlumotlar yangilandi",
+    "metadataConflict": "Boshqa muharrir shu maydonni o‘zgartirdi. Saqlashdan oldin so‘nggi qiymatlarni tekshirish uchun muharrirni qayta oching.",
     "metadataUpdateFailed": "Metamaʼlumotlarni yangilab boʻlmadi",
     "artworkUpdated": "Rasmlar yangilandi",
     "artworkUpdateFailed": "Rasmlarni yangilab boʻlmadi",
@@ -3676,7 +3692,6 @@
     "connectedTo": "${device} qizga qizga",
     "device": "Tadiqadi",
     "readyToCast": "Hazardga bo‘qadi",
-    "subtitle": "Subtitrlar",
     "serverNotAvailable": "Media server qiziziz.",
     "stopCasting": "Castingdan qurtum",
     "startFailed": "U'zizga qurtlar. serveri kontroldan qurtlar, qaytarga qurtlam."
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Import qilingan obunalar: ${imported}. Takroriylari: ${duplicates}. O‘tkazib yuborilganlari: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "Musiqa relesi URL manzili",
     "relayHint": "Qabul qiluvchi qurilmada yoqing, so‘ng bir tarmoqda bir marta juftlang. Pleazyng ochiq tursin. Rele shifrlangan musiqa buyruqlarini uzatadi va tarmoq manzillarini ko‘radi. Har bir pleyer o‘z media serveridan uzatadi.",
     "relayInvalid": "HTTPS rele manzilini kiriting."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Qaysi versiyaga tegishli ekani noma’lum xatcho‘plar",
+    "assignToVersion": "Shu versiyaga biriktirish"
   }
 }

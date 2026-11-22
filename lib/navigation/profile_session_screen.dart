@@ -1,4 +1,16 @@
+import 'dart:io' show Platform;
+import '../utils/iphone_duo.dart';
 import '../utils/platform_detector.dart';
+import '../providers/download_provider.dart';
+import '../services/playback_coordinator.dart';
+import '../utils/global_key_utils.dart';
+import '../utils/video_player_navigation.dart';
+import 'video_task_restoration.dart';
+import '../iptv/iptv_source_repository.dart';
+import '../models/livetv_channel.dart';
+import '../models/livetv_program.dart';
+import '../screens/video_player/live_tv_session_args.dart';
+import '../utils/live_tv_player_navigation.dart';
 import '../services/music/music_car_host.dart';
 import '../services/music/music_experience.dart';
 import '../services/music/music_offline_rating_account.dart';
@@ -211,8 +223,12 @@ class _ProfileSessionScreenState extends State<ProfileSessionScreen> {
       builder: (context, activeId, _) {
         _onSessionProfileChanged(activeId);
         final initialPromptHandled = widget.initialPromptHandled || _hasBuiltSession;
-        return KeyedSubtree(
+        // A CarPlay-only launch has no view controller to complete native
+        // state restoration. Let the audio catalog start immediately.
+        final canRestore = !Platform.isIOS || IphoneDuo.of(context).phoneWindowAttached;
+        return RootRestorationScope(
           key: ValueKey<String?>('profile-session:$activeId'),
+          restorationId: activeId == null || !canRestore ? null : 'profile-session:$activeId',
           child: MultiProvider(
             providers: [
               ChangeNotifierProvider<MultiviewWorkspaceController>(
@@ -559,7 +575,258 @@ class _ProfileSessionNavigator extends StatefulWidget {
   State<_ProfileSessionNavigator> createState() => _ProfileSessionNavigatorState();
 }
 
-class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
+class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> with RestorationMixin {
+  final _savedVideo = RestorableStringN(null);
+  late final _videoTasks = VideoTaskObserver((value) {
+    if (mounted && !restorePending) _savedVideo.value = value;
+  });
+  final _savedRoom = RestorableStringN(null);
+  WatchTogetherProvider? _room;
+  String? _lastMembership;
+  bool _restoringRoom = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final room = context.read<WatchTogetherProvider?>();
+    if (identical(room, _room)) return;
+    _room?.removeListener(_roomChanged);
+    _room = room;
+    room?.addListener(_roomChanged);
+  }
+
+  void _roomChanged() {
+    if (!mounted || restorePending || bucket == null) return;
+    final data = _room?.membershipForRestoration;
+    if (data == _lastMembership) return;
+    _lastMembership = data;
+    _savedRoom.value = null;
+    if (data == null) return;
+    _savedVideo.value = null;
+    unawaited(_saveRoom(data));
+  }
+
+  Future<void> _saveRoom(String data) async {
+    try {
+      final protected = await CredentialVault.protect(data);
+      if (mounted && !restorePending && _lastMembership == data) _savedRoom.value = protected;
+    } catch (_) {
+      if (mounted && !restorePending && _lastMembership == data) _savedRoom.value = null;
+    }
+  }
+
+  Future<void> _restoreRoom(String encrypted, int attempt) async {
+    final room = _room;
+    final owner = context.read<ActiveProfileProvider>().activeId;
+    if (room == null || owner == null || !CredentialVault.isProtected(encrypted)) return;
+    final generation = _videoTasks.navigationGeneration;
+    bool current() =>
+        mounted &&
+        attempt == _restoreAttempt &&
+        room.profileId == owner &&
+        generation == _videoTasks.navigationGeneration &&
+        (ModalRoute.of(context)?.isCurrent ?? true) &&
+        context.read<MusicPlaybackService?>()?.currentTrack == null &&
+        (_navigatorKey.currentState?.canPop() == false) &&
+        (WidgetsBinding.instance.lifecycleState == null ||
+            WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed);
+    try {
+      final data = await CredentialVault.reveal(encrypted);
+      if (data == null || !current() || room.isInSession || PlaybackCoordinator.instance.hasVideoSession) return;
+      _restoringRoom = true;
+      await room.restoreMembership(data, current: current);
+    } catch (error) {
+      appLogger.d('Watch Together membership restoration ended', error: error.runtimeType);
+    } finally {
+      _restoringRoom = false;
+      if (mounted && !restorePending && _savedRoom.value == encrypted && !room.isInSession) _savedRoom.value = null;
+    }
+  }
+
+  int _restoreAttempt = 0;
+  @override
+  String get restorationId => 'playback-task';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_savedVideo, 'video');
+    registerForRestoration(_savedRoom, 'room');
+    final room = _savedRoom.value;
+    final task = SavedPlaybackTask.decode(_savedVideo.value);
+    final attempt = ++_restoreAttempt;
+    if (room != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && attempt == _restoreAttempt) unawaited(_restoreRoom(room, attempt));
+      });
+    } else if (task != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && attempt == _restoreAttempt) unawaited(_restoreVideo(task, attempt));
+      });
+    }
+  }
+
+  Future<void> _restoreVideo(SavedPlaybackTask task, int attempt) async {
+    final nav = _navigatorKey.currentState;
+    if (nav == null || nav.canPop()) return;
+    final profile = context.read<ActiveProfileProvider>();
+    final owner = profile.activeId;
+    final revision = profile.identityMutationGeneration;
+    final routeGeneration = _videoTasks.navigationGeneration;
+    bool current() =>
+        mounted &&
+        owner != null &&
+        profile.activeId == owner &&
+        profile.identityMutationGeneration == revision &&
+        (ModalRoute.of(context)?.isCurrent ?? true) &&
+        (WidgetsBinding.instance.lifecycleState == null ||
+            WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) &&
+        attempt == _restoreAttempt &&
+        routeGeneration == _videoTasks.navigationGeneration &&
+        !nav.canPop() &&
+        !PlaybackCoordinator.instance.hasVideoSession &&
+        context.read<MusicPlaybackService?>()?.currentTrack == null &&
+        context.read<WatchTogetherProvider?>()?.isInSession != true;
+    if (!current()) return;
+    final servers = context.read<MultiServerProvider>();
+    final hidden = context.read<HiddenLibrariesProvider>();
+    final downloads = context.read<DownloadProvider?>();
+    if (task is SavedLiveTask) {
+      final playlists = context.read<IptvSourceRepository?>();
+      try {
+        List<LiveTvChannel> channels = [];
+        if (task.iptv) {
+          if (playlists == null) return;
+          channels = await playlists.channels(owner!);
+        } else {
+          final id = ServerId(task.ownerId);
+          for (var i = 0; i < 24 && current(); i++) {
+            final client = servers.getClientForServer(id);
+            if (client != null && servers.serverManager.isServerVisible(id)) {
+              await servers.checkLiveTvAvailability();
+              if (!current()) return;
+              for (final source in servers.liveTvServers.where((s) => s.serverId == id)) {
+                final rows = await client.liveTv.fetchChannels(lineup: source.lineup);
+                if (!current() ||
+                    !identical(servers.getClientForServer(id), client) ||
+                    !servers.serverManager.isServerVisible(id)) {
+                  return;
+                }
+                channels.addAll(rows.map((c) => c.copyWith(serverId: id, liveDvrKey: source.dvrKey)));
+              }
+              if (channels.isNotEmpty) break;
+            }
+            await Future<void>.delayed(const Duration(milliseconds: 500));
+          }
+        }
+        if (!current()) return;
+        final channel = channels
+            .where(
+              (c) =>
+                  (c.iptvSourceId ?? c.serverId) == task.ownerId &&
+                  SavedLiveTask.digest(liveTvChannelScopeKey(c)) == task.channelDigest,
+            )
+            .firstOrNull;
+        if (channel == null || channel.iptvParentalLocked || channel.drm == true) {
+          _savedVideo.value = null;
+          return;
+        }
+        LiveTvProgram? program;
+        final epoch = task.epoch;
+        if (task.iptv &&
+            epoch != null &&
+            channel.iptvCatchupAvailable &&
+            playlists != null &&
+            (channel.iptvCatchupDays == null ||
+                DateTime.now().millisecondsSinceEpoch ~/ 1000 - epoch <= channel.iptvCatchupDays! * 86400)) {
+          final at = DateTime.fromMillisecondsSinceEpoch(epoch * 1000);
+          final rows = await playlists.schedule(
+            owner!,
+            at,
+            at.add(const Duration(seconds: 1)),
+            sourceId: channel.iptvSourceId,
+            channelId: channel.iptvChannelId,
+          );
+          final airing = rows.firstOrNull;
+          if (airing?.endsAt case final end? when end > epoch) {
+            program = LiveTvProgram(title: airing!.title, beginsAt: epoch, endsAt: end);
+          }
+        }
+        final routeContext = nav.overlay?.context;
+        if (!current() || routeContext == null || !routeContext.mounted) return;
+        _savedVideo.value = null;
+        await navigateToLiveTv(
+          routeContext,
+          multiServer: servers,
+          channel: channel,
+          channels: channels,
+          canPresent: current,
+          startPosition: LiveTvStartPosition.live,
+          initiallyPaused: task.paused,
+          restoredBroadcastEpoch: task.epoch,
+          program: program,
+        );
+      } catch (error) {
+        appLogger.d('Could not retune restored live channel', error: error.runtimeType);
+      }
+      return;
+    }
+    if (task is! SavedVideoTask) return;
+    final id = ServerId(task.server);
+    final key = buildGlobalKey(id, task.item);
+    try {
+      await hidden.ensureInitialized();
+      // Profile binding, download hydration and server discovery can complete
+      // after the shell has already painted. Yield to any new user action.
+      for (var i = 0; i < 24 && current(); i++) {
+        final client = servers.serverManager.isServerVisible(id) ? servers.getClientForServer(id) : null;
+        final local = downloads != null && downloads.activeProfileId == owner && downloads.isDownloaded(key);
+        if ((task.offline && local) || (!task.offline && client != null)) {
+          final item = task.offline ? downloads!.metadata[key] : await client!.fetchItem(task.item);
+          if (!current() ||
+              (!task.offline &&
+                  (!servers.serverManager.isServerVisible(id) || !identical(servers.getClientForServer(id), client)))) {
+            return;
+          }
+          if (item == null ||
+              item.globalKey != key ||
+              item.backend.name != task.backend ||
+              (item.libraryGlobalKey != null && hidden.isLibraryHidden(item.libraryGlobalKey!))) {
+            _savedVideo.value = null;
+            return;
+          }
+          var edition = task.edition;
+          final versions = item.mediaVersions;
+          if (task.source != null && versions != null && versions.isNotEmpty) {
+            edition = versions.indexWhere((version) => version.id == task.source);
+            if (edition < 0) {
+              _savedVideo.value = null;
+              return;
+            }
+          }
+          _savedVideo.value = null;
+          final route = VideoPlayerRoute(
+            joinsWatchTogether: true,
+            builder: (_) => VideoPlayerScreen(
+              metadata: item,
+              isOffline: task.offline,
+              selectedMediaIndex: edition,
+              selectedMediaSourceId: task.source,
+              initialPosition: Duration(milliseconds: task.positionMs),
+              initiallyPaused: task.paused,
+              strictMediaSelection: true,
+            ),
+          );
+          unawaited(route.push(nav));
+          _videoTasks.record(route, task);
+          return;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+      }
+    } catch (error) {
+      appLogger.d('Could not reopen restored video task', error: error);
+    }
+  }
+
   final _navigatorKey = GlobalKey<NavigatorState>();
   final _workspaceOverlayKey = GlobalKey<OverlayState>();
   final _mainScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -583,6 +850,9 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
   void dispose() {
     profileNavigationRegistry.detachNavigator(_navigatorKey);
     profileNavigationRegistry.detachMainScaffoldMessenger(_mainScaffoldMessengerKey);
+    _room?.removeListener(_roomChanged);
+    _savedRoom.dispose();
+    _savedVideo.dispose();
     _miniPlayerInsets.dispose();
     _musicRouteObserver.suppress.dispose();
     super.dispose();
@@ -618,6 +888,7 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
           child: MultiProvider(
             providers: [
               ChangeNotifierProvider<MiniPlayerInsetController>.value(value: _miniPlayerInsets),
+              Provider<VideoTaskObserver>.value(value: _videoTasks),
               Provider<MusicUiRouteObserver>.value(value: _musicRouteObserver),
             ],
             // The mini-player mounts ABOVE the nested navigator so it persists
@@ -631,10 +902,18 @@ class _ProfileSessionNavigatorState extends State<_ProfileSessionNavigator> {
                 navigatorKey: _navigatorKey,
                 child: Stack(
                   children: [
-                    Navigator(
-                      key: _navigatorKey,
-                      observers: [_routeObserver, _musicRouteObserver, _settingsRouteTracker],
-                      onGenerateRoute: _onGenerateRoute,
+                    Listener(
+                      onPointerDown: (_) {
+                        _restoreAttempt++;
+                        if (_restoringRoom && _room?.isReconnecting == true) _room?.leave();
+                        if (!_videoTasks.hasOwner && !restorePending) _savedVideo.value = null;
+                      },
+                      child: Navigator(
+                        key: _navigatorKey,
+                        restorationScopeId: 'navigation',
+                        observers: [_routeObserver, _musicRouteObserver, _settingsRouteTracker, _videoTasks],
+                        onGenerateRoute: _onGenerateRoute,
+                      ),
                     ),
                     const Positioned.fill(child: MusicMiniPlayerOverlay()),
                     Positioned.fill(

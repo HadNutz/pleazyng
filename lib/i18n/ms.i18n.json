@@ -244,6 +244,7 @@
     "checkFailed": "Tidak boleh memeriksa untuk update"
   },
   "settings": {
+    "foldableDisplay": "Engsel skrin boleh lipat",
     "title": "Tetapan",
     "supportDeveloper": "Perkhidmatan Pleazyng",
     "supportDeveloperDescription": "Memberi sumbangan untuk menyokong pembangunan",
@@ -431,7 +432,6 @@
     "importSettings": "Pengenalan Import",
     "importSettingsDescription": "Memulihkan keutamaan daripada fail",
     "importSettingsConfirm": "Ini akan menggantikan tetapan semasa anda.Lanjutkan?",
-    "importSettingsSuccess": "Seting yang diimport",
     "importSettingsCounts": "Tetapan digunakan: ${applied}. Dilangkau: ${skipped}.",
     "importSettingsInvalidFile": "Fail ini bukan pengeksportan tetapan Pleazyng yang sah",
     "importSettingsNoUser": "Menandatangani sebelum mengimport tetapan",
@@ -445,7 +445,6 @@
     "cloudBackupComplete": "Sandaran telah dimuat naik. Simpan URL ini. Selepas pemasangan baharu, masukkan URL ini dalam bahagian sandaran awan dan pilih “${action}”.",
     "cloudBackupRestore": "Memulihkan Backup",
     "cloudBackupRestoreConfirm": "Ini akan menggantikan tetapan mudah alih yang sepadan pada peranti ini.",
-    "cloudBackupRestored": "Seting yang dipulihkan daripada Cloud Backup",
     "shortcutsReset": "Pengurangan semula kepada default",
     "resetShortcutsConfirm": "Ini akan menggantikan kekurangan yang disesuaikan anda dengan kekurangan.",
     "about": "Mengenai",
@@ -1495,6 +1494,22 @@
     "editMediaBrowserIntro": "Menambah atau menghapuskan URL untuk ${serverName}. Pleazyng akan menggunakan URL yang boleh dicapai dengan latensi terendah."
   },
   "iptv": {
+    "backupFeeds": "Sumber sandaran mengikut turutan main balik",
+    "lineupOrder": "Susunan saluran",
+    "orderChanged": "Susunan saluran telah berubah. Semak dan cuba lagi.",
+    "localPlaylist": "Fail M3U",
+    "pastePlaylist": "Tampal teks senarai main",
+    "playlistBase": "URL asas untuk pautan relatif (pilihan)",
+    "localPlaylistHelp": "Import salinan peribadi senarai saluran M3U atau M3U8. Pilih fail lain untuk menggantikannya.",
+    "showMatches": "Tunjukkan saluran yang sepadan",
+    "hideMatches": "Sembunyikan saluran yang sepadan",
+    "pickerCredit": "Diilhamkan oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan penyumbang",
+    "exportPrivate": "Alamat strim mungkin mengandungi butiran log masuk penyedia anda. Simpan senarai di lokasi peribadi.",
+    "dynamicStreamExport": "Portal menjana pautan baharu setiap kali dimainkan. Panduan rancangan boleh dieksport.",
+    "moveUp": "bergerak ke atas",
+    "moveDown": "bergerak ke bawah",
+    "choosePlaylist": "Pilih fail playlist",
+    "affectedChannels": "Saluran · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3235,6 +3250,7 @@
     "enterImageUrl": "Masukkan URL imej",
     "imageUrl": "imej URL",
     "metadataUpdated": "Metadata dikemaskini",
+    "metadataConflict": "Penyunting lain telah mengubah medan yang sama. Buka semula penyunting untuk menyemak nilai terkini sebelum menyimpan.",
     "metadataUpdateFailed": "Kegagalan Mengemas kini Metadata",
     "artworkUpdated": "Seni yang dikemaskini",
     "artworkUpdateFailed": "Kegagalan untuk mengemas kini karya seni",
@@ -3655,7 +3671,6 @@
     "connectedTo": "Menghubungkan ke ${device}",
     "device": "Peranti penghantaran",
     "readyToCast": "Sedia untuk dihantar",
-    "subtitle": "Sari kata",
     "serverNotAvailable": "Media server tidak tersedia.",
     "stopCasting": "Hentikan penghantaran",
     "startFailed": "Tidak boleh memulakan casting. semak pelayan dan cuba lagi."
@@ -4864,6 +4879,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Langganan diimport: ${imported}. Pendua: ${duplicates}. Dilangkau: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5678,5 +5694,9 @@
     "relay": "URL geganti muzik",
     "relayHint": "Aktifkan pada peranti penerima, kemudian pasangkan sekali pada rangkaian yang sama. Biarkan Pleazyng terbuka. Geganti menghantar kawalan muzik yang disulitkan dan melihat alamat rangkaian. Setiap pemain menstrim daripada pelayan medianya sendiri.",
     "relayInvalid": "Masukkan alamat geganti HTTPS."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Penanda buku daripada versi yang tidak dikenal pasti",
+    "assignToVersion": "Kaitkan dengan versi ini"
   }
 }

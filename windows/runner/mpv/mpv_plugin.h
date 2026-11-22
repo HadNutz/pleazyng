@@ -73,6 +73,7 @@ class MpvPlayerPlugin : public flutter::Plugin {
   void SaveDetachedGeometry();
   HWND GetWindow();
   HWND GetChildWindow();
+  HWND PlaybackDisplayWindow();
 
   flutter::PluginRegistrarWindows* registrar_;
   DWORD platform_thread_id_;

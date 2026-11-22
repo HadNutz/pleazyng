@@ -64,10 +64,11 @@ class SyncOffsetControl extends StatefulWidget {
 final Expando<LatestAsyncWrite<String>> _syncOffsetWrites = Expando<LatestAsyncWrite<String>>();
 
 class _SyncOffsetControlState extends State<SyncOffsetControl> {
-  // Range constants
-  static const double _sliderMin = -10_000; // ±10s slider range for fine control
+  double get _sliderMin => _absoluteMin == 0 ? 0 : -10_000;
   static const double _sliderMax = 10_000;
-  static const double _absoluteMin = ScopedPlayerPrefs.minimumSyncOffsetMs * 1.0;
+  double get _absoluteMin => widget.propertyName == PlayerSyncOffsets.subtitleProperty
+      ? PlayerSyncOffsets.of(widget.player).minimumSubtitleMs.toDouble()
+      : ScopedPlayerPrefs.minimumSyncOffsetMs.toDouble();
   static const double _absoluteMax = ScopedPlayerPrefs.maximumSyncOffsetMs * 1.0;
   // Audio gets 10ms steps, the lip-sync granularity other players offer
   // (#2620); subtitle corrections run to seconds, so they keep 50ms. The
@@ -986,7 +987,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
                 labelText: _syncTitle,
                 hintText: formatSyncOffset(_currentOffset),
                 helperText: t.settings.validationErrorDuration(
-                  min: ScopedPlayerPrefs.minimumSyncOffsetMs,
+                  min: _absoluteMin.toInt(),
                   max: ScopedPlayerPrefs.maximumSyncOffsetMs,
                   unit: 'ms',
                 ),
@@ -995,9 +996,9 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
               validator: (value) {
                 final parsed = int.tryParse(value?.trim() ?? '');
                 if (parsed == null) return t.settings.validationErrorEnterNumber;
-                if (parsed < ScopedPlayerPrefs.minimumSyncOffsetMs || parsed > ScopedPlayerPrefs.maximumSyncOffsetMs) {
+                if (parsed < _absoluteMin || parsed > _absoluteMax) {
                   return t.settings.validationErrorDuration(
-                    min: ScopedPlayerPrefs.minimumSyncOffsetMs,
+                    min: _absoluteMin.toInt(),
                     max: ScopedPlayerPrefs.maximumSyncOffsetMs,
                     unit: 'ms',
                   );
@@ -1051,15 +1052,16 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
     required IconData icon,
     required VoidCallback onTap,
     required VoidCallback onLongPressStart,
+    bool enabled = true,
   }) {
     return FocusableWrapper(
-      onSelect: onTap,
+      onSelect: enabled ? onTap : null,
       borderRadius: 18,
       autoScroll: false,
       useBackgroundFocus: true,
       child: GestureDetector(
-        onTap: onTap,
-        onLongPressStart: (_) => onLongPressStart(),
+        onTap: enabled ? onTap : null,
+        onLongPressStart: enabled ? (_) => onLongPressStart() : null,
         onLongPressEnd: (_) => _stopLongPress(),
         onLongPressCancel: _stopLongPress,
         child: Container(
@@ -1069,7 +1071,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: const BorderRadius.all(Radius.circular(8)),
           ),
-          child: AppIcon(icon, color: tokens(context).text, size: 22),
+          child: AppIcon(icon, color: enabled ? tokens(context).text : tokens(context).textMuted, size: 22),
         ),
       ),
     );
@@ -1094,6 +1096,7 @@ class _SyncOffsetControlState extends State<SyncOffsetControl> {
                 icon: Symbols.remove_rounded,
                 onTap: _decrementOffset,
                 onLongPressStart: _startLongPressDecrement,
+                enabled: _currentOffset > _absoluteMin,
               ),
               Expanded(
                 child: SliderTheme(

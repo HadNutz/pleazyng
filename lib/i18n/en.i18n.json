@@ -353,6 +353,7 @@
     "playerBackend": "Player Backend",
     "exoPlayer": "ExoPlayer",
     "mpv": "mpv",
+    "foldableDisplay": "Foldable display hinge",
     "hardwareDecoding": "Hardware Decoding",
     "hardwareDecodingDescription": "Use hardware acceleration when available",
     "playbackBuffer": "Playback Buffer",
@@ -440,7 +441,6 @@
     "importSettings": "Import Settings",
     "importSettingsDescription": "Restore preferences from a file",
     "importSettingsConfirm": "This will replace your current settings. Continue?",
-    "importSettingsSuccess": "Settings imported",
     "importSettingsCounts": "Settings applied: ${applied}. Skipped: ${skipped}.",
     "importSettingsInvalidFile": "This file isn't a valid Pleazyng settings export",
     "importSettingsNoUser": "Sign in before importing settings",
@@ -454,7 +454,6 @@
     "cloudBackupComplete": "Backup uploaded. Save this URL. On a new installation, enter it in Cloud Backup and choose “${action}”.",
     "cloudBackupRestore": "Restore Backup",
     "cloudBackupRestoreConfirm": "This will replace matching portable settings on this device. Continue?",
-    "cloudBackupRestored": "Settings restored from cloud backup",
     "shortcutsReset": "Shortcuts reset to defaults",
     "resetShortcutsConfirm": "This will replace your custom shortcuts with the defaults. Continue?",
     "about": "About",
@@ -1509,6 +1508,22 @@
     "editMediaBrowserIntro": "Add or remove URLs for ${serverName}. Pleazyng will use the reachable URL with the lowest latency."
   },
   "iptv": {
+    "backupFeeds": "Backup sources in playback order",
+    "exportPrivate": "This playlist includes stream addresses and may contain your provider credentials. Save it in a private location.",
+    "dynamicStreamExport": "This portal creates a new link each time you play a channel. Its guide can be exported.",
+    "lineupOrder": "Channel order",
+    "moveUp": "Move channel up",
+    "moveDown": "Move channel down",
+    "orderChanged": "The lineup changed. Review the current order and try again.",
+    "affectedChannels": "Channels affected: ${count}",
+    "localPlaylist": "M3U file",
+    "pastePlaylist": "Paste playlist text",
+    "choosePlaylist": "Choose a playlist file",
+    "playlistBase": "Base URL for relative entries (optional)",
+    "localPlaylistHelp": "Import a private copy of an M3U or M3U8 channel list. Choose another file here to replace it.",
+    "showMatches": "Show matching channels",
+    "hideMatches": "Hide matching channels",
+    "pickerCredit": "Lineup curation and guide merging inspired by M3U Web Picker by Zachary Schmook and contributors.",
     "addSource": "Add IPTV source",
     "addSourceDescription": "Add an M3U or Xtream feed, including Tunerr and Dispatcharr playlist outputs.",
     "sourcesTitle": "IPTV sources",
@@ -3264,6 +3279,7 @@
     "enterImageUrl": "Enter image URL",
     "imageUrl": "Image URL",
     "metadataUpdated": "Metadata updated",
+    "metadataConflict": "Another editor changed the same field. Reopen the editor to review the latest values before saving.",
     "metadataUpdateFailed": "Failed to update metadata",
     "artworkUpdated": "Artwork updated",
     "artworkUpdateFailed": "Failed to update artwork",
@@ -3691,7 +3707,6 @@
     "connectedTo": "Connected to ${device}",
     "device": "Cast device",
     "readyToCast": "Ready to cast",
-    "subtitle": "Subtitles",
     "serverNotAvailable": "The media server is not available.",
     "stopCasting": "Stop casting",
     "startFailed": "Could not start casting. Check the server and try again."
@@ -4947,6 +4962,7 @@
     "importOpml": "Import subscriptions (OPML)",
     "exportOpml": "Export subscriptions (OPML)",
     "imported": "Subscriptions imported.",
+    "importSummary": "Subscriptions imported: ${imported}. Duplicates: ${duplicates}. Skipped: ${skipped}.",
     "exportHelp": "The export contains feed URLs, including private membership links. Keep it private.",
     "serverHelp": "Browse or scan your Audiobookshelf source to add its downloaded podcast episodes here.",
     "viewAll": "Show more episodes",
@@ -5919,5 +5935,9 @@
     "relay": "Music relay URL",
     "relayHint": "Enable this on the receiving device, then pair once on the same network. Keep Pleazyng open. The relay carries encrypted music controls and sees network addresses. Each player streams from its own media server.",
     "relayInvalid": "Enter an HTTPS relay address."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Bookmarks from an unidentified version",
+    "assignToVersion": "Assign to this version"
   }
 }

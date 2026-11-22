@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
 import '../../iptv/iptv_source_repository.dart';
+import '../../iptv/iptv_models.dart';
 import '../../models/livetv_channel.dart';
 import '../../models/livetv_program.dart';
 import '../../profiles/active_profile_provider.dart';
@@ -88,11 +89,40 @@ mixin LiveTvActionsMixin<T extends StatefulWidget> on State<T> {
 
     Future<bool> Function()? onDispatcharrRecordProgram;
     Future<bool> Function()? onLocalIptvRecordProgram;
+    Future<bool> Function()? onLocalSeries;
     final sourceId = channel?.iptvSourceId;
     final profileId = effectiveContext.read<ActiveProfileProvider>().activeId;
     if (sourceId != null && channel?.iptvChannelId != null && profileId != null) {
       final repository = effectiveContext.read<IptvSourceRepository>();
-      if (program.beginsAt != null && (program.endsAt ?? 0) > DateTime.now().millisecondsSinceEpoch ~/ 1000) {
+      final end = program.endsAt;
+      if (programStart != null &&
+          end != null &&
+          IptvLocalRecordingSchedule.canSchedule(
+            start: DateTime.fromMillisecondsSinceEpoch(programStart * 1000),
+            end: DateTime.fromMillisecondsSinceEpoch(end * 1000),
+            now: DateTime.now(),
+          )) {
+        if (channel?.iptvParentalLocked != true) {
+          onLocalSeries = () async {
+            if (!effectiveContext.mounted || effectiveContext.read<ActiveProfileProvider>().activeId != profileId) {
+              return false;
+            }
+            try {
+              await repository.seriesRules.add(
+                profileId,
+                sourceId,
+                channel!.iptvChannelId!,
+                program.title,
+                programStart,
+              );
+              if (effectiveContext.mounted) showSnackBar(effectiveContext, t.iptv.localRecordingScheduled);
+              return true;
+            } catch (_) {
+              if (effectiveContext.mounted) showErrorSnackBar(effectiveContext, t.iptv.recordingActionFailed);
+              return false;
+            }
+          };
+        }
         onLocalIptvRecordProgram = () async {
           try {
             await repository.scheduleLocalRecording(profileId, channel!, program);
@@ -150,6 +180,7 @@ mixin LiveTvActionsMixin<T extends StatefulWidget> on State<T> {
       onRecordingStateChanged: onRecordingStateChanged,
       onDispatcharrRecordProgram: onDispatcharrRecordProgram,
       onLocalIptvRecordProgram: onLocalIptvRecordProgram,
+      onLocalSeries: onLocalSeries,
     );
   }
 }

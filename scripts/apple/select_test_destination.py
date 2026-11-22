@@ -14,7 +14,7 @@ def version_pair(value):
     return tuple(map(int, value.split('.')[:2]))
 
 
-def select_device_template(payload, platform, sdk_version):
+def select_device_template(payload, platform, sdk_version, preferred_type=None):
     if platform not in ('iOS', 'tvOS'):
         raise ValueError('Expected iOS or tvOS simulator platform')
     expected = version_pair(sdk_version)
@@ -22,6 +22,11 @@ def select_device_template(payload, platform, sdk_version):
                 if runtime.get('isAvailable') is True and f'.{platform}-' in runtime.get('identifier', '')
                 and version_pair(runtime['version']) == expected]
     for runtime in sorted(runtimes, key=lambda value: tuple(map(int, value['version'].split('.'))), reverse=True):
+        if preferred_type:
+            available = {model['identifier'] for model in payload.get('devicetypes', [])}
+            if preferred_type not in available:
+                raise ValueError(f'Selected simulator toolchain lacks {preferred_type}')
+            return runtime, preferred_type
         devices = [device for device in payload['devices'].get(runtime['identifier'], [])
                    if device.get('isAvailable') is True]
         devices.sort(key=lambda device: (not device.get('name', '').startswith('iPhone'),
@@ -56,7 +61,7 @@ def simctl(*args):
 
 
 def create_fresh_device(payload, platform, sdk_version, env):
-    runtime, device_type = select_device_template(payload, platform, sdk_version)
+    runtime, device_type = select_device_template(payload, platform, sdk_version, env.get("PREFERRED_SIMULATOR_TYPE"))
     owner = owner_record(env)
     receipt = receipt_path(env, owner)
     if receipt.exists() or receipt.is_symlink():

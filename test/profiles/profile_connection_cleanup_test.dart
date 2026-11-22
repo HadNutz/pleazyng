@@ -103,6 +103,29 @@ void main() {
   });
 
   group('profile connection cleanup', () {
+    test('losing an account retains shared machines through explicit links and implicit Plex Home parents', () async {
+      final remaining = _plex(id: 'remaining', serverMachineId: 'shared');
+      final removed = _plex(id: 'removed', serverMachineId: 'exclusive');
+      final mixed = removed.copyWith(servers: [...removed.servers, ...remaining.servers]);
+      await connections.upsert(remaining);
+      await connections.upsert(mixed);
+      final home = plexHomeProfileId(accountConnectionId: remaining.id, homeUserUuid: 'aaaaaaaaaaaaaaaa');
+      for (final profileId in ['local', home, 'another']) {
+        await profileConnections.upsert(
+          ProfileConnection(profileId: profileId, connectionId: mixed.id, userIdentifier: 'a', userToken: 'token'),
+        );
+      }
+      await profileConnections.upsert(
+        ProfileConnection(profileId: 'local', connectionId: remaining.id, userIdentifier: 'b', userToken: 'token'),
+      );
+      expect(await cleanup.downloadServersLostByProfile(profileId: 'local', connection: mixed), {'exclusive'});
+      expect(await cleanup.downloadServersLostByProfile(profileId: home, connection: mixed), {'exclusive'});
+      expect(await cleanup.downloadServersLostByProfile(profileId: 'another', connection: mixed), {
+        'exclusive',
+        'shared',
+      });
+    });
+
     test('removing the last Jellyfin profile link deletes the connection and profile prefs', () async {
       final conn = _jellyfin();
       await connections.upsert(conn);

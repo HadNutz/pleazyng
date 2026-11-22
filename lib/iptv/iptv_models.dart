@@ -3,7 +3,7 @@ import '../models/livetv_program.dart';
 
 /// Profile-owned IPTV inputs. Tunerr and Dispatcharr can be used through
 /// standard feeds; Stalker/Ministra uses its optional MAG portal adapter.
-enum IptvInputKind { m3u, xtream, tunerr, dispatcharr, stalker }
+enum IptvInputKind { m3u, xtream, tunerr, dispatcharr, stalker, m3uFile }
 
 enum IptvVodKind { movie, series }
 
@@ -22,6 +22,7 @@ class IptvSourceConfiguration {
     required this.endpoint,
     this.guideEndpoint = '',
     this.additionalGuideEndpoints = const [],
+    this.backupSourceIds = const [],
     this.username = '',
     this.password = '',
     this.macAddress = '',
@@ -38,6 +39,7 @@ class IptvSourceConfiguration {
   final String endpoint;
   final String guideEndpoint;
   final List<String> additionalGuideEndpoints;
+  final List<String> backupSourceIds;
   final String username;
   final String password;
   final String macAddress;
@@ -54,6 +56,7 @@ class IptvSourceConfiguration {
     'endpoint': endpoint,
     'guideEndpoint': guideEndpoint,
     'additionalGuideEndpoints': additionalGuideEndpoints,
+    'backupSourceIds': backupSourceIds,
     'username': username,
     'password': password,
     'macAddress': macAddress,
@@ -72,6 +75,7 @@ class IptvSourceConfiguration {
     guideEndpoint: json['guideEndpoint'] as String? ?? '',
     additionalGuideEndpoints:
         (json['additionalGuideEndpoints'] as List<dynamic>?)?.whereType<String>().toList() ?? const [],
+    backupSourceIds: (json['backupSourceIds'] as List?)?.whereType<String>().toSet().toList() ?? const [],
     username: json['username'] as String? ?? '',
     password: json['password'] as String? ?? '',
     macAddress: json['macAddress'] as String? ?? '',
@@ -190,6 +194,8 @@ class IptvSourceSummary {
   final String? lastErrorCode;
 }
 
+typedef IptvLineupGroup = ({String id, String name, Set<String> members, int revision});
+
 class IptvEditableChannel {
   const IptvEditableChannel({
     required this.id,
@@ -231,6 +237,7 @@ class IptvChannelSnapshot {
     this.tvgId,
     this.number,
     this.groupTitle,
+    this.lineupOrder,
     this.logoUrl,
     this.radio = false,
     this.hasCatchup = false,
@@ -244,6 +251,7 @@ class IptvChannelSnapshot {
   final String? tvgId;
   final String? number;
   final String? groupTitle;
+  final int? lineupOrder;
   final String? logoUrl;
   final bool radio;
   final bool hasCatchup;
@@ -265,6 +273,7 @@ class IptvChannelSnapshot {
     iptvSourceId: sourceId,
     iptvChannelId: id,
     iptvRadio: radio,
+    iptvLineupOrder: lineupOrder,
     iptvGroupTitle: groupTitle,
     iptvFavorite: favorite,
     iptvCatchupAvailable: hasCatchup,
@@ -399,6 +408,15 @@ class IptvVodSeriesDetails {
   final List<IptvVodEpisode> episodes;
 }
 
+/// Existing local recordings use these names for scheduled and manual capture.
+String iptvRecordingSlug(String value) {
+  final slug = value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9_-]+'), '-').replaceAll(RegExp(r'^-+|-+$'), '');
+  if (slug.isEmpty) return 'iptv';
+  return slug.length <= 64 ? slug : slug.substring(0, 64);
+}
+
+String iptvManualRecordingFolder(String profileId) => profileId.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_');
+
 class IptvLocalRecording {
   const IptvLocalRecording({
     required this.id,
@@ -434,6 +452,14 @@ class IptvLocalRecording {
 }
 
 class IptvLocalRecordingSchedule {
+  static const maxCaptureDuration = Duration(hours: 12);
+
+  static bool canSchedule({required DateTime start, required DateTime end, required DateTime now}) {
+    final effectiveStart = start.isAfter(now) ? start : now;
+    final remaining = end.difference(effectiveStart);
+    return remaining > Duration.zero && remaining <= maxCaptureDuration;
+  }
+
   const IptvLocalRecordingSchedule({
     required this.id,
     required this.profileId,

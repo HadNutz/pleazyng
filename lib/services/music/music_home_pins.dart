@@ -129,7 +129,7 @@ class MusicHomePins extends ChangeNotifier {
     if (!_active) return const [];
     await ready?.call();
     final pins = await _all();
-    return _active ? pins.where(_authorized).take(limit).toList(growable: false) : const [];
+    return _active ? pins.where(_authorized).toList(growable: false) : const [];
   }
 
   Future<T> _change<T>(Future<T> Function() action) {
@@ -245,33 +245,35 @@ class MusicHomePins extends ChangeNotifier {
   Future<void> reorder(List<MusicHomePin> pins) {
     final copy = List<MusicHomePin>.unmodifiable(pins);
     final bindings = [for (final pin in copy) _binding(pin)];
-    bool current() =>
-        _active &&
-        copy.indexed.every((entry) {
-          final binding = bindings[entry.$1], pin = entry.$2, client = clientFor(pin.item);
-          return _authorized(pin) &&
-              identical(client, binding.client) &&
-              identical(client?.authenticationSessionId, binding.authentication);
-        });
+    bool pinCurrent(int index) {
+      final binding = bindings[index], pin = copy[index], client = clientFor(pin.item);
+      return _authorized(pin) &&
+          identical(client, binding.client) &&
+          identical(client?.authenticationSessionId, binding.authentication);
+    }
+
+    bool current() => _active && copy.asMap().keys.every(pinCurrent);
     return _change(() async {
       await ready?.call();
-      final existing = await load();
+      final existing = {for (final pin in await load()) pin.id: pin};
       if (!current() ||
           copy.length != existing.length ||
           copy.map((pin) => pin.id).toSet().length != copy.length ||
-          !copy.every((pin) => existing.any((value) => value.id == pin.id))) {
+          !copy.every((pin) => existing.containsKey(pin.id))) {
         throw StateError('Music pin selection changed');
       }
       await store.database.transaction(() async {
         for (final entry in copy.indexed) {
-          if (!current()) throw StateError('Music pin account changed');
-          final pin = existing.firstWhere((pin) => pin.id == entry.$2.id);
+          if (!pinCurrent(entry.$1)) throw StateError('Music pin account changed');
+          final pin = existing[entry.$2.id]!;
+          if (pin.order == entry.$1) continue;
           await store.saveDocument(
             'homePin',
             pin.id,
             MusicHomePin(id: pin.id, account: pin.account, item: pin.item, order: entry.$1).toJson(),
           );
         }
+        // All account bindings must still match before the transaction commits.
         if (!current()) throw StateError('Music pin account changed');
       });
       if (current()) notifyListeners();

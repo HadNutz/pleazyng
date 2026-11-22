@@ -92,12 +92,3 @@ class MusicPlaylistRead {
     }
   }
 }
-
-Future<List<MediaItem>> loadMusicPlaylist(
-  MediaServerClient client,
-  String id, {
-  required bool Function() current,
-  bool Function(MediaItem)? acceptsItem,
-  int maxItems = 100000,
-}) =>
-    MusicPlaylistRead(client, id, current: current, acceptsItem: acceptsItem, maxItems: maxItems).all(active: current);

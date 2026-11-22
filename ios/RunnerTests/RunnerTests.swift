@@ -244,6 +244,103 @@ final class MpvPlayerContractTests: XCTestCase {
     XCTAssertEqual((cancelled[0] as? FlutterError)?.code, "NOT_INITIALIZED")
   }
 
+  func testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream() throws {
+    let clip = try XCTUnwrap(Bundle(for: type(of: self)).url(forResource: "Butterfly-209", withExtension: "mp4"))
+    let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 180))
+    window.isHidden = false
+    let core = MpvPlayerCore()
+    // Select the MPV output that owns the AVFoundation motion options.
+    core.experimentalDolbyVisionRequested = false
+    XCTAssertTrue(core.initialize(in: window))
+    defer {
+      // The video output releases its AVFoundation layers on the main queue.
+      let destroyed = expectation(description: "MPV video output disposed")
+      core.dispose()
+      core.queue.async { destroyed.fulfill() }
+      wait(for: [destroyed], timeout: nativeCompletionTimeout)
+      window.isHidden = true
+    }
+    core.setVisible(true)
+    func command(_ args: [String], timeout: TimeInterval? = nil) throws -> Int64? {
+      let accepted = expectation(description: args[0])
+      var result: Result<Int64?, Error>?
+      core.commandAsync(args) { reply in
+        result = reply
+        accepted.fulfill()
+      }
+      wait(for: [accepted], timeout: timeout ?? nativeCompletionTimeout)
+      return try XCTUnwrap(result).get()
+    }
+    // The cold hosted simulator can take longer to settle than one pass of the fixture.
+    XCTAssertSuccess(awaitProperty(core, name: "loop-file", value: "inf"))
+    _ = try command(["loadfile", clip.path])
+    XCTAssertSuccess(awaitProperty(core, name: "pause", value: "no"))
+    func requirePlaybackAdvance(from previous: Double) {
+      let deadline = Date().addingTimeInterval(30)
+      repeat {
+        if let raw = try? awaitGetProperty(core, name: "time-pos").get(), let seconds = Double(raw),
+          seconds > previous + 0.05 || (seconds > 0 && seconds < previous)
+        {
+          return
+        }
+        RunLoop.current.run(until: Date().addingTimeInterval(0.05))
+      } while Date() < deadline
+      XCTFail("The open clip did not advance from " + String(previous))
+    }
+    requirePlaybackAdvance(from: 0)
+    XCTAssertEqual(try awaitGetProperty(core, name: "current-vo").get(), "avfoundation")
+    let entry = try XCTUnwrap(try awaitGetProperty(core, name: "playlist/0/id").get())
+    for preset in ["performance", "quality"] {
+      let before = try timePos(core)
+      XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-preset", value: preset))
+      XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "yes"))
+      requirePlaybackAdvance(from: before)
+      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
+    }
+    XCTAssertSuccess(awaitProperty(core, name: "avfoundation-motion-interpolation", value: "no"))
+    let before = try timePos(core)
+    requirePlaybackAdvance(from: before)
+    XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
+
+    if try awaitGetProperty(core, name: "pleazyng-vt-motion-supported").get() == "no" {
+      let label = "@plezy-apple-motion"
+      let gpu = "libplacebo=fps=60:frame_mixer=oversample:format=yuv420p"
+      let cpu = "minterpolate=fps=60:mi_mode=blend"
+      let originalHwdec = try awaitGetProperty(core, name: "hwdec").get() ?? "auto"
+      if originalHwdec != "no" {
+        XCTAssertSuccess(awaitProperty(core, name: "hwdec", value: "videotoolbox-copy"))
+      }
+      var gpuActive = false
+      if try awaitGetProperty(core, name: "pleazyng-apple-mixer-gpu-supported").get() == "yes" {
+        do {
+          _ = try command(["vf", "add", "\(label):lavfi=[\(gpu)]"], timeout: 60)
+          gpuActive = true
+        } catch let error as NSError where error.domain == "mpv" {
+          print("GPU mixer rejected the filter: " + error.localizedDescription)
+        }
+      }
+      if !gpuActive { _ = try command(["vf", "add", "\(label):lavfi=[\(cpu)]"]) }
+      let provider = gpuActive ? "libplacebo GPU" : "FFmpeg CPU"
+      let deadline = Date().addingTimeInterval(30)
+      var measured = 0.0
+      repeat {
+        RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+        if let rate = try? awaitGetProperty(core, name: "estimated-vf-fps").get() {
+          measured = Double(rate) ?? 0
+        }
+      } while measured < 45 && Date() < deadline
+      XCTAssertGreaterThanOrEqual(measured, 45, "The 29.97 fps fixture must produce intermediate frames")
+      print("Live motion mixer: \(provider), measured \(measured) fps")
+      _ = try command(["vf", "remove", label], timeout: 60)
+      if originalHwdec != "no" {
+        XCTAssertSuccess(awaitProperty(core, name: "hwdec", value: originalHwdec))
+      }
+      XCTAssertEqual(try awaitGetProperty(core, name: "playlist/0/id").get(), entry)
+      XCTAssertFalse((try awaitGetProperty(core, name: "vf").get() ?? "").contains(label))
+      requirePlaybackAdvance(from: try timePos(core))
+    }
+  }
+
   func testRealSetPropertyValidInvalidNonexistentAndPauseCache() {
     let core = MpvAudioPlayerCore()
     XCTAssertTrue(core.initialize())
@@ -1109,5 +1206,33 @@ final class DownloadBackupPolicyTests: XCTestCase {
     try manager.createDirectory(at: downloads, withIntermediateDirectories: true)
     XCTAssertTrue(try DownloadBackupPolicy.exclude(downloads, allowedRoots: [downloads]))
     XCTAssertEqual(try downloads.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
+  }
+}
+
+
+@MainActor
+final class AdaptivePhoneSceneTests: XCTestCase {
+  func testActivePhoneScenePublishesWindowGeometry() async throws {
+    guard #available(iOS 27.1, *) else { throw XCTSkip("Duo geometry requires the iOS 27.1 runtime") }
+    let app = try XCTUnwrap(UIApplication.shared.delegate as? AppDelegate)
+    var controller: PlezyFlutterViewController?
+    for _ in 0..<50 {
+      controller = app.musicEngine?.viewController as? PlezyFlutterViewController
+      if controller?.viewIfLoaded?.window != nil { break }
+      try await Task.sleep(nanoseconds: 100_000_000)
+    }
+    let phone = try XCTUnwrap(controller)
+    XCTAssertNotNil(phone.viewIfLoaded?.window)
+    let state = phone.currentState()
+    for key in ["folds", "occlusions"] {
+      let rectangles = try XCTUnwrap(state[key] as? [[String: Double]])
+      for rect in rectangles {
+        for field in ["x", "y", "width", "height"] {
+          XCTAssertTrue(try XCTUnwrap(rect[field]).isFinite)
+        }
+        XCTAssertGreaterThanOrEqual(try XCTUnwrap(rect["width"]), 0)
+        XCTAssertGreaterThanOrEqual(try XCTUnwrap(rect["height"]), 0)
+      }
+    }
   }
 }

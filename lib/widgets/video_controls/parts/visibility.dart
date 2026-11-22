@@ -152,7 +152,12 @@ extension _PlexVideoControlsVisibilityMethods on _PlexVideoControlsState {
   /// this toggle or from the settings screen — takes the same path, and
   /// [OrientationHelper] keeps fixed-orientation platforms (car, TV) out of it.
   void _applyRotationLock(bool locked) {
-    unawaited(locked ? OrientationHelper.lockLandscapeOrientation() : OrientationHelper.restoreDefaultOrientations());
+    unawaited(
+      OrientationHelper.applyPlaybackLock(
+        locked,
+        systemManaged: OrientationHelper.systemManagesPlaybackWindow(context),
+      ),
+    );
   }
 
   void _toggleRotationLock() {

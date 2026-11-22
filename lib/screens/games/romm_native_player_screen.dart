@@ -265,7 +265,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
                   !s.missing,
             )
             .toList()
-          ..sort((a, b) => (b.updatedAt ?? DateTime(1970)).compareTo(a.updatedAt ?? DateTime(1970)));
+          ..sort((a, b) => b.capturedAt.compareTo(a.capturedAt));
     final saves =
         remote.saves
             .where(
@@ -277,7 +277,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
                   !s.missing,
             )
             .toList()
-          ..sort((a, b) => (b.updatedAt ?? DateTime(1970)).compareTo(a.updatedAt ?? DateTime(1970)));
+          ..sort((a, b) => b.capturedAt.compareTo(a.capturedAt));
     if (widget.stateId != null && states.isEmpty || widget.saveId != null && saves.isEmpty) {
       throw const RommFailure('romm.notFound');
     }
@@ -285,9 +285,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
     // A newer SRAM upload must not be hidden by an older cloud save state.
     final useState =
         states.isNotEmpty &&
-        (widget.stateId != null ||
-            saves.isEmpty ||
-            !(saves.first.updatedAt ?? DateTime(1970)).isAfter(states.first.updatedAt ?? DateTime(1970)));
+        (widget.stateId != null || saves.isEmpty || !saves.first.capturedAt.isAfter(states.first.capturedAt));
     if (useState) {
       final bytes = await api.saveBytes(states.first);
       if (states.first.hash.isNotEmpty && md5.convert(bytes).toString() != states.first.hash) {
@@ -679,7 +677,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
       if (sram == null && snapshot == null && rtc == null) {
         throw const RommFailure('romm.saveFailed');
       }
-      await storage.keepNativeSnapshot(
+      final checkpoint = await storage.keepNativeSnapshot(
         widget.game,
         _runtime.identity,
         sram: sram,
@@ -711,6 +709,7 @@ class _RommNativePlayerScreenState extends State<RommNativePlayerScreen> with Wi
         state: nativeState,
         slot: '$_emulator-autosave',
         nativeFileHash: _fileHash,
+        nativeCheckpoint: checkpoint,
       );
       _lastHash = hash;
       // Exiting waits for durable local bytes, not for network availability.

@@ -244,6 +244,7 @@
     "checkFailed": "Güncellemeler kontrol edilemedi"
   },
   "settings": {
+    "foldableDisplay": "Katlanabilir ekran menteşesi",
     "title": "Ayarlar",
     "supportDeveloper": "Pleazyng'yi Destekleyin",
     "supportDeveloperDescription": "Geliştirmeyi desteklemek için bağış yapın",
@@ -433,7 +434,6 @@
     "importSettings": "Ayarları İçe Aktar",
     "importSettingsDescription": "Tercihleri bir dosyadan geri yükleyin",
     "importSettingsConfirm": "Bu işlem mevcut ayarlarınızın üzerine yazacak. Devam edilsin mi?",
-    "importSettingsSuccess": "Ayarlar içe aktarıldı",
     "importSettingsCounts": "Uygulanan ayar: ${applied}. Atlanan: ${skipped}.",
     "importSettingsInvalidFile": "Bu dosya geçerli bir Pleazyng ayar dosyası değil",
     "importSettingsNoUser": "Ayarları içe aktarmadan önce giriş yapın",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "Yedek yüklendi. Bu URL’yi saklayın. Yeni bir kurulumdan sonra URL’yi bulut yedekleme bölümüne girip “${action}” seçeneğini seçin.",
     "cloudBackupRestore": "Backup Yöntemleri",
     "cloudBackupRestoreConfirm": "Bu cihazda uyumlu taşınabilir ayarları değiştirecektir. devamı?",
-    "cloudBackupRestored": "Cloud Backup'tan kurtarılan ayarlar",
     "shortcutsReset": "Kısayollar varsayılana sıfırlandı",
     "resetShortcutsConfirm": "Bu işlem özel kısayollarınızı varsayılanlarla değiştirecek. Devam edilsin mi?",
     "about": "Hakkında",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "${serverName} için URL ekleyin veya kaldırın. Pleazyng, erişilebilir olan en düşük gecikmeli URL'yi kullanacak."
   },
   "iptv": {
+    "backupFeeds": "Oynatma sırasına göre yedek kaynaklar",
+    "lineupOrder": "Kanal sırası",
+    "orderChanged": "Kanal sırası değişti. Gözden geçirip yeniden deneyin.",
+    "localPlaylist": "M3U dosyası",
+    "pastePlaylist": "Oynatma listesi metnini yapıştır",
+    "playlistBase": "Göreli bağlantılar için temel URL (isteğe bağlı)",
+    "localPlaylistHelp": "M3U veya M3U8 kanal listesinin özel bir kopyasını içe aktarın. Başka bir dosyayla değiştirebilirsiniz.",
+    "showMatches": "Eşleşen kanalları göster",
+    "hideMatches": "Eşleşen kanalları gizle",
+    "pickerCredit": "Esin kaynağı · M3U Web Picker · Zachary Schmook (@zschmook) ve katkıda bulunanlar",
+    "exportPrivate": "Yayın adresleri sağlayıcıya ait oturum bilgilerinizi içerebilir. Listeyi özel bir konuma kaydedin.",
+    "dynamicStreamExport": "Portal her oynatmada yeni bağlantı oluşturur. Yayın rehberini dışa aktarabilirsiniz.",
+    "moveUp": "yukarı hareket",
+    "moveDown": "aşağı hareket",
+    "choosePlaylist": "Playlist dosyasını seçin",
+    "affectedChannels": "Kanallar · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "Görsel URL'si girin",
     "imageUrl": "Görsel URL'si",
     "metadataUpdated": "Meta veriler güncellendi",
+    "metadataConflict": "Aynı alanı başka biri değiştirdi. Kaydetmeden önce güncel değerleri gözden geçirmek için düzenleyiciyi yeniden açın.",
     "metadataUpdateFailed": "Meta veriler güncellenemedi",
     "artworkUpdated": "Görseller güncellendi",
     "artworkUpdateFailed": "Görseller güncellenemedi",
@@ -3676,7 +3692,6 @@
     "connectedTo": "${device} ile bağlantılı",
     "device": "Cast cihazı",
     "readyToCast": "Hazırlık atmak",
-    "subtitle": "Altyazılar",
     "serverNotAvailable": "Medya sunucusu mevcut değildir.",
     "stopCasting": "Casting durdurma",
     "startFailed": "Sunucu kontrol edemezsiniz.Sunucu kontrol edin ve tekrar deneyin."
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "İçe aktarılan abonelikler: ${imported}. Yinelenenler: ${duplicates}. Atlananlar: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "Müzik rölesi URL’si",
     "relayHint": "Alıcı cihazda etkinleştirin, ardından aynı ağda bir kez eşleştirin. Pleazyng açık kalsın. Röle şifreli müzik denetimlerini iletir ve ağ adreslerini görür. Her oynatıcı kendi medya sunucusundan yayın yapar.",
     "relayInvalid": "Bir HTTPS röle adresi girin."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Sürümü belirlenemeyen yer imleri",
+    "assignToVersion": "Bu sürüme ata"
   }
 }

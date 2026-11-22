@@ -66,6 +66,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$vi dialog = _Translations$dialog$vi._(_root);
 	@override late final _Translations$profiles$vi profiles = _Translations$profiles$vi._(_root);
 	@override late final _Translations$connections$vi connections = _Translations$connections$vi._(_root);
+	@override late final _Translations$iptv$vi iptv = _Translations$iptv$vi._(_root);
 	@override late final _Translations$accountPreferences$vi accountPreferences = _Translations$accountPreferences$vi._(_root);
 	@override late final _Translations$discover$vi discover = _Translations$discover$vi._(_root);
 	@override late final _Translations$errors$vi errors = _Translations$errors$vi._(_root);
@@ -123,6 +124,7 @@ class TranslationsVi extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$vi musicExperience = _Translations$musicExperience$vi._(_root);
 	@override late final _Translations$musicTools$vi musicTools = _Translations$musicTools$vi._(_root);
 	@override late final _Translations$musicDevices$vi musicDevices = _Translations$musicDevices$vi._(_root);
+	@override late final _Translations$bookmarkMigration$vi bookmarkMigration = _Translations$bookmarkMigration$vi._(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class _Translations$settings$vi extends Translations$settings$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Bản lề màn hình gập';
 	@override String get title => 'Cài đặt';
 	@override String get supportDeveloper => 'Hỗ trợ Pleazyng';
 	@override String get supportDeveloperDescription => 'Ưu đãi để hỗ trợ phát triển';
@@ -572,7 +575,6 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String get importSettings => 'Cài đặt Import';
 	@override String get importSettingsDescription => 'khôi phục các tùy chọn từ một tệp';
 	@override String get importSettingsConfirm => 'Điều này sẽ thay thế cài đặt hiện tại của bạn. tiếp tục?';
-	@override String get importSettingsSuccess => 'Cài đặt nhập khẩu';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Cài đặt đã áp dụng: ${applied}. Đã bỏ qua: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Tệp này không phải là một hợp lệ Pleazyng cài đặt xuất khẩu';
 	@override String get importSettingsNoUser => 'Đăng nhập trước khi nhập cài đặt';
@@ -586,7 +588,6 @@ class _Translations$settings$vi extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Đã tải bản sao lưu lên. Hãy lưu URL này. Sau khi cài đặt lại, nhập URL này vào mục sao lưu đám mây rồi chọn “${action}”.';
 	@override String get cloudBackupRestore => 'khôi phục backup';
 	@override String get cloudBackupRestoreConfirm => 'Điều này sẽ thay thế các cài đặt di động phù hợp trên thiết bị này.';
-	@override String get cloudBackupRestored => 'Cài đặt khôi phục từ Cloud Backup';
 	@override String get shortcutsReset => 'Tải về Shortcuts to defaults';
 	@override String get resetShortcutsConfirm => 'Điều này sẽ thay thế các shortcuts tùy chỉnh của bạn với các default.';
 	@override String get about => 'Về';
@@ -1635,6 +1636,31 @@ class _Translations$connections$vi extends Translations$connections$en {
 	@override String get signInAgain => 'Đăng ký lại';
 	@override String editMediaBrowserTitle({required Object product}) => 'Edit ${product} kết nối';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.';
+}
+
+// Path: iptv
+class _Translations$iptv$vi extends Translations$iptv$en {
+	_Translations$iptv$vi._(TranslationsVi root) : this._root = root, super.internal(root);
+
+	final TranslationsVi _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'Nguồn dự phòng theo thứ tự phát';
+	@override String get lineupOrder => 'Thứ tự kênh';
+	@override String get orderChanged => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.';
+	@override String get localPlaylist => 'Tệp M3U';
+	@override String get pastePlaylist => 'Dán văn bản danh sách phát';
+	@override String get playlistBase => 'URL cơ sở cho liên kết tương đối (không bắt buộc)';
+	@override String get localPlaylistHelp => 'Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.';
+	@override String get showMatches => 'Hiện kênh phù hợp';
+	@override String get hideMatches => 'Ẩn kênh phù hợp';
+	@override String get pickerCredit => 'Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp';
+	@override String get exportPrivate => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.';
+	@override String get dynamicStreamExport => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.';
+	@override String get moveUp => 'chuyển lên';
+	@override String get moveDown => 'di chuyển xuống';
+	@override String get choosePlaylist => 'Chọn playlist file';
+	@override String affectedChannels({required Object count}) => 'Kênh · ${count}';
 }
 
 // Path: accountPreferences
@@ -2704,6 +2730,7 @@ class _Translations$metadataEdit$vi extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Nhập hình ảnh URL';
 	@override String get imageUrl => 'Ảnh URL';
 	@override String get metadataUpdated => 'Metadata cập nhật';
+	@override String get metadataConflict => 'Người khác đã thay đổi cùng trường này. Hãy mở lại trình chỉnh sửa để kiểm tra các giá trị mới nhất trước khi lưu.';
 	@override String get metadataUpdateFailed => 'Không cập nhật metadata';
 	@override String get artworkUpdated => 'Artwork cập nhật';
 	@override String get artworkUpdateFailed => 'Không cập nhật tác phẩm nghệ thuật';
@@ -3104,7 +3131,6 @@ class _Translations$cast$vi extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Kết nối với ${device}';
 	@override String get device => 'Thiết bị truyền';
 	@override String get readyToCast => 'Sẵn sàng truyền';
-	@override String get subtitle => 'Phụ đề';
 	@override String get serverNotAvailable => 'Server phương tiện truyền thông không sẵn dùng.';
 	@override String get stopCasting => 'Dừng truyền';
 	@override String get startFailed => 'Không thể bắt đầu casting. kiểm tra máy chủ và thử lại.';
@@ -4084,6 +4110,7 @@ class _Translations$podcasts$vi extends Translations$podcasts$en {
 	final TranslationsVi _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Số lượt đăng ký đã nhập: ${imported}. Trùng lặp: ${duplicates}. Đã bỏ qua: ${skipped}.';
 	@override String get autoDownloadLatest => 'Tự động tải các tập mới nhất';
 	@override String get removeFinishedAfter => 'Xóa bản tải xuống đã nghe xong sau';
 }
@@ -4496,6 +4523,17 @@ class _Translations$musicDevices$vi extends Translations$musicDevices$en {
 	@override String get relay => 'URL chuyển tiếp nhạc';
 	@override String get relayHint => 'Bật trên thiết bị nhận rồi ghép đôi một lần trên cùng mạng. Giữ Pleazyng mở. Máy chuyển tiếp truyền lệnh nhạc được mã hóa và thấy địa chỉ mạng. Mỗi trình phát truyền từ máy chủ phương tiện riêng.';
 	@override String get relayInvalid => 'Nhập địa chỉ chuyển tiếp HTTPS.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$vi extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$vi._(TranslationsVi root) : this._root = root, super.internal(root);
+
+	final TranslationsVi _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Dấu trang từ phiên bản chưa xác định';
+	@override String get assignToVersion => 'Gán cho phiên bản này';
 }
 
 // Path: appIcon.names
@@ -5828,6 +5866,7 @@ extension on TranslationsVi {
 			'update.viewRelease' => 'Xem bản phát hành',
 			'update.latestVersion' => 'Bạn đang ở phiên bản mới nhất',
 			'update.checkFailed' => 'Không kiểm tra cho các bản cập nhật',
+			'settings.foldableDisplay' => 'Bản lề màn hình gập',
 			'settings.title' => 'Cài đặt',
 			'settings.supportDeveloper' => 'Hỗ trợ Pleazyng',
 			'settings.supportDeveloperDescription' => 'Ưu đãi để hỗ trợ phát triển',
@@ -6011,7 +6050,6 @@ extension on TranslationsVi {
 			'settings.importSettings' => 'Cài đặt Import',
 			'settings.importSettingsDescription' => 'khôi phục các tùy chọn từ một tệp',
 			'settings.importSettingsConfirm' => 'Điều này sẽ thay thế cài đặt hiện tại của bạn. tiếp tục?',
-			'settings.importSettingsSuccess' => 'Cài đặt nhập khẩu',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Cài đặt đã áp dụng: ${applied}. Đã bỏ qua: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Tệp này không phải là một hợp lệ Pleazyng cài đặt xuất khẩu',
 			'settings.importSettingsNoUser' => 'Đăng nhập trước khi nhập cài đặt',
@@ -6025,7 +6063,6 @@ extension on TranslationsVi {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Đã tải bản sao lưu lên. Hãy lưu URL này. Sau khi cài đặt lại, nhập URL này vào mục sao lưu đám mây rồi chọn “${action}”.',
 			'settings.cloudBackupRestore' => 'khôi phục backup',
 			'settings.cloudBackupRestoreConfirm' => 'Điều này sẽ thay thế các cài đặt di động phù hợp trên thiết bị này.',
-			'settings.cloudBackupRestored' => 'Cài đặt khôi phục từ Cloud Backup',
 			'settings.shortcutsReset' => 'Tải về Shortcuts to defaults',
 			'settings.resetShortcutsConfirm' => 'Điều này sẽ thay thế các shortcuts tùy chỉnh của bạn với các default.',
 			'settings.about' => 'Về',
@@ -6123,9 +6160,9 @@ extension on TranslationsVi {
 			'settings.manageLibrariesDescription' => 'Đặt lại và ẩn thư viện',
 			'settings.companionRemoteServer' => 'Dịch vụ Remote Server',
 			'settings.companionRemoteServerDescription' => 'Cho phép các thiết bị di động trên mạng của bạn để kiểm soát ứng dụng này',
+			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Không thể khởi động máy chủ đồng nghiệp',
 			'settings.companionRemoteServerStopFailed' => 'Không thể dừng lại máy chủ đồng nghiệp',
 			'settings.autoPip' => 'Ảnh Auto Picture in Picture',
 			'settings.autoPipDescription' => 'Tự động nhập hình ảnh trong khi bạn rời khỏi ứng dụng trong khi chơi',
@@ -6637,9 +6674,9 @@ extension on TranslationsVi {
 			'accessibility.boldTextHint' => 'Sử dụng trọng lượng nặng hơn cho các nhãn giao diện và tin nhắn để làm cho chúng dễ dàng phân biệt.',
 			'tooltips.shufflePlay' => 'Shuffle chơi',
 			'tooltips.playTrailer' => 'Trò chơi Trailer',
+			'tooltips.markAsWatched' => 'Mark theo dõi',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => 'Mark theo dõi',
 			'tooltips.markAsUnwatched' => 'Mark như không được xem',
 			'audioTracks.track' => ({required Object n}) => 'Âm thanh Track ${n}',
 			'videoControls.audioLabel' => 'Âm thanh',
@@ -6982,6 +7019,22 @@ extension on TranslationsVi {
 			'connections.signInAgain' => 'Đăng ký lại',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Edit ${product} kết nối',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Thêm hoặc xóa URL cho ${serverName}. Pleazyng sẽ sử dụng URL có thể truy cập với độ chậm thấp nhất.',
+			'iptv.backupFeeds' => 'Nguồn dự phòng theo thứ tự phát',
+			'iptv.lineupOrder' => 'Thứ tự kênh',
+			'iptv.orderChanged' => 'Thứ tự kênh đã thay đổi. Hãy kiểm tra và thử lại.',
+			'iptv.localPlaylist' => 'Tệp M3U',
+			'iptv.pastePlaylist' => 'Dán văn bản danh sách phát',
+			'iptv.playlistBase' => 'URL cơ sở cho liên kết tương đối (không bắt buộc)',
+			'iptv.localPlaylistHelp' => 'Nhập bản sao riêng của danh sách kênh M3U hoặc M3U8. Bạn có thể thay thế bằng tệp khác.',
+			'iptv.showMatches' => 'Hiện kênh phù hợp',
+			'iptv.hideMatches' => 'Ẩn kênh phù hợp',
+			'iptv.pickerCredit' => 'Lấy cảm hứng từ · M3U Web Picker · Zachary Schmook (@zschmook) và những người đóng góp',
+			'iptv.exportPrivate' => 'Địa chỉ luồng có thể chứa thông tin đăng nhập của nhà cung cấp. Hãy lưu danh sách ở nơi riêng tư.',
+			'iptv.dynamicStreamExport' => 'Cổng tạo liên kết mới mỗi lần phát. Bạn có thể xuất lịch chương trình.',
+			'iptv.moveUp' => 'chuyển lên',
+			'iptv.moveDown' => 'di chuyển xuống',
+			'iptv.choosePlaylist' => 'Chọn playlist file',
+			'iptv.affectedChannels' => ({required Object count}) => 'Kênh · ${count}',
 			'accountPreferences.sectionTitle' => 'Kế toán ưu tiên',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Audio, subtitle và thư viện tùy chọn được lưu trên ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Audio, subtitle và thư viện tùy chọn được lưu trên ${count} tài khoản',
@@ -7137,6 +7190,8 @@ extension on TranslationsVi {
 			'discover.director' => 'Đạo Diễn',
 			'discover.directors' => 'Đạo Diễn',
 			'discover.movie' => 'Phim',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'chương trình TV',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} phút left',
 			'discover.moreLikeThis' => 'Nội Dung Tương Tự',
@@ -7151,8 +7206,6 @@ extension on TranslationsVi {
 			'errors.connectionTimeout' => ({required Object context}) => 'Thời gian kết nối trong khi tải ${context}',
 			'errors.connectionFailed' => 'Không thể kết nối với Media Server',
 			'errors.unableToLoad' => ({required Object context}) => 'Không thể tải ${context}. xin vui lòng thử lại.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Không có khách hàng',
 			'errors.pleaseEnterToken' => 'Vui lòng nhập token',
 			'errors.invalidToken' => 'Mã xác thực không hợp lệ',
@@ -7651,6 +7704,8 @@ extension on TranslationsVi {
 			'collections.removedFromCollection' => 'Loại bỏ từ bộ sưu tập',
 			'collections.removeFromCollectionFailed' => 'Không thể loại bỏ khỏi bộ sưu tập',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Sai lầm xóa khỏi bộ sưu tập: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => 'Tìm kiếm bộ sưu tập',
 			'playlists.title' => 'Danh sách phát',
 			'playlists.playlist' => 'Danh sách phát',
@@ -7665,8 +7720,6 @@ extension on TranslationsVi {
 			'playlists.emptyPlaylist' => 'Danh sách game này trống',
 			'playlists.deleteConfirm' => 'xóa playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Bạn có chắc chắn bạn muốn xóa "${name}" không?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist tạo ra',
 			'playlists.deleted' => 'Playlist xóa',
 			'playlists.itemAdded' => 'Thêm vào playlist',
@@ -8165,6 +8218,8 @@ extension on TranslationsVi {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision Bộ xử lý',
 			'performanceOverlay.dvRouteDecoderP81' => 'Bộ giải mã Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Lớp cơ sở',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 lớp cơ sở',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG cơ sở lớp',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR cơ sở',
@@ -8179,8 +8234,6 @@ extension on TranslationsVi {
 			'performanceOverlay.transfer' => 'Chuyển đổi',
 			'performanceOverlay.renderFps' => 'Đánh giá FPS',
 			'performanceOverlay.displayFps' => 'Hiển thị FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V đồng bộ',
 			'performanceOverlay.dropped' => 'bị rơi',
 			'performanceOverlay.dvRpus' => 'DV RPU',
@@ -8256,6 +8309,7 @@ extension on TranslationsVi {
 			'metadataEdit.enterImageUrl' => 'Nhập hình ảnh URL',
 			'metadataEdit.imageUrl' => 'Ảnh URL',
 			'metadataEdit.metadataUpdated' => 'Metadata cập nhật',
+			'metadataEdit.metadataConflict' => 'Người khác đã thay đổi cùng trường này. Hãy mở lại trình chỉnh sửa để kiểm tra các giá trị mới nhất trước khi lưu.',
 			'metadataEdit.metadataUpdateFailed' => 'Không cập nhật metadata',
 			'metadataEdit.artworkUpdated' => 'Artwork cập nhật',
 			'metadataEdit.artworkUpdateFailed' => 'Không cập nhật tác phẩm nghệ thuật',
@@ -8613,7 +8667,6 @@ extension on TranslationsVi {
 			'cast.connectedTo' => ({required Object device}) => 'Kết nối với ${device}',
 			'cast.device' => 'Thiết bị truyền',
 			'cast.readyToCast' => 'Sẵn sàng truyền',
-			'cast.subtitle' => 'Phụ đề',
 			'cast.serverNotAvailable' => 'Server phương tiện truyền thông không sẵn dùng.',
 			'cast.stopCasting' => 'Dừng truyền',
 			'cast.startFailed' => 'Không thể bắt đầu casting. kiểm tra máy chủ và thử lại.',
@@ -8679,6 +8732,8 @@ extension on TranslationsVi {
 			'homeLayout.autoSlideDescription' => 'Lấy (PC) và d-pad (TV) luôn hoạt động và khởi động lại đồng hồ.',
 			'homeLayout.autoSlideEditDescription' => 'Ngoài ra, nó tự nhảy mỗi vài giây. tắt: chỉ di chuyển khi bạn nhấp vào một mũi tên (PC) hoặc nhấn trái / phải trên từ xa (TV).',
 			'homeLayout.enableHeroFirst' => 'Khả năng Hero đầu tiên',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'Hiển thị trên màn hình Home',
 			'homeLayout.home' => 'Trang chủ',
 			'homeLayout.removeFromHome' => 'Xóa khỏi nhà',
@@ -8693,8 +8748,6 @@ extension on TranslationsVi {
 			'homeLayout.customPlexRow' => 'Tính năng: Plex',
 			'homeLayout.heroNeedsLibrary' => 'Kiểm tra Thư viện đầu tiên — Hero cần một nơi nào đó để hiển thị',
 			'homeLayout.heroNeedsSurface' => 'Kiểm tra Thư viện hoặc Nhà đầu tiên — Anh hùng cần một nơi nào đó để hiển thị',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Xóa Hub',
 			'homeLayout.noPlexRows' => 'Số Plex hàng quản lý đã trở lại cho thư viện này.',
 			'homeLayout.openDetails' => 'chi tiết mở',
@@ -9193,6 +9246,8 @@ extension on TranslationsVi {
 			'audiobook.librarySort' => 'sort sách',
 			'audiobook.sortTitle' => 'Tiêu đề',
 			'audiobook.sortAuthor' => 'Tác giả',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => 'Nữ diễn viên',
 			'audiobook.sortSeries' => 'Lệnh Series',
 			'audiobook.sortRecent' => 'Gần đây mở',
@@ -9207,8 +9262,6 @@ extension on TranslationsVi {
 			'audiobook.recoveryExport' => 'Xuất khẩu file recovery mã hóa',
 			'audiobook.recoveryImport' => 'nhập file recovery mã hóa',
 			'audiobook.recoveryImportConfirm' => 'Kết hợp tệp phục hồi mã hóa này với các vị trí đọc và ghi chú hiện tại? Lịch sử hiện có sẽ được giữ lại. Thư viện chia sẻ và ID mục không bao gồm; thiết lập ID phù hợp trên mỗi thiết bị trước khi nhập khẩu.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Tệp phục hồi mã hóa đã được lưu.',
 			'audiobook.recoveryImported' => 'Dữ liệu phục hồi kết hợp.',
 			'sourceSetup.bookorbitHelp' => 'Đăng nhập bằng tài khoản BookOrbit của riêng bạn để duyệt và phát sách. Yêu cầu các tựa sách còn thiếu vẫn được gửi qua phiên bản SeerrNG đã kết nối.',
@@ -9427,6 +9480,7 @@ extension on TranslationsVi {
 			'issueReport.privacy' => 'Bản nháp gồm phiên bản ứng dụng, nền tảng và số lượng kết nối. Bản nháp không có địa chỉ máy chủ, tên tài khoản hoặc hồ sơ, tiêu đề nội dung hay đường dẫn tệp.',
 			'issueReport.logPrivacy' => 'Nhật ký là tùy chọn. Hãy xem lại trước khi tải lên. ID nhật ký được thêm vào bản nháp, có thể hiển thị công khai.',
 			'issueReport.openDraft' => 'Mở bản nháp GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Số lượt đăng ký đã nhập: ${imported}. Trùng lặp: ${duplicates}. Đã bỏ qua: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Tự động tải các tập mới nhất',
 			'podcasts.removeFinishedAfter' => 'Xóa bản tải xuống đã nghe xong sau',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Xem trước bảng mã phụ đề',
@@ -9706,6 +9760,8 @@ extension on TranslationsVi {
 			'musicTools.guestDj' => 'DJ khách mời',
 			'musicTools.charts' => 'Bảng xếp hạng nghe',
 			'musicTools.rediscover' => 'Khám phá lại',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => 'Đài âm nhạc',
 			'musicTools.prompt' => 'Danh sách từ mô tả',
 			'musicTools.provider' => 'URL tạo của nhà cung cấp',
@@ -9721,8 +9777,6 @@ extension on TranslationsVi {
 			'musicTools.apiKey' => 'Khóa API',
 			'musicTools.missing' => 'N / A',
 			'musicTools.minutes' => 'phút',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => 'Bộ lọc',
 			'musicTools.exclusiveOutput' => 'Đầu ra âm thanh độc quyền',
 			'musicTools.preamp' => 'Tiền khuếch đại',
@@ -9778,6 +9832,8 @@ extension on TranslationsVi {
 			'musicDevices.relay' => 'URL chuyển tiếp nhạc',
 			'musicDevices.relayHint' => 'Bật trên thiết bị nhận rồi ghép đôi một lần trên cùng mạng. Giữ Pleazyng mở. Máy chuyển tiếp truyền lệnh nhạc được mã hóa và thấy địa chỉ mạng. Mỗi trình phát truyền từ máy chủ phương tiện riêng.',
 			'musicDevices.relayInvalid' => 'Nhập địa chỉ chuyển tiếp HTTPS.',
+			'bookmarkMigration.unassigned' => 'Dấu trang từ phiên bản chưa xác định',
+			'bookmarkMigration.assignToVersion' => 'Gán cho phiên bản này',
 			_ => null,
 		};
 	}

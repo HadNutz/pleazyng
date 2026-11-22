@@ -6,6 +6,19 @@ The linked people made their reports, suggestions, discussions, or code contribu
 
 The PR list comes from explicit “Squash of upstream” commit records and the selected November follow-up. The commit list covers follow-up changes that were sourced from upstream commits rather than PR records.
 
+## M3U Web Picker
+
+[Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors implemented the [v49 Xtream live-only catalog and capped M3U fallback](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/core.py). Pleazyng independently implements live stream and category resolution, credential-safe playback paths and bounded fallback between a provider’s two formats.
+
+[Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors established the [provider limits](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/settings.py) and [channel-count validation](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/core.py). Pleazyng independently implements these limits using its Dart importer and original boundary fixtures.
+
+[M3U Web Picker v49](https://github.com/zschmook/m3u-web-picker/tree/8822e68538ac91ab25bf805a74fa6bacdc2b7897), created by [Zachary Schmook (@zschmook)](https://github.com/zschmook) and contributors, inspired Pleazyng's native local playlist import, provider and custom group selection, independent channel order, M3U/XMLTV export, interval-based guide merging, profile-owned backup-source selection and the native guide-based sports browser. The public U.S. preview lineup comes from [IPTV-org](https://github.com/iptv-org/iptv). Pleazyng implements these behaviors independently. Upstream's [provider operations](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/api/providers.py) and [guide merge](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/sports/guide.py) are the behavior references. Pleazyng’s on-device series scheduling also draws on the upstream [DVR series rules](https://github.com/zschmook/m3u-web-picker/blob/8822e68538ac91ab25bf805a74fa6bacdc2b7897/src/dvr.py). The [native feature status](docs/features/native-iptv-parity.md) records implemented and outstanding workflows.
+
+
+## Watch Together room recovery
+
+[@edde746](https://github.com/edde746) authored the upstream [OpenWatchParty Dart client](https://github.com/edde746/openwatchparty/tree/main/sdk/dart). Pleazyng vendors the Apache-2.0 client from the [1.1.0 release](https://pub.dev/packages/openwatchparty/versions/1.1.0) and extends its authenticated reconnect path to restore the original member after process loss. The package retains its upstream license.
+
 ## Media-file workflows and format documentation
 
 - The retained live-buffer recording interaction draws on [TiVo’s viewer guide](https://www.tivo.com/assets/pdfs/accessibility/TiVo_VG_Complete.pdf).
@@ -264,7 +277,7 @@ endorsement of this fork.
 
 - [Switch Android mpv display mode before decoder creation](https://github.com/edde746/plezy/commit/c577edda5cdf4b0a0c3d5dd0d543e432c5bed0d8), contributed upstream by [@edde746](https://github.com/edde746): Pleazyng independently adapted hold VOD decoding at demux preload while display matching settles, bound and cancel stale holds, reject predecessor-player tokens, and retain first-frame Live TV matching, Dolby/FEL routing and motion-processing output targets.
 
-- [Adaptive fold and vertical-bar mobile layout](https://github.com/edde746/plezy/commit/b4192d6f355921aa9dbdd89b000012e7c4496fa7), contributed upstream by [@v-vincere](https://github.com/v-vincere): Pleazyng independently adapted place navigation in the system bar, keep hosted sheets on one side of a fold and retain player ownership across route replacement; preserve the fork’s scrollable navigation and system-bar styling.
+- [Adaptive fold and vertical-bar mobile layout](https://github.com/edde746/plezy/commit/b4192d6f355921aa9dbdd89b000012e7c4496fa7), contributed upstream by [@v-vincere](https://github.com/v-vincere): Pleazyng independently adapted place navigation in the system bar, keep hosted sheets on one side of a fold and retain player ownership across route replacement; preserve the fork’s scrollable navigation and system-bar styling. The fork extends that foundation with shared pane geometry, retained playback and detail navigation, reader spreads, compact music controls, and SDK verification.
 
 - [Sheet safe areas beside a vertical system bar](https://github.com/edde746/plezy/commit/04ec8506c78dc29b4dfc18f751943fb6ecb89eec), contributed upstream by [@edde746](https://github.com/edde746): Pleazyng independently adapted remove the opposite status-bar inset and align hosted and modal sheets with the mobile content edge while retaining keyboard insets and back handling.
 

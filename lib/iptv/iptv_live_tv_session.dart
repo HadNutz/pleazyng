@@ -11,6 +11,7 @@ class IptvLiveTvPlaybackSession implements LiveTvPlaybackSession, LiveTvTimeshif
     required String initialUrl,
     required this._refreshUrl,
     this.streamHeaders = const {},
+    this.reopen,
     this.localTimeShiftEnabled = true,
     this.isCatchup = false,
     this.programInfo = LiveProgramInfo.none,
@@ -19,6 +20,7 @@ class IptvLiveTvPlaybackSession implements LiveTvPlaybackSession, LiveTvTimeshif
   String? _url;
   final Future<String?> Function() _refreshUrl;
   final Map<String, String> streamHeaders;
+  final Future<LiveTvPlaybackSession?> Function()? reopen;
   final LiveProgramInfo programInfo;
   final bool localTimeShiftEnabled;
   final bool isCatchup;
@@ -102,6 +104,14 @@ class IptvLiveTvPlaybackSession implements LiveTvPlaybackSession, LiveTvTimeshif
   @override
   Future<LiveTvPlaybackSession?> recover({required bool directStream, required bool directStreamAudio}) async {
     if (_closed) return null;
+    if (reopen case final reopen?) {
+      final next = await reopen();
+      if (_closed) {
+        await next?.discard();
+        return null;
+      }
+      return next;
+    }
     final refreshed = await _refreshUrl();
     if (refreshed == null) return null;
     return IptvLiveTvPlaybackSession(

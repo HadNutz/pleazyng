@@ -244,6 +244,7 @@
     "checkFailed": "Det gick inte att söka efter uppdateringar"
   },
   "settings": {
+    "foldableDisplay": "Gångjärn på vikbar skärm",
     "title": "Inställningar",
     "supportDeveloper": "Stöd Pleazyng",
     "supportDeveloperDescription": "Donera för att stödja utvecklingen",
@@ -433,7 +434,6 @@
     "importSettings": "Importera inställningar",
     "importSettingsDescription": "Återställ inställningar från en fil",
     "importSettingsConfirm": "Detta ersätter dina nuvarande inställningar. Fortsätta?",
-    "importSettingsSuccess": "Inställningar importerade",
     "importSettingsCounts": "Tillämpade inställningar: ${applied}. Överhoppade: ${skipped}.",
     "importSettingsInvalidFile": "Filen är inte en giltig export av Pleazyng-inställningar",
     "importSettingsNoUser": "Logga in innan du importerar inställningar",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "Säkerhetskopian har laddats upp. Spara den här webbadressen. Efter en ny installation anger du den under molnsäkerhetskopiering och väljer ”${action}”.",
     "cloudBackupRestore": "Återställ backup",
     "cloudBackupRestoreConfirm": "Detta kommer att ersätta matchande bärbara inställningar på denna enhet.",
-    "cloudBackupRestored": "Inställningar återställda från moln backup",
     "shortcutsReset": "Genvägarna har återställts till standard",
     "resetShortcutsConfirm": "Detta ersätter dina anpassade genvägar med standardgenvägarna. Fortsätta?",
     "about": "Om",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "Lägg till eller ta bort URL:er för ${serverName}. Pleazyng använder den nåbara URL:en med lägst latens."
   },
   "iptv": {
+    "backupFeeds": "Reservkällor i uppspelningsordning",
+    "lineupOrder": "Kanalordning",
+    "orderChanged": "Kanalordningen har ändrats. Granska den och försök igen.",
+    "localPlaylist": "M3U-fil",
+    "pastePlaylist": "Klistra in spellistans text",
+    "playlistBase": "Bas-URL för relativa länkar (valfritt)",
+    "localPlaylistHelp": "Importera en privat kopia av en M3U- eller M3U8-kanallista. Du kan ersätta den med en annan fil.",
+    "showMatches": "Visa matchande kanaler",
+    "hideMatches": "Dölj matchande kanaler",
+    "pickerCredit": "Inspirerat av · M3U Web Picker · Zachary Schmook (@zschmook) och medverkande",
+    "exportPrivate": "Strömadresser kan innehålla inloggningsuppgifter till din leverantör. Spara listan på en privat plats.",
+    "dynamicStreamExport": "Portalen skapar en ny länk vid varje uppspelning. Programguiden kan exporteras.",
+    "moveUp": "rör sig upp",
+    "moveDown": "Flytta ner",
+    "choosePlaylist": "Välj Playlist fil",
+    "affectedChannels": "Kanaler · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "Ange bild-URL",
     "imageUrl": "Bild-URL",
     "metadataUpdated": "Metadata har uppdaterats",
+    "metadataConflict": "Någon annan har ändrat samma fält. Öppna redigeraren igen och kontrollera de senaste värdena innan du sparar.",
     "metadataUpdateFailed": "Det gick inte att uppdatera metadata",
     "artworkUpdated": "Bildmaterialet har uppdaterats",
     "artworkUpdateFailed": "Det gick inte att uppdatera bildmaterialet",
@@ -3676,7 +3692,6 @@
     "connectedTo": "Anslut till ${device}",
     "device": "Castanläggning",
     "readyToCast": "Redo att kasta",
-    "subtitle": "Undertexter",
     "serverNotAvailable": "Media server är inte tillgänglig.",
     "stopCasting": "Sluta casting",
     "startFailed": "Kan inte börja kastar. kontrollera serveren och försök igen."
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Importerade prenumerationer: ${imported}. Dubbletter: ${duplicates}. Överhoppade: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "URL till musikrelä",
     "relayHint": "Aktivera på mottagaren och parkoppla en gång på samma nätverk. Håll Pleazyng öppet. Reläet skickar krypterade musikkommandon och ser nätverksadresser. Varje spelare strömmar från sin egen medieserver.",
     "relayInvalid": "Ange en HTTPS-adress till reläet."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Bokmärken från en okänd version",
+    "assignToVersion": "Koppla till den här versionen"
   }
 }

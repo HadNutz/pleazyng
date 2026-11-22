@@ -122,8 +122,16 @@ class KaraokePackages {
           if (await audio.first.length() > 16 * 1024 * 1024) {
             throw const FormatException('MIDI exceeds 16 MiB');
           }
-          parsed = parseKaraokeMidi(await audio.first.readAsBytes());
-          warnings.addAll(parsed.warnings);
+          final midi = parseKaraokeMidi(await audio.first.readAsBytes());
+          warnings.addAll(midi.warnings);
+          final sidecar = parsed;
+          parsed = sidecar == null
+              ? midi
+              : KaraokeTextImport(
+                  sidecar.lyrics.lines.isNotEmpty ? sidecar.lyrics : midi.lyrics,
+                  notes: midi.notes.isNotEmpty ? midi.notes : sidecar.notes,
+                  metadata: {...midi.metadata, ...sidecar.metadata},
+                );
         }
         final assets = <KaraokeAsset>[];
         for (final file in files) {

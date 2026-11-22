@@ -66,6 +66,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$dialog$es dialog = Translations$dialog$es.internal(_root);
 	@override late final Translations$profiles$es profiles = Translations$profiles$es.internal(_root);
 	@override late final Translations$connections$es connections = Translations$connections$es.internal(_root);
+	@override late final Translations$iptv$es iptv = Translations$iptv$es.internal(_root);
 	@override late final Translations$accountPreferences$es accountPreferences = Translations$accountPreferences$es.internal(_root);
 	@override late final Translations$discover$es discover = Translations$discover$es.internal(_root);
 	@override late final Translations$errors$es errors = Translations$errors$es.internal(_root);
@@ -124,6 +125,7 @@ class TranslationsEs extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$es musicExperience = Translations$musicExperience$es.internal(_root);
 	@override late final Translations$musicTools$es musicTools = Translations$musicTools$es.internal(_root);
 	@override late final Translations$musicDevices$es musicDevices = Translations$musicDevices$es.internal(_root);
+	@override late final Translations$bookmarkMigration$es bookmarkMigration = Translations$bookmarkMigration$es.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -389,6 +391,7 @@ class Translations$settings$es extends Translations$settings$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Bisagra de la pantalla plegable';
 	@override String get title => 'Configuración';
 	@override String get supportDeveloper => 'Apoya Pleazyng';
 	@override String get supportDeveloperDescription => 'Dona para apoyar el desarrollo';
@@ -580,7 +583,6 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get importSettings => 'Importar configuración';
 	@override String get importSettingsDescription => 'Restaurar preferencias desde un archivo';
 	@override String get importSettingsConfirm => 'Esto reemplazará tu configuración actual. ¿Continuar?';
-	@override String get importSettingsSuccess => 'Configuración importada';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Ajustes aplicados: ${applied}. Omitidos: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Este archivo no es una exportación válida de Pleazyng';
 	@override String get importSettingsNoUser => 'Inicia sesión antes de importar la configuración';
@@ -594,7 +596,6 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Se ha subido la copia de seguridad. Guarda esta URL. Tras una nueva instalación, introdúcela en la sección de copias de seguridad en la nube y selecciona «${action}».';
 	@override String get cloudBackupRestore => 'Restaurar la Backup';
 	@override String get cloudBackupRestoreConfirm => 'Esto sustituirá las configuraciones portátiles que se ajustan a este dispositivo.';
-	@override String get cloudBackupRestored => 'Configuraciones restauradas de la backup en la nube';
 	@override String get shortcutsReset => 'Atajos restablecidos a los valores predeterminados';
 	@override String get resetShortcutsConfirm => 'Esto reemplazará tus atajos personalizados por los predeterminados. ¿Continuar?';
 	@override String get about => 'Acerca de';
@@ -1648,6 +1649,31 @@ class Translations$connections$es extends Translations$connections$en {
 	@override String get signInAgain => 'Iniciar sesión de nuevo';
 	@override String editMediaBrowserTitle({required Object product}) => 'Editar conexión de ${product}';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Añade o elimina URL para ${serverName}. Pleazyng usará la URL accesible con menor latencia.';
+}
+
+// Path: iptv
+class Translations$iptv$es extends Translations$iptv$en {
+	Translations$iptv$es.internal(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'Fuentes de respaldo en orden de reproducción';
+	@override String get lineupOrder => 'Orden de canales';
+	@override String get orderChanged => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.';
+	@override String get localPlaylist => 'Archivo M3U';
+	@override String get pastePlaylist => 'Pegar el texto de la lista';
+	@override String get playlistBase => 'URL base para enlaces relativos (opcional)';
+	@override String get localPlaylistHelp => 'Importa una copia privada de una lista de canales M3U o M3U8. Puedes reemplazarla con otro archivo.';
+	@override String get showMatches => 'Mostrar canales coincidentes';
+	@override String get hideMatches => 'Ocultar canales coincidentes';
+	@override String get pickerCredit => 'Inspirado en · M3U Web Picker · Zachary Schmook (@zschmook) y colaboradores';
+	@override String get exportPrivate => 'Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.';
+	@override String get dynamicStreamExport => 'El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.';
+	@override String get moveUp => 'Moverse arriba';
+	@override String get moveDown => 'Moverse hacia abajo';
+	@override String get choosePlaylist => 'Elegir el archivo de playlist';
+	@override String affectedChannels({required Object count}) => 'Canales · ${count}';
 }
 
 // Path: accountPreferences
@@ -2731,6 +2757,7 @@ class Translations$metadataEdit$es extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Introducir URL de imagen';
 	@override String get imageUrl => 'URL de imagen';
 	@override String get metadataUpdated => 'Metadatos actualizados';
+	@override String get metadataConflict => 'Otra persona ha modificado el mismo campo. Vuelve a abrir el editor para revisar los valores actuales antes de guardar.';
 	@override String get metadataUpdateFailed => 'Error al actualizar los metadatos';
 	@override String get artworkUpdated => 'Imágenes actualizadas';
 	@override String get artworkUpdateFailed => 'Error al actualizar las imágenes';
@@ -3131,7 +3158,6 @@ class Translations$cast$es extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Conectado a ${device}';
 	@override String get device => 'Dispositivo de Cast';
 	@override String get readyToCast => 'Prepara para lanzar';
-	@override String get subtitle => 'Subtítulos';
 	@override String get serverNotAvailable => 'El servidor de medios no está disponible.';
 	@override String get stopCasting => 'Dejar de casting';
 	@override String get startFailed => 'No puedo empezar a casting. comprobar el servidor y intentarlo de nuevo.';
@@ -4124,6 +4150,7 @@ class Translations$podcasts$es extends Translations$podcasts$en {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Suscripciones importadas: ${imported}. Duplicadas: ${duplicates}. Omitidas: ${skipped}.';
 	@override String get autoDownloadLatest => 'Descargar automáticamente los episodios más recientes';
 	@override String get removeFinishedAfter => 'Eliminar las descargas terminadas después de';
 }
@@ -4609,6 +4636,17 @@ class Translations$musicDevices$es extends Translations$musicDevices$en {
 	@override String get relay => 'URL del relé de música';
 	@override String get relayHint => 'Actívalo en el dispositivo receptor y vincula una vez en la misma red. Mantén Pleazyng abierto. El relé transmite controles de música cifrados y ve las direcciones de red. Cada reproductor transmite desde su propio servidor multimedia.';
 	@override String get relayInvalid => 'Introduce una dirección HTTPS del relé.';
+}
+
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$es extends Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$es.internal(TranslationsEs root) : this._root = root, super.internal(root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Marcadores de una versión sin identificar';
+	@override String get assignToVersion => 'Asignar a esta versión';
 }
 
 // Path: appIcon.names
@@ -5980,6 +6018,7 @@ extension on TranslationsEs {
 			'update.viewRelease' => 'Ver versión',
 			'update.latestVersion' => 'Ya estás en la última versión',
 			'update.checkFailed' => 'Error al buscar actualizaciones',
+			'settings.foldableDisplay' => 'Bisagra de la pantalla plegable',
 			'settings.title' => 'Configuración',
 			'settings.supportDeveloper' => 'Apoya Pleazyng',
 			'settings.supportDeveloperDescription' => 'Dona para apoyar el desarrollo',
@@ -6163,7 +6202,6 @@ extension on TranslationsEs {
 			'settings.importSettings' => 'Importar configuración',
 			'settings.importSettingsDescription' => 'Restaurar preferencias desde un archivo',
 			'settings.importSettingsConfirm' => 'Esto reemplazará tu configuración actual. ¿Continuar?',
-			'settings.importSettingsSuccess' => 'Configuración importada',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Ajustes aplicados: ${applied}. Omitidos: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Este archivo no es una exportación válida de Pleazyng',
 			'settings.importSettingsNoUser' => 'Inicia sesión antes de importar la configuración',
@@ -6177,7 +6215,6 @@ extension on TranslationsEs {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Se ha subido la copia de seguridad. Guarda esta URL. Tras una nueva instalación, introdúcela en la sección de copias de seguridad en la nube y selecciona «${action}».',
 			'settings.cloudBackupRestore' => 'Restaurar la Backup',
 			'settings.cloudBackupRestoreConfirm' => 'Esto sustituirá las configuraciones portátiles que se ajustan a este dispositivo.',
-			'settings.cloudBackupRestored' => 'Configuraciones restauradas de la backup en la nube',
 			'settings.shortcutsReset' => 'Atajos restablecidos a los valores predeterminados',
 			'settings.resetShortcutsConfirm' => 'Esto reemplazará tus atajos personalizados por los predeterminados. ¿Continuar?',
 			'settings.about' => 'Acerca de',
@@ -6272,9 +6309,9 @@ extension on TranslationsEs {
 			'settings.discordRichPresenceDescription' => 'Mostrar lo que estás viendo en Discord',
 			'settings.services' => 'Servicios',
 			'settings.servicesDescription' => 'Conecta Trakt, MyAnimeList, Seerr y más',
+			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
 			_ => null,
 		} ?? switch (path) {
-			'settings.manageLibrariesDescription' => 'Reordena y oculta bibliotecas',
 			'settings.companionRemoteServer' => 'Servidor de control remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móviles en tu red controlen esta aplicación',
 			'settings.companionRemoteServerStartFailed' => 'No se pudo iniciar el servidor de control remoto',
@@ -6786,9 +6823,9 @@ extension on TranslationsEs {
 			'accessibility.largeTargetsHint' => 'Dale controles compartidos más espacio para el toque y la navegación asistiva.',
 			'accessibility.navigationHint' => 'Usa Tab y Shift+Tab para moverte entre los controles, Enter o la barra espaciadora para activarlos y Escape o Atrás para cerrar. El zoom y las preferencias de lectura están disponibles cuando hay un libro abierto.',
 			'accessibility.textSizeDescription' => 'Escala el texto de la interfaz en Pleazyng además de la configuración de tamaño del texto del sistema de su dispositivo.',
+			'accessibility.boldTextHint' => 'Utilice un peso más pesado para las etiquetas de interfaz y los mensajes para que sean más fáciles de distinguir.',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.boldTextHint' => 'Utilice un peso más pesado para las etiquetas de interfaz y los mensajes para que sean más fáciles de distinguir.',
 			'tooltips.shufflePlay' => 'Reproducción aleatoria',
 			'tooltips.playTrailer' => 'Reproducir tráiler',
 			'tooltips.markAsWatched' => 'Marcar como visto',
@@ -7134,6 +7171,22 @@ extension on TranslationsEs {
 			'connections.signInAgain' => 'Iniciar sesión de nuevo',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Editar conexión de ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Añade o elimina URL para ${serverName}. Pleazyng usará la URL accesible con menor latencia.',
+			'iptv.backupFeeds' => 'Fuentes de respaldo en orden de reproducción',
+			'iptv.lineupOrder' => 'Orden de canales',
+			'iptv.orderChanged' => 'El orden ha cambiado. Revísalo e inténtalo de nuevo.',
+			'iptv.localPlaylist' => 'Archivo M3U',
+			'iptv.pastePlaylist' => 'Pegar el texto de la lista',
+			'iptv.playlistBase' => 'URL base para enlaces relativos (opcional)',
+			'iptv.localPlaylistHelp' => 'Importa una copia privada de una lista de canales M3U o M3U8. Puedes reemplazarla con otro archivo.',
+			'iptv.showMatches' => 'Mostrar canales coincidentes',
+			'iptv.hideMatches' => 'Ocultar canales coincidentes',
+			'iptv.pickerCredit' => 'Inspirado en · M3U Web Picker · Zachary Schmook (@zschmook) y colaboradores',
+			'iptv.exportPrivate' => 'Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.',
+			'iptv.dynamicStreamExport' => 'El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.',
+			'iptv.moveUp' => 'Moverse arriba',
+			'iptv.moveDown' => 'Moverse hacia abajo',
+			'iptv.choosePlaylist' => 'Elegir el archivo de playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canales · ${count}',
 			'accountPreferences.sectionTitle' => 'Preferencias de cuenta',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Opciones de audio, subtítulos y biblioteca guardadas en ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Opciones de audio, subtítulos y biblioteca guardadas en ${count} cuentas',
@@ -7286,6 +7339,8 @@ extension on TranslationsEs {
 			'discover.findNext.apply' => 'Aplicar',
 			'discover.findNext.openFailed' => 'Esta opción ya no está disponible. Actualiza para comprobarlo de nuevo.',
 			'discover.findNext.changeFailed' => 'No se pudo guardar el cambio. Inténtalo de nuevo.',
+			_ => null,
+		} ?? switch (path) {
 			'discover.findNext.savedLimit' => 'La lista de sugerencias guardadas está llena. Quita una para guardar otra.',
 			'discover.findNext.chooseHint' => 'Abre un título, guárdalo para después o pasa al siguiente.',
 			'discover.findNext.howItWorks' => 'Cómo funciona',
@@ -7300,8 +7355,6 @@ extension on TranslationsEs {
 			'discover.findNext.releaseToConfirm' => 'Suelta para confirmar',
 			'discover.findNext.remoteHint' => 'Portada enfocada: ← / → elegir · Seleccionar: detalles · ↑ / ↓ mover el foco',
 			'discover.studio' => 'Estudio',
-			_ => null,
-		} ?? switch (path) {
 			'discover.rating' => 'Valoración',
 			'discover.director' => 'Director',
 			'discover.directors' => 'Directores',
@@ -7800,6 +7853,8 @@ extension on TranslationsEs {
 			'liveTv.failedToBuildStreamUrl' => 'No se pudo generar la URL de transmisión',
 			'liveTv.playbackStartFailed' => ({required Object reason}) => 'No se pudo iniciar el canal: ${reason}',
 			'liveTv.channelSwitchFailed' => ({required Object reason}) => 'No se pudo cambiar de canal: ${reason}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.title' => 'Colecciones',
 			'collections.collection' => 'Colección',
 			'collections.empty' => 'La colección está vacía',
@@ -7814,8 +7869,6 @@ extension on TranslationsEs {
 			'collections.addedToCollection' => 'Añadido a la colección',
 			'collections.errorAddingToCollection' => 'Error al añadir a la colección',
 			'collections.created' => 'Colección creada',
-			_ => null,
-		} ?? switch (path) {
 			'collections.removeFromCollection' => 'Eliminar de la colección',
 			'collections.removeFromCollectionConfirm' => ({required Object title}) => '¿Eliminar "${title}" de esta colección?',
 			'collections.removedFromCollection' => 'Eliminado de la colección',
@@ -8314,6 +8367,8 @@ extension on TranslationsEs {
 			'videoSettings.audioPitch' => 'Cambios de Pitch',
 			'videoSettings.audioPitchDescription' => 'Cambiar la pista sin cambiar la velocidad. MPV La construcción debe incluir Rubber Band.',
 			'videoSettings.audioEffectUnavailable' => 'Este efecto no está disponible para esta pista o MPV La construcción.',
+			_ => null,
+		} ?? switch (path) {
 			'videoSettings.backgroundVideoAudio' => 'Video Audio de fondo',
 			'videoSettings.backgroundVideoAudioDescription' => 'Mantenga el audio de video cuando abandona el reproductor; la imagen está oculta hasta que vuelva. Android utiliza una notificación de reproducción de medios.',
 			'videoSettings.audioNormalization' => 'Normalizar volumen',
@@ -8328,8 +8383,6 @@ extension on TranslationsEs {
 			'performanceOverlay.passthrough' => 'Transferencia directa',
 			'performanceOverlay.aspect' => 'Aspecto',
 			'performanceOverlay.rotation' => 'Rotación',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.dvSource' => 'Origen DV',
 			'performanceOverlay.dvPath' => 'Ruta DV',
 			'performanceOverlay.dvRouteDecoder' => 'Decodificador Dolby Vision',
@@ -8424,6 +8477,7 @@ extension on TranslationsEs {
 			'metadataEdit.enterImageUrl' => 'Introducir URL de imagen',
 			'metadataEdit.imageUrl' => 'URL de imagen',
 			'metadataEdit.metadataUpdated' => 'Metadatos actualizados',
+			'metadataEdit.metadataConflict' => 'Otra persona ha modificado el mismo campo. Vuelve a abrir el editor para revisar los valores actuales antes de guardar.',
 			'metadataEdit.metadataUpdateFailed' => 'Error al actualizar los metadatos',
 			'metadataEdit.artworkUpdated' => 'Imágenes actualizadas',
 			'metadataEdit.artworkUpdateFailed' => 'Error al actualizar las imágenes',
@@ -8781,7 +8835,6 @@ extension on TranslationsEs {
 			'cast.connectedTo' => ({required Object device}) => 'Conectado a ${device}',
 			'cast.device' => 'Dispositivo de Cast',
 			'cast.readyToCast' => 'Prepara para lanzar',
-			'cast.subtitle' => 'Subtítulos',
 			'cast.serverNotAvailable' => 'El servidor de medios no está disponible.',
 			'cast.stopCasting' => 'Dejar de casting',
 			'cast.startFailed' => 'No puedo empezar a casting. comprobar el servidor y intentarlo de nuevo.',
@@ -8828,6 +8881,8 @@ extension on TranslationsEs {
 			'watchLink.dialogMovieHint' => 'Abriendo este enlace juega la película.',
 			'watchLink.copy' => 'Copia',
 			'watchLink.copied' => 'Link copiado',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.title' => 'Home Layout',
 			'homeLayout.resetToast' => 'Home Reset a la versión original de la versión Pleazyng',
 			'homeLayout.resetHeroTitle' => '¿Recuperar el layout de héroe a la stock Pleazyng?',
@@ -8842,8 +8897,6 @@ extension on TranslationsEs {
 			'homeLayout.plexHomeManager' => 'Plex Director de la casa',
 			'homeLayout.managePlexRows' => 'Gestión Plex líneas en Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Abierto a organizar las líneas seleccionadas por el hogar',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.organizeHomeRows' => 'Organizar las rutas domésticas',
 			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} líneas: movimiento, Hero, Auto-slide, eliminación',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizar ${library} líneas',
@@ -9342,6 +9395,8 @@ extension on TranslationsEs {
 			'audiobook.disableSync' => 'Desactivar la sincronización en este dispositivo',
 			'audiobook.syncSourceDisconnect' => 'Eliminar esta fuente dejará de leer y escuchar la sincronización aquí. los archivos de sincronización encriptados permanecerán en el proveedor.',
 			'audiobook.syncReconnect' => 'Reconectar la cuenta de almacenamiento',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.lastSynced' => ({required Object time}) => 'Última sincronización en ${time}',
 			'audiobook.syncPrivacy' => 'La sincronización en la nube guarda datos cifrados de progreso, finalización, marcadores y notas en archivos de sincronización de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan. Los tokens de cuenta y las contraseñas no se suben. Google Drive y OneDrive usan el almacenamiento de la aplicación; Dropbox usa Pleazyng Sync; WebDAV y S3 usan la carpeta o el prefijo elegidos. Activar la sincronización puede requerir permiso de escritura del proveedor, pero la aplicación solo escribe esos archivos de estado. La sincronización en la nube y la sincronización compatible de progreso y marcadores con el servidor funcionan de forma independiente, con reintentos separados. Los conflictos se muestran para que los resuelvas. Desactivar la sincronización conserva el historial local y el estado remoto.',
 			'audiobook.syncConflicts' => 'Elegir dónde volver',
@@ -9356,8 +9411,6 @@ extension on TranslationsEs {
 			'audiobook.bookRemaining' => ({required Object time}) => 'El tiempo que queda en este libro: ${time}',
 			'audiobook.chapterRemaining' => ({required Object time}) => 'Tiempo restante en este capítulo: ${time}',
 			'audiobook.unknownRemaining' => 'Tiempo completo disponible a medida que se juegan partes',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.undoSeek' => 'La última búsqueda',
 			'audiobook.customSpeed' => 'Velocidad de reproducción personalizada',
 			'audiobook.speedHelp' => 'Seleccione una velocidad de 0.25× a 4×.',
@@ -9603,6 +9656,7 @@ extension on TranslationsEs {
 			'issueReport.privacy' => 'El borrador incluye la versión de la aplicación, la plataforma y el número de conexiones. No incluye direcciones de servidores, nombres de cuentas o perfiles, títulos ni rutas de archivos.',
 			'issueReport.logPrivacy' => 'Los registros son opcionales. Revísalos antes de subirlos. Su ID se añade al borrador, que podría ser público.',
 			'issueReport.openDraft' => 'Abrir borrador de GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Suscripciones importadas: ${imported}. Duplicadas: ${duplicates}. Omitidas: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Descargar automáticamente los episodios más recientes',
 			'podcasts.removeFinishedAfter' => 'Eliminar las descargas terminadas después de',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Vista previa de la codificación de subtítulos',
@@ -9855,6 +9909,8 @@ extension on TranslationsEs {
 			'bonusExtras.serviceUrl' => 'Dirección del servidor de descubrimiento',
 			'bonusExtras.serviceToken' => 'Token de acceso al servicio de descubrimiento',
 			'bonusExtras.aiMode' => 'Asistencia con IA',
+			_ => null,
+		} ?? switch (path) {
 			'bonusExtras.aiOff' => 'Desactivada',
 			'bonusExtras.aiDevice' => 'En este dispositivo',
 			'bonusExtras.aiServer' => 'En mi servidor',
@@ -9870,8 +9926,6 @@ extension on TranslationsEs {
 			'bonusExtras.failed' => 'No se pudieron actualizar los extras. Los extras disponibles en tu biblioteca siguen siendo accesibles.',
 			'bonusExtras.partial' => 'Algunas fuentes en línea no están disponibles. Se muestran los resultados disponibles.',
 			'bonusExtras.linkTitle' => 'Título del extra',
-			_ => null,
-		} ?? switch (path) {
 			'bonusExtras.linkUrl' => 'Enlace de YouTube o Vimeo',
 			'bonusExtras.invalidLink' => 'Introduce un título y un enlace HTTPS válido a un vídeo de YouTube o Vimeo.',
 			'bonusExtras.showHidden' => 'Restablecer extras y editores ocultos',
@@ -10027,6 +10081,8 @@ extension on TranslationsEs {
 			'musicDevices.relay' => 'URL del relé de música',
 			'musicDevices.relayHint' => 'Actívalo en el dispositivo receptor y vincula una vez en la misma red. Mantén Pleazyng abierto. El relé transmite controles de música cifrados y ve las direcciones de red. Cada reproductor transmite desde su propio servidor multimedia.',
 			'musicDevices.relayInvalid' => 'Introduce una dirección HTTPS del relé.',
+			'bookmarkMigration.unassigned' => 'Marcadores de una versión sin identificar',
+			'bookmarkMigration.assignToVersion' => 'Asignar a esta versión',
 			_ => null,
 		};
 	}

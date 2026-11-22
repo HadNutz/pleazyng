@@ -740,6 +740,14 @@ class SourceRepository {
         final row = stale[index];
         final entry = entries[index];
         final id = row.read<String>('id');
+        final parent = entry.parentId;
+        // Recognize groups made before the explicit marker was stored as well.
+        if (parent != null &&
+            entry.kind == SourceItemKind.audiobook &&
+            (entry.identifiers['groupedAudioFolder'] == parent || id == 'group:$parent')) {
+          await _refreshAudioGroup(profile, source, generation, entry, parent);
+          continue;
+        }
         final retainedOffline = entry.files.any((file) => completed[sourceKey(source, file.id)] == file.fingerprint);
         final hasHistory =
             localSource &&
@@ -771,6 +779,40 @@ class SourceRepository {
       }
     }
   });
+
+  Future<void> _refreshAudioGroup(
+    String profile,
+    String source,
+    int generation,
+    SourceEntry group,
+    String parent,
+  ) async {
+    final siblings = await database
+        .customSelect(
+          'SELECT payload FROM entries WHERE profile=? AND source=? AND parent=? AND scan_generation=? AND id!=?',
+          variables: [Variable(profile), Variable(source), Variable(parent), Variable(generation), Variable(group.id)],
+        )
+        .get();
+    final current = <String, PublicationFile>{};
+    for (final row in siblings) {
+      final child = SourceEntry.fromJson(sourceMap(jsonDecode(row.read<String>('payload'))));
+      if (!child.unavailable) {
+        for (final member in child.files) {
+          current[member.id] = member;
+        }
+      }
+    }
+    final complete = group.files.every((file) => current.containsKey(file.id));
+    // Keep the original ordered membership while a part is missing so restoring
+    // it can recover the same edition and cursor.
+    final updated = group.copyWith(
+      files: complete ? [for (final file in group.files) current[file.id]!] : group.files,
+      unavailable: !complete,
+      identifiers: {...group.identifiers, 'groupedAudioFolder': parent},
+    );
+    await cacheEntries(profile, [updated]);
+    await markScannedEntries(profile, generation, [updated]);
+  }
 
   Future<Map<String, String>> _completedDownloadFingerprints(
     String profile,
@@ -1369,6 +1411,43 @@ class SourceRepository {
     ]);
   }
 
+  /// WebDAV preserves client bookmark IDs and explicit deletion revisions.
+  Future<void> mergeProviderAnnotations(String profile, String entry, List<BookAnnotation> values) =>
+      database.transaction(() async {
+        _writable(profile);
+        for (final note in values) {
+          if (note.entryKey != entry || note.id.isEmpty) continue;
+          await database.customStatement(
+            '''
+            INSERT INTO annotations(profile,id,entry,payload)
+            SELECT ?,?,?,? WHERE NOT EXISTS (
+              SELECT 1 FROM events WHERE profile=? AND key=? AND kind='annotation' AND pending=1
+                AND json_extract(payload,'\$.id')=?)
+            ON CONFLICT(profile,id) DO UPDATE SET payload=excluded.payload
+            WHERE annotations.entry=excluded.entry
+              AND json_extract(annotations.payload,'\$.edition')=?
+              AND json_extract(annotations.payload,'\$.mode')=?
+              AND (json_extract(annotations.payload,'\$.updatedAt') < ?
+                OR (json_extract(annotations.payload,'\$.updatedAt') = ? AND ?=1))
+          ''',
+            [
+              profile,
+              note.id,
+              entry,
+              jsonEncode(note.toJson()),
+              profile,
+              entry,
+              note.id,
+              note.edition,
+              note.mode.name,
+              note.updatedAt,
+              note.updatedAt,
+              note.deleted ? 1 : 0,
+            ],
+          );
+        }
+      });
+
   /// Applies an annotation pulled from encrypted sync and queues it for the
   /// entry's provider target. The caller runs this inside the same transaction
   /// that commits the cloud sync baseline.
@@ -1441,40 +1520,43 @@ class SourceRepository {
 
   /// The caller carries the last committed revision. An old screen cannot
   /// overwrite a newer session or an explicit reset when its final tick lands.
-  Future<PublicationProgress> saveProgress(String profile, PublicationProgress value, {String kind = 'position'}) =>
-      database.transaction(() async {
-        _writable(profile);
-        final current = await progress(profile, value.key);
-        if (current != null && current.revision != value.revision) {
-          throw const SourceException(SourceFailure.conflict);
-        }
-        final next = value.copyWith(
-          revision: (current?.revision ?? 0) + 1,
-          updatedAt: DateTime.now().millisecondsSinceEpoch,
-        );
-        final payload = jsonEncode(next.toJson());
-        await database.customStatement(
-          'INSERT INTO progress(profile,key,payload,revision,pending,entry) VALUES (?,?,?,?,1,?) '
-          'ON CONFLICT(profile,key) DO UPDATE SET payload=excluded.payload,revision=excluded.revision,pending=1,entry=excluded.entry',
-          [profile, next.key, payload, next.revision, next.entryKey],
-        );
-        await database.customStatement('INSERT INTO events VALUES (?,?,?,?,?,?,1)', [
-          profile,
-          _uuid.v4(),
-          next.key,
-          payload,
-          kind,
-          next.updatedAt,
-        ]);
-        // The latest absolute snapshot is sufficient for replay. Preserve a
-        // bounded undo history without growing one row every five seconds forever.
-        await database.customStatement(
-          'DELETE FROM events WHERE profile=? AND key=? AND kind != ? AND rowid NOT IN '
-          '(SELECT rowid FROM events WHERE profile=? AND key=? AND kind != ? ORDER BY rowid DESC LIMIT 100)',
-          [profile, next.key, 'annotation', profile, next.key, 'annotation'],
-        );
-        return next;
-      });
+  Future<PublicationProgress> saveProgress(
+    String profile,
+    PublicationProgress value, {
+    String kind = 'position',
+  }) => database.transaction(() async {
+    _writable(profile);
+    final current = await progress(profile, value.key);
+    if (current != null && current.revision != value.revision) {
+      throw const SourceException(SourceFailure.conflict);
+    }
+    final next = value.copyWith(
+      revision: (current?.revision ?? 0) + 1,
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    final payload = jsonEncode(next.toJson());
+    await database.customStatement(
+      'INSERT INTO progress(profile,key,payload,revision,pending,entry) VALUES (?,?,?,?,1,?) '
+      'ON CONFLICT(profile,key) DO UPDATE SET payload=excluded.payload,revision=excluded.revision,pending=1,entry=excluded.entry',
+      [profile, next.key, payload, next.revision, next.entryKey],
+    );
+    await database.customStatement('INSERT INTO events VALUES (?,?,?,?,?,?,1)', [
+      profile,
+      _uuid.v4(),
+      next.key,
+      payload,
+      kind,
+      next.updatedAt,
+    ]);
+    // The latest absolute snapshot is sufficient for replay. Preserve a
+    // bounded undo history without growing one row every five seconds forever.
+    await database.customStatement(
+      'DELETE FROM events WHERE profile=? AND key=? AND kind != ? AND rowid NOT IN '
+      '(SELECT rowid FROM events WHERE profile=? AND key=? AND kind != ? ORDER BY rowid DESC LIMIT 100)',
+      [profile, next.key, 'annotation', profile, next.key, 'annotation'],
+    );
+    return next;
+  });
 
   Future<void> acknowledge(String profile, String key, int revision) => database.transaction(() async {
     await database.customStatement(

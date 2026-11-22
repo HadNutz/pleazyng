@@ -66,6 +66,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$ko dialog = _Translations$dialog$ko._(_root);
 	@override late final _Translations$profiles$ko profiles = _Translations$profiles$ko._(_root);
 	@override late final _Translations$connections$ko connections = _Translations$connections$ko._(_root);
+	@override late final _Translations$iptv$ko iptv = _Translations$iptv$ko._(_root);
 	@override late final _Translations$accountPreferences$ko accountPreferences = _Translations$accountPreferences$ko._(_root);
 	@override late final _Translations$discover$ko discover = _Translations$discover$ko._(_root);
 	@override late final _Translations$errors$ko errors = _Translations$errors$ko._(_root);
@@ -123,6 +124,7 @@ class TranslationsKo extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$ko musicExperience = _Translations$musicExperience$ko._(_root);
 	@override late final _Translations$musicTools$ko musicTools = _Translations$musicTools$ko._(_root);
 	@override late final _Translations$musicDevices$ko musicDevices = _Translations$musicDevices$ko._(_root);
+	@override late final _Translations$bookmarkMigration$ko bookmarkMigration = _Translations$bookmarkMigration$ko._(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class _Translations$settings$ko extends Translations$settings$en {
 	final TranslationsKo _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => '폴더블 화면 힌지';
 	@override String get title => '설정';
 	@override String get supportDeveloper => 'Pleazyng 후원하기';
 	@override String get supportDeveloperDescription => '기부로 개발을 지원하세요';
@@ -572,7 +575,6 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get importSettings => '설정 가져오기';
 	@override String get importSettingsDescription => '파일에서 기본 설정 복원';
 	@override String get importSettingsConfirm => '현재 설정을 대체합니다. 계속하시겠습니까?';
-	@override String get importSettingsSuccess => '설정 가져오기 완료';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => '적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.';
 	@override String get importSettingsInvalidFile => '유효한 Pleazyng 설정 내보내기 파일이 아닙니다';
 	@override String get importSettingsNoUser => '설정을 가져오기 전에 로그인하세요';
@@ -586,7 +588,6 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => '백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.';
 	@override String get cloudBackupRestore => 'Backup 복구';
 	@override String get cloudBackupRestoreConfirm => '이 장치에서 해당 휴대용 설정을 대체합니다.';
-	@override String get cloudBackupRestored => 'Cloud Backup에서 복구된 설정';
 	@override String get shortcutsReset => '단축키가 기본값으로 재설정되었습니다';
 	@override String get resetShortcutsConfirm => '사용자 지정 단축키가 기본값으로 대체됩니다. 계속하시겠습니까?';
 	@override String get about => '정보';
@@ -1640,6 +1641,31 @@ class _Translations$connections$ko extends Translations$connections$en {
 	@override String get signInAgain => '다시 로그인';
 	@override String editMediaBrowserTitle({required Object product}) => '${product} 연결 편집';
 	@override String editMediaBrowserIntro({required Object serverName}) => '${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다.';
+}
+
+// Path: iptv
+class _Translations$iptv$ko extends Translations$iptv$en {
+	_Translations$iptv$ko._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => '재생 순서에 따른 예비 소스';
+	@override String get lineupOrder => '채널 순서';
+	@override String get orderChanged => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.';
+	@override String get localPlaylist => 'M3U 파일';
+	@override String get pastePlaylist => '재생목록 텍스트 붙여넣기';
+	@override String get playlistBase => '상대 링크의 기본 URL(선택 사항)';
+	@override String get localPlaylistHelp => 'M3U 또는 M3U8 채널 목록을 비공개 사본으로 가져옵니다. 다른 파일로 교체할 수 있습니다.';
+	@override String get showMatches => '일치하는 채널 표시';
+	@override String get hideMatches => '일치하는 채널 숨기기';
+	@override String get pickerCredit => '아이디어 출처 · M3U Web Picker · Zachary Schmook (@zschmook) 외 기여자';
+	@override String get exportPrivate => '스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.';
+	@override String get dynamicStreamExport => '이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.';
+	@override String get moveUp => '움직이기 위하여';
+	@override String get moveDown => '아래로 이동';
+	@override String get choosePlaylist => '플레이리스트 파일 선택';
+	@override String affectedChannels({required Object count}) => '채널 · ${count}';
 }
 
 // Path: accountPreferences
@@ -2719,6 +2745,7 @@ class _Translations$metadataEdit$ko extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => '이미지 URL 입력';
 	@override String get imageUrl => '이미지 URL';
 	@override String get metadataUpdated => '메타데이터가 업데이트되었습니다';
+	@override String get metadataConflict => '다른 사용자가 같은 필드를 수정했습니다. 저장하기 전에 편집기를 다시 열어 최신 값을 확인하세요.';
 	@override String get metadataUpdateFailed => '메타데이터 업데이트 실패';
 	@override String get artworkUpdated => '아트워크가 업데이트되었습니다';
 	@override String get artworkUpdateFailed => '아트워크 업데이트 실패';
@@ -3119,7 +3146,6 @@ class _Translations$cast$ko extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => '${device}에 연결된';
 	@override String get device => '장치 캡처';
 	@override String get readyToCast => '던져질 준비';
-	@override String get subtitle => '자막';
 	@override String get serverNotAvailable => '미디어 서버는 사용할 수 없습니다.';
 	@override String get stopCasting => '카스팅을 멈추세요';
 	@override String get startFailed => '캐스트를 시작할 수 없습니다. 서버를 확인하고 다시 시도하세요.';
@@ -4102,6 +4128,7 @@ class _Translations$podcasts$ko extends Translations$podcasts$en {
 	final TranslationsKo _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => '가져온 구독: ${imported}개. 중복: ${duplicates}개. 건너뜀: ${skipped}개.';
 	@override String get autoDownloadLatest => '최신 에피소드 자동 다운로드';
 	@override String get removeFinishedAfter => '완료한 다운로드를 다음 기간 후 삭제';
 }
@@ -4514,6 +4541,17 @@ class _Translations$musicDevices$ko extends Translations$musicDevices$en {
 	@override String get relay => '음악 릴레이 URL';
 	@override String get relayHint => '수신 기기에서 활성화한 다음 같은 네트워크에서 한 번 페어링하세요. Pleazyng을 열어 두세요. 릴레이는 암호화된 음악 제어를 전달하며 네트워크 주소를 볼 수 있습니다. 각 플레이어는 자체 미디어 서버에서 스트리밍합니다.';
 	@override String get relayInvalid => 'HTTPS 릴레이 주소를 입력하세요.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$ko extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$ko._(TranslationsKo root) : this._root = root, super.internal(root);
+
+	final TranslationsKo _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => '버전을 확인할 수 없는 북마크';
+	@override String get assignToVersion => '이 버전에 할당';
 }
 
 // Path: appIcon.names
@@ -5848,6 +5886,7 @@ extension on TranslationsKo {
 			'update.viewRelease' => '릴리스 정보 보기',
 			'update.latestVersion' => '최신 버전을 사용 중입니다',
 			'update.checkFailed' => '업데이트 확인 실패',
+			'settings.foldableDisplay' => '폴더블 화면 힌지',
 			'settings.title' => '설정',
 			'settings.supportDeveloper' => 'Pleazyng 후원하기',
 			'settings.supportDeveloperDescription' => '기부로 개발을 지원하세요',
@@ -6031,7 +6070,6 @@ extension on TranslationsKo {
 			'settings.importSettings' => '설정 가져오기',
 			'settings.importSettingsDescription' => '파일에서 기본 설정 복원',
 			'settings.importSettingsConfirm' => '현재 설정을 대체합니다. 계속하시겠습니까?',
-			'settings.importSettingsSuccess' => '설정 가져오기 완료',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.',
 			'settings.importSettingsInvalidFile' => '유효한 Pleazyng 설정 내보내기 파일이 아닙니다',
 			'settings.importSettingsNoUser' => '설정을 가져오기 전에 로그인하세요',
@@ -6045,7 +6083,6 @@ extension on TranslationsKo {
 			'settings.cloudBackupComplete' => ({required Object action}) => '백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.',
 			'settings.cloudBackupRestore' => 'Backup 복구',
 			'settings.cloudBackupRestoreConfirm' => '이 장치에서 해당 휴대용 설정을 대체합니다.',
-			'settings.cloudBackupRestored' => 'Cloud Backup에서 복구된 설정',
 			'settings.shortcutsReset' => '단축키가 기본값으로 재설정되었습니다',
 			'settings.resetShortcutsConfirm' => '사용자 지정 단축키가 기본값으로 대체됩니다. 계속하시겠습니까?',
 			'settings.about' => '정보',
@@ -6143,9 +6180,9 @@ extension on TranslationsKo {
 			'settings.manageLibrariesDescription' => '라이브러리 순서를 변경하거나 숨깁니다',
 			'settings.companionRemoteServer' => '컴패니언 리모트 서버',
 			'settings.companionRemoteServerDescription' => '네트워크의 모바일 기기가 이 앱을 제어할 수 있도록 허용',
+			'settings.companionRemoteServerStartFailed' => '컴패니언 리모트 서버를 시작할 수 없습니다',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => '컴패니언 리모트 서버를 시작할 수 없습니다',
 			'settings.companionRemoteServerStopFailed' => '컴패니언 리모트 서버를 중지할 수 없습니다',
 			'settings.autoPip' => '자동 PIP 모드',
 			'settings.autoPipDescription' => '재생 중 앱을 떠나면 자동으로 화면 속 화면 모드로 전환합니다',
@@ -6657,9 +6694,9 @@ extension on TranslationsKo {
 			'accessibility.boldTextHint' => '인터페이스 라벨과 메시지에 더 무거운 무게를 사용하여 구별하기 쉽습니다.',
 			'tooltips.shufflePlay' => '무작위 재생',
 			'tooltips.playTrailer' => '예고편 재생',
+			'tooltips.markAsWatched' => '시청 완료로 표시',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => '시청 완료로 표시',
 			'tooltips.markAsUnwatched' => '미시청으로 표시',
 			'audioTracks.track' => ({required Object n}) => '오디오 트랙 ${n}',
 			'videoControls.audioLabel' => '오디오',
@@ -7002,6 +7039,22 @@ extension on TranslationsKo {
 			'connections.signInAgain' => '다시 로그인',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} 연결 편집',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다.',
+			'iptv.backupFeeds' => '재생 순서에 따른 예비 소스',
+			'iptv.lineupOrder' => '채널 순서',
+			'iptv.orderChanged' => '채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.',
+			'iptv.localPlaylist' => 'M3U 파일',
+			'iptv.pastePlaylist' => '재생목록 텍스트 붙여넣기',
+			'iptv.playlistBase' => '상대 링크의 기본 URL(선택 사항)',
+			'iptv.localPlaylistHelp' => 'M3U 또는 M3U8 채널 목록을 비공개 사본으로 가져옵니다. 다른 파일로 교체할 수 있습니다.',
+			'iptv.showMatches' => '일치하는 채널 표시',
+			'iptv.hideMatches' => '일치하는 채널 숨기기',
+			'iptv.pickerCredit' => '아이디어 출처 · M3U Web Picker · Zachary Schmook (@zschmook) 외 기여자',
+			'iptv.exportPrivate' => '스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.',
+			'iptv.dynamicStreamExport' => '이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.',
+			'iptv.moveUp' => '움직이기 위하여',
+			'iptv.moveDown' => '아래로 이동',
+			'iptv.choosePlaylist' => '플레이리스트 파일 선택',
+			'iptv.affectedChannels' => ({required Object count}) => '채널 · ${count}',
 			'accountPreferences.sectionTitle' => '계정 기본 설정',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account}에 저장된 오디오, 자막 및 라이브러리 옵션',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count}개 계정에 저장된 오디오, 자막 및 라이브러리 옵션',
@@ -7157,6 +7210,8 @@ extension on TranslationsKo {
 			'discover.director' => '감독',
 			'discover.directors' => '감독',
 			'discover.movie' => '영화',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'TV 시리즈',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes}분 남음',
 			'discover.moreLikeThis' => '비슷한 콘텐츠',
@@ -7171,8 +7226,6 @@ extension on TranslationsKo {
 			'errors.connectionTimeout' => ({required Object context}) => '${context} 로드 중 연결 시간 초과',
 			'errors.connectionFailed' => '미디어 서버에 연결할 수 없습니다',
 			'errors.unableToLoad' => ({required Object context}) => '${context}을(를) 불러올 수 없습니다. 다시 시도하세요.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => '사용 가능한 클라이언트가 없습니다',
 			'errors.pleaseEnterToken' => '토큰을 입력해 주세요',
 			'errors.invalidToken' => '토큰이 유효하지 않습니다',
@@ -7671,6 +7724,8 @@ extension on TranslationsKo {
 			'collections.removedFromCollection' => '컬렉션에서 제거됨',
 			'collections.removeFromCollectionFailed' => '컬렉션에서 제거 실패',
 			'collections.removeFromCollectionError' => ({required Object error}) => '컬렉션에서 제거 중 오류 발생: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => '컬렉션 검색...',
 			'playlists.title' => '플레이리스트',
 			'playlists.playlist' => '재생 목록',
@@ -7685,8 +7740,6 @@ extension on TranslationsKo {
 			'playlists.emptyPlaylist' => '이 재생 목록은 비어 있습니다',
 			'playlists.deleteConfirm' => '재생 목록을 삭제하시겠습니까?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}"을(를) 삭제하시겠습니까?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => '재생 목록이 생성되었습니다',
 			'playlists.deleted' => '재생 목록이 삭제되었습니다',
 			'playlists.itemAdded' => '재생 목록에 추가되었습니다',
@@ -8185,6 +8238,8 @@ extension on TranslationsKo {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision 디코더',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision 디코더 (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => '베이스 레이어',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 베이스 레이어',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG 베이스 레이어',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR 베이스 레이어',
@@ -8199,8 +8254,6 @@ extension on TranslationsKo {
 			'performanceOverlay.transfer' => '전송',
 			'performanceOverlay.renderFps' => '렌더 FPS',
 			'performanceOverlay.displayFps' => '디스플레이 FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V 동기화',
 			'performanceOverlay.dropped' => '드롭됨',
 			'performanceOverlay.dvRpus' => 'DV RPU',
@@ -8276,6 +8329,7 @@ extension on TranslationsKo {
 			'metadataEdit.enterImageUrl' => '이미지 URL 입력',
 			'metadataEdit.imageUrl' => '이미지 URL',
 			'metadataEdit.metadataUpdated' => '메타데이터가 업데이트되었습니다',
+			'metadataEdit.metadataConflict' => '다른 사용자가 같은 필드를 수정했습니다. 저장하기 전에 편집기를 다시 열어 최신 값을 확인하세요.',
 			'metadataEdit.metadataUpdateFailed' => '메타데이터 업데이트 실패',
 			'metadataEdit.artworkUpdated' => '아트워크가 업데이트되었습니다',
 			'metadataEdit.artworkUpdateFailed' => '아트워크 업데이트 실패',
@@ -8633,7 +8687,6 @@ extension on TranslationsKo {
 			'cast.connectedTo' => ({required Object device}) => '${device}에 연결된',
 			'cast.device' => '장치 캡처',
 			'cast.readyToCast' => '던져질 준비',
-			'cast.subtitle' => '자막',
 			'cast.serverNotAvailable' => '미디어 서버는 사용할 수 없습니다.',
 			'cast.stopCasting' => '카스팅을 멈추세요',
 			'cast.startFailed' => '캐스트를 시작할 수 없습니다. 서버를 확인하고 다시 시도하세요.',
@@ -8699,6 +8752,8 @@ extension on TranslationsKo {
 			'homeLayout.autoSlideDescription' => '또한 몇 초마다 스스로 슬라이드합니다. 링 (PC) 및 d-pad (TV)는 항상 작동하고 타이머를 다시 시작합니다.',
 			'homeLayout.autoSlideEditDescription' => '또한 몇 초마다 스스로 슬라이드합니다. 끄기 : 펜 (PC)을 클릭하거나 원격 (TV)에서 왼쪽/오른쪽을 누르면 움직입니다.',
 			'homeLayout.enableHeroFirst' => '영웅을 먼저 할 수 있습니다.',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'Home 스크린에 표시',
 			'homeLayout.home' => '홈',
 			'homeLayout.removeFromHome' => '집에서 제거',
@@ -8713,8 +8768,6 @@ extension on TranslationsKo {
 			'homeLayout.customPlexRow' => '사용자 정의 Plex 라인',
 			'homeLayout.heroNeedsLibrary' => '도서관을 먼저 확인하십시오 - 영웅은 어디서나 보여줄 필요가 있습니다.',
 			'homeLayout.heroNeedsSurface' => '도서관 또는 홈을 먼저 확인하십시오 - 영웅은 어디서나 보여야합니다.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Hub 삭제',
 			'homeLayout.noPlexRows' => 'No. Plex 관리 라인이 이 도서관에 반환되었습니다.',
 			'homeLayout.openDetails' => '개방된 세부 사항',
@@ -9213,6 +9266,8 @@ extension on TranslationsKo {
 			'audiobook.librarySort' => '다양한 책들',
 			'audiobook.sortTitle' => '제목',
 			'audiobook.sortAuthor' => '작가',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => '연설자',
 			'audiobook.sortSeries' => '시리즈 명령',
 			'audiobook.sortRecent' => '최근에 열렸다',
@@ -9227,8 +9282,6 @@ extension on TranslationsKo {
 			'audiobook.recoveryExport' => '수출 암호화 된 복구 파일',
 			'audiobook.recoveryImport' => '암호화된 복구 파일 수입',
 			'audiobook.recoveryImportConfirm' => '이 암호화 된 복구 파일을 현재 읽기 위치 및 노트와 결합하십시오? 기존 역사는 유지됩니다. 공유 라이브러리 및 항목 ID는 포함되지 않습니다; 수입하기 전에 각 장치에 해당 ID를 설정합니다.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => '암호화 된 복구 파일이 저장되었습니다.',
 			'audiobook.recoveryImported' => '복구 데이터가 합쳐졌습니다.',
 			'sourceSetup.bookorbitHelp' => 'BookOrbit 도서를 둘러보고 재생하려면 본인 BookOrbit 계정으로 로그인하세요. 없는 작품의 요청은 계속 연결된 SeerrNG 인스턴스를 통해 전송됩니다.',
@@ -9447,6 +9500,7 @@ extension on TranslationsKo {
 			'issueReport.privacy' => '초안에는 앱 버전, 플랫폼, 연결 수가 포함됩니다. 서버 주소, 계정 및 프로필 이름, 미디어 제목, 파일 경로는 포함되지 않습니다.',
 			'issueReport.logPrivacy' => '로그 첨부는 선택 사항입니다. 업로드 전에 확인하세요. 로그 ID는 공개될 수 있는 초안에 추가됩니다.',
 			'issueReport.openDraft' => 'GitHub 초안 열기',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => '가져온 구독: ${imported}개. 중복: ${duplicates}개. 건너뜀: ${skipped}개.',
 			'podcasts.autoDownloadLatest' => '최신 에피소드 자동 다운로드',
 			'podcasts.removeFinishedAfter' => '완료한 다운로드를 다음 기간 후 삭제',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => '자막 인코딩 미리보기',
@@ -9726,6 +9780,8 @@ extension on TranslationsKo {
 			'musicTools.guestDj' => '게스트 DJ',
 			'musicTools.charts' => '청취 순위',
 			'musicTools.rediscover' => '다시 발견',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => '음악 스테이션',
 			'musicTools.prompt' => '설명으로 재생목록 만들기',
 			'musicTools.provider' => '공급자 생성 URL',
@@ -9741,8 +9797,6 @@ extension on TranslationsKo {
 			'musicTools.apiKey' => 'API 키',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '분',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => '필터',
 			'musicTools.exclusiveOutput' => '독점 오디오 출력',
 			'musicTools.preamp' => '프리앰프',
@@ -9798,6 +9852,8 @@ extension on TranslationsKo {
 			'musicDevices.relay' => '음악 릴레이 URL',
 			'musicDevices.relayHint' => '수신 기기에서 활성화한 다음 같은 네트워크에서 한 번 페어링하세요. Pleazyng을 열어 두세요. 릴레이는 암호화된 음악 제어를 전달하며 네트워크 주소를 볼 수 있습니다. 각 플레이어는 자체 미디어 서버에서 스트리밍합니다.',
 			'musicDevices.relayInvalid' => 'HTTPS 릴레이 주소를 입력하세요.',
+			'bookmarkMigration.unassigned' => '버전을 확인할 수 없는 북마크',
+			'bookmarkMigration.assignToVersion' => '이 버전에 할당',
 			_ => null,
 		};
 	}

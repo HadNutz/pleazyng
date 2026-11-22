@@ -35,7 +35,8 @@ final class PlayerSyncOffsets extends ChangeNotifier {
   double _subtitleRate = 1.0;
 
   int get audioMs => _audioMs;
-  int get subtitleMs => _subtitleMs;
+  int get minimumSubtitleMs => _player.canAdvanceSubtitles ? ScopedPlayerPrefs.minimumSyncOffsetMs : 0;
+  int get subtitleMs => _subtitleMs.clamp(minimumSubtitleMs, ScopedPlayerPrefs.maximumSyncOffsetMs);
   int get secondarySubtitleMs => _secondarySubtitleMs;
   double get subtitleRate => _subtitleRate;
 

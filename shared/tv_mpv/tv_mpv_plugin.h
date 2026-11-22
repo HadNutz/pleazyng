@@ -169,7 +169,11 @@ class Session {
     }
   }
   int64_t open(
-      const std::string& uri, const std::string& window, bool hardware, const std::string& fonts, bool motion) {
+      const std::string& uri, const std::string& window, bool hardware, const std::string& fonts, bool motion,
+      const std::string& preset = "balanced", double start = 0) {
+    uri_ = uri;
+    fonts_ = fonts;
+    hardware_ = hardware;
     core_ = api_.create();
     if (!core_) throw std::runtime_error("mpv create failed");
     plane_ = !motion && hardware && !window.empty() && api_.ndl_acquire && api_.ndl_status && api_.ndl_release &&
@@ -197,20 +201,8 @@ class Session {
       check(api_.set_option_string(core_, "hr-seek", "no"));
     }
     check(api_.initialize(core_));
-    if (motion) {
-      const char* filter = "@plezy-motion:lavfi=[framerate=fps=60]";
-#ifndef PLEAZYNG_TIZEN_EMBEDDER
-      // The C6's software RGBA surface sustained 60 fps at 640x360. Resizing
-      // before the mixer bounds both the GPU transfers and the CPU readback.
-      if (tv_has_two_core_g510()) {
-        filter =
-            "@plezy-motion:lavfi=[scale=w='min(iw,640)':h='min(ih,360)':force_original_aspect_ratio=decrease:"
-            "force_divisible_by=2:flags=fast_bilinear,framerate=fps=60]";
-      }
-#endif
-      const char* args[] = {"vf", "add", filter, nullptr};
-      motion_filter_ = api_.command(core_, args) >= 0;
-    }
+    if (start > 0) set("start", std::to_string(start));
+    if (motion) enableMotion(preset);
     registerTexture();
     if (plane_) api_.ndl_overlay(&publishOverlay, this);
     const char* command[] = {"loadfile", uri.c_str(), nullptr};
@@ -320,6 +312,57 @@ class Session {
     return rows;
   }
   void set(const char* name, const std::string& value) { check(api_.set_property_string(core_, name, value.c_str())); }
+  void enableMotion(const std::string& preset) {
+    if (plane_) throw std::runtime_error("Motion processing needs a texture");
+    if (motion_filter_ && preset == motion_preset_) return;
+    std::string graph;
+#ifndef PLEAZYNG_TIZEN_EMBEDDER
+    if (tv_has_two_core_g510())
+      graph =
+          "scale=w='min(iw,640)':h='min(ih,360)':force_original_aspect_ratio=decrease:"
+          "force_divisible_by=2:flags=fast_bilinear,";
+#endif
+    graph += "framerate=fps=60";
+    if (preset == "performance")
+      graph += ":interp_start=64:interp_end=192";
+    else if (preset == "quality")
+      graph += ":interp_start=0:interp_end=255";
+    else if (preset != "balanced")
+      throw std::runtime_error("Unknown motion preset");
+    // MPV replaces the filter with the same label, preserving other filters.
+    const auto filter = "@plezy-motion:lavfi=[" + graph + "]";
+    const char* args[] = {"vf", "add", filter.c_str(), nullptr};
+    check(api_.command(core_, args));
+    motion_filter_ = true;
+    motion_preset_ = preset;
+  }
+
+  int64_t prepareTexture(Session& next, const std::string& preset) {
+    if (!plane_ || !loaded_ || failed_) throw std::runtime_error("No live video plane");
+    return next.open(uri_, {}, hardware_, fonts_, true, preset, number("time-pos"));
+  }
+
+  void transferTo(Session& next) {
+    if (!plane_ || failed_ || flag("eof-reached") || !next.motion_filter_ || !next.rendered_.load())
+      throw std::runtime_error("Motion texture is not ready");
+    // Both sessions are on the same MPV source (including its local media
+    // proxy). Read the live selections and clock only when the texture is ready.
+    for (const char* key :
+         {"vid", "aid", "sid", "volume", "mute", "speed", "audio-delay", "sub-delay", "sub-visibility"}) {
+      const auto value = prop(key);
+      if (!value.empty() && next.prop(key) != value) next.set(key, value);
+    }
+    const bool playing = !flag("pause");
+    if (playing) set("pause", "yes");
+    try {
+      next.seek(number("time-pos"));
+      if (playing) next.set("pause", "no");
+    } catch (...) {
+      if (playing) set("pause", "no");
+      throw;
+    }
+  }
+
   void disableMotion() {
     if (!motion_filter_) return;
     const char* args[] = {"vf", "remove", "@plezy-motion", nullptr};
@@ -339,7 +382,8 @@ class Session {
 #ifndef PLEAZYNG_TIZEN_EMBEDDER
   uintptr_t picture_key_ = 0;
 #endif
-  bool motion_filter_ = false;
+  std::string uri_, fonts_, motion_preset_;
+  bool hardware_ = false, motion_filter_ = false;
   mpv_handle* core_ = nullptr;
   mpv_render_context* render_ = nullptr;
   int64_t texture_id_ = -1;
@@ -464,12 +508,14 @@ class TvMpvPlugin : public flutter::Plugin {
           const auto fonts = map.find(Value("fontDir"));
           const auto hardware = map.find(Value("hardwareDecoding"));
           const auto motion = map.find(Value("motion"));
+          const auto preset = map.find(Value("motionPreset"));
           auto texture = session->open(
               std::get<std::string>(map.at(Value("uri"))),
               window == map.end() ? std::string() : std::get<std::string>(window->second),
               hardware == map.end() || std::get<bool>(hardware->second),
               fonts == map.end() ? std::string() : std::get<std::string>(fonts->second),
-              motion != map.end() && std::get<bool>(motion->second));
+              motion != map.end() && std::get<bool>(motion->second),
+              preset == map.end() ? "balanced" : std::get<std::string>(preset->second));
           sessions_[id] = std::move(session);
           result->Success(Value(texture));
           return;
@@ -488,7 +534,21 @@ class TvMpvPlugin : public flutter::Plugin {
           result->Success(Value(s.tracks()));
           return;
         }
-        if (method == "disableMotion")
+        if (method == "prepareMotionTexture") {
+          const auto candidate = map.at(Value("candidate")).LongValue();
+          auto next = std::make_unique<Session>(textures_, raw_textures_);
+          const auto texture = s.prepareTexture(*next, std::get<std::string>(map.at(Value("value"))));
+          sessions_.emplace(candidate, std::move(next));
+          result->Success(Value(texture));
+          return;
+        }
+        if (method == "commitMotionTexture") {
+          const auto candidate = map.at(Value("candidate")).LongValue();
+          s.transferTo(*sessions_.at(candidate));
+          sessions_.at(id).swap(sessions_.at(candidate));
+        } else if (method == "enableMotion")
+          s.enableMotion(std::get<std::string>(map.at(Value("value"))));
+        else if (method == "disableMotion")
           s.disableMotion();
         else if (method == "play" || method == "pause")
           s.set("pause", method == "pause" ? "yes" : "no");

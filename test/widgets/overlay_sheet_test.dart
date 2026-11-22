@@ -1013,8 +1013,10 @@ void main() {
     testWidgets('a host that does not start at the view origin maps the fold into its own space', (tester) async {
       await openSheet(tester, size: landscape, folds: [fold], hostInset: 84);
       final sheet = sheetRect(tester);
-      expect(sheet.left, greaterThanOrEqualTo(84));
-      expect(sheet.right, lessThanOrEqualTo(fold.left));
+      // The centered button in the inset host now lies right of the hinge.
+      expect(tester.getCenter(find.text('Open')).dx, greaterThan(fold.right));
+      expect(sheet.left, greaterThanOrEqualTo(fold.right));
+      expect(sheet.right, lessThanOrEqualTo(landscape.width));
     });
 
     testWidgets('without a fold the sheet stays centred', (tester) async {

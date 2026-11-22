@@ -244,6 +244,7 @@
     "checkFailed": "업데이트 확인 실패"
   },
   "settings": {
+    "foldableDisplay": "폴더블 화면 힌지",
     "title": "설정",
     "supportDeveloper": "Pleazyng 후원하기",
     "supportDeveloperDescription": "기부로 개발을 지원하세요",
@@ -431,7 +432,6 @@
     "importSettings": "설정 가져오기",
     "importSettingsDescription": "파일에서 기본 설정 복원",
     "importSettingsConfirm": "현재 설정을 대체합니다. 계속하시겠습니까?",
-    "importSettingsSuccess": "설정 가져오기 완료",
     "importSettingsCounts": "적용된 설정: ${applied}개. 건너뛴 설정: ${skipped}개.",
     "importSettingsInvalidFile": "유효한 Pleazyng 설정 내보내기 파일이 아닙니다",
     "importSettingsNoUser": "설정을 가져오기 전에 로그인하세요",
@@ -445,7 +445,6 @@
     "cloudBackupComplete": "백업을 업로드했습니다. 이 URL을 보관하세요. 앱을 새로 설치한 후 클라우드 백업에 이 URL을 입력하고 ‘${action}’을 선택하세요.",
     "cloudBackupRestore": "Backup 복구",
     "cloudBackupRestoreConfirm": "이 장치에서 해당 휴대용 설정을 대체합니다.",
-    "cloudBackupRestored": "Cloud Backup에서 복구된 설정",
     "shortcutsReset": "단축키가 기본값으로 재설정되었습니다",
     "resetShortcutsConfirm": "사용자 지정 단축키가 기본값으로 대체됩니다. 계속하시겠습니까?",
     "about": "정보",
@@ -1500,6 +1499,22 @@
     "editMediaBrowserIntro": "${serverName}의 URL을 추가하거나 제거하세요. Plezy는 연결 가능한 URL 중 지연 시간이 가장 낮은 URL을 사용합니다."
   },
   "iptv": {
+    "backupFeeds": "재생 순서에 따른 예비 소스",
+    "lineupOrder": "채널 순서",
+    "orderChanged": "채널 순서가 바뀌었습니다. 확인하고 다시 시도하세요.",
+    "localPlaylist": "M3U 파일",
+    "pastePlaylist": "재생목록 텍스트 붙여넣기",
+    "playlistBase": "상대 링크의 기본 URL(선택 사항)",
+    "localPlaylistHelp": "M3U 또는 M3U8 채널 목록을 비공개 사본으로 가져옵니다. 다른 파일로 교체할 수 있습니다.",
+    "showMatches": "일치하는 채널 표시",
+    "hideMatches": "일치하는 채널 숨기기",
+    "pickerCredit": "아이디어 출처 · M3U Web Picker · Zachary Schmook (@zschmook) 외 기여자",
+    "exportPrivate": "스트림 주소에 공급자 로그인 정보가 들어 있을 수 있습니다. 목록을 비공개 위치에 저장하세요.",
+    "dynamicStreamExport": "이 포털은 재생할 때마다 새 링크를 만듭니다. 편성표는 내보낼 수 있습니다.",
+    "moveUp": "움직이기 위하여",
+    "moveDown": "아래로 이동",
+    "choosePlaylist": "플레이리스트 파일 선택",
+    "affectedChannels": "채널 · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3252,6 +3267,7 @@
     "enterImageUrl": "이미지 URL 입력",
     "imageUrl": "이미지 URL",
     "metadataUpdated": "메타데이터가 업데이트되었습니다",
+    "metadataConflict": "다른 사용자가 같은 필드를 수정했습니다. 저장하기 전에 편집기를 다시 열어 최신 값을 확인하세요.",
     "metadataUpdateFailed": "메타데이터 업데이트 실패",
     "artworkUpdated": "아트워크가 업데이트되었습니다",
     "artworkUpdateFailed": "아트워크 업데이트 실패",
@@ -3672,7 +3688,6 @@
     "connectedTo": "${device}에 연결된",
     "device": "장치 캡처",
     "readyToCast": "던져질 준비",
-    "subtitle": "자막",
     "serverNotAvailable": "미디어 서버는 사용할 수 없습니다.",
     "stopCasting": "카스팅을 멈추세요",
     "startFailed": "캐스트를 시작할 수 없습니다. 서버를 확인하고 다시 시도하세요."
@@ -4886,6 +4901,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "가져온 구독: ${imported}개. 중복: ${duplicates}개. 건너뜀: ${skipped}개.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5700,5 +5716,9 @@
     "relay": "음악 릴레이 URL",
     "relayHint": "수신 기기에서 활성화한 다음 같은 네트워크에서 한 번 페어링하세요. Pleazyng을 열어 두세요. 릴레이는 암호화된 음악 제어를 전달하며 네트워크 주소를 볼 수 있습니다. 각 플레이어는 자체 미디어 서버에서 스트리밍합니다.",
     "relayInvalid": "HTTPS 릴레이 주소를 입력하세요."
+  },
+  "bookmarkMigration": {
+    "unassigned": "버전을 확인할 수 없는 북마크",
+    "assignToVersion": "이 버전에 할당"
   }
 }

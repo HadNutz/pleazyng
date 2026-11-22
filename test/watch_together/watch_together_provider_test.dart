@@ -35,7 +35,7 @@ class _Server implements MediaServerClient {
 
   @override
   final ServerId serverId;
-  final Map<String, ExternalIds> ids;
+  final Map<String, FutureOr<ExternalIds>> ids;
 
   @override
   MediaBackend get backend => MediaBackend.plex;
@@ -375,6 +375,27 @@ void main() {
       await SettingsService.getInstance();
     });
 
+    _roomTest('a fresh provider resumes the same peer and host authority in a locked room', (world) async {
+      final old = world.host(profileId: 'home');
+      await world.settle(old.provider.createRoom());
+      old.provider.setLocked(true);
+      await world.until(() => old.provider.isLocked, 'room locks');
+      final data = old.provider.membershipForRestoration!;
+      final peer = old.peerId;
+      final foreign = world.host(profileId: 'other');
+      await foreign.provider.restoreMembership(data, current: () => true);
+      expect(foreign.provider.isInSession, isFalse);
+      final fresh = world.host(profileId: 'home');
+      world.relay.allowResumes();
+      await world.settle(fresh.provider.restoreMembership(data, current: () => true));
+      expect(fresh.peerId, peer);
+      expect(fresh.provider.isHost, isTrue);
+      expect(fresh.provider.isLocked, isTrue);
+      expect(world.relay.sent('join'), isEmpty);
+      expect(world.relay.sent('resume'), hasLength(1));
+      expect(fresh.provider.participantCount, 1);
+    });
+
     _roomTest('create and join: the code, participants with their names and clients, a join notice', (world) async {
       final h = world.host(profileId: 'profile-host');
       final g = world.guest(' \u200FGuest\tOne\n', 'profile-guest');
@@ -481,6 +502,73 @@ void main() {
       // keeps its place for a resume.
       await world.noticed<LeftNotice>(h, 'the host sees the guest go', (n) => n.name == 'Guest');
       await world.until(() => h.provider.participantCount == 1, 'the host is alone');
+    });
+
+    for (final create in [true, false]) {
+      final action = create ? 'create' : 'join';
+      _roomTest('switching profile during $action setup cancels before contacting the relay', (world) async {
+        final ready = Completer<String>();
+        var profile = 'first';
+        final provider = WatchTogetherProvider(
+          partyFactory: world.relay.party,
+          clientName: () => ready.future,
+          profileId: () => profile,
+        );
+        final pending = create ? provider.createRoom() : provider.joinRoom(FakeOwpRelay.code, create: true);
+        await world.wait(Duration.zero);
+        // Exercise both teardown orderings: the profile ID can change before
+        // Flutter unmounts the old profile's provider.
+        if (create) provider.dispose();
+        profile = 'second';
+        ready.complete('Pleazyng/test');
+        expect(await world.refusal(pending), owp.ErrorCode.cancelled);
+        expect(world.relay.received, isEmpty);
+        expect(provider.isInSession, isFalse);
+        for (final owner in ['first', 'second']) {
+          expect(RecentRoomsService.getRecentRooms(profileId: owner, relayScope: relayScopeOf(null)), isEmpty);
+        }
+        if (!create) provider.dispose();
+      });
+    }
+
+    _roomTest('changing profile during the relay handshake leaves the room without recording it', (world) async {
+      final provider = WatchTogetherProvider(
+        partyFactory: world.relay.party,
+        clientName: () async => 'Pleazyng/test',
+        profileId: () => world.relay.peerIds.isEmpty ? 'first' : 'second',
+      );
+      try {
+        expect(await world.refusal(provider.createRoom()), owp.ErrorCode.cancelled);
+        await world.until(() => world.relay.peerIds.isEmpty, 'the relay released the previous profile');
+        expect(provider.isInSession, isFalse);
+        for (final owner in ['first', 'second']) {
+          expect(RecentRoomsService.getRecentRooms(profileId: owner, relayScope: relayScopeOf(null)), isEmpty);
+        }
+      } finally {
+        provider.dispose();
+      }
+    });
+
+    _roomTest('a superseded room request cannot replace the new party', (world) async {
+      final firstClient = Completer<String>();
+      var requests = 0;
+      final provider = WatchTogetherProvider(
+        partyFactory: world.relay.party,
+        clientName: () => ++requests == 1 ? firstClient.future : Future.value('Pleazyng/test'),
+      );
+      try {
+        final pending = provider.joinRoom(FakeOwpRelay.code);
+        await world.until(() => requests == 1, 'join is preparing');
+        final code = await world.settle(provider.createRoom());
+        firstClient.complete('Pleazyng/test');
+        expect(await world.refusal(pending), owp.ErrorCode.cancelled);
+        expect(world.relay.sent('join'), isEmpty);
+        expect(world.relay.sent('create'), hasLength(1));
+        expect(provider.roomCode, code);
+        expect(provider.isHost, isTrue);
+      } finally {
+        provider.dispose();
+      }
     });
 
     _roomTest('leaving tells the others without an end notice; ending ends it for everyone', (world) async {
@@ -630,6 +718,56 @@ void main() {
       expect(g.provider.isInSession, isTrue);
     });
 
+    _roomTest('host stop cancels the next file while its server lookup is pending', (world) async {
+      final ids = Completer<ExternalIds>();
+      final client = _Server('host-nas', ids: {'next': ids.future});
+      final h = world.member('Host', clientFor: (_) => client);
+      final g = world.guest();
+      final screen = _Screen(g)..listen();
+      await world.together(h, [g]);
+      await world.hostPlays(h, _hostAlien);
+      await world.until(() => g.provider.isFollowing, 'the guest plays the first file');
+
+      final next = _openPlayer(_copyOf(_alien('next', 'host-nas')));
+      h.provider.playerOpened(next.adapter, shareable: true, roomLaunch: false);
+      await world.wait(Duration.zero);
+      h.provider.stopMedia();
+      await world.until(() => !h.provider.hasMedia && !g.provider.hasMedia, 'both see the stop');
+      expect(screen.exits, 1);
+      await world.settle(g.provider.playerClosed(screen.players.single.adapter, continuing: false));
+      ids.complete(const ExternalIds(imdb: 'tt0078748'));
+      await world.wait(Duration.zero);
+      expect(world.relay.sent('setMedia'), hasLength(1));
+      expect(h.provider.hasMedia, isFalse);
+      expect(g.provider.hasMedia, isFalse);
+      expect(screen.players, hasLength(1));
+
+      // A later deliberate share still works.
+      expect(await world.settle(h.provider.shareCopy(next.adapter)), isTrue);
+      await world.until(() => h.provider.roomCopy?.ref == next.adapter.copy, 'the new share reaches the room');
+    });
+
+    for (final replacePlayer in [false, true]) {
+      final outcome = replacePlayer ? 'preserves a replacement player' : 'closes the following guest player';
+      _roomTest('a stop received after reconnect $outcome', (world) async {
+        final (host: h, guest: g, hostPlayer: _, :screen) = await world.following();
+        h.provider.play();
+        await world.until(() => screen.players.single.player.state.playing, 'the guest is playing');
+        world.relay.drop(g.peerId);
+        await world.until(() => g.provider.isReconnecting, 'the guest is reconnecting');
+        if (replacePlayer) {
+          // The same file can open in a new player for local playback.
+          final local = _openPlayer(screen.players.single.adapter.copy);
+          g.provider.playerOpened(local.adapter, shareable: true, roomLaunch: false);
+        }
+        h.provider.stopMedia();
+        await world.until(() => !h.provider.hasMedia, 'the host stopped');
+        world.relay.allowResumes();
+        await world.until(() => g.provider.isConnected && !g.provider.hasMedia, 'the guest sees the empty room');
+        expect(screen.exits, replacePlayer ? 0 : 1);
+      });
+    }
+
     _roomTest('a host player that hands over to the next file keeps the room media', (world) async {
       final (host: h, guest: g, :hostPlayer, :screen) = await world.following();
 
@@ -752,6 +890,26 @@ void main() {
       expect(h.provider.media?.durationMs, 5400000);
     });
 
+    _roomTest('Stop during a pending join-or-create keeps the open file out of the new room', (world) async {
+      final h = world.host();
+      final opened = _openPlayer(_copyOf(_hostAlien));
+      h.provider.playerOpened(opened.adapter, shareable: true, roomLaunch: false);
+      world.relay.holdJoins = true;
+      final join = h.provider.joinRoom(FakeOwpRelay.code, create: true);
+      await world.until(() => world.relay.sent('join').isNotEmpty, 'the relay is holding the join');
+
+      h.provider.stopMedia();
+      world.relay.releaseJoins();
+      await world.settle(join);
+      await world.wait(Duration.zero);
+
+      expect(h.provider.isHost, isTrue);
+      expect(h.provider.hasMedia, isFalse);
+      expect(world.relay.sent('setMedia'), isEmpty);
+      expect(h.noticesOf<RefusedNotice>(), isEmpty);
+      expect(await world.settle(h.provider.shareCopy(opened.adapter)), isTrue);
+    });
+
     _roomTest('a file the host opened before the room is shared once the room exists', (world) async {
       final h = world.host();
       final opened = _openPlayer(_copyOf(_hostAlien));
@@ -861,6 +1019,31 @@ void main() {
 
     setUpAll(() async => relay = await _Relay.start(_relayBinary!));
     tearDownAll(() => relay.stop());
+
+    test('a fresh client resumes each member of a locked room on the real relay', () async {
+      await HttpOverrides.runWithHttpOverrides(() async {
+        final world = _RealWorld(relay.baseUrl);
+        try {
+          final host = world.host(profileId: 'owner');
+          await host.provider.createRoom();
+          final guest = world.guest('Guest', 'visitor');
+          await guest.provider.joinRoom(host.provider.roomCode!);
+          host.provider.setLocked(true);
+          await world.until(() => guest.provider.isLocked, 'room is locked');
+          for (final member in [host, guest]) {
+            final fresh = identical(member, host) ? world.host(profileId: 'owner') : world.guest('Guest', 'visitor');
+            final peer = member.peerId;
+            await fresh.provider.restoreMembership(member.provider.membershipForRestoration!, current: () => true);
+            expect(fresh.peerId, peer);
+            expect(fresh.provider.isHost, identical(member, host));
+            expect(fresh.provider.isLocked, isTrue);
+            expect(fresh.provider.participantCount, 2);
+          }
+        } finally {
+          await world.close();
+        }
+      }, _NetworkHttp());
+    });
 
     test('create, join, share, follow, presses, stop and leave', () async {
       // The widget-test binding answers every HttpClient with a 400.

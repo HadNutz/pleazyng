@@ -48,6 +48,8 @@ class OsMediaControlsPluginImpl {
   void SendEvent(FlValue* event);
 
  private:
+  friend void TestMprisMetadataReplacement();
+
   // MPRIS D-Bus interface
   GDBusConnection* connection_;
   guint bus_id_;
@@ -65,7 +67,6 @@ class OsMediaControlsPluginImpl {
   double position_;  // Position in microseconds
   double rate_;  // Playback rate
   std::map<std::string, std::string> metadata_;
-  std::vector<uint8_t> artwork_data_;
   std::string artwork_path_;
   std::string artwork_dir_;  // Directory for storing artwork files
 

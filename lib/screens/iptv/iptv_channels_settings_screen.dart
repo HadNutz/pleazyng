@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../../i18n/strings.g.dart';
+import '../../services/file_picker_service.dart';
 import '../../iptv/iptv_models.dart';
 import '../../iptv/iptv_source_repository.dart';
 import '../../profiles/active_profile_provider.dart';
@@ -14,6 +17,8 @@ import '../../utils/snackbar_helper.dart';
 import '../../widgets/app_icon.dart';
 import '../../widgets/focused_scroll_scaffold.dart';
 import '../../widgets/optimized_media_image.dart';
+import 'iptv_lineup_order_screen.dart';
+import 'iptv_picker_credit.dart';
 
 class IptvChannelsSettingsScreen extends StatefulWidget {
   const IptvChannelsSettingsScreen({super.key, required this.profileId, required this.sourceId});
@@ -30,6 +35,11 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
   List<IptvEditableChannel> _channels = const [];
   Set<String> _lockedGroups = const {};
   bool _loading = true;
+  List<IptvLineupGroup> _groups = [];
+  String? _selectedGroup;
+  String? _providerGroup;
+  bool _hideLowBandwidth = false;
+  IptvLineupGroup? get _currentGroup => _groups.where((g) => g.id == _selectedGroup).firstOrNull;
   String? _savingChannelId;
 
   @override
@@ -59,9 +69,13 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
       final repository = context.read<IptvSourceRepository>();
       final channels = await repository.editableChannels(profileId, widget.sourceId);
       final lockedGroups = await repository.lockedGroups(profileId, widget.sourceId);
+      final groups = await repository.lineupGroups(profileId, widget.sourceId);
       if (mounted) {
         setState(() {
           _channels = channels;
+          _groups = groups;
+          if (_currentGroup == null) _selectedGroup = null;
+          if (!channels.any((c) => c.displayGroup == _providerGroup)) _providerGroup = null;
           _lockedGroups = lockedGroups;
           _loading = false;
         });
@@ -76,14 +90,161 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
 
   List<IptvEditableChannel> get _filteredChannels {
     final query = _search.text.trim().toLowerCase();
-    if (query.isEmpty) return _channels;
-    return [
-      for (final channel in _channels)
-        if ('${channel.displayTitle} ${channel.displayGroup ?? ''} ${channel.number ?? ''}'.toLowerCase().contains(
-          query,
-        ))
-          channel,
-    ];
+    final group = _currentGroup;
+    return _channels
+        .where((c) {
+          if (group != null && !group.members.contains(c.id)) return false;
+          if (_providerGroup != null && c.displayGroup != _providerGroup) return false;
+          if (_hideLowBandwidth && c.groupTitle?.trim().toUpperCase() == 'LOW BANDWIDTH') return false;
+          return query.isEmpty ||
+              '${c.displayTitle} ${c.displayGroup ?? ''} ${c.number ?? ''} ${c.tvgId ?? ''} ${c.guideIdOverride ?? ''}'
+                  .toLowerCase()
+                  .contains(query);
+        })
+        .toList(growable: false);
+  }
+
+  Future<void> _editGroup(String action, IptvSourceRepository repository, String profileId) async {
+    final selected = {for (final channel in _filteredChannels) channel.id};
+    var group = _currentGroup;
+    if (action == 'group-add' || action == 'group-remove') {
+      group = await showDialog<IptvLineupGroup>(
+        context: context,
+        builder: (dialog) => SimpleDialog(
+          title: Text(t.iptv.channelGroup),
+          children: [
+            for (final g in _groups) SimpleDialogOption(onPressed: () => Navigator.pop(dialog, g), child: Text(g.name)),
+          ],
+        ),
+      );
+      if (group == null || !mounted) return;
+      await repository.editLineupGroup(
+        profileId,
+        widget.sourceId,
+        original: group,
+        name: group.name,
+        add: action == 'group-add' ? selected : const {},
+        remove: action == 'group-remove' ? selected : const {},
+      );
+    } else if (action == 'group-delete') {
+      if (group == null) return;
+      final accepted = await showDialog<bool>(
+        context: context,
+        builder: (dialog) => AlertDialog(
+          title: Text(t.common.delete),
+          content: Text(group!.name),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(t.common.cancel)),
+            FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(t.common.delete)),
+          ],
+        ),
+      );
+      if (accepted != true || !mounted) return;
+      await repository.editLineupGroup(profileId, widget.sourceId, original: group, name: group.name, delete: true);
+    } else {
+      final original = action == 'group-new' ? null : group;
+      var name = original?.name ?? '';
+      final newName = await showDialog<String>(
+        context: context,
+        builder: (dialog) => AlertDialog(
+          title: Text(t.iptv.channelGroup),
+          content: TextFormField(
+            initialValue: name,
+            maxLength: 120,
+            autofocus: true,
+            decoration: InputDecoration(labelText: t.fileSources.name),
+            onChanged: (v) => name = v,
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialog), child: Text(t.common.cancel)),
+            FilledButton(onPressed: () => Navigator.pop(dialog, name.trim()), child: Text(t.common.save)),
+          ],
+        ),
+      );
+      if (newName == null || newName.isEmpty || !mounted) return;
+      await repository.editLineupGroup(profileId, widget.sourceId, original: original, name: newName);
+    }
+  }
+
+  Future<void> _lineupAction(String action) async {
+    final profileId = widget.profileId;
+    if (profileId == null || _loading || _savingChannelId != null) return;
+    final repository = context.read<IptvSourceRepository>();
+    setState(() => _savingChannelId = '');
+    try {
+      if (action.startsWith('group-')) {
+        await _editGroup(action, repository, profileId);
+        await _load();
+        return;
+      }
+      if (action == 'm3u' || action == 'xml') {
+        final guide = action == 'xml';
+        final ids = {for (final channel in _filteredChannels) channel.id};
+        if (!guide) {
+          final accepted = await showDialog<bool>(
+            context: context,
+            builder: (dialog) => AlertDialog(
+              title: Text('${t.subtitleAiUi.export} M3U'),
+              content: Text(t.iptv.exportPrivate),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(dialog, false), child: Text(t.common.cancel)),
+                FilledButton(onPressed: () => Navigator.pop(dialog, true), child: Text(t.subtitleAiUi.export)),
+              ],
+            ),
+          );
+          if (accepted != true || !mounted) return;
+        }
+        final contents = await repository.exportLineup(profileId, widget.sourceId, ids, guide: guide);
+        if (!mounted) return;
+        await FilePickerService.instance.saveFile(
+          fileName: guide ? 'pleazyng-guide.xml' : 'pleazyng-channels.m3u',
+          bytes: utf8.encode(contents),
+        );
+        return;
+      }
+      if (action == 'order') {
+        final original = [for (final channel in _channels) channel.id];
+        final order = await Navigator.of(
+          context,
+        ).push<List<String>>(MaterialPageRoute(builder: (_) => IptvLineupOrderScreen(channels: _channels)));
+        if (order == null || !mounted) return;
+        await repository.saveLineupOrder(profileId, widget.sourceId, original, order);
+      } else {
+        final hidden = action == 'hide';
+        final ids = [
+          for (final channel in _filteredChannels)
+            if (channel.hidden != hidden) channel.id,
+        ];
+        if (ids.isEmpty) return;
+        final accepted = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(hidden ? t.iptv.hideMatches : t.iptv.showMatches),
+            content: Text(t.iptv.affectedChannels(count: ids.length)),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context, false), child: Text(t.common.cancel)),
+              FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(t.common.save)),
+            ],
+          ),
+        );
+        if (accepted != true || !mounted) return;
+        await repository.setChannelsHidden(profileId, widget.sourceId, ids, hidden, expectedHidden: !hidden);
+      }
+      await _load();
+    } on IptvImportException catch (error) {
+      if (mounted) {
+        showErrorSnackBar(context, switch (error.code) {
+          'source_changed' => t.iptv.orderChanged,
+          'dynamic_stream' => t.iptv.dynamicStreamExport,
+          _ => t.iptv.sourceInvalid,
+        });
+      }
+      await _load();
+    } catch (_) {
+      if (mounted) showErrorSnackBar(context, t.iptv.providerUnavailable);
+    } finally {
+      if (mounted) setState(() => _savingChannelId = null);
+    }
   }
 
   Future<void> _save(
@@ -267,9 +428,35 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
     return FocusedScrollScaffold(
       title: Text(t.iptv.manageChannels),
       actions: [
+        PopupMenuButton<String>(
+          enabled: !_loading && _savingChannelId == null && _channels.isNotEmpty,
+          onSelected: _lineupAction,
+          itemBuilder: (_) => [
+            PopupMenuItem(value: 'group-new', child: Text('${t.profiles.add} · ${t.iptv.channelGroup}')),
+            if (_groups.isNotEmpty) ...[
+              PopupMenuItem(
+                value: 'group-add',
+                child: Text('${t.profiles.add} · ${t.liveTv.channelsSection} → ${t.iptv.channelGroup}'),
+              ),
+              PopupMenuItem(
+                value: 'group-remove',
+                child: Text('${t.watchTogether.remove} · ${t.liveTv.channelsSection}'),
+              ),
+            ],
+            if (_currentGroup != null) ...[
+              PopupMenuItem(value: 'group-rename', child: Text('${t.iptv.edit} · ${_currentGroup!.name}')),
+              PopupMenuItem(value: 'group-delete', child: Text('${t.common.delete} · ${_currentGroup!.name}')),
+            ],
+            PopupMenuItem(value: 'order', child: Text(t.iptv.lineupOrder)),
+            PopupMenuItem(value: 'show', child: Text(t.iptv.showMatches)),
+            PopupMenuItem(value: 'hide', child: Text(t.iptv.hideMatches)),
+            PopupMenuItem(value: 'm3u', child: Text('${t.subtitleAiUi.export} M3U')),
+            PopupMenuItem(value: 'xml', child: Text('${t.subtitleAiUi.export} XMLTV')),
+          ],
+        ),
         IconButton(
           tooltip: t.iptv.refresh,
-          onPressed: _loading ? null : _load,
+          onPressed: _loading || _savingChannelId != null ? null : _load,
           icon: const AppIcon(Symbols.refresh_rounded, fill: 1),
         ),
       ],
@@ -296,6 +483,46 @@ class _IptvChannelsSettingsScreenState extends State<IptvChannelsSettingsScreen>
               ),
             ),
           ),
+        ),
+        if (_channels.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  PopupMenuButton<String>(
+                    tooltip: t.iptv.channelGroup,
+                    onSelected: (value) => setState(() {
+                      _providerGroup = value.startsWith('provider:') ? value.substring(9) : null;
+                      _selectedGroup = value.startsWith('saved:') ? value.substring(6) : null;
+                    }),
+                    itemBuilder: (_) => [
+                      PopupMenuItem(value: 'all', child: Text(t.libraries.all)),
+                      for (final g in _groups) PopupMenuItem(value: 'saved:${g.id}', child: Text(g.name)),
+                      if (_groups.isNotEmpty) const PopupMenuDivider(),
+                      for (final name
+                          in (_channels.map((c) => c.displayGroup).whereType<String>().toSet().toList()..sort()))
+                        PopupMenuItem(value: 'provider:$name', child: Text(name)),
+                    ],
+                    child: Chip(
+                      label: Text(_currentGroup?.name ?? _providerGroup ?? t.iptv.channelGroup),
+                      avatar: const Icon(Icons.filter_list),
+                    ),
+                  ),
+                  if (_channels.any((c) => c.groupTitle?.trim().toUpperCase() == 'LOW BANDWIDTH'))
+                    FilterChip(
+                      label: Text('${t.metadataEdit.hide} · LOW BANDWIDTH'),
+                      selected: _hideLowBandwidth,
+                      onSelected: (v) => setState(() => _hideLowBandwidth = v),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        const SliverToBoxAdapter(
+          child: Padding(padding: EdgeInsets.fromLTRB(16, 0, 16, 8), child: IptvPickerCredit()),
         ),
         if (_loading)
           const SliverFillRemaining(hasScrollBody: false, child: Center(child: CircularProgressIndicator()))

@@ -45,6 +45,8 @@ import 'package:plezy/services/companion_remote/companion_remote_receiver.dart';
 import 'package:plezy/services/companion_remote/companion_remote_peer_service.dart';
 import 'package:plezy/services/companion_remote/remote_auth_context.dart';
 import 'package:plezy/services/music/music_device_controller.dart';
+import 'package:plezy/services/music/music_device_link.dart';
+import 'package:plezy/services/music/music_listening_recorder.dart';
 import 'package:plezy/services/music/music_device_endpoint.dart';
 import 'package:plezy/services/music/music_device_peer.dart';
 import 'package:plezy/services/discord_rpc_service.dart';
@@ -188,6 +190,7 @@ class FakePlayer implements Player, PlayerAudioFocusControl, ParametricEqualizer
   final List<_CallGate> _openGates = [];
 
   /// Arming these URIs throws, simulating a native setNext failure.
+  final Set<String> failingOpenUris = {};
   final Set<String> failingSetNextUris = {};
   int playCalls = 0;
   int pauseCalls = 0;
@@ -312,6 +315,7 @@ class FakePlayer implements Player, PlayerAudioFocusControl, ParametricEqualizer
     Duration? timelineDuration,
     Duration timelineOffset = Duration.zero,
   }) async {
+    if (failingOpenUris.contains(media.uri)) throw StateError('Decoder rejected source');
     final gate = _openGates.isEmpty ? null : _openGates.removeAt(0);
     if (gate != null) await gate.block();
     // PlayerNative.open uses loadfile replace, which drops any armed entry.
@@ -2124,6 +2128,181 @@ void main() {
     key: '/library/metadata/1/station/one?type=10',
     title: 'Server Radio',
   );
+  group('paired music output', () {
+    late _Harness receiver;
+    late MusicDeviceEndpoint endpoint;
+    late MusicDeviceLink link;
+    setUp(() async {
+      receiver = _Harness.create();
+      endpoint = MusicDeviceEndpoint(receiver.service, allowed: () => true);
+      link = MusicDeviceLink(name: 'Desk', request: endpoint.handle, isConnected: () => true);
+      await receiver.playTracks([t1, t2]);
+      await link.refresh(full: true);
+      h.service.setMusicDeviceOutput(link);
+    });
+    tearDown(() {
+      h.service.setMusicDeviceOutput(null);
+      link.dispose();
+      endpoint.close();
+      receiver.dispose();
+    });
+
+    for (final kind in ['instant', 'album', 'station', 'server']) {
+      test('$kind radio plays and refills on the selected device', () async {
+        final initial = [radioTrack('r1', 'a'), radioTrack('r2', 'a')];
+        final added = radioTrack('r3', 'c');
+        late InstantMixOutcome outcome;
+        switch (kind) {
+          case 'instant':
+            h.client.instantMixGate = Completer<List<MediaItem>>()..complete(initial);
+            receiver.client.instantMixGate = Completer<List<MediaItem>>()..complete([added]);
+            outcome = await h.service.playInstantMix(t1);
+          case 'album':
+            prepareRadio(h);
+            prepareRadio(receiver);
+            outcome = await h.service.playAlbumRadio(radioAlbum('a'));
+          case 'station':
+            h.client.stationRows = initial;
+            receiver.client.stationRows = [added];
+            outcome = await h.service.playStationRadio(
+              await radioRule().preview(h.client, current: () => true),
+              startTrack: initial.last,
+            );
+          case 'server':
+            h.client.serverRadios = [serverRadio];
+            h.client.serverRadioWindows.add(initial);
+            receiver.client.serverRadios = [serverRadio];
+            receiver.client.serverRadioWindows.add([added]);
+            outcome = await h.service.playServerRadio(serverRadio);
+        }
+        await pumpEventQueue();
+        await link.refresh(full: true);
+        expect(outcome, InstantMixOutcome.started);
+        expect(h.players, isEmpty);
+        expect(receiver.service.isPlaying, isTrue);
+        expect(
+          receiver.service.currentTrack?.id,
+          kind == 'station'
+              ? 'r2'
+              : kind == 'album'
+              ? 'a1'
+              : 'r1',
+        );
+        expect(h.service.currentTrack?.id, receiver.service.currentTrack?.id);
+        if (kind == 'album') {
+          expect(receiver.client.sonicCalls, isNotEmpty);
+        } else {
+          expect(receiver.service.queue.any((track) => track.id == 'r3'), isTrue);
+        }
+        await h.service.pause();
+        expect(receiver.service.isPlaying, isFalse);
+        expect(h.players, isEmpty);
+      });
+    }
+
+    for (final rejectedBy in ['source', 'decoder']) {
+      test('a $rejectedBy rejection retains the receiver queue and playhead', () async {
+        receiver.player.setPosition(const Duration(seconds: 37));
+        final rejected = _track('rejected');
+        h.client.instantMixGate = Completer<List<MediaItem>>()..complete([rejected]);
+        if (rejectedBy == 'source') {
+          receiver.resolver.failingIds.add(rejected.id);
+        } else {
+          receiver.player.failingOpenUris.add(_urlFor(rejected));
+        }
+        await expectLater(h.service.playInstantMix(t1), throwsStateError);
+        await link.refresh(full: true);
+        expect(h.players, isEmpty);
+        expect(receiver.service.currentTrack?.id, t1.id);
+        expect(receiver.service.queue.map((track) => track.id), [t1.id, t2.id]);
+        expect(receiver.service.position, const Duration(seconds: 37));
+        expect(receiver.player.state.playing, isTrue);
+      });
+    }
+
+    test('the receiver owns the sleep timer and consumes it at EOF', () async {
+      h.service.setSleepTimer(const Duration(minutes: 15));
+      await pumpEventQueue();
+      expect(receiver.service.sleepTimerDuration, const Duration(minutes: 15));
+      expect(h.service.sleepTimerDuration, const Duration(minutes: 15));
+      h.service.setSleepTimer(null, endOfTrack: true);
+      await pumpEventQueue();
+      expect(receiver.service.sleepTimerEndOfTrack, isTrue);
+      expect(h.service.sleepTimerEndOfTrack, isTrue);
+      expect(receiver.player.emitNaturalBoundary(), isFalse);
+      await pumpEventQueue();
+      await link.refresh();
+      expect(receiver.service.currentTrack!.id, t1.id);
+      expect(receiver.service.isPlaying, isFalse);
+      expect(h.service.sleepTimerActive, isFalse);
+    });
+
+    test('only the renderer credits a paired listening occurrence', () async {
+      final database = AppDatabase.forTesting(NativeDatabase.memory());
+      final store = MusicLibraryStore(database, 'test');
+      var clock = 0;
+      final listener = MusicListeningRecorder(receiver.service, store, monotonicMs: () => clock);
+      final controller = MusicListeningRecorder(h.service, store, monotonicMs: () => clock);
+      try {
+        for (final seconds in [0, 20, 40, 60, 80, 100]) {
+          clock = seconds * 1000;
+          receiver.player.setPosition(Duration(seconds: seconds));
+          await link.refresh();
+          await pumpEventQueue(times: 1);
+        }
+        await listener.flush();
+        await controller.flush();
+        final rows = await store.historyPage();
+        expect(rows.entries.single.listenedMs, 100000);
+      } finally {
+        controller.dispose();
+        listener.dispose();
+        await pumpEventQueue();
+        await database.close();
+      }
+    });
+
+    test('removing the current paused remote song keeps the next one paused', () async {
+      await h.service.pause();
+      h.service.removeAt(0);
+      await pumpEventQueue();
+      await link.refresh();
+      expect(receiver.service.currentTrack!.id, t2.id);
+      expect(receiver.player.state.playing, isFalse);
+      expect(h.service.isPlaying, isFalse);
+    });
+  });
+
+  for (final paused in [true, false]) {
+    test('removing the current local song preserves play intent (paused=$paused)', () async {
+      await h.playTracks([t1, t2]);
+      if (paused) await h.service.pause();
+      h.service.removeAt(0);
+      await pumpEventQueue();
+      expect(h.service.currentTrack!.id, t2.id);
+      expect(h.player.state.playing, !paused);
+    });
+  }
+
+  test('skipping an unavailable successor after a paused removal keeps the next playable song paused', () async {
+    await h.playTracks([t1, t2, t3]);
+    await h.service.pause();
+    h.resolver.failingIds.add(t2.id);
+    h.service.removeAt(0);
+    await pumpEventQueue();
+    expect(h.service.currentTrack?.id, t3.id);
+    expect(h.player.state.playing, isFalse);
+  });
+
+  test('removing the only paused song leaves an empty, stopped queue', () async {
+    await h.playTracks([t1]);
+    await h.service.pause();
+    h.service.removeAt(0);
+    await pumpEventQueue();
+    expect(h.service.queue, isEmpty);
+    expect(h.service.isPlaying, isFalse);
+  });
+
   test('server radio uses its issued queue, refills with exclusions, and terminates without generic mix', () async {
     h.client.serverRadios = [serverRadio];
     h.client.serverRadioWindows.addAll([
@@ -3543,6 +3722,57 @@ void main() {
     expect(h.service.status, MusicPlaybackStatus.playing);
     expect(h.player.playCalls, 1);
   });
+
+  test('headphones attaching during an interruption wait for the system resume verdict', () async {
+    await h.playTracks([t1]);
+    h.controls.eventsCtrl.add(const AudioInterruptionBeganEvent());
+    await pumpEventQueue();
+    h.controls.eventsCtrl.add(const AudioRouteNewDeviceAvailableEvent());
+    await pumpEventQueue();
+    expect(h.service.status, MusicPlaybackStatus.paused);
+    h.controls.eventsCtrl.add(const AudioInterruptionEndedEvent(shouldResume: false));
+    await pumpEventQueue();
+    expect(h.player.playCalls, 0);
+    expect(h.service.status, MusicPlaybackStatus.paused);
+  });
+
+  test('an explicit Pause retires automatic resume after a call', () async {
+    await h.playTracks([t1]);
+    h.controls.eventsCtrl.add(const AudioInterruptionBeganEvent());
+    await pumpEventQueue();
+    h.controls.eventsCtrl.add(const PauseEvent());
+    await pumpEventQueue();
+    h.controls.eventsCtrl.add(const AudioInterruptionEndedEvent(shouldResume: true));
+    await pumpEventQueue();
+    expect(h.player.playCalls, 0);
+    expect(h.service.status, MusicPlaybackStatus.paused);
+  });
+
+  for (final reconnectFirst in [false, true]) {
+    test(
+      'overlapping call and private-route pauses resume only after both clear (reconnect first: $reconnectFirst)',
+      () async {
+        await h.playTracks([t1]);
+        final gate = Completer<void>();
+        h.player.pauseGate = gate;
+        h.controls.eventsCtrl.add(const AudioRouteOldDeviceUnavailableEvent());
+        h.controls.eventsCtrl.add(const AudioInterruptionBeganEvent());
+        await pumpEventQueue();
+        const route = AudioRouteNewDeviceAvailableEvent();
+        const call = AudioInterruptionEndedEvent(shouldResume: true);
+        h.controls.eventsCtrl.add(reconnectFirst ? route : call);
+        await pumpEventQueue();
+        expect(h.player.playCalls, 0);
+        h.controls.eventsCtrl.add(reconnectFirst ? call : route);
+        await pumpEventQueue();
+        expect(h.player.playCalls, 0);
+        gate.complete();
+        await pumpEventQueue();
+        expect(h.player.playCalls, 1);
+        expect(h.service.status, MusicPlaybackStatus.playing);
+      },
+    );
+  }
 
   test('OS stop command stops the session', () async {
     await h.playTracks([t1, t2]);

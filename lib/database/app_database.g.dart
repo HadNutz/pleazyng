@@ -7526,6 +7526,17 @@ class $IptvSourcesTable extends IptvSources
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _playlistCiphertextMeta =
+      const VerificationMeta('playlistCiphertext');
+  @override
+  late final GeneratedColumn<String> playlistCiphertext =
+      GeneratedColumn<String>(
+        'playlist_ciphertext',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _revisionMeta = const VerificationMeta(
     'revision',
   );
@@ -7590,6 +7601,7 @@ class $IptvSourcesTable extends IptvSources
     displayName,
     kind,
     configCiphertext,
+    playlistCiphertext,
     revision,
     generation,
     createdAt,
@@ -7650,6 +7662,15 @@ class $IptvSourcesTable extends IptvSources
       );
     } else if (isInserting) {
       context.missing(_configCiphertextMeta);
+    }
+    if (data.containsKey('playlist_ciphertext')) {
+      context.handle(
+        _playlistCiphertextMeta,
+        playlistCiphertext.isAcceptableOrUnknown(
+          data['playlist_ciphertext']!,
+          _playlistCiphertextMeta,
+        ),
+      );
     }
     if (data.containsKey('revision')) {
       context.handle(
@@ -7718,6 +7739,10 @@ class $IptvSourcesTable extends IptvSources
         DriftSqlType.string,
         data['${effectivePrefix}config_ciphertext'],
       )!,
+      playlistCiphertext: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}playlist_ciphertext'],
+      ),
       revision: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}revision'],
@@ -7753,6 +7778,7 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
   final String displayName;
   final String kind;
   final String configCiphertext;
+  final String? playlistCiphertext;
   final int revision;
   final int generation;
   final int createdAt;
@@ -7764,6 +7790,7 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
     required this.displayName,
     required this.kind,
     required this.configCiphertext,
+    this.playlistCiphertext,
     required this.revision,
     required this.generation,
     required this.createdAt,
@@ -7778,6 +7805,9 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
     map['display_name'] = Variable<String>(displayName);
     map['kind'] = Variable<String>(kind);
     map['config_ciphertext'] = Variable<String>(configCiphertext);
+    if (!nullToAbsent || playlistCiphertext != null) {
+      map['playlist_ciphertext'] = Variable<String>(playlistCiphertext);
+    }
     map['revision'] = Variable<int>(revision);
     map['generation'] = Variable<int>(generation);
     map['created_at'] = Variable<int>(createdAt);
@@ -7797,6 +7827,9 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
       displayName: Value(displayName),
       kind: Value(kind),
       configCiphertext: Value(configCiphertext),
+      playlistCiphertext: playlistCiphertext == null && nullToAbsent
+          ? const Value.absent()
+          : Value(playlistCiphertext),
       revision: Value(revision),
       generation: Value(generation),
       createdAt: Value(createdAt),
@@ -7820,6 +7853,9 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
       displayName: serializer.fromJson<String>(json['displayName']),
       kind: serializer.fromJson<String>(json['kind']),
       configCiphertext: serializer.fromJson<String>(json['configCiphertext']),
+      playlistCiphertext: serializer.fromJson<String?>(
+        json['playlistCiphertext'],
+      ),
       revision: serializer.fromJson<int>(json['revision']),
       generation: serializer.fromJson<int>(json['generation']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
@@ -7836,6 +7872,7 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
       'displayName': serializer.toJson<String>(displayName),
       'kind': serializer.toJson<String>(kind),
       'configCiphertext': serializer.toJson<String>(configCiphertext),
+      'playlistCiphertext': serializer.toJson<String?>(playlistCiphertext),
       'revision': serializer.toJson<int>(revision),
       'generation': serializer.toJson<int>(generation),
       'createdAt': serializer.toJson<int>(createdAt),
@@ -7850,6 +7887,7 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
     String? displayName,
     String? kind,
     String? configCiphertext,
+    Value<String?> playlistCiphertext = const Value.absent(),
     int? revision,
     int? generation,
     int? createdAt,
@@ -7861,6 +7899,9 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
     displayName: displayName ?? this.displayName,
     kind: kind ?? this.kind,
     configCiphertext: configCiphertext ?? this.configCiphertext,
+    playlistCiphertext: playlistCiphertext.present
+        ? playlistCiphertext.value
+        : this.playlistCiphertext,
     revision: revision ?? this.revision,
     generation: generation ?? this.generation,
     createdAt: createdAt ?? this.createdAt,
@@ -7882,6 +7923,9 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
       configCiphertext: data.configCiphertext.present
           ? data.configCiphertext.value
           : this.configCiphertext,
+      playlistCiphertext: data.playlistCiphertext.present
+          ? data.playlistCiphertext.value
+          : this.playlistCiphertext,
       revision: data.revision.present ? data.revision.value : this.revision,
       generation: data.generation.present
           ? data.generation.value
@@ -7904,6 +7948,7 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
           ..write('displayName: $displayName, ')
           ..write('kind: $kind, ')
           ..write('configCiphertext: $configCiphertext, ')
+          ..write('playlistCiphertext: $playlistCiphertext, ')
           ..write('revision: $revision, ')
           ..write('generation: $generation, ')
           ..write('createdAt: $createdAt, ')
@@ -7920,6 +7965,7 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
     displayName,
     kind,
     configCiphertext,
+    playlistCiphertext,
     revision,
     generation,
     createdAt,
@@ -7935,6 +7981,7 @@ class IptvSourceRow extends DataClass implements Insertable<IptvSourceRow> {
           other.displayName == this.displayName &&
           other.kind == this.kind &&
           other.configCiphertext == this.configCiphertext &&
+          other.playlistCiphertext == this.playlistCiphertext &&
           other.revision == this.revision &&
           other.generation == this.generation &&
           other.createdAt == this.createdAt &&
@@ -7948,6 +7995,7 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
   final Value<String> displayName;
   final Value<String> kind;
   final Value<String> configCiphertext;
+  final Value<String?> playlistCiphertext;
   final Value<int> revision;
   final Value<int> generation;
   final Value<int> createdAt;
@@ -7960,6 +8008,7 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
     this.displayName = const Value.absent(),
     this.kind = const Value.absent(),
     this.configCiphertext = const Value.absent(),
+    this.playlistCiphertext = const Value.absent(),
     this.revision = const Value.absent(),
     this.generation = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -7973,6 +8022,7 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
     required String displayName,
     required String kind,
     required String configCiphertext,
+    this.playlistCiphertext = const Value.absent(),
     this.revision = const Value.absent(),
     this.generation = const Value.absent(),
     required int createdAt,
@@ -7991,6 +8041,7 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
     Expression<String>? displayName,
     Expression<String>? kind,
     Expression<String>? configCiphertext,
+    Expression<String>? playlistCiphertext,
     Expression<int>? revision,
     Expression<int>? generation,
     Expression<int>? createdAt,
@@ -8004,6 +8055,7 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
       if (displayName != null) 'display_name': displayName,
       if (kind != null) 'kind': kind,
       if (configCiphertext != null) 'config_ciphertext': configCiphertext,
+      if (playlistCiphertext != null) 'playlist_ciphertext': playlistCiphertext,
       if (revision != null) 'revision': revision,
       if (generation != null) 'generation': generation,
       if (createdAt != null) 'created_at': createdAt,
@@ -8019,6 +8071,7 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
     Value<String>? displayName,
     Value<String>? kind,
     Value<String>? configCiphertext,
+    Value<String?>? playlistCiphertext,
     Value<int>? revision,
     Value<int>? generation,
     Value<int>? createdAt,
@@ -8032,6 +8085,7 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
       displayName: displayName ?? this.displayName,
       kind: kind ?? this.kind,
       configCiphertext: configCiphertext ?? this.configCiphertext,
+      playlistCiphertext: playlistCiphertext ?? this.playlistCiphertext,
       revision: revision ?? this.revision,
       generation: generation ?? this.generation,
       createdAt: createdAt ?? this.createdAt,
@@ -8058,6 +8112,9 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
     }
     if (configCiphertext.present) {
       map['config_ciphertext'] = Variable<String>(configCiphertext.value);
+    }
+    if (playlistCiphertext.present) {
+      map['playlist_ciphertext'] = Variable<String>(playlistCiphertext.value);
     }
     if (revision.present) {
       map['revision'] = Variable<int>(revision.value);
@@ -8088,6 +8145,7 @@ class IptvSourcesCompanion extends UpdateCompanion<IptvSourceRow> {
           ..write('displayName: $displayName, ')
           ..write('kind: $kind, ')
           ..write('configCiphertext: $configCiphertext, ')
+          ..write('playlistCiphertext: $playlistCiphertext, ')
           ..write('revision: $revision, ')
           ..write('generation: $generation, ')
           ..write('createdAt: $createdAt, ')
@@ -9543,6 +9601,17 @@ class $IptvChannelOverridesTable extends IptvChannelOverrides
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _lineupOrderMeta = const VerificationMeta(
+    'lineupOrder',
+  );
+  @override
+  late final GeneratedColumn<int> lineupOrder = GeneratedColumn<int>(
+    'lineup_order',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _favoriteOrderMeta = const VerificationMeta(
     'favoriteOrder',
   );
@@ -9622,6 +9691,7 @@ class $IptvChannelOverridesTable extends IptvChannelOverrides
     sourceId,
     channelId,
     favorite,
+    lineupOrder,
     favoriteOrder,
     hidden,
     customTitle,
@@ -9669,6 +9739,15 @@ class $IptvChannelOverridesTable extends IptvChannelOverrides
       context.handle(
         _favoriteMeta,
         favorite.isAcceptableOrUnknown(data['favorite']!, _favoriteMeta),
+      );
+    }
+    if (data.containsKey('lineup_order')) {
+      context.handle(
+        _lineupOrderMeta,
+        lineupOrder.isAcceptableOrUnknown(
+          data['lineup_order']!,
+          _lineupOrderMeta,
+        ),
       );
     }
     if (data.containsKey('favorite_order')) {
@@ -9747,6 +9826,10 @@ class $IptvChannelOverridesTable extends IptvChannelOverrides
         DriftSqlType.bool,
         data['${effectivePrefix}favorite'],
       )!,
+      lineupOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}lineup_order'],
+      ),
       favoriteOrder: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}favorite_order'],
@@ -9786,6 +9869,7 @@ class IptvChannelOverrideRow extends DataClass
   final String sourceId;
   final String channelId;
   final bool favorite;
+  final int? lineupOrder;
   final int favoriteOrder;
   final bool hidden;
   final String? customTitle;
@@ -9797,6 +9881,7 @@ class IptvChannelOverrideRow extends DataClass
     required this.sourceId,
     required this.channelId,
     required this.favorite,
+    this.lineupOrder,
     required this.favoriteOrder,
     required this.hidden,
     this.customTitle,
@@ -9811,6 +9896,9 @@ class IptvChannelOverrideRow extends DataClass
     map['source_id'] = Variable<String>(sourceId);
     map['channel_id'] = Variable<String>(channelId);
     map['favorite'] = Variable<bool>(favorite);
+    if (!nullToAbsent || lineupOrder != null) {
+      map['lineup_order'] = Variable<int>(lineupOrder);
+    }
     map['favorite_order'] = Variable<int>(favoriteOrder);
     map['hidden'] = Variable<bool>(hidden);
     if (!nullToAbsent || customTitle != null) {
@@ -9832,6 +9920,9 @@ class IptvChannelOverrideRow extends DataClass
       sourceId: Value(sourceId),
       channelId: Value(channelId),
       favorite: Value(favorite),
+      lineupOrder: lineupOrder == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lineupOrder),
       favoriteOrder: Value(favoriteOrder),
       hidden: Value(hidden),
       customTitle: customTitle == null && nullToAbsent
@@ -9857,6 +9948,7 @@ class IptvChannelOverrideRow extends DataClass
       sourceId: serializer.fromJson<String>(json['sourceId']),
       channelId: serializer.fromJson<String>(json['channelId']),
       favorite: serializer.fromJson<bool>(json['favorite']),
+      lineupOrder: serializer.fromJson<int?>(json['lineupOrder']),
       favoriteOrder: serializer.fromJson<int>(json['favoriteOrder']),
       hidden: serializer.fromJson<bool>(json['hidden']),
       customTitle: serializer.fromJson<String?>(json['customTitle']),
@@ -9873,6 +9965,7 @@ class IptvChannelOverrideRow extends DataClass
       'sourceId': serializer.toJson<String>(sourceId),
       'channelId': serializer.toJson<String>(channelId),
       'favorite': serializer.toJson<bool>(favorite),
+      'lineupOrder': serializer.toJson<int?>(lineupOrder),
       'favoriteOrder': serializer.toJson<int>(favoriteOrder),
       'hidden': serializer.toJson<bool>(hidden),
       'customTitle': serializer.toJson<String?>(customTitle),
@@ -9887,6 +9980,7 @@ class IptvChannelOverrideRow extends DataClass
     String? sourceId,
     String? channelId,
     bool? favorite,
+    Value<int?> lineupOrder = const Value.absent(),
     int? favoriteOrder,
     bool? hidden,
     Value<String?> customTitle = const Value.absent(),
@@ -9898,6 +9992,7 @@ class IptvChannelOverrideRow extends DataClass
     sourceId: sourceId ?? this.sourceId,
     channelId: channelId ?? this.channelId,
     favorite: favorite ?? this.favorite,
+    lineupOrder: lineupOrder.present ? lineupOrder.value : this.lineupOrder,
     favoriteOrder: favoriteOrder ?? this.favoriteOrder,
     hidden: hidden ?? this.hidden,
     customTitle: customTitle.present ? customTitle.value : this.customTitle,
@@ -9915,6 +10010,9 @@ class IptvChannelOverrideRow extends DataClass
       sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
       channelId: data.channelId.present ? data.channelId.value : this.channelId,
       favorite: data.favorite.present ? data.favorite.value : this.favorite,
+      lineupOrder: data.lineupOrder.present
+          ? data.lineupOrder.value
+          : this.lineupOrder,
       favoriteOrder: data.favoriteOrder.present
           ? data.favoriteOrder.value
           : this.favoriteOrder,
@@ -9941,6 +10039,7 @@ class IptvChannelOverrideRow extends DataClass
           ..write('sourceId: $sourceId, ')
           ..write('channelId: $channelId, ')
           ..write('favorite: $favorite, ')
+          ..write('lineupOrder: $lineupOrder, ')
           ..write('favoriteOrder: $favoriteOrder, ')
           ..write('hidden: $hidden, ')
           ..write('customTitle: $customTitle, ')
@@ -9957,6 +10056,7 @@ class IptvChannelOverrideRow extends DataClass
     sourceId,
     channelId,
     favorite,
+    lineupOrder,
     favoriteOrder,
     hidden,
     customTitle,
@@ -9972,6 +10072,7 @@ class IptvChannelOverrideRow extends DataClass
           other.sourceId == this.sourceId &&
           other.channelId == this.channelId &&
           other.favorite == this.favorite &&
+          other.lineupOrder == this.lineupOrder &&
           other.favoriteOrder == this.favoriteOrder &&
           other.hidden == this.hidden &&
           other.customTitle == this.customTitle &&
@@ -9986,6 +10087,7 @@ class IptvChannelOverridesCompanion
   final Value<String> sourceId;
   final Value<String> channelId;
   final Value<bool> favorite;
+  final Value<int?> lineupOrder;
   final Value<int> favoriteOrder;
   final Value<bool> hidden;
   final Value<String?> customTitle;
@@ -9998,6 +10100,7 @@ class IptvChannelOverridesCompanion
     this.sourceId = const Value.absent(),
     this.channelId = const Value.absent(),
     this.favorite = const Value.absent(),
+    this.lineupOrder = const Value.absent(),
     this.favoriteOrder = const Value.absent(),
     this.hidden = const Value.absent(),
     this.customTitle = const Value.absent(),
@@ -10011,6 +10114,7 @@ class IptvChannelOverridesCompanion
     required String sourceId,
     required String channelId,
     this.favorite = const Value.absent(),
+    this.lineupOrder = const Value.absent(),
     this.favoriteOrder = const Value.absent(),
     this.hidden = const Value.absent(),
     this.customTitle = const Value.absent(),
@@ -10026,6 +10130,7 @@ class IptvChannelOverridesCompanion
     Expression<String>? sourceId,
     Expression<String>? channelId,
     Expression<bool>? favorite,
+    Expression<int>? lineupOrder,
     Expression<int>? favoriteOrder,
     Expression<bool>? hidden,
     Expression<String>? customTitle,
@@ -10039,6 +10144,7 @@ class IptvChannelOverridesCompanion
       if (sourceId != null) 'source_id': sourceId,
       if (channelId != null) 'channel_id': channelId,
       if (favorite != null) 'favorite': favorite,
+      if (lineupOrder != null) 'lineup_order': lineupOrder,
       if (favoriteOrder != null) 'favorite_order': favoriteOrder,
       if (hidden != null) 'hidden': hidden,
       if (customTitle != null) 'custom_title': customTitle,
@@ -10054,6 +10160,7 @@ class IptvChannelOverridesCompanion
     Value<String>? sourceId,
     Value<String>? channelId,
     Value<bool>? favorite,
+    Value<int?>? lineupOrder,
     Value<int>? favoriteOrder,
     Value<bool>? hidden,
     Value<String?>? customTitle,
@@ -10067,6 +10174,7 @@ class IptvChannelOverridesCompanion
       sourceId: sourceId ?? this.sourceId,
       channelId: channelId ?? this.channelId,
       favorite: favorite ?? this.favorite,
+      lineupOrder: lineupOrder ?? this.lineupOrder,
       favoriteOrder: favoriteOrder ?? this.favoriteOrder,
       hidden: hidden ?? this.hidden,
       customTitle: customTitle ?? this.customTitle,
@@ -10091,6 +10199,9 @@ class IptvChannelOverridesCompanion
     }
     if (favorite.present) {
       map['favorite'] = Variable<bool>(favorite.value);
+    }
+    if (lineupOrder.present) {
+      map['lineup_order'] = Variable<int>(lineupOrder.value);
     }
     if (favoriteOrder.present) {
       map['favorite_order'] = Variable<int>(favoriteOrder.value);
@@ -10123,6 +10234,7 @@ class IptvChannelOverridesCompanion
           ..write('sourceId: $sourceId, ')
           ..write('channelId: $channelId, ')
           ..write('favorite: $favorite, ')
+          ..write('lineupOrder: $lineupOrder, ')
           ..write('favoriteOrder: $favoriteOrder, ')
           ..write('hidden: $hidden, ')
           ..write('customTitle: $customTitle, ')
@@ -14480,6 +14592,7 @@ typedef $$IptvSourcesTableCreateCompanionBuilder =
       required String displayName,
       required String kind,
       required String configCiphertext,
+      Value<String?> playlistCiphertext,
       Value<int> revision,
       Value<int> generation,
       required int createdAt,
@@ -14494,6 +14607,7 @@ typedef $$IptvSourcesTableUpdateCompanionBuilder =
       Value<String> displayName,
       Value<String> kind,
       Value<String> configCiphertext,
+      Value<String?> playlistCiphertext,
       Value<int> revision,
       Value<int> generation,
       Value<int> createdAt,
@@ -14599,6 +14713,11 @@ class $$IptvSourcesTableFilterComposer
 
   ColumnFilters<String> get configCiphertext => $composableBuilder(
     column: $table.configCiphertext,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get playlistCiphertext => $composableBuilder(
+    column: $table.playlistCiphertext,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -14737,6 +14856,11 @@ class $$IptvSourcesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get playlistCiphertext => $composableBuilder(
+    column: $table.playlistCiphertext,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get revision => $composableBuilder(
     column: $table.revision,
     builder: (column) => ColumnOrderings(column),
@@ -14788,6 +14912,11 @@ class $$IptvSourcesTableAnnotationComposer
 
   GeneratedColumn<String> get configCiphertext => $composableBuilder(
     column: $table.configCiphertext,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get playlistCiphertext => $composableBuilder(
+    column: $table.playlistCiphertext,
     builder: (column) => column,
   );
 
@@ -14926,6 +15055,7 @@ class $$IptvSourcesTableTableManager
                 Value<String> displayName = const Value.absent(),
                 Value<String> kind = const Value.absent(),
                 Value<String> configCiphertext = const Value.absent(),
+                Value<String?> playlistCiphertext = const Value.absent(),
                 Value<int> revision = const Value.absent(),
                 Value<int> generation = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
@@ -14938,6 +15068,7 @@ class $$IptvSourcesTableTableManager
                 displayName: displayName,
                 kind: kind,
                 configCiphertext: configCiphertext,
+                playlistCiphertext: playlistCiphertext,
                 revision: revision,
                 generation: generation,
                 createdAt: createdAt,
@@ -14952,6 +15083,7 @@ class $$IptvSourcesTableTableManager
                 required String displayName,
                 required String kind,
                 required String configCiphertext,
+                Value<String?> playlistCiphertext = const Value.absent(),
                 Value<int> revision = const Value.absent(),
                 Value<int> generation = const Value.absent(),
                 required int createdAt,
@@ -14964,6 +15096,7 @@ class $$IptvSourcesTableTableManager
                 displayName: displayName,
                 kind: kind,
                 configCiphertext: configCiphertext,
+                playlistCiphertext: playlistCiphertext,
                 revision: revision,
                 generation: generation,
                 createdAt: createdAt,
@@ -15970,6 +16103,7 @@ typedef $$IptvChannelOverridesTableCreateCompanionBuilder =
       required String sourceId,
       required String channelId,
       Value<bool> favorite,
+      Value<int?> lineupOrder,
       Value<int> favoriteOrder,
       Value<bool> hidden,
       Value<String?> customTitle,
@@ -15984,6 +16118,7 @@ typedef $$IptvChannelOverridesTableUpdateCompanionBuilder =
       Value<String> sourceId,
       Value<String> channelId,
       Value<bool> favorite,
+      Value<int?> lineupOrder,
       Value<int> favoriteOrder,
       Value<bool> hidden,
       Value<String?> customTitle,
@@ -16045,6 +16180,11 @@ class $$IptvChannelOverridesTableFilterComposer
 
   ColumnFilters<bool> get favorite => $composableBuilder(
     column: $table.favorite,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lineupOrder => $composableBuilder(
+    column: $table.lineupOrder,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -16126,6 +16266,11 @@ class $$IptvChannelOverridesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get lineupOrder => $composableBuilder(
+    column: $table.lineupOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get favoriteOrder => $composableBuilder(
     column: $table.favoriteOrder,
     builder: (column) => ColumnOrderings(column),
@@ -16197,6 +16342,11 @@ class $$IptvChannelOverridesTableAnnotationComposer
 
   GeneratedColumn<bool> get favorite =>
       $composableBuilder(column: $table.favorite, builder: (column) => column);
+
+  GeneratedColumn<int> get lineupOrder => $composableBuilder(
+    column: $table.lineupOrder,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get favoriteOrder => $composableBuilder(
     column: $table.favoriteOrder,
@@ -16290,6 +16440,7 @@ class $$IptvChannelOverridesTableTableManager
                 Value<String> sourceId = const Value.absent(),
                 Value<String> channelId = const Value.absent(),
                 Value<bool> favorite = const Value.absent(),
+                Value<int?> lineupOrder = const Value.absent(),
                 Value<int> favoriteOrder = const Value.absent(),
                 Value<bool> hidden = const Value.absent(),
                 Value<String?> customTitle = const Value.absent(),
@@ -16302,6 +16453,7 @@ class $$IptvChannelOverridesTableTableManager
                 sourceId: sourceId,
                 channelId: channelId,
                 favorite: favorite,
+                lineupOrder: lineupOrder,
                 favoriteOrder: favoriteOrder,
                 hidden: hidden,
                 customTitle: customTitle,
@@ -16316,6 +16468,7 @@ class $$IptvChannelOverridesTableTableManager
                 required String sourceId,
                 required String channelId,
                 Value<bool> favorite = const Value.absent(),
+                Value<int?> lineupOrder = const Value.absent(),
                 Value<int> favoriteOrder = const Value.absent(),
                 Value<bool> hidden = const Value.absent(),
                 Value<String?> customTitle = const Value.absent(),
@@ -16328,6 +16481,7 @@ class $$IptvChannelOverridesTableTableManager
                 sourceId: sourceId,
                 channelId: channelId,
                 favorite: favorite,
+                lineupOrder: lineupOrder,
                 favoriteOrder: favoriteOrder,
                 hidden: hidden,
                 customTitle: customTitle,

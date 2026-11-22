@@ -244,6 +244,7 @@
     "checkFailed": "Falha ao verificar atualizações"
   },
   "settings": {
+    "foldableDisplay": "Dobradiça do ecrã dobrável",
     "title": "Configurações",
     "supportDeveloper": "Apoie o Pleazyng",
     "supportDeveloperDescription": "Doe para apoiar o desenvolvimento",
@@ -435,7 +436,6 @@
     "importSettings": "Importar Configurações",
     "importSettingsDescription": "Restaurar preferências a partir de um arquivo",
     "importSettingsConfirm": "Isso substituirá suas configurações atuais. Continuar?",
-    "importSettingsSuccess": "Configurações importadas",
     "importSettingsCounts": "Configurações aplicadas: ${applied}. Ignoradas: ${skipped}.",
     "importSettingsInvalidFile": "Este arquivo não é uma exportação válida do Pleazyng",
     "importSettingsNoUser": "Entre na conta antes de importar as configurações",
@@ -449,7 +449,6 @@
     "cloudBackupComplete": "Cópia de segurança enviada. Guarde este URL. Após uma nova instalação, introduza-o na secção de cópias de segurança na nuvem e selecione «${action}».",
     "cloudBackupRestore": "Restauração de backup",
     "cloudBackupRestoreConfirm": "Isso substituirá as configurações portáteis correspondentes neste dispositivo.",
-    "cloudBackupRestored": "Atualização de configurações recuperadas da backup da nuvem",
     "shortcutsReset": "Atalhos redefinidos para o padrão",
     "resetShortcutsConfirm": "Isso substituirá seus atalhos personalizados pelos padrões. Continuar?",
     "about": "Sobre",
@@ -1504,6 +1503,22 @@
     "editMediaBrowserIntro": "Adicione ou remova URLs para ${serverName}. O Pleazyng usará a URL acessível com menor latência."
   },
   "iptv": {
+    "backupFeeds": "Fontes alternativas por ordem de reprodução",
+    "lineupOrder": "Ordem dos canais",
+    "orderChanged": "A ordem dos canais mudou. Verifique e tente novamente.",
+    "localPlaylist": "Ficheiro M3U",
+    "pastePlaylist": "Colar o texto da lista de reprodução",
+    "playlistBase": "URL base para ligações relativas (opcional)",
+    "localPlaylistHelp": "Importe uma cópia privada de uma lista de canais M3U ou M3U8. Pode substituí-la por outro ficheiro.",
+    "showMatches": "Mostrar canais correspondentes",
+    "hideMatches": "Ocultar canais correspondentes",
+    "pickerCredit": "Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores",
+    "exportPrivate": "Os endereços das transmissões podem incluir credenciais do fornecedor. Guarde a lista num local privado.",
+    "dynamicStreamExport": "O portal cria uma nova ligação em cada reprodução. Pode exportar o guia.",
+    "moveUp": "Move em cima",
+    "moveDown": "Move abaixo",
+    "choosePlaylist": "Escolha o arquivo de playlist",
+    "affectedChannels": "Canais · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3259,6 +3274,7 @@
     "enterImageUrl": "Insira a URL da imagem",
     "imageUrl": "URL da Imagem",
     "metadataUpdated": "Metadados atualizados",
+    "metadataConflict": "Outra pessoa alterou o mesmo campo. Reabra o editor para verificar os valores atuais antes de guardar as alterações.",
     "metadataUpdateFailed": "Falha ao atualizar metadados",
     "artworkUpdated": "Arte atualizada",
     "artworkUpdateFailed": "Falha ao atualizar arte",
@@ -3679,7 +3695,6 @@
     "connectedTo": "Conectado a ${device}",
     "device": "CAST DEFINITOR",
     "readyToCast": "Pronto para jogar",
-    "subtitle": "Legendas",
     "serverNotAvailable": "O servidor de mídia não está disponível.",
     "stopCasting": "Parar de casting",
     "startFailed": "Não pode começar a casting. verificar o servidor e tentar novamente."
@@ -4900,6 +4915,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Assinaturas importadas: ${imported}. Duplicadas: ${duplicates}. Ignoradas: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5714,5 +5730,9 @@
     "relay": "URL do relay de música",
     "relayHint": "Ative no dispositivo recetor e emparelhe uma vez na mesma rede. Mantenha o Pleazyng aberto. O relay transmite comandos de música encriptados e vê os endereços de rede. Cada leitor transmite do seu próprio servidor multimédia.",
     "relayInvalid": "Introduza um endereço HTTPS do relay."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Marcadores de uma versão não identificada",
+    "assignToVersion": "Associar a esta versão"
   }
 }

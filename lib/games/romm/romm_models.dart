@@ -299,6 +299,17 @@ class RommSave {
   final String name, emulator, core, slot, hash, screenshot;
   final DateTime? updatedAt;
   final bool state, missing;
+
+  // RomM dates an upload when it arrives. A retried capture retains its
+  // original timestamp in the filename on every device, including after restart.
+  static final _captureName = RegExp(r'^plezy-([0-9]{14,17})-[0-9a-f-]{36}\.(?:state|srm)$');
+  DateTime get capturedAt {
+    final stamp = _captureName.firstMatch(name)?.group(1);
+    return stamp == null
+        ? updatedAt ?? DateTime.utc(1970)
+        : DateTime.fromMicrosecondsSinceEpoch(int.parse(stamp), isUtc: true);
+  }
+
   factory RommSave.fromJson(Map<String, dynamic> j, {bool state = false}) => RommSave(
     id: rommInt(j['id']),
     romId: rommInt(j['rom_id']),

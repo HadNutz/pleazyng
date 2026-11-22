@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../media/media_item.dart';
+import '../widgets/fold_browser.dart';
 import '../media/media_kind.dart';
 import '../media/media_playlist.dart';
 import '../media/media_server_client.dart';
@@ -35,9 +36,14 @@ NavigatorState _contentNavigatorOf(BuildContext context) {
   return ProfileNavigationScope.maybeOf(context)?.navigatorKey.currentState ?? Navigator.of(context);
 }
 
+NavigatorState _musicDetailNavigator(BuildContext context) =>
+    FoldBrowserScope.of(context) == null ? _contentNavigatorOf(context) : FoldBrowserScope.detailNavigator(context);
+
 /// Push the artist detail screen for [artist] on the profile navigator.
 Future<void> navigateToArtist(BuildContext context, MediaItem artist) async {
-  await _contentNavigatorOf(context).push(MaterialPageRoute(builder: (context) => ArtistDetailScreen(artist: artist)));
+  await _musicDetailNavigator(
+    context,
+  ).push(MaterialPageRoute(builder: (context) => ArtistDetailScreen(artist: artist)));
 }
 
 /// Fetch the artist [artistId] with [client], then push its detail screen on
@@ -57,7 +63,7 @@ Future<void> openArtistById(BuildContext context, MediaServerClient client, Stri
 /// Push the album detail screen for [album] on the profile navigator.
 /// [isOffline] makes the screen read its track list from downloads.
 Future<void> navigateToAlbum(BuildContext context, MediaItem album, {bool isOffline = false}) async {
-  await _contentNavigatorOf(context).push(
+  await _musicDetailNavigator(context).push(
     MaterialPageRoute(
       builder: (context) => AlbumDetailScreen(album: album, isOffline: isOffline),
     ),

@@ -77,17 +77,18 @@ List<MediaHub> buildConfiguredHomeSections({
     final items =
         singleCollection ??
         (section.isCollectionRow
-            ? _collectionItems(section, collections, collectionLibraryKinds)
+            ? matchingHomeCollections(section, collections, collectionLibraryKinds)
             : _recentItems(section, sourceHubs.where((hub) => _matches(section.kind, hub)).toList()));
     if (items.isEmpty) continue;
+    final distinctItems = _dedupe(items);
     output.add(
       MediaHub(
         id: section.id,
         identifier: 'configured.${section.kind.id}',
         title: section.title,
         type: singleCollection != null ? 'mixed' : (section.isCollectionRow ? 'collection' : 'mixed'),
-        items: _dedupe(items),
-        size: items.length,
+        items: distinctItems,
+        size: distinctItems.length,
         heroStyle: section.heroStyle,
         heroAutoSlide: section.heroAutoSlide,
       ),
@@ -182,14 +183,17 @@ List<MediaHub> buildConfiguredHomeSections({
   return [...ordered, ...untrackable];
 }
 
-List<MediaItem> _collectionItems(HomeSectionConfig section, List<MediaItem> all, Map<String, MediaKind> libraryKinds) =>
-    all.where((item) {
-      if (item.kind != MediaKind.collection) return false;
-      final libraryKind = libraryKinds[item.libraryGlobalKey];
-      if (libraryKind != section.kind.collectionKind) return false;
-      if (section.collectionKeys.isNotEmpty && !section.collectionKeys.contains(item.globalKey)) return false;
-      return section.libraryKeys.isEmpty || section.libraryKeys.contains(item.libraryGlobalKey);
-    }).toList();
+List<MediaItem> matchingHomeCollections(
+  HomeSectionConfig section,
+  List<MediaItem> all,
+  Map<String, MediaKind> libraryKinds,
+) => all.where((item) {
+  if (item.kind != MediaKind.collection) return false;
+  final libraryKind = libraryKinds[item.libraryGlobalKey];
+  if (libraryKind != section.kind.collectionKind) return false;
+  if (section.collectionKeys.isNotEmpty && !section.collectionKeys.contains(item.globalKey)) return false;
+  return section.libraryKeys.isEmpty || section.libraryKeys.contains(item.libraryGlobalKey);
+}).toList();
 
 /// [matchedHubs] are already filtered to this section's kind (see the
 /// caller) so this only applies the section's own library selection.

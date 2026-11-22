@@ -244,6 +244,7 @@
     "checkFailed": "gagal memeriksa update"
   },
   "settings": {
+    "foldableDisplay": "Engsel layar lipat",
     "title": "Pengaturan",
     "supportDeveloper": "Dukungan Pleazyng",
     "supportDeveloperDescription": "Memberi dukungan untuk pengembangan",
@@ -431,7 +432,6 @@
     "importSettings": "Pengaturan Import",
     "importSettingsDescription": "Memulihkan preferensi dari file",
     "importSettingsConfirm": "Ini akan menggantikan pengaturan Anda saat ini. lanjutkan?",
-    "importSettingsSuccess": "Pengaturan yang diimpor",
     "importSettingsCounts": "Pengaturan diterapkan: ${applied}. Dilewati: ${skipped}.",
     "importSettingsInvalidFile": "Fail ini tidak valid Pleazyng pengeksportan pengaturan",
     "importSettingsNoUser": "Mendaftar sebelum mengimport pengaturan",
@@ -445,7 +445,6 @@
     "cloudBackupComplete": "Cadangan telah diunggah. Simpan URL ini. Setelah memasang ulang aplikasi, masukkan URL ini di bagian pencadangan cloud dan pilih “${action}”.",
     "cloudBackupRestore": "Restorasi Backup",
     "cloudBackupRestoreConfirm": "Ini akan menggantikan pengaturan portabel yang sepadan pada perangkat ini.",
-    "cloudBackupRestored": "Pengaturan yang dikembalikan dari cloud backup",
     "shortcutsReset": "Kembali ke default",
     "resetShortcutsConfirm": "Ini akan menggantikan singkatan yang disesuaikan dengan default.",
     "about": "Tentang",
@@ -1495,6 +1494,22 @@
     "editMediaBrowserIntro": "Menambahkan atau menghapus URL untuk ${serverName}. Pleazyng akan menggunakan URL yang dapat diakses dengan latensi terendah."
   },
   "iptv": {
+    "backupFeeds": "Sumber cadangan menurut urutan pemutaran",
+    "lineupOrder": "Urutan saluran",
+    "orderChanged": "Urutan saluran berubah. Periksa lalu coba lagi.",
+    "localPlaylist": "Berkas M3U",
+    "pastePlaylist": "Tempel teks daftar putar",
+    "playlistBase": "URL dasar untuk tautan relatif (opsional)",
+    "localPlaylistHelp": "Impor salinan pribadi daftar saluran M3U atau M3U8. Ganti dengan berkas lain jika perlu.",
+    "showMatches": "Tampilkan saluran yang cocok",
+    "hideMatches": "Sembunyikan saluran yang cocok",
+    "pickerCredit": "Terinspirasi oleh · M3U Web Picker · Zachary Schmook (@zschmook) dan para kontributor",
+    "exportPrivate": "Alamat siaran mungkin memuat kredensial penyedia Anda. Simpan daftar di lokasi pribadi.",
+    "dynamicStreamExport": "Portal membuat tautan baru setiap kali diputar. Panduan acara dapat diekspor.",
+    "moveUp": "bergerak ke atas",
+    "moveDown": "Memuat turun",
+    "choosePlaylist": "Pilih file playlist",
+    "affectedChannels": "Saluran · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3235,6 +3250,7 @@
     "enterImageUrl": "Masukkan URL gambar",
     "imageUrl": "Gambar URL",
     "metadataUpdated": "Metadata yang diperbarui",
+    "metadataConflict": "Orang lain telah mengubah kolom yang sama. Buka kembali editor untuk memeriksa nilai terbaru sebelum menyimpan.",
     "metadataUpdateFailed": "Tidak dapat mengemas kini metadata",
     "artworkUpdated": "Artwork dikemas kini",
     "artworkUpdateFailed": "gagal memperbarui karya seni",
@@ -3655,7 +3671,6 @@
     "connectedTo": "Menghubungkan ke ${device}",
     "device": "Perangkat transmisi",
     "readyToCast": "Siap mentransmisikan",
-    "subtitle": "Subtitel",
     "serverNotAvailable": "Media server tidak tersedia.",
     "stopCasting": "Hentikan transmisi",
     "startFailed": "Tidak bisa memulai casting. periksa server dan coba lagi."
@@ -4864,6 +4879,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Langganan yang diimpor: ${imported}. Duplikat: ${duplicates}. Dilewati: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5678,5 +5694,9 @@
     "relay": "URL relai musik",
     "relayHint": "Aktifkan di perangkat penerima, lalu pasangkan sekali di jaringan yang sama. Biarkan Pleazyng terbuka. Relai meneruskan kontrol musik terenkripsi dan melihat alamat jaringan. Setiap pemutar melakukan streaming dari server medianya sendiri.",
     "relayInvalid": "Masukkan alamat relai HTTPS."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Markah dari versi yang belum teridentifikasi",
+    "assignToVersion": "Kaitkan dengan versi ini"
   }
 }

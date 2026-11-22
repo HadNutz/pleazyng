@@ -62,6 +62,7 @@ class _IptvSourcesSettingsScreenState extends State<IptvSourcesSettingsScreen> {
   }
 
   String _kindName(IptvInputKind kind) => switch (kind) {
+    IptvInputKind.m3uFile => t.iptv.localPlaylist,
     IptvInputKind.m3u => t.iptv.m3u,
     IptvInputKind.xtream => t.iptv.xtream,
     IptvInputKind.tunerr => t.iptv.tunerr,
@@ -127,6 +128,7 @@ class _IptvSourcesSettingsScreenState extends State<IptvSourcesSettingsScreen> {
   String _messageFor(Object error) {
     if (error is! IptvImportException) return t.iptv.providerUnavailable;
     return switch (error.code) {
+      'playlist_missing' => t.iptv.choosePlaylist,
       'authentication' => t.iptv.authentication,
       'permission' => t.iptv.permission,
       'invalid_data' => t.iptv.invalidData,
@@ -140,6 +142,7 @@ class _IptvSourcesSettingsScreenState extends State<IptvSourcesSettingsScreen> {
   }
 
   String _sourceError(String? code) => switch (code) {
+    'playlist_missing' => t.iptv.choosePlaylist,
     'authentication' => t.iptv.authentication,
     'permission' => t.iptv.permission,
     'invalid_data' => t.iptv.invalidData,

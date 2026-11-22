@@ -3,6 +3,7 @@ project(runner LANGUAGES CXX)
 
 add_executable(${BINARY_NAME} WIN32
   "flutter_window.cpp"
+  "fold_panels.cpp"
   "media_foundation_decoders.cpp"
   "workspace_views.cpp"
   "main.cpp"

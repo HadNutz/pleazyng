@@ -244,6 +244,7 @@
     "checkFailed": "Nie udało się sprawdzić aktualizacji"
   },
   "settings": {
+    "foldableDisplay": "Zawias składanego ekranu",
     "title": "Ustawienia",
     "supportDeveloper": "Wesprzyj Pleazyng",
     "supportDeveloperDescription": "Wspomóż rozwój darowizną",
@@ -437,7 +438,6 @@
     "importSettings": "Importuj ustawienia",
     "importSettingsDescription": "Przywróć preferencje z pliku",
     "importSettingsConfirm": "Bieżące ustawienia zostaną zastąpione. Kontynuować?",
-    "importSettingsSuccess": "Ustawienia zaimportowane",
     "importSettingsCounts": "Zastosowane ustawienia: ${applied}. Pominięte: ${skipped}.",
     "importSettingsInvalidFile": "Ten plik nie jest prawidłowym eksportem Pleazyng",
     "importSettingsNoUser": "Zaloguj się przed importem ustawień",
@@ -451,7 +451,6 @@
     "cloudBackupComplete": "Przesłano kopię zapasową. Zachowaj ten adres URL. Po ponownej instalacji wpisz go w ustawieniach kopii zapasowej w chmurze i wybierz „${action}”.",
     "cloudBackupRestore": "Odzyskiwanie backup",
     "cloudBackupRestoreConfirm": "To zastąpi dopasowane ustawienia przenośne na tym urządzeniu.",
-    "cloudBackupRestored": "Ustawienia przywróciły się z kopii zapasowej w chmurze",
     "shortcutsReset": "Skróty przywrócone do domyślnych",
     "resetShortcutsConfirm": "Twoje własne skróty zostaną zastąpione domyślnymi. Kontynuować?",
     "about": "O aplikacji",
@@ -1516,6 +1515,22 @@
     "editMediaBrowserIntro": "Dodaj lub usuń adresy URL dla ${serverName}. Pleazyng będzie używać osiągalnego adresu URL o najniższym opóźnieniu."
   },
   "iptv": {
+    "backupFeeds": "Zapasowe źródła w kolejności odtwarzania",
+    "lineupOrder": "Kolejność kanałów",
+    "orderChanged": "Kolejność kanałów uległa zmianie. Sprawdź ją i spróbuj ponownie.",
+    "localPlaylist": "Plik M3U",
+    "pastePlaylist": "Wklej tekst listy odtwarzania",
+    "playlistBase": "Bazowy URL odnośników względnych (opcjonalny)",
+    "localPlaylistHelp": "Zaimportuj prywatną kopię listy kanałów M3U lub M3U8. Możesz ją zastąpić innym plikiem.",
+    "showMatches": "Pokaż pasujące kanały",
+    "hideMatches": "Ukryj pasujące kanały",
+    "pickerCredit": "Inspiracja · M3U Web Picker · Zachary Schmook (@zschmook) i współtwórcy",
+    "exportPrivate": "Adresy strumieni mogą zawierać dane logowania do usługodawcy. Zapisz listę w prywatnym miejscu.",
+    "dynamicStreamExport": "Portal tworzy nowy odnośnik przy każdym odtwarzaniu. Możesz wyeksportować przewodnik.",
+    "moveUp": "Move Up",
+    "moveDown": "Przeprowadź się w dół",
+    "choosePlaylist": "Wybierz plik playlist",
+    "affectedChannels": "Kanały · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3298,6 +3313,7 @@
     "enterImageUrl": "Wprowadź URL obrazu",
     "imageUrl": "URL obrazu",
     "metadataUpdated": "Metadane zaktualizowane",
+    "metadataConflict": "Ktoś inny zmienił to samo pole. Przed zapisaniem ponownie otwórz edytor i sprawdź aktualne wartości.",
     "metadataUpdateFailed": "Nie udało się zaktualizować metadanych",
     "artworkUpdated": "Grafika zaktualizowana",
     "artworkUpdateFailed": "Nie udało się zaktualizować grafiki",
@@ -3718,7 +3734,6 @@
     "connectedTo": "Źródło: ${device}",
     "device": "Urządzenie Cast",
     "readyToCast": "gotowy do wyrzucenia",
-    "subtitle": "Napisy",
     "serverNotAvailable": "Serwer medialny nie jest dostępny.",
     "stopCasting": "Przestań casting",
     "startFailed": "Nie można zacząć casting. sprawdź serwer i spróbuj ponownie."
@@ -4945,6 +4960,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Zaimportowane subskrypcje: ${imported}. Duplikaty: ${duplicates}. Pominięte: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5759,5 +5775,9 @@
     "relay": "URL przekaźnika muzyki",
     "relayHint": "Włącz na urządzeniu odbierającym i sparuj raz w tej samej sieci. Pozostaw Pleazyng otwarty. Przekaźnik przesyła zaszyfrowane polecenia muzyczne i widzi adresy sieciowe. Każdy odtwarzacz korzysta ze swojego serwera multimediów.",
     "relayInvalid": "Wpisz adres HTTPS przekaźnika."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Zakładki z niezidentyfikowanej wersji",
+    "assignToVersion": "Przypisz do tej wersji"
   }
 }

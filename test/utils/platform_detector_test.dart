@@ -184,13 +184,14 @@ void main() {
       return result;
     }
 
-    testWidgets('classifies by the logical diagonal, independent of devicePixelRatio', (tester) async {
+    testWidgets('classifies by the available short edge, independent of devicePixelRatio', (tester) async {
       // Logical pixels are already density-independent; a dpr-scaled
       // conversion inflated a low-density handset past the tablet threshold.
       expect(await isTabletAt(tester, const Size(390, 844), 3), isFalse, reason: 'high-density phone');
       expect(await isTabletAt(tester, const Size(360, 640), 1.5), isFalse, reason: 'low-density phone');
       expect(await isTabletAt(tester, const Size(820, 1180), 2), isTrue, reason: 'large tablet');
-      expect(await isTabletAt(tester, const Size(600, 960), 2), isTrue, reason: 'small tablet at the 7-inch edge');
+      expect(await isTabletAt(tester, const Size(340, 1240), 2), isFalse, reason: 'narrow split window');
+      expect(await isTabletAt(tester, const Size(600, 960), 2), isTrue, reason: 'compact tablet');
     });
   });
 }

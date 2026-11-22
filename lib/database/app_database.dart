@@ -91,7 +91,7 @@ final class LegacyDesktopDatabasePreview {
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  static const int currentSchemaVersion = 39;
+  static const int currentSchemaVersion = 42;
 
   /// Resolves the current app-owned database path for first-run migration UI.
   /// This never scans or adopts another application's files.
@@ -148,6 +148,8 @@ class AppDatabase extends _$AppDatabase {
         if (versionValue >= 36) required.addAll({'music_queue_entries', 'music_recipes'});
         if (versionValue >= 37) required.addAll({'music_listens', 'music_documents'});
         if (versionValue >= 38) required.add('retained_download_owners');
+        if (versionValue >= 42) required.addAll({'iptv_series_rules', 'iptv_series_airings'});
+        if (versionValue >= 41) required.add('iptv_lineup_groups');
         if (versionValue >= 38) required.addAll({'iptv_guide_programmes', 'iptv_guide_logos', 'iptv_feed_identities'});
         if (!tables.containsAll(required)) {
           final missing = required.difference(tables).toList()..sort();
@@ -193,6 +195,9 @@ class AppDatabase extends _$AppDatabase {
     'iptv_guide_logos',
     'iptv_channel_overrides',
     'iptv_group_locks',
+    'iptv_lineup_groups',
+    'iptv_series_rules',
+    'iptv_series_airings',
     'iptv_recording_schedules',
     'iptv_vod_categories',
     'iptv_vod_items',
@@ -392,7 +397,7 @@ class AppDatabase extends _$AppDatabase {
       profileConnections,
     )..orderBy([(t) => OrderingTerm.asc(t.profileId), (t) => OrderingTerm.asc(t.connectionId)])).get();
     final iptvSourcesRows = await customSelect('''
-      SELECT id, profile_id, display_name, kind, config_ciphertext, revision, generation,
+      SELECT id, profile_id, display_name, kind, config_ciphertext, playlist_ciphertext, revision, generation,
              created_at, last_success_at, last_error_code
       FROM iptv_sources ORDER BY id
     ''').get();
@@ -402,9 +407,18 @@ class AppDatabase extends _$AppDatabase {
       'SELECT source_id,feed_key,channel_id FROM iptv_feed_identities WHERE feed_key != channel_id ORDER BY source_id,feed_key',
     ).get();
     final iptvOverrideRows = await customSelect('''
-      SELECT profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked
+      SELECT profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked, lineup_order
       FROM iptv_channel_overrides ORDER BY profile_id, source_id, channel_id
     ''').get();
+    final series = await customSelect(
+      'SELECT id,source_id,channel_id,title,title_key,anchor FROM iptv_series_rules ORDER BY id',
+    ).get();
+    final airings = await customSelect(
+      'SELECT rule_id,schedule_id,episode_key FROM iptv_series_airings ORDER BY rule_id,schedule_id',
+    ).get();
+    final lineupGroups = await customSelect(
+      'SELECT id,source_id,name,members,revision FROM iptv_lineup_groups ORDER BY id',
+    ).get();
     final iptvGroupLockRows = await customSelect('''
       SELECT profile_id, source_id, group_key, group_title
       FROM iptv_group_locks ORDER BY profile_id, source_id, group_key
@@ -438,6 +452,7 @@ class AppDatabase extends _$AppDatabase {
             'displayName': row.data['display_name'],
             'kind': row.data['kind'],
             'configCiphertext': row.data['config_ciphertext'],
+            'playlistCiphertext': row.data['playlist_ciphertext'],
             'revision': row.data['revision'],
             'generation': row.data['generation'],
             'createdAt': row.data['created_at'],
@@ -457,11 +472,24 @@ class AppDatabase extends _$AppDatabase {
             'channelId': row.data['channel_id'],
             'favorite': row.data['favorite'] == 1,
             'favoriteOrder': row.data['favorite_order'],
+            'lineupOrder': row.data['lineup_order'],
             'hidden': row.data['hidden'] == 1,
             'customTitle': row.data['custom_title'],
             'groupOverride': row.data['group_override'],
             'guideIdOverride': row.data['guide_id_override'],
             'parentalLocked': row.data['parental_locked'] == 1,
+          },
+      ],
+      'iptvSeriesRules': [for (final row in series) row.data],
+      'iptvSeriesAirings': [for (final row in airings) row.data],
+      'iptvLineupGroups': [
+        for (final group in lineupGroups)
+          {
+            'id': group.data['id'],
+            'sourceId': group.data['source_id'],
+            'name': group.data['name'],
+            'members': group.data['members'],
+            'revision': group.data['revision'],
           },
       ],
       'iptvGroupLocks': [
@@ -542,6 +570,7 @@ class AppDatabase extends _$AppDatabase {
       'displayName',
       'kind',
       'configCiphertext',
+      'playlistCiphertext',
       'revision',
       'generation',
       'createdAt',
@@ -559,11 +588,32 @@ class AppDatabase extends _$AppDatabase {
       'channelId',
       'favorite',
       'favoriteOrder',
+      'lineupOrder',
       'hidden',
       'customTitle',
       'groupOverride',
       'guideIdOverride',
       'parentalLocked',
+    });
+    final series = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvSeriesRules', const {
+      'id',
+      'source_id',
+      'channel_id',
+      'title',
+      'title_key',
+      'anchor',
+    });
+    final airings = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvSeriesAirings', const {
+      'rule_id',
+      'schedule_id',
+      'episode_key',
+    });
+    final lineupGroups = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvLineupGroups', const {
+      'id',
+      'sourceId',
+      'name',
+      'members',
+      'revision',
     });
     final iptvGroupLockRows = _decodeIptvRecoveryRowsIfPresent(snapshot.identity, 'iptvGroupLocks', const {
       'profileId',
@@ -652,6 +702,9 @@ class AppDatabase extends _$AppDatabase {
       await delete(profileConnections).go();
       await customStatement('DELETE FROM iptv_channel_overrides');
       await customStatement('DELETE FROM iptv_group_locks');
+      await customStatement('DELETE FROM iptv_series_airings');
+      await customStatement('DELETE FROM iptv_series_rules');
+      await customStatement('DELETE FROM iptv_lineup_groups');
       await customStatement('DELETE FROM iptv_vod_progress');
       await customStatement('DELETE FROM iptv_recording_schedules');
       await customStatement('DELETE FROM iptv_recordings');
@@ -675,13 +728,14 @@ class AppDatabase extends _$AppDatabase {
       }
       for (final row in iptvSourcesRows) {
         await customStatement(
-          'INSERT INTO iptv_sources(id, profile_id, display_name, kind, config_ciphertext, revision, generation, created_at, last_success_at, last_error_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO iptv_sources(id, profile_id, display_name, kind, config_ciphertext, playlist_ciphertext, revision, generation, created_at, last_success_at, last_error_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
             row['id'],
             row['profileId'],
             row['displayName'],
             row['kind'],
             row['configCiphertext'],
+            row['playlistCiphertext'],
             row['revision'],
             row['generation'],
             row['createdAt'],
@@ -699,7 +753,7 @@ class AppDatabase extends _$AppDatabase {
       }
       for (final row in iptvOverrideRows) {
         await customStatement(
-          'INSERT INTO iptv_channel_overrides(profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO iptv_channel_overrides(profile_id, source_id, channel_id, favorite, favorite_order, hidden, custom_title, group_override, guide_id_override, parental_locked, lineup_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [
             row['profileId'],
             row['sourceId'],
@@ -711,8 +765,18 @@ class AppDatabase extends _$AppDatabase {
             row['groupOverride'],
             row['guideIdOverride'],
             row['parentalLocked'] == true ? 1 : 0,
+            row['lineupOrder'],
           ],
         );
+      }
+      for (final group in lineupGroups) {
+        await customStatement('INSERT INTO iptv_lineup_groups(id,source_id,name,members,revision) VALUES (?,?,?,?,?)', [
+          group['id'],
+          group['sourceId'],
+          group['name'],
+          group['members'],
+          group['revision'],
+        ]);
       }
       for (final row in iptvGroupLockRows) {
         await customStatement(
@@ -762,6 +826,19 @@ class AppDatabase extends _$AppDatabase {
             row['updatedAt'],
           ],
         );
+      }
+      for (final row in series) {
+        await customStatement(
+          'INSERT INTO iptv_series_rules(id,source_id,channel_id,title,title_key,anchor) VALUES(?,?,?,?,?,?)',
+          [row['id'], row['source_id'], row['channel_id'], row['title'], row['title_key'], row['anchor']],
+        );
+      }
+      for (final row in airings) {
+        await customStatement('INSERT INTO iptv_series_airings(rule_id,schedule_id,episode_key) VALUES(?,?,?)', [
+          row['rule_id'],
+          row['schedule_id'],
+          row['episode_key'],
+        ]);
       }
       for (final row in iptvRecordingRows) {
         await customStatement(
@@ -837,7 +914,11 @@ class AppDatabase extends _$AppDatabase {
       if (raw is! Map<String, dynamic>) {
         throw _invalidRecoveryImage;
       }
-      final rawColumns = raw.keys.toSet();
+      final normalized = Map<String, dynamic>.from(raw);
+      // Nullable fields added in v40 were absent in earlier recovery images.
+      if (key == 'iptvSources') normalized.putIfAbsent('playlistCiphertext', () => null);
+      if (key == 'iptvChannelOverrides') normalized.putIfAbsent('lineupOrder', () => null);
+      final rawColumns = normalized.keys.toSet();
       final legacyOverrideColumns = columns.difference(const {'guideIdOverride', 'parentalLocked'});
       final legacyIptvOverrides =
           key == 'iptvChannelOverrides' &&
@@ -847,7 +928,6 @@ class AppDatabase extends _$AppDatabase {
           (columns.difference(rawColumns).isNotEmpty && !legacyIptvOverrides)) {
         throw _invalidRecoveryImage;
       }
-      final normalized = Map<String, dynamic>.from(raw);
       if (legacyIptvOverrides) {
         normalized.putIfAbsent('guideIdOverride', () => null);
         normalized.putIfAbsent('parentalLocked', () => false);
@@ -858,6 +938,9 @@ class AppDatabase extends _$AppDatabase {
             normalized['displayName'] is! String ||
             normalized['kind'] is! String ||
             normalized['configCiphertext'] is! String ||
+            (normalized['playlistCiphertext'] != null &&
+                (normalized['playlistCiphertext'] is! String ||
+                    !CredentialVault.isProtected(normalized['playlistCiphertext'] as String))) ||
             normalized['revision'] is! int ||
             normalized['generation'] is! int ||
             normalized['createdAt'] is! int ||
@@ -879,7 +962,35 @@ class AppDatabase extends _$AppDatabase {
             (normalized['guideIdOverride'] != null && normalized['guideIdOverride'] is! String)) {
           throw _invalidRecoveryImage;
         }
-        if (normalized['parentalLocked'] is! bool) throw _invalidRecoveryImage;
+        if (normalized['parentalLocked'] is! bool ||
+            (normalized['lineupOrder'] != null && normalized['lineupOrder'] is! int)) {
+          throw _invalidRecoveryImage;
+        }
+      } else if (key == 'iptvSeriesRules') {
+        if (raw['id'] is! String ||
+            raw['source_id'] is! String ||
+            raw['channel_id'] is! String ||
+            raw['title'] is! String ||
+            raw['title_key'] is! String ||
+            raw['anchor'] is! int) {
+          throw _invalidRecoveryImage;
+        }
+      } else if (key == 'iptvSeriesAirings') {
+        if (raw['rule_id'] is! String ||
+            raw['schedule_id'] is! String ||
+            (raw['episode_key'] != null && raw['episode_key'] is! String)) {
+          throw _invalidRecoveryImage;
+        }
+      } else if (key == 'iptvLineupGroups') {
+        if (normalized['id'] is! String ||
+            normalized['sourceId'] is! String ||
+            normalized['name'] is! String ||
+            normalized['revision'] is! int ||
+            normalized['members'] is! String) {
+          throw _invalidRecoveryImage;
+        }
+        final members = jsonDecode(normalized['members'] as String);
+        if (members is! List || members.any((member) => member is! String)) throw _invalidRecoveryImage;
       } else if (key == 'iptvGroupLocks') {
         if (normalized['profileId'] is! String ||
             normalized['sourceId'] is! String ||
@@ -980,10 +1091,12 @@ class AppDatabase extends _$AppDatabase {
         await createDownloadConversionTable(this);
         await _createIptvTables();
         await _createIptvGuideCache();
+        await _createIptvLineupGroups();
         await _createRetainedDownloadOwners();
         await _createIptvExtensionTables();
         await _createIptvParentalTables();
         await _createIptvRecordingSchedules();
+        await _createIptvSeriesTables();
         await _createMusicCatalogTables();
         await _createMusicExperienceTables();
       },
@@ -1163,6 +1276,18 @@ class AppDatabase extends _$AppDatabase {
             FROM iptv_channels c LEFT JOIN iptv_channel_overrides o
               ON o.source_id=c.source_id AND o.channel_id=c.channel_id
             WHERE c.logo_url IS NOT NULL AND COALESCE(NULLIF(o.guide_id_override,''),c.tvg_id) IS NOT NULL''');
+        }
+        if (from < 42) await _createIptvSeriesTables();
+        if (from < 41) await _createIptvLineupGroups();
+        if (from < 40) {
+          final overrides = await customSelect('PRAGMA table_info(iptv_channel_overrides)').get();
+          if (!overrides.any((row) => row.read<String>('name') == 'lineup_order')) {
+            await customStatement('ALTER TABLE iptv_channel_overrides ADD COLUMN lineup_order INTEGER');
+          }
+          final columns = await customSelect('PRAGMA table_info(iptv_sources)').get();
+          if (!columns.any((row) => row.read<String>('name') == 'playlist_ciphertext')) {
+            await customStatement('ALTER TABLE iptv_sources ADD COLUMN playlist_ciphertext TEXT');
+          }
         }
         if (from < 39) {
           await createDownloadConversionTable(this);
@@ -1476,6 +1601,25 @@ class AppDatabase extends _$AppDatabase {
     'owner_id TEXT NOT NULL, backend TEXT, client_scope_id TEXT, PRIMARY KEY (global_key, owner_id))',
   );
 
+  Future<void> _createIptvSeriesTables() async {
+    await customStatement(
+      'CREATE TABLE IF NOT EXISTS iptv_series_rules(id TEXT PRIMARY KEY NOT NULL,source_id TEXT NOT NULL REFERENCES iptv_sources(id) ON DELETE CASCADE,channel_id TEXT NOT NULL,title TEXT NOT NULL,title_key TEXT NOT NULL,anchor INTEGER NOT NULL,UNIQUE(source_id,channel_id,title_key))',
+    );
+    await customStatement(
+      'CREATE TABLE IF NOT EXISTS iptv_series_airings(rule_id TEXT NOT NULL REFERENCES iptv_series_rules(id) ON DELETE CASCADE,schedule_id TEXT PRIMARY KEY NOT NULL REFERENCES iptv_recording_schedules(id) ON DELETE CASCADE,episode_key TEXT)',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_iptv_series_airings_rule ON iptv_series_airings(rule_id,episode_key)',
+    );
+  }
+
+  Future<void> _createIptvLineupGroups() => customStatement("""
+    CREATE TABLE IF NOT EXISTS iptv_lineup_groups (
+      id TEXT PRIMARY KEY NOT NULL, source_id TEXT NOT NULL REFERENCES iptv_sources(id) ON DELETE CASCADE,
+      name TEXT NOT NULL COLLATE NOCASE, members TEXT NOT NULL DEFAULT '[]', revision INTEGER NOT NULL DEFAULT 1,
+      UNIQUE(source_id,name))
+    """);
+
   Future<void> _createIptvTables() async {
     await customStatement('''
       CREATE TABLE IF NOT EXISTS iptv_sources (
@@ -1484,6 +1628,7 @@ class AppDatabase extends _$AppDatabase {
         display_name TEXT NOT NULL,
         kind TEXT NOT NULL,
         config_ciphertext TEXT NOT NULL,
+        playlist_ciphertext TEXT,
         revision INTEGER NOT NULL DEFAULT 1,
         generation INTEGER NOT NULL DEFAULT 0,
         created_at INTEGER NOT NULL,
@@ -1545,6 +1690,7 @@ class AppDatabase extends _$AppDatabase {
         channel_id TEXT NOT NULL,
         favorite INTEGER NOT NULL DEFAULT 0,
         favorite_order INTEGER NOT NULL DEFAULT 0,
+        lineup_order INTEGER,
         hidden INTEGER NOT NULL DEFAULT 0,
         custom_title TEXT,
         group_override TEXT,
@@ -1731,7 +1877,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<OfflineWatchProgressItem>> getPendingWatchActions({String? profileId}) {
-    final query = select(offlineWatchProgress)..orderBy([(t) => OrderingTerm.asc(t.createdAt)]);
+    final query = select(offlineWatchProgress)
+      ..orderBy([(t) => OrderingTerm.asc(t.updatedAt), (t) => OrderingTerm.asc(t.id)]);
     if (profileId != null) {
       query.where((t) => t.profileId.equals(profileId));
     }
@@ -1870,6 +2017,16 @@ class AppDatabase extends _$AppDatabase {
     return accountScope != null && accountScope == clientScopeId ? exact | column.isNull() : exact;
   }
 
+  Future<int> _nextWatchRevision(String key) async {
+    final latest = offlineWatchProgress.updatedAt.max();
+    final query = selectOnly(offlineWatchProgress)
+      ..addColumns([latest])
+      ..where(offlineWatchProgress.globalKey.equals(key));
+    final previous = (await query.getSingle()).read(latest) ?? 0;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    return now > previous ? now : previous + 1;
+  }
+
   /// Insert or update a progress action (merges with existing).
   Future<({int rowId, int revision})> upsertProgressAction({
     String? profileId,
@@ -1880,31 +2037,33 @@ class AppDatabase extends _$AppDatabase {
     required int viewOffset,
     required int? duration,
     required bool shouldMarkWatched,
+    int? sessionRowId,
+    bool startSession = false,
   }) async {
     return _runPendingMutation(() async {
       final globalKey = buildGlobalKey(ServerId(serverId), ratingKey);
-      final now = DateTime.now().millisecondsSinceEpoch;
 
       return transaction(() async {
-        final existing =
-            await (select(offlineWatchProgress)
-                  ..where(
-                    (t) =>
-                        t.globalKey.equals(globalKey) &
-                        _nullableTextPredicate(t.profileId, profileId) &
-                        _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
-                        _nullableTextPredicate(t.clientScopeId, clientScopeId) &
-                        t.actionType.equals(OfflineActionType.progress.id),
-                  )
-                  ..orderBy([(t) => OrderingTerm.asc(t.id)]))
-                .get();
-
-        final keep = existing.isEmpty ? null : existing.first;
+        final revision = await _nextWatchRevision(globalKey);
+        final existing = startSession
+            ? null
+            : await (select(offlineWatchProgress)
+                    ..where(
+                      (t) =>
+                          t.globalKey.equals(globalKey) &
+                          _nullableTextPredicate(t.profileId, profileId) &
+                          _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
+                          _nullableTextPredicate(t.clientScopeId, clientScopeId) &
+                          t.actionType.equals(OfflineActionType.progress.id) &
+                          (sessionRowId == null ? const Constant(true) : t.id.equals(sessionRowId)),
+                    )
+                    ..orderBy([(t) => OrderingTerm.desc(t.id)])
+                    ..limit(1))
+                  .getSingleOrNull();
+        // A play that reached completion is a history event. Subsequent
+        // resumable playback must never replace it, including legacy rows.
+        final keep = existing != null && (!existing.shouldMarkWatched || shouldMarkWatched) ? existing : null;
         if (keep != null) {
-          // The row id survives a merge, so its timestamp must advance even
-          // when multiple playback updates land in one clock millisecond.
-          final nextRevision = keep.updatedAt + 1;
-          final revision = now > nextRevision ? now : nextRevision;
           // A merge is a new logical action; retry history belongs only to
           // the revision whose server write failed.
           await (update(offlineWatchProgress)..where((t) => t.id.equals(keep.id))).write(
@@ -1920,10 +2079,6 @@ class AppDatabase extends _$AppDatabase {
               lastError: const Value<String?>(null),
             ),
           );
-          final duplicateIds = existing.skip(1).map((row) => row.id).toList(growable: false);
-          if (duplicateIds.isNotEmpty) {
-            await (delete(offlineWatchProgress)..where((t) => t.id.isIn(duplicateIds))).go();
-          }
           return (rowId: keep.id, revision: revision);
         }
 
@@ -1939,11 +2094,11 @@ class AppDatabase extends _$AppDatabase {
             viewOffset: Value(viewOffset),
             duration: Value(duration),
             shouldMarkWatched: Value(shouldMarkWatched),
-            createdAt: now,
-            updatedAt: now,
+            createdAt: revision,
+            updatedAt: revision,
           ),
         );
-        return (rowId: rowId, revision: now);
+        return (rowId: rowId, revision: revision);
       });
     });
   }
@@ -1960,9 +2115,9 @@ class AppDatabase extends _$AppDatabase {
   }) async {
     return _runPendingMutation(() async {
       final globalKey = buildGlobalKey(ServerId(serverId), ratingKey);
-      final now = DateTime.now().millisecondsSinceEpoch;
 
       return transaction(() async {
+        final now = await _nextWatchRevision(globalKey);
         // Remove conflicting actions (opposite action type and progress).
         await (delete(offlineWatchProgress)..where(
               (t) =>
@@ -2021,11 +2176,18 @@ class AppDatabase extends _$AppDatabase {
                 _watchAccountPredicate(t.accountScope, accountScope, clientScopeId) &
                 _nullableTextPredicate(t.clientScopeId, clientScopeId) &
                 t.actionType.equals(OfflineActionType.progress.id) &
+                t.shouldMarkWatched.equals(false) &
                 (beforeRevision == null ? const Constant(true) : t.updatedAt.isSmallerThanValue(beforeRevision)),
           ))
           .go();
     });
   }
+
+  Future<bool> watchActionIsCurrent(int id, int revision) async =>
+      await (select(
+        offlineWatchProgress,
+      )..where((t) => t.id.equals(id) & t.updatedAt.equals(revision))).getSingleOrNull() !=
+      null;
 
   /// Delete a watch action only if it is still the snapshotted revision.
   Future<bool> deleteWatchActionIfUnchanged(int id, int revision) {

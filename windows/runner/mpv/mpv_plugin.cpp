@@ -127,6 +127,16 @@ HWND MpvPlayerPlugin::GetChildWindow() { return registrar_->GetView()->GetNative
 
 HWND MpvPlayerPlugin::GetWindow() { return ::GetAncestor(GetChildWindow(), GA_ROOT); }
 
+// In a spanned or detached player the video can be on a different physical
+// output than the Flutter window. Use its child HWND whenever it has an area.
+HWND MpvPlayerPlugin::PlaybackDisplayWindow() {
+  HWND surface = player_ ? player_->GetHwnd() : nullptr;
+  RECT rect{};
+  return surface && IsWindowVisible(surface) && GetWindowRect(surface, &rect) && !IsRectEmpty(&rect)
+             ? surface
+             : GetWindow();
+}
+
 namespace {
 std::wstring DetachedText(const std::string& text) {
   const int length = static_cast<int>(std::min<size_t>(text.size(), 1024));
@@ -953,7 +963,7 @@ void MpvPlayerPlugin::HandleMethodCall(
 
     // --- Display mode matching (video instance only) ---
   } else if (!audio_only_ && method == "getDisplayModes") {
-    HWND hwnd = GetWindow();
+    HWND hwnd = PlaybackDisplayWindow();
     auto modes = display_mode_manager_.EnumerateDisplayModes(hwnd);
     flutter::EncodableList list;
     for (const auto& mode : modes) {
@@ -961,7 +971,7 @@ void MpvPlayerPlugin::HandleMethodCall(
     }
     result->Success(flutter::EncodableValue(list));
   } else if (!audio_only_ && method == "getCurrentDisplayMode") {
-    HWND hwnd = GetWindow();
+    HWND hwnd = PlaybackDisplayWindow();
     auto mode = display_mode_manager_.GetCurrentMode(hwnd);
     result->Success(flutter::EncodableValue(DisplayModeToMap(mode)));
   } else if (!audio_only_ && method == "setDisplayMode") {
@@ -976,19 +986,19 @@ void MpvPlayerPlugin::HandleMethodCall(
       if (it != map.end() && std::holds_alternative<int32_t>(it->second)) return std::get<int32_t>(it->second);
       return 0;
     };
-    HWND hwnd = GetWindow();
+    HWND hwnd = PlaybackDisplayWindow();
     bool success =
         display_mode_manager_.SetDisplayMode(hwnd, get_int("width"), get_int("height"), get_int("refreshRate"));
     result->Success(flutter::EncodableValue(success));
   } else if (!audio_only_ && method == "restoreDisplayMode") {
-    HWND hwnd = GetWindow();
+    HWND hwnd = PlaybackDisplayWindow();
     bool success = display_mode_manager_.RestoreOriginalMode(hwnd);
     result->Success(flutter::EncodableValue(success));
   } else if (!audio_only_ && method == "isHDRSupported") {
-    HWND hwnd = GetWindow();
+    HWND hwnd = PlaybackDisplayWindow();
     result->Success(flutter::EncodableValue(display_mode_manager_.IsHDRSupported(hwnd)));
   } else if (!audio_only_ && method == "isHDREnabled") {
-    HWND hwnd = GetWindow();
+    HWND hwnd = PlaybackDisplayWindow();
     result->Success(flutter::EncodableValue(display_mode_manager_.IsHDREnabled(hwnd)));
   } else if (!audio_only_ && method == "setSystemHDR") {
     const auto* args = method_call.arguments();
@@ -1003,11 +1013,11 @@ void MpvPlayerPlugin::HandleMethodCall(
       return;
     }
     bool enabled = std::get<bool>(it->second);
-    HWND hwnd = GetWindow();
+    HWND hwnd = PlaybackDisplayWindow();
     bool success = display_mode_manager_.SetHDREnabled(hwnd, enabled);
     result->Success(flutter::EncodableValue(success));
   } else if (!audio_only_ && method == "restoreSystemHDR") {
-    HWND hwnd = GetWindow();
+    HWND hwnd = PlaybackDisplayWindow();
     bool success = display_mode_manager_.RestoreOriginalHDRState(hwnd);
     result->Success(flutter::EncodableValue(success));
   } else if (!audio_only_ && method == "isModeChanged") {

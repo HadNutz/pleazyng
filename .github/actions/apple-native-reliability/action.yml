@@ -4,6 +4,9 @@ inputs:
   platform:
     description: iOS, macOS or tvOS.
     required: true
+  motion-test-only:
+    description: Run the iPhone live motion XCTest on its own.
+    default: 'false'
 runs:
   using: composite
   steps:
@@ -20,7 +23,7 @@ runs:
           macOS) project=macos; sdk='';               runtime='';   destination='platform=macOS' ;;
           *) echo "::error::Unsupported Apple platform $PLATFORM"; exit 1 ;;
         esac
-        if [[ "$RUNNER_ENVIRONMENT" == self-hosted ]]; then
+        if [[ "$RUNNER_ENVIRONMENT" == self-hosted && "$PLATFORM" != iOS ]]; then
           xcodebuild -version | grep -Fx 'Xcode 27.0'
           test "$(xcrun --sdk "${sdk:-macosx}" --show-sdk-version)" = '27.0'
         fi
@@ -86,6 +89,14 @@ runs:
       shell: bash
       working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
       run: flutter pub get --enforce-lockfile --no-example
+
+    - name: Stage verified SQLite libraries for iPhone simulator and host hooks
+      if: inputs.platform == 'iOS'
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: python3 scripts/prepare_native_downloads.py --ios-simulator-sqlite --cache-dir "$RUNNER_TEMP/ios-simulator-native-downloads"
 
     - name: Verify Sherpa ONNX iOS simulator framework
       if: inputs.platform == 'iOS'
@@ -318,6 +329,7 @@ runs:
     - name: Select Apple test destination
       id: destination
       env:
+        PREFERRED_SIMULATOR_TYPE: ${{ inputs.platform == 'iOS' && 'com.apple.CoreSimulator.SimDeviceType.iPhone-Duo' || '' }}
         SIMULATOR_RUNTIME: ${{ steps.scratch.outputs.runtime }}
         SIMULATOR_SDK: ${{ steps.scratch.outputs.sdk }}
         STATIC_DESTINATION: ${{ steps.scratch.outputs.destination }}
@@ -363,14 +375,19 @@ runs:
         NATIVE_WORKSPACE: ${{ steps.scratch.outputs.project }}/Runner.xcworkspace
         APPLE_TEST_DESTINATION: ${{ steps.destination.outputs.APPLE_TEST_DESTINATION }}
         PLATFORM: ${{ inputs.platform }}
+        MOTION_TEST_ONLY: ${{ inputs.motion-test-only }}
       shell: bash
       working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
       run: |
         result_bundle="$APPLE_RESULT_BUNDLE"
         test_log="$APPLE_LOCAL_BUILD_DIR/native-test-output.log"
+        test_selection=()
+        if [[ "$MOTION_TEST_ONLY" == true ]]; then
+          test_selection=(-only-testing:RunnerTests/MpvPlayerContractTests/testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream)
+        fi
         set -o pipefail
         set +e
-        gtimeout --kill-after=30s 75m xcodebuild test \
+        gtimeout --kill-after=30s 75m xcodebuild test "${test_selection[@]}" \
           -workspace "$NATIVE_WORKSPACE" \
           -scheme Runner \
           -configuration Debug \
@@ -393,7 +410,18 @@ runs:
           xcrun xcresulttool get test-results tests --path "$result_bundle" > "$startup_results"
           python3 scripts/checks/check_tvos_startup_result.py "$startup_results"
         fi
+        if [[ "$MOTION_TEST_ONLY" == true && "$test_status" == 0 ]]; then
+          grep -Ei 'Test case .*testVideoMotionOptionsCanChangeOnAnOpenAVFoundationStream.* passed' "$test_log"
+        fi
         exit "$test_status"
+
+    - name: Launch the same iOS app on an older phone runtime
+      if: inputs.platform == 'iOS' && runner.environment == 'github-hosted' && inputs.motion-test-only != 'true'
+      env:
+        PRODUCTS: ${{ steps.scratch.outputs.APPLE_DERIVED_DATA_PATH }}/Build/Products/Debug-iphonesimulator
+      shell: bash
+      working-directory: ${{ steps.scratch.outputs.PLEZYNG_APPLE_WORKSPACE }}
+      run: python3 scripts/apple/smoke_older_iphone.py "$PRODUCTS"
 
     - name: Build macOS application and XCTest bundle
       if: inputs.platform == 'macOS'

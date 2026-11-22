@@ -41,7 +41,7 @@ class TranslationsFrCa extends TranslationsFr with BaseTranslations<AppLocale, T
 	TranslationsFrCa $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsFrCa(meta: meta ?? this.$meta);
 
 	// Translations
-	@override late final _Translations$cast$fr_CA cast = _Translations$cast$fr_CA._(_root);
+	@override late final _Translations$iptv$fr_CA iptv = _Translations$iptv$fr_CA._(_root);
 	@override late final _Translations$appIcon$fr_CA appIcon = _Translations$appIcon$fr_CA._(_root);
 	@override late final _Translations$auth$fr_CA auth = _Translations$auth$fr_CA._(_root);
 	@override late final _Translations$common$fr_CA common = _Translations$common$fr_CA._(_root);
@@ -92,14 +92,29 @@ class TranslationsFrCa extends TranslationsFr with BaseTranslations<AppLocale, T
 	@override late final _Translations$subtitleAiUi$fr_CA subtitleAiUi = _Translations$subtitleAiUi$fr_CA._(_root);
 }
 
-// Path: cast
-class _Translations$cast$fr_CA extends Translations$cast$fr {
-	_Translations$cast$fr_CA._(TranslationsFrCa root) : this._root = root, super.internal(root);
+// Path: iptv
+class _Translations$iptv$fr_CA extends Translations$iptv$fr {
+	_Translations$iptv$fr_CA._(TranslationsFrCa root) : this._root = root, super.internal(root);
 
 	final TranslationsFrCa _root; // ignore: unused_field
 
 	// Translations
-	@override String get subtitle => 'Sous-titres';
+	@override String get backupFeeds => 'Sources de secours par ordre de lecture';
+	@override String get lineupOrder => 'Ordre des chaînes';
+	@override String get orderChanged => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.';
+	@override String get localPlaylist => 'Fichier M3U';
+	@override String get pastePlaylist => 'Coller le texte de la liste';
+	@override String get playlistBase => 'URL de base pour les liens relatifs (facultatif)';
+	@override String get localPlaylistHelp => 'Importez une copie privée d’une liste de chaînes M3U ou M3U8. Vous pouvez la remplacer par un autre fichier.';
+	@override String get showMatches => 'Afficher les chaînes correspondantes';
+	@override String get hideMatches => 'Masquer les chaînes correspondantes';
+	@override String get pickerCredit => 'Inspiré de · M3U Web Picker · Zachary Schmook (@zschmook) et des contributeurs';
+	@override String get exportPrivate => 'Les adresses des flux peuvent contenir vos identifiants. Enregistrez la liste dans un emplacement privé.';
+	@override String get dynamicStreamExport => 'Le portail crée un nouveau lien à chaque lecture. Vous pouvez exporter le guide.';
+	@override String get moveUp => 'Mouvement en haut';
+	@override String get moveDown => 'Mouvez-vous en bas';
+	@override String get choosePlaylist => 'Choisissez le fichier playlist';
+	@override String affectedChannels({required Object count}) => 'Chaînes · ${count}';
 }
 
 // Path: appIcon
@@ -177,6 +192,7 @@ class _Translations$settings$fr_CA extends Translations$settings$fr {
 	final TranslationsFrCa _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Charnière de l’écran pliable';
 	@override String get title => 'Paramètres';
 	@override String get language => 'Langue';
 	@override String get theme => 'Thème';
@@ -1336,7 +1352,22 @@ class _Translations$services$libraryFilter$fr_CA extends Translations$services$l
 extension on TranslationsFrCa {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
-			'cast.subtitle' => 'Sous-titres',
+			'iptv.backupFeeds' => 'Sources de secours par ordre de lecture',
+			'iptv.lineupOrder' => 'Ordre des chaînes',
+			'iptv.orderChanged' => 'L’ordre des chaînes a changé. Vérifiez-le et réessayez.',
+			'iptv.localPlaylist' => 'Fichier M3U',
+			'iptv.pastePlaylist' => 'Coller le texte de la liste',
+			'iptv.playlistBase' => 'URL de base pour les liens relatifs (facultatif)',
+			'iptv.localPlaylistHelp' => 'Importez une copie privée d’une liste de chaînes M3U ou M3U8. Vous pouvez la remplacer par un autre fichier.',
+			'iptv.showMatches' => 'Afficher les chaînes correspondantes',
+			'iptv.hideMatches' => 'Masquer les chaînes correspondantes',
+			'iptv.pickerCredit' => 'Inspiré de · M3U Web Picker · Zachary Schmook (@zschmook) et des contributeurs',
+			'iptv.exportPrivate' => 'Les adresses des flux peuvent contenir vos identifiants. Enregistrez la liste dans un emplacement privé.',
+			'iptv.dynamicStreamExport' => 'Le portail crée un nouveau lien à chaque lecture. Vous pouvez exporter le guide.',
+			'iptv.moveUp' => 'Mouvement en haut',
+			'iptv.moveDown' => 'Mouvez-vous en bas',
+			'iptv.choosePlaylist' => 'Choisissez le fichier playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Chaînes · ${count}',
 			'appIcon.defaultIcon' => 'Par défaut',
 			'auth.quickConnect' => 'Connexion rapide',
 			'auth.useQuickConnect' => 'Utiliser la connexion rapide',
@@ -1375,6 +1406,7 @@ extension on TranslationsFrCa {
 			'common.mediaKind.folder' => 'Dossier',
 			'screens.subtitleStyling' => 'Style des sous-titres',
 			'screens.logs' => 'Journaux',
+			'settings.foldableDisplay' => 'Charnière de l’écran pliable',
 			'settings.title' => 'Paramètres',
 			'settings.language' => 'Langue',
 			'settings.theme' => 'Thème',
@@ -1833,6 +1865,8 @@ extension on TranslationsFrCa {
 			'romm.busy' => 'The streaming computer is occupied.',
 			'romm.streamEnded' => 'The streaming session ended.',
 			'romm.retry' => 'Try again',
+			_ => null,
+		} ?? switch (path) {
 			'romm.disc' => 'Change disc',
 			'romm.memoryCard' => 'Memory card',
 			'romm.multiplayer' => 'Allow players to join',
@@ -1848,8 +1882,6 @@ extension on TranslationsFrCa {
 			'romm.controls' => 'Controls',
 			'romm.resetControls' => 'Reset controls',
 			'romm.playerOne' => 'Player 1',
-			_ => null,
-		} ?? switch (path) {
 			'romm.select' => 'Select',
 			'romm.start' => 'Start',
 			'romm.up' => 'Up',

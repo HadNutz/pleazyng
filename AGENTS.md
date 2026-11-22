@@ -30,6 +30,27 @@ Public pull-request code runs without secrets and with minimal permissions.
 Use GitHub-hosted disposable execution for untrusted code; never widen trusted
 runner-group access to admit it.
 
+## CodeQL — owner directive, 2026-11-21
+
+Keep GitHub CodeQL default setup enabled for this repository. The owner has
+withdrawn the 2026-10-30 organization-wide disable and explicitly requires
+CodeQL to stay on. Do not disable CodeQL or remove its workflow/checks. Correct
+any live instruction, workflow comment, ledger note or check that says CodeQL
+is disabled or forbidden. CodeQL jobs follow the runner policy above:
+compatible GitHub-hosted runners, no secrets and minimal permissions for public
+pull-request code.
+
+## Worktree and stash hygiene — owner directive, 2026-11-21
+
+Create task worktrees only under `/home/keith/Documents/code/task-worktrees/`
+or a task-scoped scratch root; never inside this checkout (including
+`.dart_tool/`) or inside a build output directory. At task end, commit or
+hand off the work, then remove the worktree with `git worktree remove` and
+run the task's cleanup helper. Prefer a commit on a detached worktree to
+`git stash`. `scripts/maintainers/worktree_hygiene.py report` is the
+read-only inventory; follow `docs/maintainers/worktree-hygiene.md` for archival,
+review and removal.
+
 ## Release coverage — owner directive, 2026-11-05
 
 Versioned GitHub releases include Android, Linux x64/arm64, Windows x64/arm64,

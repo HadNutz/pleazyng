@@ -266,6 +266,7 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
       currentPlayer.streams.position.listen((position) {
         final activePlayer = player;
         if (activePlayer == null || activePlayer != currentPlayer) return;
+        _saveVideoTask(position);
         if (widget.isLive && _live.observePlayerPosition(position)) {
           appLogger.w('Live player timestamp moved backwards; broadcast mapping is now unknown');
           _setPlayerState(() {});
@@ -816,7 +817,89 @@ extension _VideoPlayerPlaybackServiceMethods on VideoPlayerScreenState {
     );
   }
 
+  void _saveVideoTask(Duration position, {bool exact = false}) {
+    if (!mounted ||
+        _shuttingDown ||
+        !_isPlayerInitialized ||
+        !_firstFrame.rendered ||
+        _hasFatalPlaybackError ||
+        !PlatformDetector.isMobile(context)) {
+      return;
+    }
+    final observer = context.read<VideoTaskObserver?>();
+    final route = _videoPlayerRoute;
+    if (observer == null || route == null) return;
+    final item = _currentMetadata;
+    final source = _playbackSession?.mediaSourceId;
+    if (widget.isLive) {
+      final args = widget.live!;
+      final list = args.channels;
+      final index = _live.channelIndex;
+      final channel = list != null && index >= 0 && index < list.length ? list[index] : args.channel;
+      final owner = channel.iptvSourceId ?? channel.serverId;
+      if (_live.session == null ||
+          !SavedVideoTask.identifier(owner) ||
+          channel.iptvParentalLocked ||
+          _live.retrying ||
+          _transitionGate.transition == PlaybackTransition.switchingChannel) {
+        observer.clear(route);
+        return;
+      }
+      final reading = _live.playbackPosition(position);
+      final clock = reading.active && reading.accuracy != LiveTvTimeAccuracy.stale ? reading.epoch : null;
+      final edge = _liveSeekBounds()?.endEpoch;
+      final session = _live.session;
+      final catchupOrigin = session is IptvLiveTvPlaybackSession && session.isCatchup ? session.program.beginsAt : null;
+      final pending = _lateLiveRestore;
+      final broadcast =
+          (pending != null && identical(pending.session, session) && pending.intent == _liveSeek.intentGeneration
+              ? pending.epoch
+              : null) ??
+          (catchupOrigin != null
+              ? catchupOrigin + position.inSeconds
+              : (clock != null && clock.isFinite && edge != null && (edge - clock > 3 || !_playbackIntentShouldPlay)
+                    ? clock.floor()
+                    : null));
+      observer.record(
+        route,
+        SavedLiveTask(
+          owner!,
+          SavedLiveTask.digest(liveTvChannelScopeKey(channel)),
+          channel.iptvSourceId != null,
+          broadcast == null || exact ? broadcast : broadcast ~/ 5 * 5,
+          !_playbackIntentShouldPlay,
+        ),
+      );
+      return;
+    }
+    if (widget.isPreroll ||
+        _activeExternalPlaybackSource != null ||
+        context.read<WatchTogetherProvider?>()?.isInSession == true ||
+        !SavedVideoTask.identifier(item.id) ||
+        !SavedVideoTask.identifier(item.serverId) ||
+        (source != null && !SavedVideoTask.identifier(source))) {
+      observer.clear(route);
+      return;
+    }
+    final ms = position.inMilliseconds;
+    if (ms < 0) return;
+    observer.record(
+      route,
+      SavedVideoTask(
+        server: item.serverId!,
+        item: item.id,
+        backend: item.backend.name,
+        edition: _effectiveSelectedMediaIndex,
+        source: source,
+        positionMs: exact ? ms : (ms ~/ 5000) * 5000,
+        paused: !_playbackIntentShouldPlay,
+        offline: _isOfflinePlayback,
+      ),
+    );
+  }
+
   void _onPlayingStateChanged(bool isPlaying) {
+    if (player case final active?) _saveVideoTask(active.state.position, exact: true);
     if (!isPlaying) {
       _lastPlaybackPauseAt = DateTime.now();
     }

@@ -244,6 +244,7 @@
     "checkFailed": "نتوانستیم به روز رسانی ها را بررسی کنیم"
   },
   "settings": {
+    "foldableDisplay": "لولای نمایشگر تاشو",
     "title": "تنظیمات",
     "supportDeveloper": "پشتیبانی Pleazyng",
     "supportDeveloperDescription": "کمک های مالی برای حمایت از توسعه",
@@ -433,7 +434,6 @@
     "importSettings": "تنظیمات واردات",
     "importSettingsDescription": "بازگرداندن ترجیحات از یک فایل",
     "importSettingsConfirm": "این کار جایگزین تنظیمات فعلی شما خواهد شد. ادامه دهید؟",
-    "importSettingsSuccess": "تنظیمات وارداتی",
     "importSettingsCounts": "تنظیمات اعمال‌شده: ${applied}. ردشده: ${skipped}.",
     "importSettingsInvalidFile": "این فایل معتبر نیست Pleazyng تنظیمات صادرات",
     "importSettingsNoUser": "قبل از واردات تنظیمات را وارد کنید",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "نسخهٔ پشتیبان بارگذاری شد. این نشانی را ذخیره کنید. پس از نصب دوباره، آن را در بخش پشتیبان‌گیری ابری وارد کنید و «${action}» را انتخاب کنید.",
     "cloudBackupRestore": "بازگرداندن Backup",
     "cloudBackupRestoreConfirm": "این جایگزین تنظیمات قابل حمل مطابقت در این دستگاه خواهد بود.",
-    "cloudBackupRestored": "تنظیمات بازگردانده شده از پشتیبان ابر",
     "shortcutsReset": "تعویض کوتاه به تعویضات",
     "resetShortcutsConfirm": "این کار کوتاه کردن های سفارشی شما را با کوتاه کردن های پیش فرض جایگزین می کند.",
     "about": "درباره",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "اضافه کردن یا حذف URL برای ${serverName}. Pleazyng از URL قابل دسترسی با پایین ترین تاخیر استفاده می کند."
   },
   "iptv": {
+    "backupFeeds": "منابع پشتیبان به ترتیب پخش",
+    "lineupOrder": "ترتیب کانال‌ها",
+    "orderChanged": "ترتیب کانال‌ها تغییر کرده است. آن را بررسی کنید و دوباره تلاش کنید.",
+    "localPlaylist": "فایل M3U",
+    "pastePlaylist": "چسباندن متن فهرست پخش",
+    "playlistBase": "نشانی پایه برای پیوندهای نسبی (اختیاری)",
+    "localPlaylistHelp": "یک نسخهٔ خصوصی از فهرست کانال‌های M3U یا M3U8 وارد کنید. می‌توانید آن را با فایل دیگری جایگزین کنید.",
+    "showMatches": "نمایش کانال‌های مطابق",
+    "hideMatches": "پنهان کردن کانال‌های مطابق",
+    "pickerCredit": "با الهام از · M3U Web Picker · Zachary Schmook (@zschmook) و مشارکت‌کنندگان",
+    "exportPrivate": "نشانی‌های پخش ممکن است شامل اطلاعات ورود سرویس شما باشند. فهرست را در محلی خصوصی ذخیره کنید.",
+    "dynamicStreamExport": "درگاه برای هر پخش پیوند تازه‌ای می‌سازد. راهنمای برنامه‌ها را می‌توانید صادر کنید.",
+    "moveUp": "حرکت بالا",
+    "moveDown": "حرکت به پایین",
+    "choosePlaylist": "انتخاب فایل playlist",
+    "affectedChannels": "کانالها · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "URL تصویر را وارد کنید",
     "imageUrl": "تصویر URL",
     "metadataUpdated": "Metadata به روز شده",
+    "metadataConflict": "ویرایشگر دیگری همین فیلد را تغییر داده است. پیش از ذخیره، ویرایشگر را دوباره باز کنید تا آخرین مقادیر را بررسی کنید.",
     "metadataUpdateFailed": "عدم به روز رسانی متا",
     "artworkUpdated": "هنر به روز شده",
     "artworkUpdateFailed": "به روز رسانی هنرهای هنری",
@@ -3676,7 +3692,6 @@
     "connectedTo": "به ${device} متصل شده است.",
     "device": "دستگاه پخش",
     "readyToCast": "آمادهٔ پخش روی دستگاه",
-    "subtitle": "زیرنویس‌ها",
     "serverNotAvailable": "سرور رسانه ای در دسترس نیست.",
     "stopCasting": "توقف پخش روی دستگاه",
     "startFailed": "نمی توانم شروع به کاستینگ کنم، سرور را چک کنید و دوباره امتحان کنید."
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "اشتراک‌های واردشده: ${imported}، تکراری: ${duplicates}، ردشده: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "نشانی رلهٔ موسیقی",
     "relayHint": "در دستگاه گیرنده فعال کنید و یک بار در همان شبکه جفت کنید. Pleazyng را باز نگه دارید. رله فرمان‌های رمزگذاری‌شدهٔ موسیقی را منتقل می‌کند و نشانی‌های شبکه را می‌بیند. هر پخش‌کننده از سرور رسانهٔ خودش پخش می‌کند.",
     "relayInvalid": "نشانی HTTPS رله را وارد کنید."
+  },
+  "bookmarkMigration": {
+    "unassigned": "نشانک‌های نسخه‌ای ناشناخته",
+    "assignToVersion": "اختصاص به این نسخه"
   }
 }

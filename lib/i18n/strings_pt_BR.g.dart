@@ -41,9 +41,9 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	TranslationsPtBr $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsPtBr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final Translations$iptv$pt_BR iptv = Translations$iptv$pt_BR.internal(_root);
 	@override late final Translations$mediaConveniences$pt_BR mediaConveniences = Translations$mediaConveniences$pt_BR.internal(_root);
 	@override late final Translations$viewing$pt_BR viewing = Translations$viewing$pt_BR.internal(_root);
-	@override late final Translations$cast$pt_BR cast = Translations$cast$pt_BR.internal(_root);
 	@override late final Translations$appIcon$pt_BR appIcon = Translations$appIcon$pt_BR.internal(_root);
 	@override late final Translations$auth$pt_BR auth = Translations$auth$pt_BR.internal(_root);
 	@override late final Translations$common$pt_BR common = Translations$common$pt_BR.internal(_root);
@@ -94,6 +94,31 @@ class TranslationsPtBr extends TranslationsPt with BaseTranslations<AppLocale, T
 	@override late final Translations$subtitleAiUi$pt_BR subtitleAiUi = Translations$subtitleAiUi$pt_BR.internal(_root);
 }
 
+// Path: iptv
+class Translations$iptv$pt_BR extends Translations$iptv$pt {
+	Translations$iptv$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
+
+	final TranslationsPtBr _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'Fontes alternativas por ordem de reprodução';
+	@override String get lineupOrder => 'Ordem dos canais';
+	@override String get orderChanged => 'A ordem dos canais mudou. Confira e tente novamente.';
+	@override String get localPlaylist => 'Arquivo M3U';
+	@override String get pastePlaylist => 'Colar o texto da playlist';
+	@override String get playlistBase => 'URL base para links relativos (opcional)';
+	@override String get localPlaylistHelp => 'Importe uma cópia privada de uma lista de canais M3U ou M3U8. Você pode substituí-la por outro arquivo.';
+	@override String get showMatches => 'Mostrar canais correspondentes';
+	@override String get hideMatches => 'Ocultar canais correspondentes';
+	@override String get pickerCredit => 'Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores';
+	@override String get exportPrivate => 'Os endereços das transmissões podem incluir suas credenciais. Salve a lista em um local privado.';
+	@override String get dynamicStreamExport => 'O portal cria um link novo a cada reprodução. Você pode exportar o guia.';
+	@override String get moveUp => 'Move em cima';
+	@override String get moveDown => 'Move abaixo';
+	@override String get choosePlaylist => 'Escolha o arquivo de playlist';
+	@override String affectedChannels({required Object count}) => 'Canais · ${count}';
+}
+
 // Path: mediaConveniences
 class Translations$mediaConveniences$pt_BR extends Translations$mediaConveniences$pt {
 	Translations$mediaConveniences$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
@@ -124,16 +149,6 @@ class Translations$viewing$pt_BR extends Translations$viewing$pt {
 	@override String get pairPage => 'Voltar a agrupar esta página';
 	@override String get listenPhone => 'Ouvir neste celular';
 	@override String get audioUnavailable => 'O arquivo ou a faixa de áudio não está disponível neste celular.';
-}
-
-// Path: cast
-class Translations$cast$pt_BR extends Translations$cast$pt {
-	Translations$cast$pt_BR.internal(TranslationsPtBr root) : this._root = root, super.internal(root);
-
-	final TranslationsPtBr _root; // ignore: unused_field
-
-	// Translations
-	@override String get subtitle => 'Legendas';
 }
 
 // Path: appIcon
@@ -212,6 +227,7 @@ class Translations$settings$pt_BR extends Translations$settings$pt {
 	final TranslationsPtBr _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Dobradiça da tela dobrável';
 	@override String get title => 'Configurações';
 	@override String get language => 'Idioma';
 	@override String get theme => 'Tema';
@@ -1408,6 +1424,22 @@ class Translations$services$libraryFilter$pt_BR extends Translations$services$li
 extension on TranslationsPtBr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'iptv.backupFeeds' => 'Fontes alternativas por ordem de reprodução',
+			'iptv.lineupOrder' => 'Ordem dos canais',
+			'iptv.orderChanged' => 'A ordem dos canais mudou. Confira e tente novamente.',
+			'iptv.localPlaylist' => 'Arquivo M3U',
+			'iptv.pastePlaylist' => 'Colar o texto da playlist',
+			'iptv.playlistBase' => 'URL base para links relativos (opcional)',
+			'iptv.localPlaylistHelp' => 'Importe uma cópia privada de uma lista de canais M3U ou M3U8. Você pode substituí-la por outro arquivo.',
+			'iptv.showMatches' => 'Mostrar canais correspondentes',
+			'iptv.hideMatches' => 'Ocultar canais correspondentes',
+			'iptv.pickerCredit' => 'Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores',
+			'iptv.exportPrivate' => 'Os endereços das transmissões podem incluir suas credenciais. Salve a lista em um local privado.',
+			'iptv.dynamicStreamExport' => 'O portal cria um link novo a cada reprodução. Você pode exportar o guia.',
+			'iptv.moveUp' => 'Move em cima',
+			'iptv.moveDown' => 'Move abaixo',
+			'iptv.choosePlaylist' => 'Escolha o arquivo de playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canais · ${count}',
 			'mediaConveniences.readNext' => 'Ler o próximo',
 			'mediaConveniences.showRotation' => 'Rodízio de séries',
 			'mediaConveniences.rotationHelp' => 'Adicione séries pelos respectivos menus. Cada rodada reproduz o próximo episódio de cada série.',
@@ -1422,7 +1454,6 @@ extension on TranslationsPtBr {
 			'viewing.pairPage' => 'Voltar a agrupar esta página',
 			'viewing.listenPhone' => 'Ouvir neste celular',
 			'viewing.audioUnavailable' => 'O arquivo ou a faixa de áudio não está disponível neste celular.',
-			'cast.subtitle' => 'Legendas',
 			'appIcon.defaultIcon' => 'Padrão',
 			'auth.quickConnect' => 'Conexão rápida',
 			'auth.useQuickConnect' => 'Usar Conexão Rápida',
@@ -1466,6 +1497,7 @@ extension on TranslationsPtBr {
 			'common.mediaKind.folder' => 'Pasta',
 			'screens.subtitleStyling' => 'Estilização da legenda',
 			'screens.logs' => 'Registros',
+			'settings.foldableDisplay' => 'Dobradiça da tela dobrável',
 			'settings.title' => 'Configurações',
 			'settings.language' => 'Idioma',
 			'settings.theme' => 'Tema',
@@ -1905,6 +1937,8 @@ extension on TranslationsPtBr {
 			'romm.emulatorJs' => 'EmulatorJS',
 			'romm.ruffle' => 'Ruffle',
 			'romm.jsDos' => 'js-dos',
+			_ => null,
+		} ?? switch (path) {
 			'romm.pico8' => 'PICO-8',
 			'romm.easyRpg' => 'EasyRPG',
 			'romm.browserUnavailable' => 'An embedded browser player is not available in this build.',
@@ -1920,8 +1954,6 @@ extension on TranslationsPtBr {
 			'romm.manual' => 'Manual',
 			'romm.importSave' => 'Import save',
 			'romm.exportSave' => 'Export',
-			_ => null,
-		} ?? switch (path) {
 			'romm.importState' => 'Import state',
 			'romm.saveImported' => 'Save imported',
 			'romm.saveExported' => 'Save exported',

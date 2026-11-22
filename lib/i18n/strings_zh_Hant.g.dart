@@ -67,6 +67,7 @@ class TranslationsZhHant extends TranslationsZh with BaseTranslations<AppLocale,
 	@override late final _Translations$dialog$zh_Hant dialog = _Translations$dialog$zh_Hant._(_root);
 	@override late final _Translations$profiles$zh_Hant profiles = _Translations$profiles$zh_Hant._(_root);
 	@override late final _Translations$connections$zh_Hant connections = _Translations$connections$zh_Hant._(_root);
+	@override late final _Translations$iptv$zh_Hant iptv = _Translations$iptv$zh_Hant._(_root);
 	@override late final _Translations$accountPreferences$zh_Hant accountPreferences = _Translations$accountPreferences$zh_Hant._(_root);
 	@override late final _Translations$discover$zh_Hant discover = _Translations$discover$zh_Hant._(_root);
 	@override late final _Translations$errors$zh_Hant errors = _Translations$errors$zh_Hant._(_root);
@@ -124,6 +125,7 @@ class TranslationsZhHant extends TranslationsZh with BaseTranslations<AppLocale,
 	@override late final _Translations$musicExperience$zh_Hant musicExperience = _Translations$musicExperience$zh_Hant._(_root);
 	@override late final _Translations$musicTools$zh_Hant musicTools = _Translations$musicTools$zh_Hant._(_root);
 	@override late final _Translations$musicDevices$zh_Hant musicDevices = _Translations$musicDevices$zh_Hant._(_root);
+	@override late final _Translations$bookmarkMigration$zh_Hant bookmarkMigration = _Translations$bookmarkMigration$zh_Hant._(_root);
 }
 
 // Path: mediaConveniences
@@ -386,6 +388,7 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => '摺疊螢幕鉸鏈';
 	@override String get title => '設定';
 	@override String get supportDeveloper => '贊助 Pleazyng';
 	@override String get supportDeveloperDescription => '捐款支持開發';
@@ -573,7 +576,6 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	@override String get importSettings => '匯入設定';
 	@override String get importSettingsDescription => '從檔案還原偏好設定';
 	@override String get importSettingsConfirm => '這將覆蓋您目前的設定。要繼續嗎？';
-	@override String get importSettingsSuccess => '設定已匯入';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => '已套用設定：${applied} 項。已略過：${skipped} 項。';
 	@override String get importSettingsInvalidFile => '此檔案不是有效的 Pleazyng 設定匯出檔';
 	@override String get importSettingsNoUser => '匯入設定前請先登入';
@@ -587,7 +589,6 @@ class _Translations$settings$zh_Hant extends Translations$settings$zh {
 	@override String cloudBackupComplete({required Object action}) => '備份已上傳。請儲存這個網址。重新安裝後，在雲端備份中輸入這個網址，再選擇「${action}」。';
 	@override String get cloudBackupRestore => '恢復備份';
 	@override String get cloudBackupRestoreConfirm => '此將取代該裝置上的相匹配移動設定。';
-	@override String get cloudBackupRestored => '從雲端儲備恢復的設定';
 	@override String get shortcutsReset => '快速鍵已重設為預設值';
 	@override String get resetShortcutsConfirm => '這會將您的自訂快速鍵替換為預設值。要繼續嗎？';
 	@override String get about => '關於';
@@ -1641,6 +1642,31 @@ class _Translations$connections$zh_Hant extends Translations$connections$zh {
 	@override String get signInAgain => '重新登入';
 	@override String editMediaBrowserTitle({required Object product}) => '編輯 ${product} 連線';
 	@override String editMediaBrowserIntro({required Object serverName}) => '為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。';
+}
+
+// Path: iptv
+class _Translations$iptv$zh_Hant extends Translations$iptv$zh {
+	_Translations$iptv$zh_Hant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => '依播放順序排列的備用來源';
+	@override String get lineupOrder => '頻道順序';
+	@override String get orderChanged => '頻道順序已變更。請檢查後再試一次。';
+	@override String get localPlaylist => 'M3U 檔案';
+	@override String get pastePlaylist => '貼上播放清單文字';
+	@override String get playlistBase => '相對連結的基底 URL（選填）';
+	@override String get localPlaylistHelp => '匯入 M3U 或 M3U8 頻道清單的私人副本。可以選擇其他檔案取代。';
+	@override String get showMatches => '顯示相符的頻道';
+	@override String get hideMatches => '隱藏相符的頻道';
+	@override String get pickerCredit => '靈感來源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他貢獻者';
+	@override String get exportPrivate => '串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。';
+	@override String get dynamicStreamExport => '此入口每次播放都會產生新連結。您可以匯出節目指南。';
+	@override String get moveUp => '移動上';
+	@override String get moveDown => '移動下';
+	@override String get choosePlaylist => '選擇 Playlist 檔案';
+	@override String affectedChannels({required Object count}) => '頻道 · ${count}';
 }
 
 // Path: accountPreferences
@@ -2720,6 +2746,7 @@ class _Translations$metadataEdit$zh_Hant extends Translations$metadataEdit$zh {
 	@override String get enterImageUrl => '輸入圖片 URL';
 	@override String get imageUrl => '圖片 URL';
 	@override String get metadataUpdated => '中繼資料已更新';
+	@override String get metadataConflict => '其他人已修改了同一欄位。請重新開啟編輯器，確認最新的值後再儲存。';
 	@override String get metadataUpdateFailed => '中繼資料更新失敗';
 	@override String get artworkUpdated => '封面圖片已更新';
 	@override String get artworkUpdateFailed => '封面圖片更新失敗';
@@ -3120,7 +3147,6 @@ class _Translations$cast$zh_Hant extends Translations$cast$zh {
 	@override String connectedTo({required Object device}) => '連線到 ${device}';
 	@override String get device => '加密裝置';
 	@override String get readyToCast => '準備放';
-	@override String get subtitle => '字幕';
 	@override String get serverNotAvailable => '媒體伺服器不適用。';
 	@override String get stopCasting => '停止加密';
 	@override String get startFailed => '無法開始投射,檢查伺服器並嘗試一次。';
@@ -4103,6 +4129,7 @@ class _Translations$podcasts$zh_Hant extends Translations$podcasts$zh {
 	final TranslationsZhHant _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => '已匯入訂閱：${imported}。重複：${duplicates}。已略過：${skipped}。';
 	@override String get autoDownloadLatest => '自動下載最新單集';
 	@override String get removeFinishedAfter => '在以下時間後移除已聽完的下載';
 }
@@ -4515,6 +4542,17 @@ class _Translations$musicDevices$zh_Hant extends Translations$musicDevices$zh {
 	@override String get relay => '音樂中繼 URL';
 	@override String get relayHint => '在接收裝置上啟用，然後在同一網路中配對一次。保持 Pleazyng 開啟。中繼傳遞加密的音樂控制，並能看到網路位址。每個播放器從自己的媒體伺服器串流。';
 	@override String get relayInvalid => '請輸入 HTTPS 中繼位址。';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$zh_Hant extends Translations$bookmarkMigration$zh {
+	_Translations$bookmarkMigration$zh_Hant._(TranslationsZhHant root) : this._root = root, super.internal(root);
+
+	final TranslationsZhHant _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => '來自不明版本的書籤';
+	@override String get assignToVersion => '指派給此版本';
 }
 
 // Path: appIcon.names
@@ -5849,6 +5887,7 @@ extension on TranslationsZhHant {
 			'update.viewRelease' => '查看版本詳情',
 			'update.latestVersion' => '已安裝的版本為最新版本',
 			'update.checkFailed' => '無法檢查更新',
+			'settings.foldableDisplay' => '摺疊螢幕鉸鏈',
 			'settings.title' => '設定',
 			'settings.supportDeveloper' => '贊助 Pleazyng',
 			'settings.supportDeveloperDescription' => '捐款支持開發',
@@ -6032,7 +6071,6 @@ extension on TranslationsZhHant {
 			'settings.importSettings' => '匯入設定',
 			'settings.importSettingsDescription' => '從檔案還原偏好設定',
 			'settings.importSettingsConfirm' => '這將覆蓋您目前的設定。要繼續嗎？',
-			'settings.importSettingsSuccess' => '設定已匯入',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => '已套用設定：${applied} 項。已略過：${skipped} 項。',
 			'settings.importSettingsInvalidFile' => '此檔案不是有效的 Pleazyng 設定匯出檔',
 			'settings.importSettingsNoUser' => '匯入設定前請先登入',
@@ -6046,7 +6084,6 @@ extension on TranslationsZhHant {
 			'settings.cloudBackupComplete' => ({required Object action}) => '備份已上傳。請儲存這個網址。重新安裝後，在雲端備份中輸入這個網址，再選擇「${action}」。',
 			'settings.cloudBackupRestore' => '恢復備份',
 			'settings.cloudBackupRestoreConfirm' => '此將取代該裝置上的相匹配移動設定。',
-			'settings.cloudBackupRestored' => '從雲端儲備恢復的設定',
 			'settings.shortcutsReset' => '快速鍵已重設為預設值',
 			'settings.resetShortcutsConfirm' => '這會將您的自訂快速鍵替換為預設值。要繼續嗎？',
 			'settings.about' => '關於',
@@ -6144,9 +6181,9 @@ extension on TranslationsZhHant {
 			'settings.manageLibrariesDescription' => '重新排序與隱藏媒體庫',
 			'settings.companionRemoteServer' => '隨身遙控器伺服器',
 			'settings.companionRemoteServerDescription' => '允許區域網路中的行動裝置控制此應用程式',
+			'settings.companionRemoteServerStartFailed' => '無法啟動隨身遙控器伺服器',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => '無法啟動隨身遙控器伺服器',
 			'settings.companionRemoteServerStopFailed' => '無法停止隨身遙控器伺服器',
 			'settings.autoPip' => '自動進入子母畫面',
 			'settings.autoPipDescription' => '播放影片時離開應用程式將自動進入子母畫面模式',
@@ -6658,9 +6695,9 @@ extension on TranslationsZhHant {
 			'accessibility.boldTextHint' => '加粗介面標籤與訊息的字重，讓它們更容易辨識。',
 			'tooltips.shufflePlay' => '隨機播放',
 			'tooltips.playTrailer' => '播放預告片',
+			'tooltips.markAsWatched' => '標記為已觀看',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => '標記為已觀看',
 			'tooltips.markAsUnwatched' => '標記為未觀看',
 			'audioTracks.track' => ({required Object n}) => '音軌 ${n}',
 			'videoControls.audioLabel' => '音訊',
@@ -7003,6 +7040,22 @@ extension on TranslationsZhHant {
 			'connections.signInAgain' => '重新登入',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '編輯 ${product} 連線',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '為 ${serverName} 新增或移除 URL。Pleazyng 將使用延遲最低且可連線的 URL。',
+			'iptv.backupFeeds' => '依播放順序排列的備用來源',
+			'iptv.lineupOrder' => '頻道順序',
+			'iptv.orderChanged' => '頻道順序已變更。請檢查後再試一次。',
+			'iptv.localPlaylist' => 'M3U 檔案',
+			'iptv.pastePlaylist' => '貼上播放清單文字',
+			'iptv.playlistBase' => '相對連結的基底 URL（選填）',
+			'iptv.localPlaylistHelp' => '匯入 M3U 或 M3U8 頻道清單的私人副本。可以選擇其他檔案取代。',
+			'iptv.showMatches' => '顯示相符的頻道',
+			'iptv.hideMatches' => '隱藏相符的頻道',
+			'iptv.pickerCredit' => '靈感來源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他貢獻者',
+			'iptv.exportPrivate' => '串流網址可能包含服務供應商的登入憑證。請將清單儲存在私人位置。',
+			'iptv.dynamicStreamExport' => '此入口每次播放都會產生新連結。您可以匯出節目指南。',
+			'iptv.moveUp' => '移動上',
+			'iptv.moveDown' => '移動下',
+			'iptv.choosePlaylist' => '選擇 Playlist 檔案',
+			'iptv.affectedChannels' => ({required Object count}) => '頻道 · ${count}',
 			'accountPreferences.sectionTitle' => '帳戶偏好設定',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '已在 ${account} 上儲存音訊、字幕與媒體庫選項',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '已在 ${count} 個帳戶上儲存音訊、字幕與媒體庫選項',
@@ -7158,6 +7211,8 @@ extension on TranslationsZhHant {
 			'discover.director' => '導演',
 			'discover.directors' => '導演',
 			'discover.movie' => '電影',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => '影集',
 			'discover.minutesLeft' => ({required Object minutes}) => '剩餘 ${minutes} 分鐘',
 			'discover.moreLikeThis' => '更多類似內容',
@@ -7172,8 +7227,6 @@ extension on TranslationsZhHant {
 			'errors.connectionTimeout' => ({required Object context}) => '載入 ${context} 時連線逾時',
 			'errors.connectionFailed' => '無法連線至媒體伺服器',
 			'errors.unableToLoad' => ({required Object context}) => '無法載入 ${context}。請重試。',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => '沒有可用用戶端',
 			'errors.pleaseEnterToken' => '請輸入 Token',
 			'errors.invalidToken' => 'Token 無效',
@@ -7672,6 +7725,8 @@ extension on TranslationsZhHant {
 			'collections.removedFromCollection' => '已從收藏集移除',
 			'collections.removeFromCollectionFailed' => '從收藏集移除失敗',
 			'collections.removeFromCollectionError' => ({required Object error}) => '從收藏集移除時發生錯誤：${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => '搜尋收藏集…',
 			'playlists.title' => '播放清單',
 			'playlists.playlist' => '播放清單',
@@ -7686,8 +7741,6 @@ extension on TranslationsZhHant {
 			'playlists.emptyPlaylist' => '此播放清單為空',
 			'playlists.deleteConfirm' => '刪除播放清單？',
 			'playlists.deleteMessage' => ({required Object name}) => '確定要刪除「${name}」嗎？',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => '播放清單已建立',
 			'playlists.deleted' => '播放清單已刪除',
 			'playlists.itemAdded' => '已新增至播放清單',
@@ -8186,6 +8239,8 @@ extension on TranslationsZhHant {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision 解碼器',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision 解碼器（P7→8.1）',
 			'performanceOverlay.dvRouteBaseLayer' => '基礎層',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 基礎層',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG 基礎層',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR 基礎層',
@@ -8200,8 +8255,6 @@ extension on TranslationsZhHant {
 			'performanceOverlay.transfer' => '傳輸特性',
 			'performanceOverlay.renderFps' => '渲染 FPS',
 			'performanceOverlay.displayFps' => '螢幕 FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => '影音同步（A/V Sync）',
 			'performanceOverlay.dropped' => '丟格數（Dropped）',
 			'performanceOverlay.dvRpus' => 'DV RPU 數',
@@ -8277,6 +8330,7 @@ extension on TranslationsZhHant {
 			'metadataEdit.enterImageUrl' => '輸入圖片 URL',
 			'metadataEdit.imageUrl' => '圖片 URL',
 			'metadataEdit.metadataUpdated' => '中繼資料已更新',
+			'metadataEdit.metadataConflict' => '其他人已修改了同一欄位。請重新開啟編輯器，確認最新的值後再儲存。',
 			'metadataEdit.metadataUpdateFailed' => '中繼資料更新失敗',
 			'metadataEdit.artworkUpdated' => '封面圖片已更新',
 			'metadataEdit.artworkUpdateFailed' => '封面圖片更新失敗',
@@ -8634,7 +8688,6 @@ extension on TranslationsZhHant {
 			'cast.connectedTo' => ({required Object device}) => '連線到 ${device}',
 			'cast.device' => '加密裝置',
 			'cast.readyToCast' => '準備放',
-			'cast.subtitle' => '字幕',
 			'cast.serverNotAvailable' => '媒體伺服器不適用。',
 			'cast.stopCasting' => '停止加密',
 			'cast.startFailed' => '無法開始投射,檢查伺服器並嘗試一次。',
@@ -8700,6 +8753,8 @@ extension on TranslationsZhHant {
 			'homeLayout.autoSlideDescription' => '每隔幾秒也會自動切換。電腦上的箭頭按鈕和電視遙控器的方向鍵始終可用，使用後會重新開始計時。',
 			'homeLayout.autoSlideEditDescription' => '每隔幾秒也會自動切換。關閉時，僅在點選電腦上的箭頭按鈕或按電視遙控器的左右方向鍵時切換。無論此設定是否開啟，箭頭按鈕和方向鍵都可用。',
 			'homeLayout.enableHeroFirst' => '英雄第一',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => '顯示在主螢幕上',
 			'homeLayout.home' => '首頁',
 			'homeLayout.removeFromHome' => '離開家',
@@ -8714,8 +8769,6 @@ extension on TranslationsZhHant {
 			'homeLayout.customPlexRow' => '定製 Plex 行',
 			'homeLayout.heroNeedsLibrary' => '檢視圖書館首先 - 英雄需要在某處展示',
 			'homeLayout.heroNeedsSurface' => '檢視圖書館或家先 - 英雄需要在某處展示',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => '取消 Hub',
 			'homeLayout.noPlexRows' => '第Plex號管理行返回此圖書館。',
 			'homeLayout.openDetails' => '開放細節',
@@ -9214,6 +9267,8 @@ extension on TranslationsZhHant {
 			'audiobook.librarySort' => '各式各樣的書籍',
 			'audiobook.sortTitle' => '標題',
 			'audiobook.sortAuthor' => '作者',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => '講話者',
 			'audiobook.sortSeries' => '系列命令',
 			'audiobook.sortRecent' => '最近開放',
@@ -9228,8 +9283,6 @@ extension on TranslationsZhHant {
 			'audiobook.recoveryExport' => '輸出加密恢復檔案',
 			'audiobook.recoveryImport' => '輸入加密恢復檔案',
 			'audiobook.recoveryImportConfirm' => '將此加密恢復檔案與當前閱讀位置和筆記相結合嗎?現有歷史記錄將被保留. 共享圖書館和專案 ID 不包含; 在進口之前,在每個裝置上設定匹配 ID。',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => '加密恢復檔案儲存。',
 			'audiobook.recoveryImported' => '恢復資料合併。',
 			'sourceSetup.bookorbitHelp' => '使用您自己的 BookOrbit 帳戶登入，即可瀏覽及播放書籍。缺少的書名仍會透過已連線的 SeerrNG 執行個體提出請求。',
@@ -9448,6 +9501,7 @@ extension on TranslationsZhHant {
 			'issueReport.privacy' => '草稿包含應用程式版本、平台和連線數量，不包含伺服器位址、帳戶或個人資料名稱、媒體標題及檔案路徑。',
 			'issueReport.logPrivacy' => '記錄檔為選填。上傳前請先檢查。記錄檔 ID 會加入草稿，而問題可能是公開的。',
 			'issueReport.openDraft' => '開啟 GitHub 草稿',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => '已匯入訂閱：${imported}。重複：${duplicates}。已略過：${skipped}。',
 			'podcasts.autoDownloadLatest' => '自動下載最新單集',
 			'podcasts.removeFinishedAfter' => '在以下時間後移除已聽完的下載',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => '預覽字幕編碼',
@@ -9727,6 +9781,8 @@ extension on TranslationsZhHant {
 			'musicTools.guestDj' => '客座 DJ',
 			'musicTools.charts' => '聆聽排行',
 			'musicTools.rediscover' => '重新發現',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => '音樂電台',
 			'musicTools.prompt' => '描述產生播放清單',
 			'musicTools.provider' => '供應商產生位址',
@@ -9742,8 +9798,6 @@ extension on TranslationsZhHant {
 			'musicTools.apiKey' => 'API 金鑰',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => '分鐘',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => '篩選器',
 			'musicTools.exclusiveOutput' => '獨佔音訊輸出',
 			'musicTools.preamp' => '前置放大',
@@ -9799,6 +9853,8 @@ extension on TranslationsZhHant {
 			'musicDevices.relay' => '音樂中繼 URL',
 			'musicDevices.relayHint' => '在接收裝置上啟用，然後在同一網路中配對一次。保持 Pleazyng 開啟。中繼傳遞加密的音樂控制，並能看到網路位址。每個播放器從自己的媒體伺服器串流。',
 			'musicDevices.relayInvalid' => '請輸入 HTTPS 中繼位址。',
+			'bookmarkMigration.unassigned' => '來自不明版本的書籤',
+			'bookmarkMigration.assignToVersion' => '指派給此版本',
 			_ => null,
 		};
 	}

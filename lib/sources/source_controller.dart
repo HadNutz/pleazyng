@@ -874,7 +874,11 @@ class SourceController extends ChangeNotifier {
     await reload();
   }
 
-  Future<int> importPodcastSubscriptions(List<PodcastSubscription> feeds, {int? expectedGeneration}) async {
+  Future<int> importPodcastSubscriptions(
+    List<PodcastSubscription> feeds, {
+    int? expectedGeneration,
+    Set<Uri> approvedHttpFeeds = const {},
+  }) async {
     if (feeds.isEmpty || feeds.length > PodcastOpml.maxFeeds) {
       throw const SourceException(SourceFailure.invalidData);
     }
@@ -897,11 +901,8 @@ class SourceController extends ChangeNotifier {
     final additions = <(FileSource, Map<String, String>)>[];
     for (final feed in feeds) {
       final uri = feed.url;
-      if (uri.scheme != 'https' ||
-          uri.host.isEmpty ||
-          uri.userInfo.isNotEmpty ||
-          uri.hasFragment ||
-          uri.toString().length > 8192) {
+      final allowHttp = uri.scheme == 'http' && approvedHttpFeeds.contains(uri);
+      if (!PodcastSubscription.acceptsUrl(uri, allowHttp: allowHttp)) {
         throw const SourceException(SourceFailure.permission);
       }
       final key = sourceDigest(uri.toString());
@@ -916,7 +917,7 @@ class SourceController extends ChangeNotifier {
         kind: FileSourceKind.podcastRss,
         name: displayName.length > 200 ? displayName.substring(0, 200) : displayName,
         endpoint: sourceOrigin(uri),
-        options: const {'allowHttp': 'false', 'shelves': 'music', 'onlineMetadata': 'false'},
+        options: {'allowHttp': allowHttp.toString(), 'shelves': 'music', 'onlineMetadata': 'false'},
       );
       additions.add((source, {'feedUrl': uri.toString()}));
     }
@@ -1931,18 +1932,22 @@ class SourceController extends ChangeNotifier {
           }
           final notes = await provider.readAnnotations(syncEntry, local ?? initial);
           requireSession(epoch);
-          final existing = await repository.annotations(profile, entry.key);
-          for (final note in notes) {
-            if (existing.any(
-              (a) =>
-                  a.edition == note.edition &&
-                  a.mode == note.mode &&
-                  a.positionMs == note.positionMs &&
-                  a.locator?.cfi == note.locator?.cfi,
-            )) {
-              continue;
+          if (provider is WebDavSourceAdapter) {
+            await repository.mergeProviderAnnotations(profile, entry.key, notes);
+          } else {
+            final existing = await repository.annotations(profile, entry.key);
+            for (final note in notes) {
+              if (existing.any(
+                (a) =>
+                    a.edition == note.edition &&
+                    a.mode == note.mode &&
+                    a.positionMs == note.positionMs &&
+                    a.locator?.cfi == note.locator?.cfi,
+              )) {
+                continue;
+              }
+              await repository.importAnnotation(profile, note);
             }
-            await repository.importAnnotation(profile, note);
           }
         } on SourceException catch (e) {
           if (e.reason == SourceFailure.cancelled || e.reason == SourceFailure.invalidData) {
@@ -2167,6 +2172,7 @@ class SourceController extends ChangeNotifier {
     final book = SourceEntry(
       sourceId: folder.sourceId,
       id: 'group:${folder.id}',
+      identifiers: {'groupedAudioFolder': folder.id},
       title: title,
       kind: SourceItemKind.audiobook,
       parentId: folder.id,

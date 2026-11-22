@@ -244,6 +244,7 @@
     "checkFailed": "Kon niet controleren op updates"
   },
   "settings": {
+    "foldableDisplay": "Scharnier van het vouwscherm",
     "title": "Instellingen",
     "supportDeveloper": "Steun Pleazyng",
     "supportDeveloperDescription": "Doneer om de ontwikkeling te steunen",
@@ -433,7 +434,6 @@
     "importSettings": "Instellingen importeren",
     "importSettingsDescription": "Voorkeuren herstellen vanuit een bestand",
     "importSettingsConfirm": "Hiermee worden je huidige instellingen vervangen. Doorgaan?",
-    "importSettingsSuccess": "Instellingen geïmporteerd",
     "importSettingsCounts": "Toegepaste instellingen: ${applied}. Overgeslagen: ${skipped}.",
     "importSettingsInvalidFile": "Dit bestand is geen geldige Pleazyng-export",
     "importSettingsNoUser": "Meld je aan voordat je instellingen importeert",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "De back-up is geüpload. Bewaar deze URL. Voer de URL na een nieuwe installatie in bij de cloudback-up en kies ‘${action}’.",
     "cloudBackupRestore": "Herstel backup",
     "cloudBackupRestoreConfirm": "Dit zal de overeenkomstige portable instellingen op deze apparaat vervangen.",
-    "cloudBackupRestored": "Instellingen hersteld van cloud backup",
     "shortcutsReset": "Sneltoetsen gereset naar standaard",
     "resetShortcutsConfirm": "Hiermee worden je aangepaste sneltoetsen vervangen door de standaardinstellingen. Doorgaan?",
     "about": "Over",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "Voeg URL's toe aan ${serverName} of verwijder ze. Pleazyng gebruikt de bereikbare URL met de laagste latentie."
   },
   "iptv": {
+    "backupFeeds": "Reservebronnen in afspeelvolgorde",
+    "lineupOrder": "Kanaalvolgorde",
+    "orderChanged": "De kanaalvolgorde is gewijzigd. Controleer deze en probeer het opnieuw.",
+    "localPlaylist": "M3U-bestand",
+    "pastePlaylist": "Tekst van afspeellijst plakken",
+    "playlistBase": "Basis-URL voor relatieve links (optioneel)",
+    "localPlaylistHelp": "Importeer een privékopie van een M3U- of M3U8-kanaallijst. Je kunt deze vervangen door een ander bestand.",
+    "showMatches": "Overeenkomende kanalen tonen",
+    "hideMatches": "Overeenkomende kanalen verbergen",
+    "pickerCredit": "Geïnspireerd door · M3U Web Picker · Zachary Schmook (@zschmook) en bijdragers",
+    "exportPrivate": "Streamadressen kunnen je inloggegevens bevatten. Bewaar de lijst op een privélocatie.",
+    "dynamicStreamExport": "Het portaal maakt bij elke afspeelbeurt een nieuwe link. Je kunt de programmagids exporteren.",
+    "moveUp": "bewegen op",
+    "moveDown": "Verplaatsen naar beneden",
+    "choosePlaylist": "Kies een playlist bestand",
+    "affectedChannels": "Zenders · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "Voer de afbeeldings-URL in",
     "imageUrl": "Afbeeldings-URL",
     "metadataUpdated": "Metadata bijgewerkt",
+    "metadataConflict": "Iemand anders heeft hetzelfde veld gewijzigd. Open de editor opnieuw om de meest recente waarden te controleren voordat je opslaat.",
     "metadataUpdateFailed": "Metadata bijwerken mislukt",
     "artworkUpdated": "Illustraties bijgewerkt",
     "artworkUpdateFailed": "Illustraties bijwerken mislukt",
@@ -3676,7 +3692,6 @@
     "connectedTo": "Geleid naar ${device}",
     "device": "Cast apparaat",
     "readyToCast": "Bereid om te casten",
-    "subtitle": "Ondertitels",
     "serverNotAvailable": "De media server is niet beschikbaar.",
     "stopCasting": "Stop met casting",
     "startFailed": "Kan niet beginnen met casting. check the server and try again."
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Geïmporteerde abonnementen: ${imported}. Duplicaten: ${duplicates}. Overgeslagen: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "URL van muziekrelais",
     "relayHint": "Schakel in op het ontvangende apparaat en koppel eenmaal op hetzelfde netwerk. Houd Pleazyng open. Het relais verstuurt versleutelde muziekbediening en ziet netwerkadressen. Elke speler streamt vanaf zijn eigen mediaserver.",
     "relayInvalid": "Voer een HTTPS-adres voor het relais in."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Bladwijzers uit een onbekende versie",
+    "assignToVersion": "Aan deze versie koppelen"
   }
 }

@@ -14,14 +14,16 @@ import '../test_helpers/prefs.dart';
 void main() {
   const lastCheckKey = 'update_last_check_time';
 
-  setUp(resetSharedPreferencesForTest);
-  PackageInfo.setMockInitialValues(
-    appName: 'Pleazyng',
-    packageName: 'com.plezy.test',
-    version: '1.0.0',
-    buildNumber: '1',
-    buildSignature: '',
-  );
+  setUp(() {
+    resetSharedPreferencesForTest();
+    PackageInfo.setMockInitialValues(
+      appName: 'Pleazyng',
+      packageName: 'com.plezy.test',
+      version: '1.0.0',
+      buildNumber: '1',
+      buildSignature: '',
+    );
+  });
 
   test('malformed cooldown state fails open and removes the invalid value', () async {
     final prefs = await BaseSharedPreferencesService.sharedCache();
@@ -91,6 +93,26 @@ void main() {
       await UpdateService.debugPerformUpdateCheck(respectCooldown: false, client: client, throwOnFailure: true),
       isNull,
     );
+  });
+
+  test('skipping a release suppresses startup prompts and still offers it on a manual check', () async {
+    await UpdateService.skipVersion('1.1.0');
+    final client = MediaServerHttpClient(
+      client: MockClient(
+        (_) async => http.Response(
+          jsonEncode({'tag_name': 'v1.1.0', 'html_url': 'https://example.com/release', 'published_at': '2026-01-01'}),
+          200,
+          headers: {'content-type': 'application/json'},
+        ),
+      ),
+    );
+    addTearDown(client.close);
+
+    expect(await UpdateService.debugPerformUpdateCheck(respectCooldown: true, client: client), isNull);
+    final update = await UpdateService.debugPerformUpdateCheck(respectCooldown: false, client: client);
+    expect(update?['latestVersion'], '1.1.0');
+    expect(update?['releaseUrl'], 'https://example.com/release');
+    expect(await UpdateService.getSkippedVersion(), '1.1.0');
   });
 
   for (final failure in failedResponses.entries) {

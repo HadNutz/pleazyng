@@ -66,6 +66,7 @@ class TranslationsKk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$dialog$kk dialog = _Translations$dialog$kk._(_root);
 	@override late final _Translations$profiles$kk profiles = _Translations$profiles$kk._(_root);
 	@override late final _Translations$connections$kk connections = _Translations$connections$kk._(_root);
+	@override late final _Translations$iptv$kk iptv = _Translations$iptv$kk._(_root);
 	@override late final _Translations$accountPreferences$kk accountPreferences = _Translations$accountPreferences$kk._(_root);
 	@override late final _Translations$discover$kk discover = _Translations$discover$kk._(_root);
 	@override late final _Translations$errors$kk errors = _Translations$errors$kk._(_root);
@@ -123,6 +124,7 @@ class TranslationsKk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _Translations$musicExperience$kk musicExperience = _Translations$musicExperience$kk._(_root);
 	@override late final _Translations$musicTools$kk musicTools = _Translations$musicTools$kk._(_root);
 	@override late final _Translations$musicDevices$kk musicDevices = _Translations$musicDevices$kk._(_root);
+	@override late final _Translations$bookmarkMigration$kk bookmarkMigration = _Translations$bookmarkMigration$kk._(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class _Translations$settings$kk extends Translations$settings$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Жиналмалы экранның топсасы';
 	@override String get title => 'Баптаулар';
 	@override String get supportDeveloper => 'Pleazyng жобасын қолдау';
 	@override String get supportDeveloperDescription => 'Әзірлеуді қолдау үшін қайырымдылық жасаңыз';
@@ -574,7 +577,6 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String get importSettings => 'Баптауларды импорттау';
 	@override String get importSettingsDescription => 'Параметрлерді файлдан қалпына келтіріңіз';
 	@override String get importSettingsConfirm => 'Бұл ағымдағы баптауларыңыздың үстінен жазады. Жалғастырасыз ба?';
-	@override String get importSettingsSuccess => 'Баптаулар импортталды';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Қолданылған баптаулар: ${applied}. Өткізіп жіберілгені: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Бұл файл дұрыс Pleazyng баптаулар файлы емес';
 	@override String get importSettingsNoUser => 'Баптауларды импорттау алдында жүйеге кіріңіз';
@@ -588,7 +590,6 @@ class _Translations$settings$kk extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Сақтық көшірме жүктеп салынды. Осы URL мекенжайын сақтаңыз. Қолданбаны қайта орнатқаннан кейін оны бұлттық сақтық көшірме бөлімінде енгізіп, «${action}» тармағын таңдаңыз.';
 	@override String get cloudBackupRestore => 'Бақырлық';
 	@override String get cloudBackupRestoreConfirm => 'Бұл үшін бұл қосымшалар мен қосымшалармен қосымшалар бар.';
-	@override String get cloudBackupRestored => '«Аяқтар» АҚШ-ның «Now Backup» АҚШ';
 	@override String get shortcutsReset => 'Пернелер тіркесі әдепкі күйге қайтарылды';
 	@override String get resetShortcutsConfirm => 'Бұл таңдамалы пернелер тіркесін әдепкі мәндермен ауыстырады. Жалғастырасыз ба?';
 	@override String get about => 'Қолданба туралы';
@@ -1642,6 +1643,31 @@ class _Translations$connections$kk extends Translations$connections$en {
 	@override String get signInAgain => 'Қайтадан кіру';
 	@override String editMediaBrowserTitle({required Object product}) => '${product} қосылымын өңдеу';
 	@override String editMediaBrowserIntro({required Object serverName}) => '${serverName} үшін URL мекенжайларды қосыңыз немесе өшіріңіз. Pleazyng ең төмен кідірісі бар қолжетімді URL мекенжайды пайдаланады.';
+}
+
+// Path: iptv
+class _Translations$iptv$kk extends Translations$iptv$en {
+	_Translations$iptv$kk._(TranslationsKk root) : this._root = root, super.internal(root);
+
+	final TranslationsKk _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'Ойнату ретімен қосалқы көздер';
+	@override String get lineupOrder => 'Арналар реті';
+	@override String get orderChanged => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.';
+	@override String get localPlaylist => 'M3U файлы';
+	@override String get pastePlaylist => 'Ойнату тізімінің мәтінін қою';
+	@override String get playlistBase => 'Салыстырмалы сілтемелерге арналған негізгі URL (міндетті емес)';
+	@override String get localPlaylistHelp => 'M3U немесе M3U8 арналар тізімінің жеке көшірмесін импорттаңыз. Оны басқа файлмен ауыстыруға болады.';
+	@override String get showMatches => 'Сәйкес арналарды көрсету';
+	@override String get hideMatches => 'Сәйкес арналарды жасыру';
+	@override String get pickerCredit => 'Шабыт көзі · M3U Web Picker · Zachary Schmook (@zschmook) және үлес қосушылар';
+	@override String get exportPrivate => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.';
+	@override String get dynamicStreamExport => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.';
+	@override String get moveUp => 'Өзінің';
+	@override String get moveDown => 'Қайтаны';
+	@override String get choosePlaylist => 'Серіктің қағидалары';
+	@override String affectedChannels({required Object count}) => 'Арналар · ${count}';
 }
 
 // Path: accountPreferences
@@ -2723,6 +2749,7 @@ class _Translations$metadataEdit$kk extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Сурет URL-ін енгізіңіз';
 	@override String get imageUrl => 'Сурет URL-і';
 	@override String get metadataUpdated => 'Метадеректер жаңартылды';
+	@override String get metadataConflict => 'Басқа редактор осы өрісті өзгертті. Сақтау алдында соңғы мәндерді тексеру үшін редакторды қайта ашыңыз.';
 	@override String get metadataUpdateFailed => 'Метадеректерді жаңарту мүмкін болмады';
 	@override String get artworkUpdated => 'Суреттер жаңартылды';
 	@override String get artworkUpdateFailed => 'Суреттерді жаңарту мүмкін болмады';
@@ -3123,7 +3150,6 @@ class _Translations$cast$kk extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Қаланың тұрақты тұрғындарының саны ${device}';
 	@override String get device => 'Ауызды';
 	@override String get readyToCast => 'Қатысуға арналған';
-	@override String get subtitle => 'Субтитрлер';
 	@override String get serverNotAvailable => 'Медыя сервері не қосқан.';
 	@override String get stopCasting => 'Оданды';
 	@override String get startFailed => 'Бұл үшін бір-бірімен бір-бірін бір-бірин бір-бірек келді, бір-біру үшін бір-бирімен бір';
@@ -4107,6 +4133,7 @@ class _Translations$podcasts$kk extends Translations$podcasts$en {
 	final TranslationsKk _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Импортталған жазылымдар: ${imported}. Қайталанатындары: ${duplicates}. Өткізіп жіберілгендері: ${skipped}.';
 	@override String get autoDownloadLatest => 'Соңғы эпизодтарды автоматты түрде жүктеп алу';
 	@override String get removeFinishedAfter => 'Аяқталған жүктеулерді кейін жою';
 }
@@ -4519,6 +4546,17 @@ class _Translations$musicDevices$kk extends Translations$musicDevices$en {
 	@override String get relay => 'Музыка релесінің URL мекенжайы';
 	@override String get relayHint => 'Қабылдаушы құрылғыда қосып, бір желіде бір рет жұптастырыңыз. Pleazyng ашық тұрсын. Реле шифрланған музыка пәрмендерін тасымалдайды және желі мекенжайларын көреді. Әр ойнатқыш өз медиа серверінен ағын алады.';
 	@override String get relayInvalid => 'Реленің HTTPS мекенжайын енгізіңіз.';
+}
+
+// Path: bookmarkMigration
+class _Translations$bookmarkMigration$kk extends Translations$bookmarkMigration$en {
+	_Translations$bookmarkMigration$kk._(TranslationsKk root) : this._root = root, super.internal(root);
+
+	final TranslationsKk _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Белгісіз нұсқадағы бетбелгілер';
+	@override String get assignToVersion => 'Осы нұсқаға байланыстыру';
 }
 
 // Path: appIcon.names
@@ -5853,6 +5891,7 @@ extension on TranslationsKk {
 			'update.viewRelease' => 'Релизді көру',
 			'update.latestVersion' => 'Сізде ең соңғы нұсқа орнатылған',
 			'update.checkFailed' => 'Жаңартуларды тексеру мүмкін болмады',
+			'settings.foldableDisplay' => 'Жиналмалы экранның топсасы',
 			'settings.title' => 'Баптаулар',
 			'settings.supportDeveloper' => 'Pleazyng жобасын қолдау',
 			'settings.supportDeveloperDescription' => 'Әзірлеуді қолдау үшін қайырымдылық жасаңыз',
@@ -6036,7 +6075,6 @@ extension on TranslationsKk {
 			'settings.importSettings' => 'Баптауларды импорттау',
 			'settings.importSettingsDescription' => 'Параметрлерді файлдан қалпына келтіріңіз',
 			'settings.importSettingsConfirm' => 'Бұл ағымдағы баптауларыңыздың үстінен жазады. Жалғастырасыз ба?',
-			'settings.importSettingsSuccess' => 'Баптаулар импортталды',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Қолданылған баптаулар: ${applied}. Өткізіп жіберілгені: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Бұл файл дұрыс Pleazyng баптаулар файлы емес',
 			'settings.importSettingsNoUser' => 'Баптауларды импорттау алдында жүйеге кіріңіз',
@@ -6050,7 +6088,6 @@ extension on TranslationsKk {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Сақтық көшірме жүктеп салынды. Осы URL мекенжайын сақтаңыз. Қолданбаны қайта орнатқаннан кейін оны бұлттық сақтық көшірме бөлімінде енгізіп, «${action}» тармағын таңдаңыз.',
 			'settings.cloudBackupRestore' => 'Бақырлық',
 			'settings.cloudBackupRestoreConfirm' => 'Бұл үшін бұл қосымшалар мен қосымшалармен қосымшалар бар.',
-			'settings.cloudBackupRestored' => '«Аяқтар» АҚШ-ның «Now Backup» АҚШ',
 			'settings.shortcutsReset' => 'Пернелер тіркесі әдепкі күйге қайтарылды',
 			'settings.resetShortcutsConfirm' => 'Бұл таңдамалы пернелер тіркесін әдепкі мәндермен ауыстырады. Жалғастырасыз ба?',
 			'settings.about' => 'Қолданба туралы',
@@ -6148,9 +6185,9 @@ extension on TranslationsKk {
 			'settings.manageLibrariesDescription' => 'Кітапханаларды қайта реттеу және жасыру',
 			'settings.companionRemoteServer' => 'Көмекші пульт сервері',
 			'settings.companionRemoteServerDescription' => 'Желідегі мобильді құрылғыларға осы қолданбаны басқаруға рұқсат беру',
+			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Көмекші серверді іске қосу мүмкін болмады',
 			'settings.companionRemoteServerStopFailed' => 'Көмекші серверді тоқтату мүмкін болмады',
 			'settings.autoPip' => 'Автоматты Суреттегі сурет (PiP)',
 			'settings.autoPipDescription' => 'Видео ойнап жатқанда қолданбадан шыққанда авто-PiP режиміне өту',
@@ -6662,9 +6699,9 @@ extension on TranslationsKk {
 			'accessibility.boldTextHint' => 'Қандай-ақ интерфейс етикетке және мақалалар үшін көптеген жылдардан тұрады.',
 			'tooltips.shufflePlay' => 'Араластырып ойнату',
 			'tooltips.playTrailer' => 'Трейлерді ойнату',
+			'tooltips.markAsWatched' => 'Көрілді деп белгілеу',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => 'Көрілді деп белгілеу',
 			'tooltips.markAsUnwatched' => 'Көрілмеді деп белгілеу',
 			'audioTracks.track' => ({required Object n}) => 'Аудиожол ${n}',
 			'videoControls.audioLabel' => 'Дыбыс',
@@ -7007,6 +7044,22 @@ extension on TranslationsKk {
 			'connections.signInAgain' => 'Қайтадан кіру',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => '${product} қосылымын өңдеу',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => '${serverName} үшін URL мекенжайларды қосыңыз немесе өшіріңіз. Pleazyng ең төмен кідірісі бар қолжетімді URL мекенжайды пайдаланады.',
+			'iptv.backupFeeds' => 'Ойнату ретімен қосалқы көздер',
+			'iptv.lineupOrder' => 'Арналар реті',
+			'iptv.orderChanged' => 'Арналар реті өзгерді. Тексеріп, қайталап көріңіз.',
+			'iptv.localPlaylist' => 'M3U файлы',
+			'iptv.pastePlaylist' => 'Ойнату тізімінің мәтінін қою',
+			'iptv.playlistBase' => 'Салыстырмалы сілтемелерге арналған негізгі URL (міндетті емес)',
+			'iptv.localPlaylistHelp' => 'M3U немесе M3U8 арналар тізімінің жеке көшірмесін импорттаңыз. Оны басқа файлмен ауыстыруға болады.',
+			'iptv.showMatches' => 'Сәйкес арналарды көрсету',
+			'iptv.hideMatches' => 'Сәйкес арналарды жасыру',
+			'iptv.pickerCredit' => 'Шабыт көзі · M3U Web Picker · Zachary Schmook (@zschmook) және үлес қосушылар',
+			'iptv.exportPrivate' => 'Ағын мекенжайларында провайдерге кіру деректері болуы мүмкін. Тізімді жеке жерде сақтаңыз.',
+			'iptv.dynamicStreamExport' => 'Портал әр ойнатқанда жаңа сілтеме жасайды. Бағдарлама нұсқаулығын экспорттауға болады.',
+			'iptv.moveUp' => 'Өзінің',
+			'iptv.moveDown' => 'Қайтаны',
+			'iptv.choosePlaylist' => 'Серіктің қағидалары',
+			'iptv.affectedChannels' => ({required Object count}) => 'Арналар · ${count}',
 			'accountPreferences.sectionTitle' => 'Тіркелгі баптаулары',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => '${account} тіркелгісінде сақталған аудио, субтитр және кітапхана баптаулары',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => '${count} тіркелгіде сақталған аудио, субтитр және кітапхана баптаулары',
@@ -7162,6 +7215,8 @@ extension on TranslationsKk {
 			'discover.director' => 'Режиссер',
 			'discover.directors' => 'Режиссерлер',
 			'discover.movie' => 'Фильм',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'TV Шоу',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} мин қалды',
 			'discover.moreLikeThis' => 'Ұқсастар',
@@ -7176,8 +7231,6 @@ extension on TranslationsKk {
 			'errors.connectionTimeout' => ({required Object context}) => '${context} жүктеу уақыты өтті',
 			'errors.connectionFailed' => 'Медиа серверіне қосылу мүмкін емес',
 			'errors.unableToLoad' => ({required Object context}) => '${context} жүктеу мүмкін болмады.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Қолжетімді клиент жоқ',
 			'errors.pleaseEnterToken' => 'Токенді енгізіңіз',
 			'errors.invalidToken' => 'Жарамсыз токен',
@@ -7676,6 +7729,8 @@ extension on TranslationsKk {
 			'collections.removedFromCollection' => 'Топтамадан өшірілді',
 			'collections.removeFromCollectionFailed' => 'Топтамадан өшіру мүмкін болмады',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Өшіру қатесі: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => 'Топтамалардан іздеу...',
 			'playlists.title' => 'Ойнату тізімдері',
 			'playlists.playlist' => 'Ойнату тізімі',
@@ -7690,8 +7745,6 @@ extension on TranslationsKk {
 			'playlists.emptyPlaylist' => 'Бұл ойнату тізімі бос',
 			'playlists.deleteConfirm' => 'Ойнату тізімі өшірілсін бе?',
 			'playlists.deleteMessage' => ({required Object name}) => '"${name}" өшірілсін бе?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Ойнату тізімі жасалды',
 			'playlists.deleted' => 'Ойнату тізімі өшірілді',
 			'playlists.itemAdded' => 'Тізімге қосылды',
@@ -8190,6 +8243,8 @@ extension on TranslationsKk {
 			'performanceOverlay.dvRouteDecoder' => 'Dolby Vision декодері',
 			'performanceOverlay.dvRouteDecoderP81' => 'Dolby Vision декодері (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Негізгі қабат',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'HDR10 негізгі қабаты',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'HLG негізгі қабаты',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'SDR негізгі қабаты',
@@ -8204,8 +8259,6 @@ extension on TranslationsKk {
 			'performanceOverlay.transfer' => 'Беріліс',
 			'performanceOverlay.renderFps' => 'Рендер FPS',
 			'performanceOverlay.displayFps' => 'Дисплей FPS',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'A/V синхрондау',
 			'performanceOverlay.dropped' => 'Өткізілген кадрлар',
 			'performanceOverlay.dvRpus' => 'DV RPU-лар',
@@ -8281,6 +8334,7 @@ extension on TranslationsKk {
 			'metadataEdit.enterImageUrl' => 'Сурет URL-ін енгізіңіз',
 			'metadataEdit.imageUrl' => 'Сурет URL-і',
 			'metadataEdit.metadataUpdated' => 'Метадеректер жаңартылды',
+			'metadataEdit.metadataConflict' => 'Басқа редактор осы өрісті өзгертті. Сақтау алдында соңғы мәндерді тексеру үшін редакторды қайта ашыңыз.',
 			'metadataEdit.metadataUpdateFailed' => 'Метадеректерді жаңарту мүмкін болмады',
 			'metadataEdit.artworkUpdated' => 'Суреттер жаңартылды',
 			'metadataEdit.artworkUpdateFailed' => 'Суреттерді жаңарту мүмкін болмады',
@@ -8638,7 +8692,6 @@ extension on TranslationsKk {
 			'cast.connectedTo' => ({required Object device}) => 'Қаланың тұрақты тұрғындарының саны ${device}',
 			'cast.device' => 'Ауызды',
 			'cast.readyToCast' => 'Қатысуға арналған',
-			'cast.subtitle' => 'Субтитрлер',
 			'cast.serverNotAvailable' => 'Медыя сервері не қосқан.',
 			'cast.stopCasting' => 'Оданды',
 			'cast.startFailed' => 'Бұл үшін бір-бірімен бір-бірін бір-бірин бір-бірек келді, бір-біру үшін бір-бирімен бір',
@@ -8704,6 +8757,8 @@ extension on TranslationsKk {
 			'homeLayout.autoSlideDescription' => 'Бұл үшін, бұл жерде де ұзақ уақытқа дейін ұзақ уақыт бойы жасылған.',
 			'homeLayout.autoSlideEditDescription' => 'Бұл үшін, бұл жерде де ұзақ уақытқа дейін ұзақ уақыт бойы жасылған.Ап: бұл жерде ұзақ уақыттан дейін ұзақ жылдан дейін ұзақ уақытта ұзақ уақытға дейін ұзақ мерзімде (PC) немесе ұзақ мерзімі (TV) ұзақ мерзі (TV) жасылғанды.',
 			'homeLayout.enableHeroFirst' => 'Бұл үшін Герояның',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'Home Screen қауымда',
 			'homeLayout.home' => 'Басты бет',
 			'homeLayout.removeFromHome' => 'Өйткені қайтарып',
@@ -8718,8 +8773,6 @@ extension on TranslationsKk {
 			'homeLayout.customPlexRow' => 'Қазір Plex қаңтар',
 			'homeLayout.heroNeedsLibrary' => '«Жеңіске үлес қосқандар» деген әйгілі әндердің авторы.',
 			'homeLayout.heroNeedsSurface' => '«Жеңіске» және «Жектесі» деген әйгілі әндер шыққан әндер шырқалып, биленді.',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Өткен қағал',
 			'homeLayout.noPlexRows' => 'Бұл кітапхана үшін Plex басқаратын қатарлар табылмады.',
 			'homeLayout.openDetails' => 'Одандық детайл',
@@ -9218,6 +9271,8 @@ extension on TranslationsKk {
 			'audiobook.librarySort' => 'Бібліотекасы',
 			'audiobook.sortTitle' => 'Қатысушылардың',
 			'audiobook.sortAuthor' => 'Алдыңғы',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => 'Жарысқа',
 			'audiobook.sortSeries' => 'Сериялық ордер',
 			'audiobook.sortRecent' => 'Ауыз ішінен',
@@ -9232,8 +9287,6 @@ extension on TranslationsKk {
 			'audiobook.recoveryExport' => 'Експортдық криптовалюттік файл',
 			'audiobook.recoveryImport' => 'Қандай-ақ криптовалюталық дағдарыс',
 			'audiobook.recoveryImportConfirm' => 'Бұл криптовалюталық дағдарыстағы қанағаттанды және жабдықтармен көруге болады? іс-әрекеттің историю бар. Жабдықтау библиотекасы және элементтік ID-дер не пайдаланылады; екеуінде импортируға дейін әртүрлі айналысатын идентификатордан қабылдайды.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'Қазіргі уақытта өңдеуге кеңінен танымал.',
 			'audiobook.recoveryImported' => 'Ауыздан дағдарыста.',
 			'sourceSetup.bookorbitHelp' => 'Кітаптарды қарау және ойнату үшін өз BookOrbit тіркелгіңізге кіріңіз. Жоқ тақырыптарға арналған сұраулар әлі де қосылған SeerrNG данасы арқылы жіберіледі.',
@@ -9452,6 +9505,7 @@ extension on TranslationsKk {
 			'issueReport.privacy' => 'Жобада қолданба нұсқасы, платформа және байланыстар саны болады. Сервер мекенжайлары, тіркелгі мен профиль атаулары, медиа атаулары және файл жолдары қосылмайды.',
 			'issueReport.logPrivacy' => 'Журналдар міндетті емес. Жүктемес бұрын тексеріңіз. Олардың ID-і ашық болуы мүмкін жобаға қосылады.',
 			'issueReport.openDraft' => 'GitHub жобасын ашу',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Импортталған жазылымдар: ${imported}. Қайталанатындары: ${duplicates}. Өткізіп жіберілгендері: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Соңғы эпизодтарды автоматты түрде жүктеп алу',
 			'podcasts.removeFinishedAfter' => 'Аяқталған жүктеулерді кейін жою',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Субтитр кодтамасын алдын ала қарау',
@@ -9731,6 +9785,8 @@ extension on TranslationsKk {
 			'musicTools.guestDj' => 'Қонақ диджей',
 			'musicTools.charts' => 'Тыңдау рейтингі',
 			'musicTools.rediscover' => 'Қайта ашу',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => 'Музыка станциялары',
 			'musicTools.prompt' => 'Сипаттамадан ойнату тізімі',
 			'musicTools.provider' => 'Провайдердің жасау мекенжайы',
@@ -9746,8 +9802,6 @@ extension on TranslationsKk {
 			'musicTools.apiKey' => 'API кілті',
 			'musicTools.missing' => 'N/A',
 			'musicTools.minutes' => 'Минут',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => 'Фильтрлер',
 			'musicTools.exclusiveOutput' => 'Эксклюзивті аудио шығыс',
 			'musicTools.preamp' => 'Алдын ала күшейту',
@@ -9803,6 +9857,8 @@ extension on TranslationsKk {
 			'musicDevices.relay' => 'Музыка релесінің URL мекенжайы',
 			'musicDevices.relayHint' => 'Қабылдаушы құрылғыда қосып, бір желіде бір рет жұптастырыңыз. Pleazyng ашық тұрсын. Реле шифрланған музыка пәрмендерін тасымалдайды және желі мекенжайларын көреді. Әр ойнатқыш өз медиа серверінен ағын алады.',
 			'musicDevices.relayInvalid' => 'Реленің HTTPS мекенжайын енгізіңіз.',
+			'bookmarkMigration.unassigned' => 'Белгісіз нұсқадағы бетбелгілер',
+			'bookmarkMigration.assignToVersion' => 'Осы нұсқаға байланыстыру',
 			_ => null,
 		};
 	}

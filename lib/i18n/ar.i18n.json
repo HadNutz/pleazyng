@@ -244,6 +244,7 @@
     "checkFailed": "فشل في التحقق من التحديثات"
   },
   "settings": {
+    "foldableDisplay": "مفصلة الشاشة القابلة للطي",
     "title": "الإعدادات",
     "supportDeveloper": "دعم Pleazyng",
     "supportDeveloperDescription": "التبرع بدعم التنمية",
@@ -441,7 +442,6 @@
     "importSettings": "إعدادات الواردات",
     "importSettingsDescription": "استعادة تفضيلات من ملف",
     "importSettingsConfirm": "هذا سيحل محل إعداداتك الحالية.مواصلة؟",
-    "importSettingsSuccess": "الإعدادات المستوردة",
     "importSettingsCounts": "الإعدادات المطبقة: ${applied}. الإعدادات التي تم تخطيها: ${skipped}.",
     "importSettingsInvalidFile": "هذا الملف غير صالحة Pleazyng إعدادات تصدير",
     "importSettingsNoUser": "تسجيل الدخول قبل استيراد الإعدادات",
@@ -455,7 +455,6 @@
     "cloudBackupComplete": "رُفعت النسخة الاحتياطية. احفظ هذا الرابط. بعد تثبيت التطبيق من جديد، أدخله في إعدادات النسخ الاحتياطي السحابي واختر «${action}».",
     "cloudBackupRestore": "استعادة النسخ الاحتياطي",
     "cloudBackupRestoreConfirm": "هذا سوف يحل محل إعدادات المحمول المقابلة على هذا الجهاز.",
-    "cloudBackupRestored": "إعدادات استعادة من النسخ الاحتياطي السحابية",
     "shortcutsReset": "إعادة تعيين القصص إلى الافتراضات",
     "resetShortcutsConfirm": "هذا سوف يحل محل اختصاراتك المخصصة مع الافتراضات.",
     "about": "حول",
@@ -1530,6 +1529,22 @@
     "editMediaBrowserIntro": "إضافة أو إزالة عناوين URL لـ ${serverName}. Pleazyng سوف تستخدم عناوين URL المتاحة مع أدنى تأخير."
   },
   "iptv": {
+    "backupFeeds": "المصادر الاحتياطية بترتيب التشغيل",
+    "lineupOrder": "ترتيب القنوات",
+    "orderChanged": "تغيّر ترتيب القنوات. راجعه وحاول مجددًا.",
+    "localPlaylist": "ملف M3U",
+    "pastePlaylist": "لصق نص قائمة التشغيل",
+    "playlistBase": "عنوان أساسي للروابط النسبية (اختياري)",
+    "localPlaylistHelp": "استورد نسخة خاصة من قائمة قنوات M3U أو M3U8. يمكنك استبدالها بملف آخر.",
+    "showMatches": "إظهار القنوات المطابقة",
+    "hideMatches": "إخفاء القنوات المطابقة",
+    "pickerCredit": "مستوحى من · M3U Web Picker · Zachary Schmook (@zschmook) والمساهمين",
+    "exportPrivate": "قد تتضمن روابط البث بيانات دخول مزوّد الخدمة. احفظ القائمة في مكان خاص.",
+    "dynamicStreamExport": "تنشئ البوابة رابطًا جديدًا عند كل تشغيل. يمكنك تصدير الدليل.",
+    "moveUp": "تحرك إلى الأعلى",
+    "moveDown": "تحرك إلى أسفل",
+    "choosePlaylist": "اختيار ملف Playlist",
+    "affectedChannels": "القنوات · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3340,6 +3355,7 @@
     "enterImageUrl": "إدخال صورة URL",
     "imageUrl": "صورة URL",
     "metadataUpdated": "متاجدات تحديثات",
+    "metadataConflict": "عدّل محرر آخر الحقل نفسه. افتح المحرر من جديد لمراجعة أحدث القيم قبل الحفظ.",
     "metadataUpdateFailed": "فشل في تحديث البيانات الميتا",
     "artworkUpdated": "الفنون المحدثة",
     "artworkUpdateFailed": "فشل في تحديث أعمال الفن",
@@ -3760,7 +3776,6 @@
     "connectedTo": "متصل بـ ${device}",
     "device": "جهاز البث",
     "readyToCast": "جاهز للبث",
-    "subtitle": "الترجمة",
     "serverNotAvailable": "خادم الوسائط غير متاح.",
     "stopCasting": "إيقاف البث",
     "startFailed": "تعذر بدء البث. تحقق من الخادم وحاول مرة أخرى."
@@ -4999,6 +5014,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "الاشتراكات المستوردة: ${imported}. المكررة: ${duplicates}. التي تم تخطيها: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5813,5 +5829,9 @@
     "relay": "عنوان مرحّل الموسيقى",
     "relayHint": "فعّل هذا على جهاز الاستقبال، ثم أقرن الجهازين مرة واحدة على الشبكة نفسها. أبقِ Pleazyng مفتوحًا. ينقل المرحّل أوامر الموسيقى المشفّرة ويرى عناوين الشبكة. يبث كل مشغّل من خادم الوسائط الخاص به.",
     "relayInvalid": "أدخل عنوان مرحّل يستخدم HTTPS."
+  },
+  "bookmarkMigration": {
+    "unassigned": "إشارات مرجعية من نسخة غير معروفة",
+    "assignToVersion": "إسناد إلى هذه النسخة"
   }
 }

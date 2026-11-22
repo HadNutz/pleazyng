@@ -50,7 +50,7 @@ class _LocalValue {
   final BookAnnotation? annotation;
 }
 
-typedef _EditionCandidate = ({String edition, List<dynamic> descriptor});
+typedef _EditionCandidate = ({String edition, List<dynamic> descriptor, List<PublicationFile> files});
 
 class _SyncCache {
   _SyncCache(Map<String, dynamic> j)
@@ -287,18 +287,23 @@ class PublicationSync {
       canonicalSyncJson([identity, mode.name, edition]);
 
   static List<_EditionCandidate> _editionCandidates(SourceEntry entry, PublicationMode mode) {
-    final byEdition = <String, List<dynamic>>{};
+    final byEdition = <String, _EditionCandidate>{};
     final ordinaryFiles = entry.files.where((file) => !file.sampleOnly).toList(growable: false);
     void add(List<PublicationFile> files, String edition) {
       byEdition.putIfAbsent(
         edition,
-        () => [
-          'catalog',
-          for (final file in ordinaryFiles) [file.kind.name, file.mimeType.trim().toLowerCase(), file.size],
-          'selection',
-          for (final file in files) ordinaryFiles.indexWhere((candidate) => candidate.fingerprint == file.fingerprint),
-          for (final file in files) [file.kind.name, file.mimeType.trim().toLowerCase(), file.size],
-        ],
+        () => (
+          edition: edition,
+          files: files,
+          descriptor: [
+            'catalog',
+            for (final file in ordinaryFiles) [file.kind.name, file.mimeType.trim().toLowerCase(), file.size],
+            'selection',
+            for (final file in files)
+              ordinaryFiles.indexWhere((candidate) => candidate.fingerprint == file.fingerprint),
+            for (final file in files) [file.kind.name, file.mimeType.trim().toLowerCase(), file.size],
+          ],
+        ),
       );
     }
 
@@ -321,7 +326,7 @@ class PublicationSync {
         add([file], sourceDigest(jsonEncode([file.progressFingerprint])));
       }
     }
-    return [for (final candidate in byEdition.entries) (edition: candidate.key, descriptor: candidate.value)];
+    return byEdition.values.toList();
   }
 
   static String? _sharedEditionId(SourceEntry entry, String sharedEntryId, PublicationMode mode, String edition) {
@@ -620,13 +625,12 @@ class PublicationSync {
     return identities;
   }
 
-  bool _compatible(SourceEntry entry, Map<String, dynamic> data, {String? sharedEntryId}) {
-    final edition = data['edition'], mode = data['mode'];
-    if (edition is! String) return false;
-    final publicationMode = PublicationMode.values.where((candidate) => candidate.name == mode).firstOrNull;
-    if (publicationMode == null) return false;
-    if (_editionCandidates(entry, publicationMode).any((candidate) => candidate.edition == edition)) return true;
-    return sharedEntryId != null && _localEditionForShared(entry, sharedEntryId, publicationMode, edition) != null;
+  T _decodeRecord<T>(Map<String, dynamic> data, T Function(Map<String, dynamic>) decode) {
+    try {
+      return decode(data);
+    } on TypeError {
+      throw const SourceException(SourceFailure.invalidData);
+    }
   }
 
   Future<void> _apply(
@@ -639,94 +643,114 @@ class PublicationSync {
     conflicts.clear();
     final identities = await _identitiesForDocument(profile, sources, cache.document, entryMappings);
     for (final record in cache.document.records.entries) {
-      final values = record.value;
-      final first = values.first.value;
-      final entry = identities[first['entry']];
-      if (entry == null) continue; // Discovered later; retained in the document.
-      for (final v in values) {
-        if (v.value['entry'] != first['entry'] || v.value['type'] != first['type']) {
-          throw const SourceException(SourceFailure.invalidData);
-        }
+      try {
+        await _applyRecord(profile, cache, record, identities, entryMappings, activeKeys);
+      } on SourceException catch (error) {
+        if (error.reason != SourceFailure.invalidData) rethrow;
+        // Leave this version unobserved for a later catalog/metadata refresh.
       }
-      if (cache.document.conflicted(record.key)) {
-        conflicts[record.key] = PublicationSyncConflict(record.key, entry, values);
-        continue;
-      }
-      final data = sourceMap(first['data']);
-      final edition = data['edition'], mode = data['mode'];
-      if (edition is! String || mode is! String || !PublicationMode.values.any((m) => m.name == mode)) {
-        throw const SourceException(SourceFailure.invalidData);
-      }
-      final recordEntry = first['entry'];
-      if (recordEntry is! String) throw const SourceException(SourceFailure.invalidData);
-      final expectedKey = first['type'] == 'progress'
-          ? progressKey(recordEntry, edition, PublicationMode.values.byName(mode))
-          : first['type'] == 'annotation'
-          ? annotationKey(recordEntry, data['id'] as String? ?? '')
-          : '';
-      if (expectedKey.isEmpty || expectedKey != record.key) {
-        throw const SourceException(SourceFailure.invalidData);
-      }
-      final sharedEntryId = entryMappings[entry.key];
-      if (!(first['type'] == 'annotation' && data['deleted'] == true) &&
-          !_compatible(entry, data, sharedEntryId: sharedEntryId)) {
-        continue;
-      }
-      final publicationMode = PublicationMode.values.byName(mode);
-      final localEdition = sharedEntryId == null
-          ? edition
-          : _localEditionForShared(entry, sharedEntryId, publicationMode, edition) ?? edition;
-      final localData = localEdition == edition ? data : {...data, 'edition': localEdition};
-      final hash = _hash(first);
-      if (cache.observed[record.key] == hash) {
-        cache.basis[record.key] = joinedClock(values);
-        continue;
-      }
-      if (first['type'] == 'progress') {
-        final value = PublicationProgress.fromJson({...localData, 'entryKey': entry.key, 'session': const Uuid().v4()});
-        if (value.positionMs < 0 ||
-            value.filePositionMs < 0 ||
-            value.fileIndex < 0 ||
-            value.fileIndex >= entry.files.length ||
-            !value.speed.isFinite) {
-          throw const SourceException(SourceFailure.invalidData);
-        }
-        final knownDuration = entry.files[value.fileIndex].durationMs;
-        if (knownDuration != null && value.filePositionMs > knownDuration) {
-          throw const SourceException(SourceFailure.invalidData);
-        }
-        if (activeKeys.contains(value.key)) continue;
-        final current = await repository.progress(profile, value.key);
-        await repository.saveProgress(profile, value.copyWith(revision: current?.revision ?? 0), kind: 'cloud');
-      } else if (first['type'] == 'annotation') {
-        final a = BookAnnotation.fromJson({
-          ...localData,
-          'entryKey': entry.key,
-          'updatedAt': DateTime.now().millisecondsSinceEpoch,
-        });
-        var invalidFileCursor = (a.fileIndex == null) != (a.filePositionMs == null);
-        if (a.fileIndex != null && a.filePositionMs != null) {
-          if (a.fileIndex! < 0 || a.fileIndex! >= entry.files.length || a.filePositionMs! < 0) {
-            invalidFileCursor = true;
-          } else {
-            final duration = entry.files[a.fileIndex!].durationMs;
-            if (duration != null && a.filePositionMs! > duration) invalidFileCursor = true;
-          }
-        }
-        if (a.note.length > 100000 ||
-            a.quote.length > 100000 ||
-            a.id.length > 200 ||
-            (a.positionMs != null && a.positionMs! < 0) ||
-            invalidFileCursor) {
-          throw const SourceException(SourceFailure.invalidData);
-        }
-        await repository.importSyncedAnnotation(profile, a);
-      } else {
-        throw const SourceException(SourceFailure.invalidData);
-      }
-      cache.observed[record.key] = hash;
-      cache.basis[record.key] = joinedClock(values);
     }
+  }
+
+  Future<void> _applyRecord(
+    String profile,
+    _SyncCache cache,
+    MapEntry<String, List<SyncVersion>> record,
+    Map<String, SourceEntry> identities,
+    Map<String, String> entryMappings,
+    Set<String> activeKeys,
+  ) async {
+    final values = record.value;
+    final first = values.first.value;
+    final entry = identities[first['entry']];
+    if (entry == null) return; // Discovered later; retained in the document.
+    for (final v in values) {
+      if (v.value['entry'] != first['entry'] || v.value['type'] != first['type']) {
+        throw const SourceException(SourceFailure.invalidData);
+      }
+    }
+    if (cache.document.conflicted(record.key)) {
+      conflicts[record.key] = PublicationSyncConflict(record.key, entry, values);
+      return;
+    }
+    final data = sourceMap(first['data']);
+    final edition = data['edition'], mode = data['mode'];
+    if (edition is! String || mode is! String || !PublicationMode.values.any((m) => m.name == mode)) {
+      throw const SourceException(SourceFailure.invalidData);
+    }
+    final recordEntry = first['entry'];
+    if (recordEntry is! String) throw const SourceException(SourceFailure.invalidData);
+    final noteId = data['id'];
+    final expectedKey = first['type'] == 'progress'
+        ? progressKey(recordEntry, edition, PublicationMode.values.byName(mode))
+        : first['type'] == 'annotation' && noteId is String && noteId.isNotEmpty
+        ? annotationKey(recordEntry, noteId)
+        : '';
+    if (expectedKey.isEmpty || expectedKey != record.key) {
+      throw const SourceException(SourceFailure.invalidData);
+    }
+    final sharedEntryId = entryMappings[entry.key];
+    final publicationMode = PublicationMode.values.byName(mode);
+    final localEdition = sharedEntryId == null
+        ? edition
+        : _localEditionForShared(entry, sharedEntryId, publicationMode, edition) ?? edition;
+    final localData = localEdition == edition ? data : {...data, 'edition': localEdition};
+    final hash = _hash(first);
+    if (cache.observed[record.key] == hash) {
+      cache.basis[record.key] = joinedClock(values);
+      return;
+    }
+    final candidates = _editionCandidates(entry, publicationMode);
+    final selectedFiles = candidates.where((c) => c.edition == localEdition).firstOrNull?.files ?? const [];
+    if (selectedFiles.isEmpty && !(first['type'] == 'annotation' && data['deleted'] == true)) return;
+    if (first['type'] == 'progress') {
+      final value = _decodeRecord({
+        ...localData,
+        'entryKey': entry.key,
+        'session': const Uuid().v4(),
+      }, PublicationProgress.fromJson);
+      if (value.positionMs < 0 ||
+          value.filePositionMs < 0 ||
+          value.fileIndex < 0 ||
+          value.fileIndex >= selectedFiles.length ||
+          !value.speed.isFinite) {
+        throw const SourceException(SourceFailure.invalidData);
+      }
+      final knownDuration = selectedFiles[value.fileIndex].durationMs ?? 0;
+      if (knownDuration > 0 && value.filePositionMs > knownDuration) {
+        throw const SourceException(SourceFailure.invalidData);
+      }
+      if (activeKeys.contains(value.key)) return;
+      final current = await repository.progress(profile, value.key);
+      await repository.saveProgress(profile, value.copyWith(revision: current?.revision ?? 0), kind: 'cloud');
+    } else if (first['type'] == 'annotation') {
+      final a = _decodeRecord({
+        ...localData,
+        'entryKey': entry.key,
+        'updatedAt': DateTime.now().millisecondsSinceEpoch,
+      }, BookAnnotation.fromJson);
+      var invalidFileCursor = (a.fileIndex == null) != (a.filePositionMs == null);
+      if (!a.deleted && a.fileIndex != null && a.filePositionMs != null) {
+        if (a.fileIndex! < 0 || a.fileIndex! >= selectedFiles.length || a.filePositionMs! < 0) {
+          invalidFileCursor = true;
+        } else {
+          final duration = selectedFiles[a.fileIndex!].durationMs ?? 0;
+          if (duration > 0 && a.filePositionMs! > duration) invalidFileCursor = true;
+        }
+      }
+      if (a.note.length > 100000 ||
+          a.quote.length > 100000 ||
+          a.id.length > 200 ||
+          (a.positionMs != null && a.positionMs! < 0) ||
+          invalidFileCursor) {
+        throw const SourceException(SourceFailure.invalidData);
+      }
+      await repository.importSyncedAnnotation(profile, a);
+    } else {
+      throw const SourceException(SourceFailure.invalidData);
+    }
+    cache.observed[record.key] = hash;
+    cache.basis[record.key] = joinedClock(values);
   }
 
   Future<void> run({

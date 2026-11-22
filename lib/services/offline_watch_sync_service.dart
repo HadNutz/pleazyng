@@ -56,6 +56,77 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
   OfflineModeSource? _offlineModeSource;
   VoidCallback? _offlineModeListener;
   bool _isSyncing = false;
+  final _itemWrites = <String, Future<void>>{};
+
+  /// Bind live reports, online marks and queued replay to the same item's
+  /// wire order, while unrelated titles can still report independently.
+  Future<T> serializeWatchWrite<T>(String globalKey, Future<T> Function() write) {
+    final next = (_itemWrites[globalKey] ?? Future<void>.value()).then((_) => write());
+    final settled = next.then<void>((_) {}, onError: (Object _, StackTrace _) {});
+    _itemWrites[globalKey] = settled;
+    unawaited(
+      settled.then((_) {
+        if (identical(_itemWrites[globalKey], settled)) _itemWrites.remove(globalKey);
+      }),
+    );
+    return next;
+  }
+
+  int get playbackProfileGeneration => _profileGeneration;
+
+  Future<bool> checkpointIsPending(QueuedOfflineWatchAction checkpoint) =>
+      _database.watchActionIsCurrent(checkpoint.rowId, checkpoint.revision);
+
+  Future<void> acknowledgePlaybackCheckpoint(QueuedOfflineWatchAction checkpoint) async {
+    if (await _database.deleteWatchActionIfUnchanged(checkpoint.rowId, checkpoint.revision)) {
+      WatchPatchPromotionNotifier().promote(
+        WatchPatchId.offlineAction(
+          profileId: checkpoint.profileId,
+          rowId: checkpoint.rowId,
+          revision: checkpoint.revision,
+        ),
+      );
+      safeNotifyListeners();
+    }
+  }
+
+  /// Snapshot revisions when the user acts; a checkpoint recorded while the
+  /// transport is in flight belongs to the next intent.
+  Future<bool> writeOnlineMark(
+    MediaServerClient client,
+    MediaItem item, {
+    required bool watched,
+    required bool Function() isCurrent,
+  }) async {
+    final profile = _activeProfileId, generation = _profileGeneration;
+    final scope = resolveActiveClientScopeId(serverId: client.serverId, cacheServerId: client.cacheServerId);
+    final prior = _database.getWatchActionsForKey(
+      item.globalKey,
+      profileId: profile,
+      filterProfile: true,
+      clientScopeId: scope,
+      filterClientScope: true,
+    );
+    return serializeWatchWrite(item.globalKey, () async {
+      final rows = (await prior).where((row) => offlineWatchAccountMatches(row, client)).toList();
+      if (!isCurrent() || generation != _profileGeneration) return false;
+      if (watched) {
+        await client.markWatched(item);
+      } else {
+        await client.markUnwatched(item);
+      }
+      for (final row in rows) {
+        await acknowledgePlaybackCheckpoint((
+          rowId: row.id,
+          revision: row.updatedAt,
+          profileId: row.profileId,
+          clientScopeId: row.clientScopeId,
+        ));
+      }
+      return true;
+    });
+  }
+
   // The bidirectional pass in flight, completed when it settles.
   Completer<void>? _bidirectionalSync;
   // Set for good by [stopBackgroundSync].
@@ -134,7 +205,7 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
   void _onWatchStateChanged(WatchStateEvent event) {
     // Offline marks already purged their own queue in the insert transaction.
     // A delayed notification may arrive after another profile becomes active.
-    if (isDisposed || event.patchId?.isOfflineAction == true) return;
+    if (isDisposed || event.pendingActionsReconciled || event.patchId?.isOfflineAction == true) return;
     if (event.changeType != WatchStateChangeType.watched && event.changeType != WatchStateChangeType.unwatched) {
       return;
     }
@@ -340,11 +411,15 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
     required String itemId,
     required int viewOffset,
     required int? duration,
+    int? sessionRowId,
+    bool startSession = false,
+    int? playbackGeneration,
   }) async {
     final shouldMarkWatched =
         duration != null && isWatchedByProgress(viewOffset, duration, serverId: ServerId(serverId));
     final profileId = _activeProfileId;
     final owner = await _watchOwner(serverId, itemId, profileId);
+    if (playbackGeneration != null && playbackGeneration != _profileGeneration) throw const _RetiredWatchOwner();
     final clientScopeId = owner.scope;
 
     final queued = await _database.upsertProgressAction(
@@ -356,6 +431,8 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
       viewOffset: viewOffset,
       duration: duration,
       shouldMarkWatched: shouldMarkWatched,
+      sessionRowId: sessionRowId,
+      startSession: startSession,
     );
 
     final durationLabel = duration == null ? 'unknown' : '${(duration / 1000).toStringAsFixed(0)}s';
@@ -537,7 +614,10 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
 
       appLogger.i('Syncing ${pendingActions.length} pending watch actions');
 
+      final blocked = <(String, String?, String?)>{};
       for (final action in pendingActions) {
+        final lineage = (action.globalKey, action.clientScopeId, action.accountScope);
+        if (blocked.contains(lineage)) continue;
         if (_backgroundSyncStopped) return;
         if (_activeProfileId != profileId) {
           // A profile switch mid-loop rebinds server clients to the NEW
@@ -548,6 +628,7 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
           return;
         }
         if (action.syncAttempts >= maxSyncAttempts) {
+          blocked.add(lineage);
           appLogger.w(
             'Skipping action ${action.id} - exceeded retry limit '
             '(${action.syncAttempts} attempts). Last error: ${action.lastError}',
@@ -555,34 +636,40 @@ class OfflineWatchSyncService extends ChangeNotifier with DisposableChangeNotifi
           continue;
         }
 
-        final synced = await _withOnlineClientForAction(action, (client, clientScopeId) async {
-          try {
-            final result = await _syncAction(client, action, clientScopeId: clientScopeId);
-            if (!result.persisted) {
-              // The write did not land — MediaBrowser drops a stop for a
-              // session its Started never opened. Leave the row queued and
-              // count the attempt so a later pass retries it.
-              appLogger.d('Action ${action.id} did not persist; keeping it queued');
-              await _database.updateSyncAttemptIfUnchanged(action.id, action.updatedAt, 'write did not persist');
+        final synced = await serializeWatchWrite(action.globalKey, () async {
+          if (!await _database.watchActionIsCurrent(action.id, action.updatedAt)) return true;
+          return _withOnlineClientForAction(action, (client, clientScopeId) async {
+            try {
+              final result = await _syncAction(client, action, clientScopeId: clientScopeId);
+              if (!result.persisted) {
+                // The write did not land — MediaBrowser drops a stop for a
+                // session its Started never opened. Leave the row queued and
+                // count the attempt so a later pass retries it.
+                blocked.add(lineage);
+                appLogger.d('Action ${action.id} did not persist; keeping it queued');
+                await _database.updateSyncAttemptIfUnchanged(action.id, action.updatedAt, 'write did not persist');
+                return;
+              }
+              final deleted = await _database.deleteWatchActionIfUnchanged(result.rowId, result.revision);
+              if (!deleted) {
+                appLogger.d('Synced action ${action.id} revision ${action.updatedAt}; a newer revision remains queued');
+                return;
+              }
+              WatchPatchPromotionNotifier().promote(
+                WatchPatchId.offlineAction(profileId: result.profileId, rowId: result.rowId, revision: result.revision),
+              );
+              appLogger.d('Successfully synced action ${action.id}: ${action.actionType} for ${action.ratingKey}');
+            } on _RetiredWatchOwner {
               return;
+            } catch (e) {
+              blocked.add(lineage);
+              appLogger.w('Failed to sync action ${action.id}: $e');
+              await _database.updateSyncAttemptIfUnchanged(action.id, action.updatedAt, e.toString());
             }
-            final deleted = await _database.deleteWatchActionIfUnchanged(result.rowId, result.revision);
-            if (!deleted) {
-              appLogger.d('Synced action ${action.id} revision ${action.updatedAt}; a newer revision remains queued');
-              return;
-            }
-            WatchPatchPromotionNotifier().promote(
-              WatchPatchId.offlineAction(profileId: result.profileId, rowId: result.rowId, revision: result.revision),
-            );
-            appLogger.d('Successfully synced action ${action.id}: ${action.actionType} for ${action.ratingKey}');
-          } on _RetiredWatchOwner {
-            return;
-          } catch (e) {
-            appLogger.w('Failed to sync action ${action.id}: $e');
-            await _database.updateSyncAttemptIfUnchanged(action.id, action.updatedAt, e.toString());
-          }
+          });
         });
         if (!synced) {
+          blocked.add(lineage);
           appLogger.d('Keeping action ${action.id} queued until server is available');
           continue;
         }

@@ -356,7 +356,8 @@ class PerformanceStats {
     final neuralRequest = resolution.requestedPreset == null
         ? t.settings.neuralInterpolation
         : '${t.settings.neuralInterpolation} · ${_neuralPresetLabel(resolution.requestedPreset!)}';
-    if ((playbackCapabilityReport?.playerType == 'tvmpv' || motionProviderStatus == 'libplacebo GPU') &&
+    if ((playbackCapabilityReport?.playerType == 'tvmpv' ||
+            const {'libplacebo GPU', 'FFmpeg CPU'}.contains(motionProviderStatus)) &&
         resolution.usesMpvInterpolation &&
         motionInterpolationActive == true &&
         motionProviderStatus?.isNotEmpty == true) {

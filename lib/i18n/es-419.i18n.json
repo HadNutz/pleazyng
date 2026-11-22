@@ -1,6 +1,21 @@
 {
-  "cast": {
-    "subtitle": "Subtítulos"
+  "iptv": {
+    "backupFeeds": "Fuentes de respaldo en orden de reproducción",
+    "lineupOrder": "Orden de canales",
+    "orderChanged": "El orden ha cambiado. Revísalo e inténtalo de nuevo.",
+    "localPlaylist": "Archivo M3U",
+    "pastePlaylist": "Pegar el texto de la lista",
+    "playlistBase": "URL base para enlaces relativos (opcional)",
+    "localPlaylistHelp": "Importa una copia privada de una lista de canales M3U o M3U8. Puedes reemplazarla con otro archivo.",
+    "showMatches": "Mostrar canales coincidentes",
+    "hideMatches": "Ocultar canales coincidentes",
+    "pickerCredit": "Inspirado en · M3U Web Picker · Zachary Schmook (@zschmook) y colaboradores",
+    "exportPrivate": "Las direcciones de las emisiones pueden incluir tus credenciales del proveedor. Guarda la lista en un lugar privado.",
+    "dynamicStreamExport": "El portal crea un enlace nuevo en cada reproducción. Puedes exportar la guía.",
+    "moveUp": "Moverse arriba",
+    "moveDown": "Moverse hacia abajo",
+    "choosePlaylist": "Elegir el archivo de playlist",
+    "affectedChannels": "Canales · ${count}"
   },
   "appIcon": {
     "defaultIcon": "Por defecto"
@@ -53,6 +68,7 @@
     "logs": "Registros"
   },
   "settings": {
+    "foldableDisplay": "Bisagra de la pantalla plegable",
     "title": "Configuración",
     "language": "Idioma",
     "theme": "Tema",

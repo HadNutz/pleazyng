@@ -27,6 +27,20 @@ void main() {
       expect(lyrics.lines.map((l) => l.text), ['Clamped', 'Late start']);
     });
 
+    test('the last valid global offset applies to every line and word regardless of position', () {
+      const body = '[00:10.00]<00:10.00>Hello <00:10.50>there\n[00:12.00]again';
+      for (final input in [
+        '[offset:+500]\n$body',
+        '$body\n[offset:+500]',
+        '[offset:100]\n$body\n[Offset:500]\n[offset:bad]',
+      ]) {
+        final lyrics = parseLrc(input)!;
+        expect(lyrics.lines.map((line) => line.startMs), [9500, 11500]);
+        expect(lyrics.lines.first.spans.map((span) => span.startMs), [9500, 10000]);
+        expect(lyrics.lines.first.spans.first.endMs, 10000);
+      }
+    });
+
     test('scales fractional part by digit count', () {
       final lyrics = parseLrc('[00:01.5]One digit\n[00:02.50]Two digits\n[00:03.500]Three digits');
 

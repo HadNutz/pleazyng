@@ -1,4 +1,6 @@
 import 'dart:io' show Platform;
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'fullscreen_state_manager.dart';
 
@@ -13,6 +15,29 @@ import 'fullscreen_state_manager.dart';
 class NativeWindowService {
   static const _channel = MethodChannel('plezy/window');
   static bool _initialized = false;
+  static final panels = ValueNotifier<List<Rect>>([]);
+  static int _panelRevision = 0;
+
+  static void _publishPanels(Object? rows) {
+    if (rows is! List) return;
+    panels.value = [
+      for (final row in rows)
+        if (row case [final int x, final int y, final int right, final int bottom])
+          Rect.fromLTRB(x.toDouble(), y.toDouble(), right.toDouble(), bottom.toDouble()),
+    ];
+  }
+
+  static Future<void> _readPanels() async {
+    final rev = _panelRevision;
+    try {
+      final rows = await _channel.invokeMethod<List<Object?>>('getPanelLayout');
+      if (rev == _panelRevision) _publishPanels(rows);
+    } on MissingPluginException {
+      // Older runner or headless test.
+    } on PlatformException {
+      // No usable desktop topology.
+    }
+  }
 
   /// Hook the native → Dart callback that keeps [FullscreenStateManager] in
   /// sync with OS-driven fullscreen transitions. Safe to call more than once.
@@ -20,10 +45,14 @@ class NativeWindowService {
     if (!Platform.isWindows || _initialized) return;
     _channel.setMethodCallHandler(_handleMethodCall);
     _initialized = true;
+    unawaited(_readPanels());
   }
 
   static Future<void> _handleMethodCall(MethodCall call) async {
-    if (call.method == 'onFullScreenChanged') {
+    if (call.method == 'onPanelLayout') {
+      _panelRevision++;
+      _publishPanels(call.arguments);
+    } else if (call.method == 'onFullScreenChanged') {
       final value = call.arguments;
       if (value is bool) {
         FullscreenStateManager().setFullscreen(value);

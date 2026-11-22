@@ -132,6 +132,22 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
                 _playerBackendSelector(),
                 if (PlatformDetector.supportsExternalPlayers()) _externalPlayerTile(),
                 if (mpvActive) _mpvConfigTile(),
+                if (Platform.isWindows)
+                  SettingSelectionTile<String>(
+                    pref: SettingsService.windowsFoldAxis,
+                    icon: Symbols.splitscreen_rounded,
+                    title: t.settings.foldableDisplay,
+                    subtitleBuilder: (value) => value == 'horizontal'
+                        ? t.games.touchLayoutHorizontal
+                        : value == 'vertical'
+                        ? t.games.touchLayoutVertical
+                        : t.settings.preferredServerAutomatic,
+                    options: [
+                      DialogOption(value: 'auto', title: t.settings.preferredServerAutomatic),
+                      DialogOption(value: 'horizontal', title: t.games.touchLayoutHorizontal),
+                      DialogOption(value: 'vertical', title: t.games.touchLayoutVertical),
+                    ],
+                  ),
                 if (mpvActive || exoActive || engine == 'tvmpv' || engine == 'gstreamer') _hardwareDecodingTile(),
                 if (exoActive) _playbackBufferTile(),
                 if (mpvActive || exoActive) _streamBufferSizeTile(exoActive: exoActive),
@@ -196,6 +212,19 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
                 if (mpvActive) _deinterlaceTile(),
                 SettingSelectionTile<MotionClarityPreset>(
                   pref: SettingsService.motionClarityPreset,
+                  onAfterWrite: (preset) async {
+                    if (!PlatformDetector.usesNativeTvMedia()) return;
+                    await svc.write(SettingsService.neuralInterpolationPreset, preset.tvMixerPreset);
+                    final current = svc.read(SettingsService.motionProcessingMode);
+                    await svc.write(
+                      SettingsService.motionProcessingMode,
+                      !preset.interpolationEnabled
+                          ? MotionProcessingMode.off
+                          : current == MotionProcessingMode.off
+                          ? MotionProcessingMode.mpv
+                          : current,
+                    );
+                  },
                   icon: Symbols.blur_on_rounded,
                   title: t.videoSettings.motionClarity,
                   description: t.videoSettings.motionClarityDescription,

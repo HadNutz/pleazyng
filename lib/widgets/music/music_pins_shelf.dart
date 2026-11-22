@@ -31,6 +31,8 @@ class _MusicPinsShelfState extends State<MusicPinsShelf> {
   String? _signature;
   Future<List<MusicHomePin>>? _future;
   bool _busy = false;
+  static const _pageSize = 50;
+  int _visibleCount = _pageSize;
 
   @override
   void didChangeDependencies() {
@@ -56,6 +58,7 @@ class _MusicPinsShelfState extends State<MusicPinsShelf> {
     }
     if (_signature != signature) {
       _signature = signature;
+      _visibleCount = _pageSize;
       _future = pins.load();
     }
   }
@@ -138,17 +141,30 @@ class _MusicPinsShelfState extends State<MusicPinsShelf> {
       if (pins.isEmpty) {
         return Padding(padding: const EdgeInsets.all(16), child: Text(t.messages.noResultsFound));
       }
-      if (!widget.editing) return Column(children: pins.map(_row).toList());
-      return ReorderableListView(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        onReorderItem: (from, to) {
-          if (_busy) return;
-          final reordered = List<MusicHomePin>.of(pins);
-          reordered.insert(to, reordered.removeAt(from));
-          unawaited(_mutate(() => _pins!.reorder(reordered)));
-        },
-        children: pins.map(_row).toList(),
+      final rows = pins.take(_visibleCount).map(_row).toList();
+      return Column(
+        children: [
+          if (widget.editing)
+            ReorderableListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              onReorderItem: (from, to) {
+                if (_busy) return;
+                // Keep pins on later pages in their saved order.
+                final reordered = List<MusicHomePin>.of(pins);
+                reordered.insert(to, reordered.removeAt(from));
+                unawaited(_mutate(() => _pins!.reorder(reordered)));
+              },
+              children: rows,
+            )
+          else
+            ...rows,
+          if (rows.length < pins.length)
+            TextButton(
+              onPressed: () => setState(() => _visibleCount += _pageSize),
+              child: Text(t.fileSources.loadMore),
+            ),
+        ],
       );
     },
   );

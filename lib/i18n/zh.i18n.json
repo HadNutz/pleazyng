@@ -244,6 +244,7 @@
     "checkFailed": "无法检查更新"
   },
   "settings": {
+    "foldableDisplay": "折叠屏铰链",
     "title": "设置",
     "supportDeveloper": "支持 Pleazyng",
     "supportDeveloperDescription": "捐赠以支持开发",
@@ -431,7 +432,6 @@
     "importSettings": "导入设置",
     "importSettingsDescription": "从文件恢复偏好设置",
     "importSettingsConfirm": "这将替换您当前的设置。继续吗？",
-    "importSettingsSuccess": "设置已导入",
     "importSettingsCounts": "已应用设置：${applied} 项。已跳过：${skipped} 项。",
     "importSettingsInvalidFile": "此文件不是有效的 Pleazyng 设置导出",
     "importSettingsNoUser": "导入设置前请先登录",
@@ -445,7 +445,6 @@
     "cloudBackupComplete": "备份已上传。请保存此网址。重新安装后，在云备份中输入此网址，然后选择“${action}”。",
     "cloudBackupRestore": "恢复备份",
     "cloudBackupRestoreConfirm": "此将取代该设备上的相匹配移动设置。",
-    "cloudBackupRestored": "從雲端儲備恢復的設定",
     "shortcutsReset": "快捷键已重置为默认值",
     "resetShortcutsConfirm": "这将用默认快捷键替换你的自定义快捷键。继续吗？",
     "about": "关于",
@@ -1500,6 +1499,22 @@
     "editMediaBrowserIntro": "为 ${serverName} 添加或移除 URL。Pleazyng 会使用延迟最低且可访问的 URL。"
   },
   "iptv": {
+    "backupFeeds": "按播放顺序排列的备用来源",
+    "lineupOrder": "频道顺序",
+    "orderChanged": "频道顺序已更改。请检查后重试。",
+    "localPlaylist": "M3U 文件",
+    "pastePlaylist": "粘贴播放列表文本",
+    "playlistBase": "相对链接的基础 URL（可选）",
+    "localPlaylistHelp": "导入 M3U 或 M3U8 频道列表的私人副本。可以选择其他文件替换。",
+    "showMatches": "显示匹配的频道",
+    "hideMatches": "隐藏匹配的频道",
+    "pickerCredit": "灵感来源 · M3U Web Picker · Zachary Schmook (@zschmook) 及其他贡献者",
+    "exportPrivate": "直播地址可能包含服务商的登录凭据。请将列表保存到私密位置。",
+    "dynamicStreamExport": "此门户每次播放都会生成新链接。您可以导出节目指南。",
+    "moveUp": "移动上",
+    "moveDown": "移动下",
+    "choosePlaylist": "选择 Playlist 文件",
+    "affectedChannels": "频道 · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3252,6 +3267,7 @@
     "enterImageUrl": "输入图片 URL",
     "imageUrl": "图片 URL",
     "metadataUpdated": "元数据已更新",
+    "metadataConflict": "其他人已修改了同一字段。请重新打开编辑器，查看最新值后再保存。",
     "metadataUpdateFailed": "元数据更新失败",
     "artworkUpdated": "封面图片已更新",
     "artworkUpdateFailed": "封面图片更新失败",
@@ -3672,7 +3688,6 @@
     "connectedTo": "连接到 ${device}",
     "device": "加密装置",
     "readyToCast": "准备放",
-    "subtitle": "字幕",
     "serverNotAvailable": "媒体服务器不适用。",
     "stopCasting": "停止加密",
     "startFailed": "无法开始投射,检查服务器并尝试一次。"
@@ -4886,6 +4901,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "已导入订阅：${imported}。重复：${duplicates}。已跳过：${skipped}。",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5700,5 +5716,9 @@
     "relay": "音乐中继 URL",
     "relayHint": "在接收设备上启用，然后在同一网络中配对一次。保持 Pleazyng 打开。中继传递加密的音乐控制，并能看到网络地址。每个播放器从自己的媒体服务器串流。",
     "relayInvalid": "请输入 HTTPS 中继地址。"
+  },
+  "bookmarkMigration": {
+    "unassigned": "来自未知版本的书签",
+    "assignToVersion": "分配给此版本"
   }
 }

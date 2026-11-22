@@ -186,7 +186,7 @@ class WebDavSourceAdapter extends SourceAdapter {
     final data = _state[uri.toString()]?.data ?? await _readState(uri);
     return sourceList(data['annotations'])
         .map(sourceMap)
-        .where((j) => j['edition'] == progress.edition && j['mode'] == progress.mode.name && j['deleted'] != true)
+        .where((j) => j['edition'] == progress.edition && j['mode'] == progress.mode.name)
         .map((j) => BookAnnotation.fromJson({...j, 'entryKey': entry.key}))
         .toList();
   }
@@ -204,7 +204,10 @@ class WebDavSourceAdapter extends SourceAdapter {
       final state = await _readState(uri);
       final notes = sourceList(state['annotations']).map(sourceMap).toList();
       final current = notes.where((n) => n['id'] == annotation.id).firstOrNull;
-      if (current != null && (sourceInt(current['updatedAt']) ?? 0) > annotation.updatedAt) return;
+      if (current != null) {
+        final updated = sourceInt(current['updatedAt']) ?? 0;
+        if (updated > annotation.updatedAt || (updated == annotation.updatedAt && current['deleted'] == true)) return;
+      }
       notes.removeWhere((n) => n['id'] == annotation.id);
       notes.add(annotation.toJson());
       try {

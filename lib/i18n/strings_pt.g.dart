@@ -66,6 +66,7 @@ class TranslationsPt extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$dialog$pt dialog = Translations$dialog$pt.internal(_root);
 	@override late final Translations$profiles$pt profiles = Translations$profiles$pt.internal(_root);
 	@override late final Translations$connections$pt connections = Translations$connections$pt.internal(_root);
+	@override late final Translations$iptv$pt iptv = Translations$iptv$pt.internal(_root);
 	@override late final Translations$accountPreferences$pt accountPreferences = Translations$accountPreferences$pt.internal(_root);
 	@override late final Translations$discover$pt discover = Translations$discover$pt.internal(_root);
 	@override late final Translations$errors$pt errors = Translations$errors$pt.internal(_root);
@@ -123,6 +124,7 @@ class TranslationsPt extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final Translations$musicExperience$pt musicExperience = Translations$musicExperience$pt.internal(_root);
 	@override late final Translations$musicTools$pt musicTools = Translations$musicTools$pt.internal(_root);
 	@override late final Translations$musicDevices$pt musicDevices = Translations$musicDevices$pt.internal(_root);
+	@override late final Translations$bookmarkMigration$pt bookmarkMigration = Translations$bookmarkMigration$pt.internal(_root);
 }
 
 // Path: mediaConveniences
@@ -385,6 +387,7 @@ class Translations$settings$pt extends Translations$settings$en {
 	final TranslationsPt _root; // ignore: unused_field
 
 	// Translations
+	@override String get foldableDisplay => 'Dobradiça do ecrã dobrável';
 	@override String get title => 'Configurações';
 	@override String get supportDeveloper => 'Apoie o Pleazyng';
 	@override String get supportDeveloperDescription => 'Doe para apoiar o desenvolvimento';
@@ -576,7 +579,6 @@ class Translations$settings$pt extends Translations$settings$en {
 	@override String get importSettings => 'Importar Configurações';
 	@override String get importSettingsDescription => 'Restaurar preferências a partir de um arquivo';
 	@override String get importSettingsConfirm => 'Isso substituirá suas configurações atuais. Continuar?';
-	@override String get importSettingsSuccess => 'Configurações importadas';
 	@override String importSettingsCounts({required Object applied, required Object skipped}) => 'Configurações aplicadas: ${applied}. Ignoradas: ${skipped}.';
 	@override String get importSettingsInvalidFile => 'Este arquivo não é uma exportação válida do Pleazyng';
 	@override String get importSettingsNoUser => 'Entre na conta antes de importar as configurações';
@@ -590,7 +592,6 @@ class Translations$settings$pt extends Translations$settings$en {
 	@override String cloudBackupComplete({required Object action}) => 'Cópia de segurança enviada. Guarde este URL. Após uma nova instalação, introduza-o na secção de cópias de segurança na nuvem e selecione «${action}».';
 	@override String get cloudBackupRestore => 'Restauração de backup';
 	@override String get cloudBackupRestoreConfirm => 'Isso substituirá as configurações portáteis correspondentes neste dispositivo.';
-	@override String get cloudBackupRestored => 'Atualização de configurações recuperadas da backup da nuvem';
 	@override String get shortcutsReset => 'Atalhos redefinidos para o padrão';
 	@override String get resetShortcutsConfirm => 'Isso substituirá seus atalhos personalizados pelos padrões. Continuar?';
 	@override String get about => 'Sobre';
@@ -1644,6 +1645,31 @@ class Translations$connections$pt extends Translations$connections$en {
 	@override String get signInAgain => 'Entrar novamente';
 	@override String editMediaBrowserTitle({required Object product}) => 'Editar conexão do ${product}';
 	@override String editMediaBrowserIntro({required Object serverName}) => 'Adicione ou remova URLs para ${serverName}. O Pleazyng usará a URL acessível com menor latência.';
+}
+
+// Path: iptv
+class Translations$iptv$pt extends Translations$iptv$en {
+	Translations$iptv$pt.internal(TranslationsPt root) : this._root = root, super.internal(root);
+
+	final TranslationsPt _root; // ignore: unused_field
+
+	// Translations
+	@override String get backupFeeds => 'Fontes alternativas por ordem de reprodução';
+	@override String get lineupOrder => 'Ordem dos canais';
+	@override String get orderChanged => 'A ordem dos canais mudou. Verifique e tente novamente.';
+	@override String get localPlaylist => 'Ficheiro M3U';
+	@override String get pastePlaylist => 'Colar o texto da lista de reprodução';
+	@override String get playlistBase => 'URL base para ligações relativas (opcional)';
+	@override String get localPlaylistHelp => 'Importe uma cópia privada de uma lista de canais M3U ou M3U8. Pode substituí-la por outro ficheiro.';
+	@override String get showMatches => 'Mostrar canais correspondentes';
+	@override String get hideMatches => 'Ocultar canais correspondentes';
+	@override String get pickerCredit => 'Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores';
+	@override String get exportPrivate => 'Os endereços das transmissões podem incluir credenciais do fornecedor. Guarde a lista num local privado.';
+	@override String get dynamicStreamExport => 'O portal cria uma nova ligação em cada reprodução. Pode exportar o guia.';
+	@override String get moveUp => 'Move em cima';
+	@override String get moveDown => 'Move abaixo';
+	@override String get choosePlaylist => 'Escolha o arquivo de playlist';
+	@override String affectedChannels({required Object count}) => 'Canais · ${count}';
 }
 
 // Path: accountPreferences
@@ -2726,6 +2752,7 @@ class Translations$metadataEdit$pt extends Translations$metadataEdit$en {
 	@override String get enterImageUrl => 'Insira a URL da imagem';
 	@override String get imageUrl => 'URL da Imagem';
 	@override String get metadataUpdated => 'Metadados atualizados';
+	@override String get metadataConflict => 'Outra pessoa alterou o mesmo campo. Reabra o editor para verificar os valores atuais antes de guardar as alterações.';
 	@override String get metadataUpdateFailed => 'Falha ao atualizar metadados';
 	@override String get artworkUpdated => 'Arte atualizada';
 	@override String get artworkUpdateFailed => 'Falha ao atualizar arte';
@@ -3126,7 +3153,6 @@ class Translations$cast$pt extends Translations$cast$en {
 	@override String connectedTo({required Object device}) => 'Conectado a ${device}';
 	@override String get device => 'CAST DEFINITOR';
 	@override String get readyToCast => 'Pronto para jogar';
-	@override String get subtitle => 'Legendas';
 	@override String get serverNotAvailable => 'O servidor de mídia não está disponível.';
 	@override String get stopCasting => 'Parar de casting';
 	@override String get startFailed => 'Não pode começar a casting. verificar o servidor e tentar novamente.';
@@ -4114,6 +4140,7 @@ class Translations$podcasts$pt extends Translations$podcasts$en {
 	final TranslationsPt _root; // ignore: unused_field
 
 	// Translations
+	@override String importSummary({required Object imported, required Object duplicates, required Object skipped}) => 'Assinaturas importadas: ${imported}. Duplicadas: ${duplicates}. Ignoradas: ${skipped}.';
 	@override String get autoDownloadLatest => 'Transferir automaticamente os episódios mais recentes';
 	@override String get removeFinishedAfter => 'Remover transferências concluídas após';
 }
@@ -4526,6 +4553,17 @@ class Translations$musicDevices$pt extends Translations$musicDevices$en {
 	@override String get relay => 'URL do relay de música';
 	@override String get relayHint => 'Ative no dispositivo recetor e emparelhe uma vez na mesma rede. Mantenha o Pleazyng aberto. O relay transmite comandos de música encriptados e vê os endereços de rede. Cada leitor transmite do seu próprio servidor multimédia.';
 	@override String get relayInvalid => 'Introduza um endereço HTTPS do relay.';
+}
+
+// Path: bookmarkMigration
+class Translations$bookmarkMigration$pt extends Translations$bookmarkMigration$en {
+	Translations$bookmarkMigration$pt.internal(TranslationsPt root) : this._root = root, super.internal(root);
+
+	final TranslationsPt _root; // ignore: unused_field
+
+	// Translations
+	@override String get unassigned => 'Marcadores de uma versão não identificada';
+	@override String get assignToVersion => 'Associar a esta versão';
 }
 
 // Path: appIcon.names
@@ -5860,6 +5898,7 @@ extension on TranslationsPt {
 			'update.viewRelease' => 'Ver Lançamento',
 			'update.latestVersion' => 'Você está na versão mais recente',
 			'update.checkFailed' => 'Falha ao verificar atualizações',
+			'settings.foldableDisplay' => 'Dobradiça do ecrã dobrável',
 			'settings.title' => 'Configurações',
 			'settings.supportDeveloper' => 'Apoie o Pleazyng',
 			'settings.supportDeveloperDescription' => 'Doe para apoiar o desenvolvimento',
@@ -6043,7 +6082,6 @@ extension on TranslationsPt {
 			'settings.importSettings' => 'Importar Configurações',
 			'settings.importSettingsDescription' => 'Restaurar preferências a partir de um arquivo',
 			'settings.importSettingsConfirm' => 'Isso substituirá suas configurações atuais. Continuar?',
-			'settings.importSettingsSuccess' => 'Configurações importadas',
 			'settings.importSettingsCounts' => ({required Object applied, required Object skipped}) => 'Configurações aplicadas: ${applied}. Ignoradas: ${skipped}.',
 			'settings.importSettingsInvalidFile' => 'Este arquivo não é uma exportação válida do Pleazyng',
 			'settings.importSettingsNoUser' => 'Entre na conta antes de importar as configurações',
@@ -6057,7 +6095,6 @@ extension on TranslationsPt {
 			'settings.cloudBackupComplete' => ({required Object action}) => 'Cópia de segurança enviada. Guarde este URL. Após uma nova instalação, introduza-o na secção de cópias de segurança na nuvem e selecione «${action}».',
 			'settings.cloudBackupRestore' => 'Restauração de backup',
 			'settings.cloudBackupRestoreConfirm' => 'Isso substituirá as configurações portáteis correspondentes neste dispositivo.',
-			'settings.cloudBackupRestored' => 'Atualização de configurações recuperadas da backup da nuvem',
 			'settings.shortcutsReset' => 'Atalhos redefinidos para o padrão',
 			'settings.resetShortcutsConfirm' => 'Isso substituirá seus atalhos personalizados pelos padrões. Continuar?',
 			'settings.about' => 'Sobre',
@@ -6155,9 +6192,9 @@ extension on TranslationsPt {
 			'settings.manageLibrariesDescription' => 'Reordene e oculte bibliotecas',
 			'settings.companionRemoteServer' => 'Servidor de controle remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móveis na sua rede controlem este app',
+			'settings.companionRemoteServerStartFailed' => 'Não foi possível iniciar o servidor de controle remoto',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Não foi possível iniciar o servidor de controle remoto',
 			'settings.companionRemoteServerStopFailed' => 'Não foi possível parar o servidor de controle remoto',
 			'settings.autoPip' => 'Picture-in-picture automático',
 			'settings.autoPipDescription' => 'Entrar automaticamente no modo picture-in-picture ao sair do app durante a reprodução',
@@ -6669,9 +6706,9 @@ extension on TranslationsPt {
 			'accessibility.boldTextHint' => 'Use um peso mais pesado para etiquetas de interface e mensagens para torná-los mais fáceis de distinguir.',
 			'tooltips.shufflePlay' => 'Reprodução aleatória',
 			'tooltips.playTrailer' => 'Reproduzir trailer',
+			'tooltips.markAsWatched' => 'Marcar como assistido',
 			_ => null,
 		} ?? switch (path) {
-			'tooltips.markAsWatched' => 'Marcar como assistido',
 			'tooltips.markAsUnwatched' => 'Marcar como não assistido',
 			'audioTracks.track' => ({required Object n}) => 'Faixa de áudio ${n}',
 			'videoControls.audioLabel' => 'Áudio',
@@ -7014,6 +7051,22 @@ extension on TranslationsPt {
 			'connections.signInAgain' => 'Entrar novamente',
 			'connections.editMediaBrowserTitle' => ({required Object product}) => 'Editar conexão do ${product}',
 			'connections.editMediaBrowserIntro' => ({required Object serverName}) => 'Adicione ou remova URLs para ${serverName}. O Pleazyng usará a URL acessível com menor latência.',
+			'iptv.backupFeeds' => 'Fontes alternativas por ordem de reprodução',
+			'iptv.lineupOrder' => 'Ordem dos canais',
+			'iptv.orderChanged' => 'A ordem dos canais mudou. Verifique e tente novamente.',
+			'iptv.localPlaylist' => 'Ficheiro M3U',
+			'iptv.pastePlaylist' => 'Colar o texto da lista de reprodução',
+			'iptv.playlistBase' => 'URL base para ligações relativas (opcional)',
+			'iptv.localPlaylistHelp' => 'Importe uma cópia privada de uma lista de canais M3U ou M3U8. Pode substituí-la por outro ficheiro.',
+			'iptv.showMatches' => 'Mostrar canais correspondentes',
+			'iptv.hideMatches' => 'Ocultar canais correspondentes',
+			'iptv.pickerCredit' => 'Inspirado em · M3U Web Picker · Zachary Schmook (@zschmook) e colaboradores',
+			'iptv.exportPrivate' => 'Os endereços das transmissões podem incluir credenciais do fornecedor. Guarde a lista num local privado.',
+			'iptv.dynamicStreamExport' => 'O portal cria uma nova ligação em cada reprodução. Pode exportar o guia.',
+			'iptv.moveUp' => 'Move em cima',
+			'iptv.moveDown' => 'Move abaixo',
+			'iptv.choosePlaylist' => 'Escolha o arquivo de playlist',
+			'iptv.affectedChannels' => ({required Object count}) => 'Canais · ${count}',
 			'accountPreferences.sectionTitle' => 'Preferências da conta',
 			'accountPreferences.hubSubtitleSingle' => ({required Object account}) => 'Opções de áudio, legendas e biblioteca salvas em ${account}',
 			'accountPreferences.hubSubtitleMultiple' => ({required Object count}) => 'Opções de áudio, legendas e biblioteca salvas em ${count} contas',
@@ -7169,6 +7222,8 @@ extension on TranslationsPt {
 			'discover.director' => 'Diretor',
 			'discover.directors' => 'Diretores',
 			'discover.movie' => 'Filme',
+			_ => null,
+		} ?? switch (path) {
 			'discover.tvShow' => 'Série de TV',
 			'discover.minutesLeft' => ({required Object minutes}) => '${minutes} min restantes',
 			'discover.moreLikeThis' => 'Títulos semelhantes',
@@ -7183,8 +7238,6 @@ extension on TranslationsPt {
 			'errors.connectionTimeout' => ({required Object context}) => 'Tempo de conexão esgotado ao carregar ${context}',
 			'errors.connectionFailed' => 'Não foi possível conectar ao servidor de mídia',
 			'errors.unableToLoad' => ({required Object context}) => 'Não foi possível carregar ${context}. Tente novamente.',
-			_ => null,
-		} ?? switch (path) {
 			'errors.noClientAvailable' => 'Nenhum cliente disponível',
 			'errors.pleaseEnterToken' => 'Insira um token',
 			'errors.invalidToken' => 'Token inválido',
@@ -7683,6 +7736,8 @@ extension on TranslationsPt {
 			'collections.removedFromCollection' => 'Removido da coleção',
 			'collections.removeFromCollectionFailed' => 'Falha ao remover da coleção',
 			'collections.removeFromCollectionError' => ({required Object error}) => 'Erro ao remover da coleção: ${error}',
+			_ => null,
+		} ?? switch (path) {
 			'collections.searchCollections' => 'Pesquisar coleções...',
 			'playlists.title' => 'Playlists',
 			'playlists.playlist' => 'Playlist',
@@ -7697,8 +7752,6 @@ extension on TranslationsPt {
 			'playlists.emptyPlaylist' => 'Esta playlist está vazia',
 			'playlists.deleteConfirm' => 'Excluir Playlist?',
 			'playlists.deleteMessage' => ({required Object name}) => 'Tem certeza de que deseja excluir "${name}"?',
-			_ => null,
-		} ?? switch (path) {
 			'playlists.created' => 'Playlist criada',
 			'playlists.deleted' => 'Playlist excluída',
 			'playlists.itemAdded' => 'Adicionado à playlist',
@@ -8197,6 +8250,8 @@ extension on TranslationsPt {
 			'performanceOverlay.dvRouteDecoder' => 'Decodificador Dolby Vision',
 			'performanceOverlay.dvRouteDecoderP81' => 'Decodificador Dolby Vision (P7→8.1)',
 			'performanceOverlay.dvRouteBaseLayer' => 'Camada base',
+			_ => null,
+		} ?? switch (path) {
 			'performanceOverlay.dvRouteBaseLayerHdr10' => 'Camada base HDR10',
 			'performanceOverlay.dvRouteBaseLayerHlg' => 'Camada base HLG',
 			'performanceOverlay.dvRouteBaseLayerSdr' => 'Camada base SDR',
@@ -8211,8 +8266,6 @@ extension on TranslationsPt {
 			'performanceOverlay.transfer' => 'Transferência',
 			'performanceOverlay.renderFps' => 'FPS de renderização',
 			'performanceOverlay.displayFps' => 'FPS da tela',
-			_ => null,
-		} ?? switch (path) {
 			'performanceOverlay.avSync' => 'Sincronia A/V',
 			'performanceOverlay.dropped' => 'Descartados',
 			'performanceOverlay.dvRpus' => 'DV RPUs',
@@ -8288,6 +8341,7 @@ extension on TranslationsPt {
 			'metadataEdit.enterImageUrl' => 'Insira a URL da imagem',
 			'metadataEdit.imageUrl' => 'URL da Imagem',
 			'metadataEdit.metadataUpdated' => 'Metadados atualizados',
+			'metadataEdit.metadataConflict' => 'Outra pessoa alterou o mesmo campo. Reabra o editor para verificar os valores atuais antes de guardar as alterações.',
 			'metadataEdit.metadataUpdateFailed' => 'Falha ao atualizar metadados',
 			'metadataEdit.artworkUpdated' => 'Arte atualizada',
 			'metadataEdit.artworkUpdateFailed' => 'Falha ao atualizar arte',
@@ -8645,7 +8699,6 @@ extension on TranslationsPt {
 			'cast.connectedTo' => ({required Object device}) => 'Conectado a ${device}',
 			'cast.device' => 'CAST DEFINITOR',
 			'cast.readyToCast' => 'Pronto para jogar',
-			'cast.subtitle' => 'Legendas',
 			'cast.serverNotAvailable' => 'O servidor de mídia não está disponível.',
 			'cast.stopCasting' => 'Parar de casting',
 			'cast.startFailed' => 'Não pode começar a casting. verificar o servidor e tentar novamente.',
@@ -8711,6 +8764,8 @@ extension on TranslationsPt {
 			'homeLayout.autoSlideDescription' => 'As entradas (PC) e o d-pad (TV) sempre funcionam e reiniciar o timer.',
 			'homeLayout.autoSlideEditDescription' => 'Também desliza por conta própria a cada alguns segundos. desligado: só se move quando você clicar em uma bala (PC) ou pressionar esquerda/direita no remoto (TV).',
 			'homeLayout.enableHeroFirst' => 'Primeiro, o herói',
+			_ => null,
+		} ?? switch (path) {
 			'homeLayout.showOnHome' => 'Mostrando em Home Screen',
 			'homeLayout.home' => 'Início',
 			'homeLayout.removeFromHome' => 'Remover de casa',
@@ -8725,8 +8780,6 @@ extension on TranslationsPt {
 			'homeLayout.customPlexRow' => 'Cadeia de Cadeia Plex',
 			'homeLayout.heroNeedsLibrary' => 'Veja a Biblioteca primeiro – Hero precisa de algum lugar para mostrar',
 			'homeLayout.heroNeedsSurface' => 'Veja a Biblioteca ou a Casa primeiro — Hero precisa de algum lugar para mostrar',
-			_ => null,
-		} ?? switch (path) {
 			'homeLayout.removeHub' => 'Remover o Hub',
 			'homeLayout.noPlexRows' => 'No Plex linhas gerenciadas retornou para esta biblioteca.',
 			'homeLayout.openDetails' => 'Detalhes abertos',
@@ -9225,6 +9278,8 @@ extension on TranslationsPt {
 			'audiobook.librarySort' => 'Livros Sorte',
 			'audiobook.sortTitle' => 'Título',
 			'audiobook.sortAuthor' => 'Autor',
+			_ => null,
+		} ?? switch (path) {
 			'audiobook.sortNarrator' => 'narração',
 			'audiobook.sortSeries' => 'Série Ordem',
 			'audiobook.sortRecent' => 'Recentemente aberta',
@@ -9239,8 +9294,6 @@ extension on TranslationsPt {
 			'audiobook.recoveryExport' => 'Exportação de arquivos de recuperação criptografados',
 			'audiobook.recoveryImport' => 'Importar arquivo de recuperação criptografado',
 			'audiobook.recoveryImportConfirm' => 'Combine este arquivo de recuperação criptografado com as posições e notas de leitura atuais? História existente será mantida. bibliotecas compartilhadas e IDs de itens não são incluídos; definir IDs correspondentes em cada dispositivo antes da importação.',
-			_ => null,
-		} ?? switch (path) {
 			'audiobook.recoveryExported' => 'arquivo de recuperação criptografado salvo.',
 			'audiobook.recoveryImported' => 'Dados de recuperação combinados.',
 			'sourceSetup.bookorbitHelp' => 'Entre com sua própria conta BookOrbit para navegar e reproduzir seus livros. Pedidos de títulos ausentes continuam passando pela sua instância SeerrNG conectada.',
@@ -9459,6 +9512,7 @@ extension on TranslationsPt {
 			'issueReport.privacy' => 'O rascunho inclui a versão da aplicação, a plataforma e o número de ligações. Exclui endereços de servidores, nomes de contas e perfis, títulos e caminhos de ficheiros.',
 			'issueReport.logPrivacy' => 'Os registos são opcionais. Reveja-os antes de os carregar. O respetivo ID é adicionado ao rascunho, que pode ser público.',
 			'issueReport.openDraft' => 'Abrir rascunho do GitHub',
+			'podcasts.importSummary' => ({required Object imported, required Object duplicates, required Object skipped}) => 'Assinaturas importadas: ${imported}. Duplicadas: ${duplicates}. Ignoradas: ${skipped}.',
 			'podcasts.autoDownloadLatest' => 'Transferir automaticamente os episódios mais recentes',
 			'podcasts.removeFinishedAfter' => 'Remover transferências concluídas após',
 			'subtitleAiUi.subtitleEncodingPreviewTitle' => 'Pré-visualização da codificação das legendas',
@@ -9738,6 +9792,8 @@ extension on TranslationsPt {
 			'musicTools.guestDj' => 'DJ convidado',
 			'musicTools.charts' => 'Estatísticas de escuta',
 			'musicTools.rediscover' => 'Redescobrir',
+			_ => null,
+		} ?? switch (path) {
 			'musicTools.stations' => 'Estações musicais',
 			'musicTools.prompt' => 'Playlist por descrição',
 			'musicTools.provider' => 'URL de geração do fornecedor',
@@ -9753,8 +9809,6 @@ extension on TranslationsPt {
 			'musicTools.apiKey' => 'Chave API',
 			'musicTools.missing' => 'N/D',
 			'musicTools.minutes' => 'Minutos',
-			_ => null,
-		} ?? switch (path) {
 			'musicTools.rules' => 'Filtros',
 			'musicTools.exclusiveOutput' => 'Saída de áudio exclusiva',
 			'musicTools.preamp' => 'Pré-amplificação',
@@ -9810,6 +9864,8 @@ extension on TranslationsPt {
 			'musicDevices.relay' => 'URL do relay de música',
 			'musicDevices.relayHint' => 'Ative no dispositivo recetor e emparelhe uma vez na mesma rede. Mantenha o Pleazyng aberto. O relay transmite comandos de música encriptados e vê os endereços de rede. Cada leitor transmite do seu próprio servidor multimédia.',
 			'musicDevices.relayInvalid' => 'Introduza um endereço HTTPS do relay.',
+			'bookmarkMigration.unassigned' => 'Marcadores de uma versão não identificada',
+			'bookmarkMigration.assignToVersion' => 'Associar a esta versão',
 			_ => null,
 		};
 	}

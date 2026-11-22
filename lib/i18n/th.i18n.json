@@ -244,6 +244,7 @@
     "checkFailed": "ไม่สามารถตรวจสอบอัปเดตได้"
   },
   "settings": {
+    "foldableDisplay": "บานพับของหน้าจอพับได้",
     "title": "การตั้งค่า",
     "supportDeveloper": "สนับสนุน Pleazyng",
     "supportDeveloperDescription": "การสนับสนุนการพัฒนา",
@@ -431,7 +432,6 @@
     "importSettings": "การตั้งค่าการนําเข้า",
     "importSettingsDescription": "การกู้คืนความต้องการจากไฟล์",
     "importSettingsConfirm": "สิ่งนี้จะเปลี่ยนการตั้งค่าปัจจุบันของคุณ ต่อเนื่อง?",
-    "importSettingsSuccess": "การตั้งค่าที่นําเข้า",
     "importSettingsCounts": "ใช้การตั้งค่าแล้ว ${applied} รายการ ข้าม ${skipped} รายการ",
     "importSettingsInvalidFile": "ไฟล์นี้ไม่ได้รับการส่งออกการตั้งค่า Pleazyng",
     "importSettingsNoUser": "ลงทะเบียนก่อนนําเข้าการตั้งค่า",
@@ -445,7 +445,6 @@
     "cloudBackupComplete": "อัปโหลดข้อมูลสำรองแล้ว โปรดเก็บ URL นี้ไว้ หลังจากติดตั้งแอปใหม่ ให้ป้อน URL นี้ในหน้าสำรองข้อมูลบนคลาวด์ แล้วเลือก “${action}”",
     "cloudBackupRestore": "การกู้คืน Backup",
     "cloudBackupRestoreConfirm": "สิ่งนี้จะแทนที่การตั้งค่าแบบพกพาที่ตรงกับอุปกรณ์นี้. ต่อไป?",
-    "cloudBackupRestored": "การตั้งค่าที่ได้รับการกู้คืนจาก Cloud Backup",
     "shortcutsReset": "ระยะสั้นที่กําหนดเอง",
     "resetShortcutsConfirm": "นี่จะแทนที่การสั้น ๆ ที่กําหนดเองของคุณด้วยข้อกําหนดต่อไปหรือไม่?",
     "about": "เกี่ยวกับ",
@@ -1495,6 +1494,22 @@
     "editMediaBrowserIntro": "เพิ่มหรือลบ URL สําหรับ ${serverName}. Pleazyng จะใช้ URL ที่สามารถเข้าถึงได้ด้วย latency ที่ต่ําสุด"
   },
   "iptv": {
+    "backupFeeds": "แหล่งสำรองตามลำดับการเล่น",
+    "lineupOrder": "ลำดับช่อง",
+    "orderChanged": "ลำดับช่องมีการเปลี่ยนแปลง โปรดตรวจสอบแล้วลองอีกครั้ง",
+    "localPlaylist": "ไฟล์ M3U",
+    "pastePlaylist": "วางข้อความเพลย์ลิสต์",
+    "playlistBase": "URL ฐานสำหรับลิงก์สัมพัทธ์ (ไม่บังคับ)",
+    "localPlaylistHelp": "นำเข้าสำเนาส่วนตัวของรายการช่อง M3U หรือ M3U8 คุณสามารถเลือกไฟล์อื่นมาแทนที่ได้",
+    "showMatches": "แสดงช่องที่ตรงกัน",
+    "hideMatches": "ซ่อนช่องที่ตรงกัน",
+    "pickerCredit": "ได้รับแรงบันดาลใจจาก · M3U Web Picker · Zachary Schmook (@zschmook) และผู้ร่วมพัฒนา",
+    "exportPrivate": "ที่อยู่สตรีมอาจมีข้อมูลเข้าสู่ระบบของผู้ให้บริการ ควรบันทึกรายการไว้ในที่ส่วนตัว",
+    "dynamicStreamExport": "พอร์ทัลสร้างลิงก์ใหม่ทุกครั้งที่เล่น คุณสามารถส่งออกผังรายการได้",
+    "moveUp": "ขึ้นไป",
+    "moveDown": "การเคลื่อนไหวลง",
+    "choosePlaylist": "เลือกไฟล์ Playlist",
+    "affectedChannels": "ช่อง · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3235,6 +3250,7 @@
     "enterImageUrl": "หมายเลข URL",
     "imageUrl": "ภาพ URL",
     "metadataUpdated": "ข้อมูลอัปเดต",
+    "metadataConflict": "มีผู้อื่นแก้ไขช่องเดียวกัน โปรดเปิดตัวแก้ไขอีกครั้งเพื่อตรวจสอบค่าล่าสุดก่อนบันทึก",
     "metadataUpdateFailed": "ไม่สามารถปรับปรุงข้อมูล metadata",
     "artworkUpdated": "อัพเดทศิลปะ",
     "artworkUpdateFailed": "ไม่สามารถปรับปรุงงานศิลปะได้",
@@ -3655,7 +3671,6 @@
     "connectedTo": "เชื่อมต่อ ${device}",
     "device": "อุปกรณ์แคสต์",
     "readyToCast": "พร้อมแคสต์",
-    "subtitle": "คำบรรยาย",
     "serverNotAvailable": "เซิร์ฟเวอร์สื่อไม่สามารถใช้ได้",
     "stopCasting": "หยุดแคสต์",
     "startFailed": "ไม่สามารถเริ่ม casting ตรวจสอบเซิร์ฟเวอร์และลองอีกครั้ง"
@@ -4864,6 +4879,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "นำเข้าการติดตามแล้ว ${imported} รายการ ซ้ำ ${duplicates} รายการ ข้าม ${skipped} รายการ",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5678,5 +5694,9 @@
     "relay": "URL รีเลย์เพลง",
     "relayHint": "เปิดใช้งานบนอุปกรณ์รับ แล้วจับคู่ครั้งเดียวบนเครือข่ายเดียวกัน เปิด Pleazyng ค้างไว้ รีเลย์ส่งคำสั่งเพลงที่เข้ารหัสและเห็นที่อยู่เครือข่ายได้ เครื่องเล่นแต่ละเครื่องสตรีมจากเซิร์ฟเวอร์สื่อของตนเอง",
     "relayInvalid": "ป้อนที่อยู่รีเลย์ HTTPS"
+  },
+  "bookmarkMigration": {
+    "unassigned": "บุ๊กมาร์กจากเวอร์ชันที่ระบุไม่ได้",
+    "assignToVersion": "เชื่อมโยงกับเวอร์ชันนี้"
   }
 }

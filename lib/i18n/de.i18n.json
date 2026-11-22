@@ -244,6 +244,7 @@
     "checkFailed": "Fehler bei der Updateprüfung"
   },
   "settings": {
+    "foldableDisplay": "Scharnier des Faltdisplays",
     "title": "Einstellungen",
     "supportDeveloper": "Pleazyng unterstützen",
     "supportDeveloperDescription": "Spenden Sie, um die Entwicklung zu unterstützen",
@@ -433,7 +434,6 @@
     "importSettings": "Einstellungen importieren",
     "importSettingsDescription": "Einstellungen aus einer Datei wiederherstellen",
     "importSettingsConfirm": "Dies ersetzt deine aktuellen Einstellungen. Fortfahren?",
-    "importSettingsSuccess": "Einstellungen importiert",
     "importSettingsCounts": "Angewendete Einstellungen: ${applied}. Übersprungen: ${skipped}.",
     "importSettingsInvalidFile": "Diese Datei ist kein gültiger Pleazyng-Einstellungsexport",
     "importSettingsNoUser": "Vor dem Import bitte anmelden",
@@ -447,7 +447,6 @@
     "cloudBackupComplete": "Sicherung hochgeladen. Speichere diese URL. Gib sie nach einer Neuinstallation in den Cloud-Backup-Einstellungen ein und wähle „${action}“.",
     "cloudBackupRestore": "Backup wiederherstellen",
     "cloudBackupRestoreConfirm": "Dies ersetzt die entsprechenden Portable-Einstellungen auf diesem Gerät.",
-    "cloudBackupRestored": "Einstellungen wiederhergestellt von Cloud Backup",
     "shortcutsReset": "Tastenkürzel auf Standard zurückgesetzt",
     "resetShortcutsConfirm": "Dadurch werden deine eigenen Tastenkürzel durch die Standardwerte ersetzt. Fortfahren?",
     "about": "Über",
@@ -1502,6 +1501,22 @@
     "editMediaBrowserIntro": "URLs für ${serverName} hinzufügen oder entfernen. Pleazyng verwendet die erreichbare URL mit der geringsten Latenz."
   },
   "iptv": {
+    "backupFeeds": "Ersatzquellen in Wiedergabereihenfolge",
+    "lineupOrder": "Kanalreihenfolge",
+    "orderChanged": "Die Reihenfolge hat sich geändert. Bitte prüfen und erneut versuchen.",
+    "localPlaylist": "M3U-Datei",
+    "pastePlaylist": "Playlist-Text einfügen",
+    "playlistBase": "Basis-URL für relative Links (optional)",
+    "localPlaylistHelp": "Eine private Kopie einer M3U- oder M3U8-Kanalliste importieren. Zum Ersetzen eine andere Datei wählen.",
+    "showMatches": "Passende Kanäle einblenden",
+    "hideMatches": "Passende Kanäle ausblenden",
+    "pickerCredit": "Inspiriert von · M3U Web Picker · Zachary Schmook (@zschmook) und Mitwirkenden",
+    "exportPrivate": "Streamadressen können Zugangsdaten des Anbieters enthalten. Die Liste an einem privaten Ort speichern.",
+    "dynamicStreamExport": "Das Portal erstellt bei jeder Wiedergabe einen neuen Link. Der Programmführer lässt sich exportieren.",
+    "moveUp": "Bewegung auf",
+    "moveDown": "Bewegung nach unten",
+    "choosePlaylist": "Wählen Sie Playlist-Datei",
+    "affectedChannels": "Kanäle · ${count}",
     "addSource": "",
     "addSourceDescription": "",
     "sourcesTitle": "",
@@ -3256,6 +3271,7 @@
     "enterImageUrl": "Bild-URL eingeben",
     "imageUrl": "Bild-URL",
     "metadataUpdated": "Metadaten aktualisiert",
+    "metadataConflict": "Jemand anderes hat dasselbe Feld geändert. Öffne den Editor erneut, um die aktuellen Werte vor dem Speichern zu prüfen.",
     "metadataUpdateFailed": "Metadaten konnten nicht aktualisiert werden",
     "artworkUpdated": "Grafiken aktualisiert",
     "artworkUpdateFailed": "Grafiken konnten nicht aktualisiert werden",
@@ -3676,7 +3692,6 @@
     "connectedTo": "Anschluss an ${device}",
     "device": "Cast Gerät",
     "readyToCast": "Bereit zum Ausführen",
-    "subtitle": "Untertitel",
     "serverNotAvailable": "Der Media-Server ist nicht verfügbar.",
     "stopCasting": "Stoppen Sie Casting",
     "startFailed": "Kann nicht starten, die Kasten. prüfen Sie den Server und versuchen Sie es wieder."
@@ -4891,6 +4906,7 @@
     "refreshPartial": "",
     "importOpml": "",
     "exportOpml": "",
+    "importSummary": "Importierte Abonnements: ${imported}. Duplikate: ${duplicates}. Übersprungen: ${skipped}.",
     "imported": "",
     "exportHelp": "",
     "serverHelp": "",
@@ -5705,5 +5721,9 @@
     "relay": "URL des Musik-Relays",
     "relayHint": "Auf dem Empfangsgerät aktivieren und einmal im selben Netzwerk koppeln. Pleazyng geöffnet lassen. Das Relay überträgt verschlüsselte Musikbefehle und sieht Netzwerkadressen. Jeder Player streamt vom eigenen Medienserver.",
     "relayInvalid": "Eine HTTPS-Adresse für das Relay eingeben."
+  },
+  "bookmarkMigration": {
+    "unassigned": "Lesezeichen aus einer unbekannten Version",
+    "assignToVersion": "Dieser Version zuordnen"
   }
 }
