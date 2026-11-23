@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+- Update the vendored wakelock package’s Linux D-Bus development lock to 0.8.1.
+
+- Regenerate the wakelock platform bindings with Pigeon 30.0.4.
+
+- Update Ruby setup to 1.342.0 for Store and Play qualification workflows.
+
+- Update the GitHub Actions Java setup to 6.3.0 and keep the Windows native JDK check aligned with the pinned action.
+
+- Update the optional karaoke audio analysis environment to librosa 1.0.1.
+
+- Update the Google Tensor LiteRT AOT compiler nightly to its November 17 build.
+
+- Update the GitHub Actions Go setup used by CI to 7.1.0.
+
+- Raise the Android model exporter to NumPy 2.4.6 while retaining compatibility with its Python 3.11 Torch wheel.
+
+- Update the reader integration test browser tooling to Playwright 1.65.1.
+
+- Update GitHub Actions artifact downloads to 8.0.2 for release assembly, foldable Android checks, and the macOS Store build.
+
 - Remove the unused browser sign-in label from the translation catalogs.
 
 - Open the music mini-player’s Play on device picker inside the active profile.

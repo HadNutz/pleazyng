@@ -117,10 +117,10 @@ packages:
     dependency: "direct main"
     description:
       name: dbus
-      sha256: f7db8504e715b835f5ebe5fe74604ccd961d504c73389a5d8e81bafc2e2f3612
+      sha256: fe6b46eae35441227e9e750656d06a4f40c230fe96e4390da7d7ebc69a60f0b3
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.0"
+    version: "0.8.1"
   fake_async:
     dependency: transitive
     description:
@@ -324,10 +324,10 @@ packages:
     dependency: "direct dev"
     description:
       name: pigeon
-      sha256: "1214707e7b0180fad43d8e4747a892b0f03d84963030048787a0b230e03df5ed"
+      sha256: "5c2ac8dd19571590eaf4c178bf4a093b5646dc376d2d2619943ce2aa0aa860d0"
       url: "https://pub.dev"
     source: hosted
-    version: "30.0.2"
+    version: "30.0.4"
   plugin_platform_interface:
     dependency: transitive
     description:
