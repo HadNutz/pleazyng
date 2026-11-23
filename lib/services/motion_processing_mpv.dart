@@ -18,6 +18,7 @@ Future<void> _logLiveMotionChange(Player player, MotionProcessingMode requested)
     'video-sync',
     'display-sync-active',
     'interpolation',
+    'interpolation-threshold',
     'video-out-interpolation',
     'mistimed-frame-count',
     'vo-delayed-frame-count',
@@ -48,29 +49,15 @@ Future<void> _logLiveMotionChange(Player player, MotionProcessingMode requested)
   }
 }
 
-Future<void> _applyMpvInterpolation(
-  Player player, {
-  bool checkDesktopCadence = false,
-  bool sourceAlreadyOpen = false,
-  double? sourceFps,
-}) async {
-  if (checkDesktopCadence) {
-    final cadence = await _desktopDisplayCadence(player, sourceAlreadyOpen: sourceAlreadyOpen, sourceFps: sourceFps);
-    if (cadence != null) {
-      final original = MotionProcessingService._originals[player];
-      if (original != null) await _restoreOriginalProperties(player, original);
-      appLogger.i(
-        'Motion smoothing bypassed temporal blending: ${cadence.$1} fps fits '
-        '${cadence.$2} Hz with ${(cadence.$2 / cadence.$1).round()} refreshes per frame',
-      );
-      return;
-    }
-  }
+Future<void> _applyMpvInterpolation(Player player, {bool alwaysInterpolate = false}) async {
   var original = MotionProcessingService._originals[player];
   if (original == null) {
     original = _OriginalMotionProperties(
       videoSync: await _readMpvMotionProperty(player, 'video-sync'),
       interpolation: await _readMpvMotionProperty(player, 'interpolation'),
+      interpolationThreshold: MotionProcessingService._isDesktopPmePlatform
+          ? await _readMpvMotionProperty(player, 'interpolation-threshold')
+          : null,
       tscale: await _readMpvMotionProperty(player, 'tscale'),
       tscaleBlur: await _readMpvMotionProperty(player, 'tscale-blur'),
       tscaleClamp: await _readMpvMotionProperty(player, 'tscale-clamp'),
@@ -96,6 +83,9 @@ Future<void> _applyMpvInterpolation(
     );
     await _writeMpvMotionProperty(player, 'tscale-blur', '1.0');
     await _writeMpvMotionProperty(player, 'tscale-clamp', '1.0');
+    // The explicit desktop MPV choice should interpolate at any cadence
+    // supported by the renderer. mpv uses -1 to disable its threshold.
+    if (alwaysInterpolate) await _writeMpvMotionProperty(player, 'interpolation-threshold', '-1');
     await _writeMpvMotionProperty(player, 'interpolation', 'yes');
   } catch (error, stackTrace) {
     MotionProcessingService._interpolationBufferReady[player] = false;
@@ -113,35 +103,6 @@ Future<void> _applyMpvInterpolation(
   }
 }
 
-Future<(double, double)?> _desktopDisplayCadence(
-  Player player, {
-  required bool sourceAlreadyOpen,
-  required double? sourceFps,
-}) async {
-  try {
-    final values = await Future.wait([
-      player.getProperty('display-fps'),
-      player.getProperty('display-fps-override'),
-      if (sourceAlreadyOpen) player.getProperty('container-fps'),
-    ]).timeout(const Duration(milliseconds: 500));
-    final measuredDisplay = double.tryParse(values[0] ?? '');
-    final display = measuredDisplay != null && measuredDisplay > 0 ? measuredDisplay : double.tryParse(values[1] ?? '');
-    final nominalSource = sourceAlreadyOpen ? double.tryParse(values[2] ?? '') : sourceFps;
-    final source = nominalSource == null ? null : nominalSource * player.state.rate;
-    if (source == null || display == null || !source.isFinite || !display.isFinite || source <= 0 || display <= 0) {
-      return null;
-    }
-    final ratio = display / source;
-    if (!ratio.isFinite || ratio < 0.995) return null;
-    final repeats = ratio.round();
-    // A small tolerance covers the nominal and 1000/1001 display clocks.
-    return (ratio - repeats).abs() <= repeats * 0.0015 ? (source, display) : null;
-  } catch (_) {
-    // Unknown cadence leaves the renderer's normal interpolation policy in charge.
-    return null;
-  }
-}
-
 Future<void> _restoreOriginalProperties(Player player, _OriginalMotionProperties original) async {
   // Return to the original cadence even if a renderer refuses an optional
   // filter control. Try both playback-critical properties before tuning.
@@ -151,6 +112,7 @@ Future<void> _restoreOriginalProperties(Player player, _OriginalMotionProperties
     await _writeMpvMotionProperty(player, 'video-sync', original.videoSync ?? 'audio');
   }
   for (final (name, value) in [
+    ('interpolation-threshold', original.interpolationThreshold),
     ('tscale', original.tscale),
     ('tscale-blur', original.tscaleBlur),
     ('tscale-clamp', original.tscaleClamp),
@@ -168,6 +130,7 @@ Future<void> _restoreOriginalProperties(Player player, _OriginalMotionProperties
 final class _OriginalMotionProperties {
   final String? videoSync;
   final String? interpolation;
+  final String? interpolationThreshold;
   final String? tscale;
   final String? tscaleBlur;
   final String? tscaleClamp;
@@ -175,6 +138,7 @@ final class _OriginalMotionProperties {
   const _OriginalMotionProperties({
     required this.videoSync,
     required this.interpolation,
+    required this.interpolationThreshold,
     required this.tscale,
     required this.tscaleBlur,
     required this.tscaleClamp,

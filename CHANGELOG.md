@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- Apply playback motion smoothing changes before closing the settings sheet and log renderer acceptance, deferral, and failure. Desktop MPV keeps the original cadence when the source already fits the display refresh rate.
+- Apply playback motion smoothing changes before closing the settings sheet and log renderer acceptance, deferral, and failure. Honor explicit desktop MPV smoothing at even frame-to-refresh ratios.
 
 - Bundle both verified 1080p Neural models in the desktop build inputs so a model host outage cannot interrupt packaging.
 

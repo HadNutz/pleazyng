@@ -125,12 +125,13 @@ void main() {
     expect(MotionProcessingService.canChangeLive(player, mode: MotionProcessingMode.mpv), isFalse);
   }, skip: !(Platform.isLinux || Platform.isWindows));
 
-  test('desktop MPV toggles with sparse metadata and keeps an even display cadence', () async {
+  test('explicit desktop MPV smoothing applies at an even display cadence and restores the threshold', () async {
     final player = _RecordingPlayer(119.956);
     player._properties.addAll({
       'current-vo': Platform.isLinux ? 'libmpv' : 'gpu-next',
       'video-sync': 'audio',
       'interpolation': 'no',
+      'interpolation-threshold': '0.04',
       'container-fps': '23.976',
     });
     final service = MotionClarityService.forPlayer(player);
@@ -140,21 +141,24 @@ void main() {
       thresholdPercent: 1,
       beforeSourceOpen: true,
     );
-    await MotionProcessingService.configureForPlayback(player, MotionProcessingMode.off);
+    await MotionProcessingService.configureForPlayback(player, MotionProcessingMode.mpv);
     addTearDown(() => MotionProcessingService.stopPowerSourceMonitoring(player));
+    expect(await player.getProperty('interpolation'), 'yes');
+    expect(await player.getProperty('interpolation-threshold'), '-1');
     service.markSourceOpened();
     expect(MotionProcessingService.canChangeLive(player, mode: MotionProcessingMode.mpv), isTrue);
     expect(MotionProcessingService.canChangeLive(player, mode: MotionProcessingMode.neural), isFalse);
-    await MotionProcessingService.apply(player, MotionProcessingMode.mpv);
+    await MotionProcessingService.apply(player, MotionProcessingMode.off);
     expect(await player.getProperty('interpolation'), 'no');
-    expect(await player.getProperty('video-sync'), 'audio');
+    expect(await player.getProperty('interpolation-threshold'), '0.04');
 
-    await player.setProperty('display-fps', '60');
     await MotionProcessingService.apply(player, MotionProcessingMode.mpv);
     expect(await player.getProperty('interpolation'), 'yes');
+    expect(await player.getProperty('interpolation-threshold'), '-1');
     expect(await player.getProperty('video-sync'), 'display-resample');
     await MotionProcessingService.apply(player, MotionProcessingMode.off);
     expect(await player.getProperty('interpolation'), 'no');
+    expect(await player.getProperty('interpolation-threshold'), '0.04');
     expect(await player.getProperty('video-sync'), 'audio');
     expect(player.commands, isEmpty);
   }, skip: !(Platform.isLinux || Platform.isWindows));

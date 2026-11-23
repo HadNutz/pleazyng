@@ -693,11 +693,7 @@ abstract final class MotionProcessingService {
     }
 
     try {
-      await _applyMpvInterpolation(
-        player,
-        checkDesktopCadence: _isDesktopPmePlatform,
-        sourceFps: _selectedMotionVideo(selectedVersion)?.frameRate,
-      );
+      await _applyMpvInterpolation(player, alwaysInterpolate: _isDesktopPmePlatform);
       _interpolationBufferReady[player] = true;
       if (resolution.fallback == MotionProcessingFallback.neuralUnavailable) {
         appLogger.i(
@@ -834,7 +830,7 @@ abstract final class MotionProcessingService {
       return;
     }
 
-    await _applyMpvInterpolation(player, checkDesktopCadence: _isDesktopPmePlatform, sourceAlreadyOpen: true);
+    await _applyMpvInterpolation(player, alwaysInterpolate: _isDesktopPmePlatform);
     _interpolationBufferReady[player] = true;
     if (resolution.fallback == MotionProcessingFallback.neuralUnavailable) {
       appLogger.i(
