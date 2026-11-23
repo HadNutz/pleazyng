@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Offer MPV smoothing only on MPV backends and label Neural smoothing by the available GPU and NPU hardware.
+
 - Apply playback motion smoothing changes before closing the settings sheet and log renderer acceptance, deferral, and failure. Honor explicit desktop MPV smoothing at even frame-to-refresh ratios.
 
 - Bundle both verified 1080p Neural models in the desktop build inputs so a model host outage cannot interrupt packaging.

@@ -7,6 +7,7 @@ import 'package:plezy/models/audio_channel_limit.dart';
 import 'package:plezy/models/audio_quality_preset.dart';
 import 'package:plezy/models/motion_processing_mode.dart';
 import 'package:plezy/screens/settings/playback_settings_screen.dart';
+import 'package:plezy/services/motion_processing_service.dart';
 import 'package:plezy/services/settings_service.dart';
 import 'package:plezy/theme/mono_theme.dart';
 import 'package:plezy/models/player_setting_scope.dart';
@@ -16,11 +17,14 @@ import '../../test_helpers/prefs.dart';
 import 'package:provider/provider.dart';
 import 'package:plezy/providers/libraries_provider.dart';
 
-Future<void> _pumpPlaybackSettings(WidgetTester tester) async {
+Future<void> _pumpPlaybackSettings(
+  WidgetTester tester, {
+  PlaybackSettingsScreen screen = const PlaybackSettingsScreen(),
+}) async {
   await tester.pumpWidget(
     ChangeNotifierProvider<LibrariesProvider>(
       create: (_) => LibrariesProvider(),
-      child: MaterialApp(theme: monoTheme(MonoPalette.dark), home: const PlaybackSettingsScreen()),
+      child: MaterialApp(theme: monoTheme(MonoPalette.dark), home: screen),
     ),
   );
 }
@@ -53,14 +57,19 @@ void main() {
     expect((await SettingsService.getInstance()).read(SettingsService.showStopButton), isFalse);
   });
 
-  testWidgets('neural experiments are an off-by-default persisted Settings choice', (tester) async {
+  testWidgets('GPU interpolation is an off-by-default persisted Settings choice', (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(1000, 1400);
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.view.resetPhysicalSize);
     final settings = SettingsService.instance;
     expect(settings.read(SettingsService.motionProcessingMode), MotionProcessingMode.off);
-    await _pumpPlaybackSettings(tester);
+    await _pumpPlaybackSettings(
+      tester,
+      screen: PlaybackSettingsScreen(
+        detectMotionCapabilities: (_) async => const MotionSmoothingCapabilities(mpv: true, gpu: true),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text(t.settings.neuralInterpolationPresets), findsNothing);
     final mode = find.text(t.settings.motionSmoothing);
@@ -69,7 +78,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(mode);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(t.settings.neuralInterpolation));
+    expect(find.textContaining('NPU'), findsNothing);
+    await tester.tap(find.text('${t.settings.neuralInterpolation} · GPU'));
     await tester.pumpAndSettle();
     expect(settings.read(SettingsService.motionProcessingMode), MotionProcessingMode.neural);
     expect(settings.prefs.getString(SettingsService.motionProcessingMode.key), 'neural');

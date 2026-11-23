@@ -28,6 +28,7 @@ import '../../utils/dialogs.dart';
 import '../../utils/provider_extensions.dart';
 import '../../utils/quality_preset_labels.dart';
 import '../../services/settings_service.dart';
+import '../../services/motion_processing_service.dart';
 import '../../services/video_decode_capabilities.dart';
 import '../../utils/codec_utils.dart';
 import '../../utils/platform_detector.dart';
@@ -35,6 +36,7 @@ import '../../utils/snackbar_helper.dart';
 import '../../widgets/dialog_action_button.dart';
 import '../../widgets/focusable_list_tile.dart';
 import '../../widgets/setting_tile.dart';
+import '../../widgets/motion_smoothing_labels.dart';
 import '../../widgets/settings_builder.dart';
 import '../../widgets/settings_page.dart';
 import '../../widgets/settings_section.dart';
@@ -46,7 +48,9 @@ import 'subtitle_language_order_screen.dart';
 import '../sources/dv_offline_export_screen.dart';
 
 class PlaybackSettingsScreen extends StatefulWidget {
-  const PlaybackSettingsScreen({super.key});
+  const PlaybackSettingsScreen({super.key, this.detectMotionCapabilities = MotionSmoothingCapabilities.detect});
+
+  final Future<MotionSmoothingCapabilities> Function(String backend) detectMotionCapabilities;
 
   @override
   State<PlaybackSettingsScreen> createState() => _PlaybackSettingsScreenState();
@@ -55,6 +59,7 @@ class PlaybackSettingsScreen extends StatefulWidget {
 class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
   String? _prerollLibraryGlobalKey;
   Set<String> _prerollSelectedItemKeys = {};
+  final _motionCapabilities = <String, Future<MotionSmoothingCapabilities>>{};
 
   @override
   void initState() {
@@ -358,7 +363,7 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
               ],
             ),
 
-            _motionProcessingGroup(),
+            _motionProcessingGroup(engine),
             _seekAndTimingGroup(),
             _autoPlayAndSkipGroup(),
             if (!PlatformDetector.isTizenBuild()) _musicPlaybackGroup(),
@@ -373,35 +378,31 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
     );
   }
 
-  Widget _motionProcessingGroup() => SettingsGroup(
+  Widget _motionProcessingGroup(String backend) => FutureBuilder<MotionSmoothingCapabilities>(
+    key: ValueKey(backend),
+    future: _motionCapabilities.putIfAbsent(backend, () => widget.detectMotionCapabilities(backend)),
+    builder: (context, snapshot) =>
+        _buildMotionProcessingGroup(snapshot.data ?? MotionSmoothingCapabilities.forBackend(backend)),
+  );
+
+  Widget _buildMotionProcessingGroup(MotionSmoothingCapabilities capabilities) => SettingsGroup(
     title: t.settings.motionProcessing,
     children: [
       SettingSelectionTile<MotionProcessingMode>(
         pref: SettingsService.motionProcessingMode,
         icon: Symbols.slow_motion_video_rounded,
         title: t.settings.motionSmoothing,
-        subtitleBuilder: _motionProcessingModeSummary,
+        subtitleBuilder: (mode) => mode == MotionProcessingMode.mpv
+            ? '${capabilities.label(mode)} · ${t.settings.motionSmoothingDescription}'
+            : capabilities.label(mode),
         options: [
-          DialogOption(
-            value: MotionProcessingMode.off,
-            title: t.settings.motionSmoothingOff,
-            subtitle: t.settings.motionSmoothingOffDescription,
-          ),
-          DialogOption(
-            value: MotionProcessingMode.mpv,
-            title: t.settings.motionSmoothingMpv,
-            subtitle: t.settings.motionSmoothingMpvDescription,
-          ),
-          DialogOption(
-            value: MotionProcessingMode.neural,
-            title: t.settings.neuralInterpolation,
-            subtitle: t.settings.neuralInterpolationUnavailableDescription,
-          ),
+          for (final mode in capabilities.modes)
+            DialogOption(value: mode, title: capabilities.label(mode), subtitle: capabilities.description(mode)),
         ],
       ),
       ValueListenableBuilder<MotionProcessingMode>(
         valueListenable: SettingsService.instance.listenable(SettingsService.motionProcessingMode),
-        builder: (context, mode, _) => mode == MotionProcessingMode.neural
+        builder: (context, mode, _) => mode.usesNeuralInterpolation && capabilities.neural
             ? Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -409,9 +410,9 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
                     pref: SettingsService.neuralInterpolationPreset,
                     icon: Symbols.tune_rounded,
                     title: t.settings.neuralInterpolationPresets,
-                    subtitleBuilder: _neuralInterpolationPresetLabel,
+                    subtitleBuilder: neuralInterpolationPresetLabel,
                     options: NeuralInterpolationPreset.values
-                        .map((preset) => DialogOption(value: preset, title: _neuralInterpolationPresetLabel(preset)))
+                        .map((preset) => DialogOption(value: preset, title: neuralInterpolationPresetLabel(preset)))
                         .toList(growable: false),
                   ),
                   SettingSwitchTile(
@@ -426,25 +427,6 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
       ),
     ],
   );
-
-  String _motionProcessingModeLabel(MotionProcessingMode mode) => switch (mode) {
-    MotionProcessingMode.off => t.settings.motionSmoothingOff,
-    MotionProcessingMode.mpv => t.settings.motionSmoothingMpv,
-    MotionProcessingMode.neural => t.settings.neuralInterpolation,
-  };
-
-  String _motionProcessingModeSummary(MotionProcessingMode mode) => switch (mode) {
-    MotionProcessingMode.off => '${_motionProcessingModeLabel(mode)} · ${t.settings.motionSmoothingOffDescription}',
-    MotionProcessingMode.mpv => '${_motionProcessingModeLabel(mode)} · ${t.settings.motionSmoothingDescription}',
-    MotionProcessingMode.neural =>
-      '${_motionProcessingModeLabel(mode)} · ${t.settings.neuralInterpolationUnavailableDescription}',
-  };
-
-  String _neuralInterpolationPresetLabel(NeuralInterpolationPreset preset) => switch (preset) {
-    NeuralInterpolationPreset.performance => t.settings.neuralInterpolationPresetPerformance,
-    NeuralInterpolationPreset.balanced => t.settings.neuralInterpolationPresetBalanced,
-    NeuralInterpolationPreset.quality => t.settings.neuralInterpolationPresetQuality,
-  };
 
   Widget _seekAndTimingGroup() => SettingsGroup(
     title: t.settings.seekAndTiming,

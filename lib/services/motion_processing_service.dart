@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
 import '../media/media_stream.dart';
@@ -20,6 +21,7 @@ import 'settings_service.dart';
 import '../utils/app_logger.dart';
 
 part 'motion_processing_mpv.dart';
+part 'motion_smoothing_capabilities.dart';
 
 /// Applies display-synced MPV temporal interpolation. Windows uses gpu-next;
 /// Linux's Wayland video plane supplies monitor refresh and render-swap
@@ -1394,35 +1396,6 @@ abstract final class MotionProcessingService {
     if (!const {'h264', 'avc', 'avc1'}.contains(codec)) return false;
     final fps = video.frameRate;
     return fps != null && ((fps - 24).abs() <= 0.1 || (fps - 30).abs() <= 0.1);
-  }
-
-  static Future<_DesktopPmeRuntime?> _findDesktopPmeRuntime() async {
-    final executableDirectory = Directory(p.dirname(Platform.resolvedExecutable));
-    final directories = <Directory>[];
-    final runtimeOverride = Platform.environment['PLEZY_PME_RUNTIME_DIR']?.trim();
-    if (runtimeOverride != null && runtimeOverride.isNotEmpty) {
-      directories.add(Directory(runtimeOverride));
-    }
-    directories.addAll(<Directory>[
-      executableDirectory,
-      Directory(p.join(executableDirectory.path, 'lib')),
-      Directory(p.normalize(p.join(executableDirectory.path, '..', 'lib'))),
-      Directory(p.normalize(p.join(executableDirectory.path, '..', 'lib', 'plezy'))),
-      Directory(p.normalize(p.join(executableDirectory.path, '..', 'lib', 'plezyng'))),
-    ]);
-    final windows = Platform.isWindows;
-    final manifestName = windows ? 'providers.windows.tsv' : 'providers.linux.tsv';
-    final pmeName = windows ? 'plezy_motion_engine.dll' : 'libplezy_motion_engine.so';
-    final ortName = windows ? 'onnxruntime.dll' : 'libonnxruntime.so';
-    for (final directory in directories) {
-      final manifest = File(p.join(directory.path, manifestName));
-      final pme = File(p.join(directory.path, pmeName));
-      final ort = File(p.join(directory.path, ortName));
-      if (await manifest.exists() && await pme.exists() && await ort.exists()) {
-        return _DesktopPmeRuntime(providerManifest: manifest.path, pmeLibrary: pme.path, ortLibrary: ort.path);
-      }
-    }
-    return null;
   }
 
   static String _escapeMpvFilterValue(String value) =>

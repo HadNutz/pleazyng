@@ -93,13 +93,13 @@ void main() {
     }
   });
 
-  testWidgets('desktop motion selection persists even when it cannot apply to the current source', (tester) async {
+  testWidgets('desktop motion shows MPV and keeps unavailable Neural out of the choices', (tester) async {
     final settings = SettingsService.instance;
-    await settings.write(SettingsService.motionProcessingMode, MotionProcessingMode.mpv);
+    await settings.write(SettingsService.motionProcessingMode, MotionProcessingMode.neural);
     final player = _FakeSettingsPlayer(playerType: 'mpv');
     addTearDown(player.dispose);
     for (final (label, mode) in [
-      (t.settings.neuralInterpolation, MotionProcessingMode.neural),
+      (t.settings.motionSmoothingMpv, MotionProcessingMode.mpv),
       (t.settings.motionSmoothingOff, MotionProcessingMode.off),
     ]) {
       await _pumpSheetViaOverlayRoute(tester, player);
@@ -107,6 +107,7 @@ void main() {
       await tester.scrollUntilVisible(motion, 180, scrollable: find.byType(Scrollable).last);
       await tester.tap(motion);
       await tester.pumpAndSettle();
+      expect(find.textContaining('${t.settings.neuralInterpolation} ·'), findsNothing);
       await tester.tap(find.text(label).last);
       await tester.pumpAndSettle();
       expect(settings.read(SettingsService.motionProcessingMode), mode);

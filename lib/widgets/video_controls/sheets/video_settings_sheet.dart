@@ -39,6 +39,7 @@ import '../../../services/player_sync_offsets.dart';
 import '../../../services/motion_clarity_service.dart';
 import '../../../services/settings_service.dart';
 import '../../../services/motion_processing_service.dart';
+import '../../motion_smoothing_labels.dart';
 import '../../../services/playback_initialization_types.dart';
 import '../../../services/sleep_timer_service.dart';
 import '../../../services/video_filter_manager.dart';
@@ -406,6 +407,9 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
   late HdrToneMapping _hdrToneMapping;
   late AudioChannelLimit _audioChannelLimit;
   late MotionProcessingMode _motionProcessingMode;
+  late Future<MotionSmoothingCapabilities> _motionCapabilities = MotionSmoothingCapabilities.detectPlayer(
+    widget.player,
+  );
   late List<double> _audioEqualizerGains;
   late MotionClarityPreset _motionPreset;
   late MotionTemporalKernel _motionKernel;
@@ -509,6 +513,9 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
   @override
   void didUpdateWidget(covariant VideoSettingsSheet oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.player != widget.player) {
+      _motionCapabilities = MotionSmoothingCapabilities.detectPlayer(widget.player);
+    }
     final nextZoomScale = VideoFilterManager.normalizeZoomScale(_state.videoZoomScale);
     if (_zoomScale != nextZoomScale) {
       _zoomScale = nextZoomScale;
@@ -1108,7 +1115,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
           _SettingsMenuItem(
             icon: Symbols.slow_motion_video_rounded,
             title: t.settings.motionSmoothing,
-            valueText: _motionProcessingModeLabel(_motionProcessingMode),
+            valueText: const MotionSmoothingCapabilities().label(_motionProcessingMode),
             isHighlighted: _motionProcessingMode != MotionProcessingMode.off,
             onTap: () => _navigateTo(_SettingsView.motionSmoothing),
           ),
@@ -1842,9 +1849,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
           for (final preset in MotionClarityPreset.values.where((value) => value != MotionClarityPreset.custom))
             FocusableListTile(
               title: Text(_motionPresetTitle(preset)),
-              subtitle: preset.interpolationEnabled
-                  ? Text(_neuralInterpolationPresetLabel(preset.tvMixerPreset))
-                  : null,
+              subtitle: preset.interpolationEnabled ? Text(neuralInterpolationPresetLabel(preset.tvMixerPreset)) : null,
               trailing: _motionPreset == preset ? AppIcon(Symbols.check_rounded, fill: 1) : null,
               onTap: () => _selectMotionClarityPreset(preset),
             ),
@@ -2558,24 +2563,6 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     );
   }
 
-  String _motionProcessingModeLabel(MotionProcessingMode mode) => switch (mode) {
-    MotionProcessingMode.off => t.settings.motionSmoothingOff,
-    MotionProcessingMode.mpv => t.settings.motionSmoothingMpv,
-    MotionProcessingMode.neural => t.settings.neuralInterpolation,
-  };
-
-  String _motionProcessingModeDescription(MotionProcessingMode mode) => switch (mode) {
-    MotionProcessingMode.off => t.settings.motionSmoothingOffDescription,
-    MotionProcessingMode.mpv => t.settings.motionSmoothingMpvDescription,
-    MotionProcessingMode.neural => t.settings.neuralInterpolationUnavailableDescription,
-  };
-
-  String _neuralInterpolationPresetLabel(NeuralInterpolationPreset preset) => switch (preset) {
-    NeuralInterpolationPreset.performance => t.settings.neuralInterpolationPresetPerformance,
-    NeuralInterpolationPreset.balanced => t.settings.neuralInterpolationPresetBalanced,
-    NeuralInterpolationPreset.quality => t.settings.neuralInterpolationPresetQuality,
-  };
-
   NeuralInterpolationPreset _activeMotionPreset(Player player) {
     final settings = SettingsService.instance;
     if (player is PlayerSystem &&
@@ -2636,25 +2623,32 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     }
   }
 
-  Widget _buildMotionSmoothingView() => ListView(
+  Widget _buildMotionSmoothingView() => FutureBuilder<MotionSmoothingCapabilities>(
+    key: ObjectKey(widget.player),
+    future: _motionCapabilities,
+    builder: (context, snapshot) =>
+        _motionSmoothingOptions(snapshot.data ?? MotionSmoothingCapabilities.forBackend(widget.player.playerType)),
+  );
+
+  Widget _motionSmoothingOptions(MotionSmoothingCapabilities capabilities) => ListView(
     shrinkWrap: true,
     children: [
-      for (final mode in MotionProcessingMode.values)
+      for (final mode in capabilities.modes)
         FocusableListTile(
           title: Text(
-            _motionProcessingModeLabel(mode),
+            capabilities.label(mode),
             style: TextStyle(color: mode == _motionProcessingMode ? Theme.of(context).colorScheme.primary : null),
           ),
-          subtitle: Text(
-            _motionProcessingModeDescription(mode),
-            style: TextStyle(color: tokens(context).textMuted, fontSize: 12),
-          ),
+          subtitle: switch (capabilities.description(mode)) {
+            final String description => Text(description),
+            null => null,
+          },
           trailing: mode == _motionProcessingMode
               ? AppIcon(Symbols.check_rounded, fill: 1, color: Theme.of(context).colorScheme.primary)
               : null,
           onTap: () => unawaited(_setMotionProcessingMode(mode)),
         ),
-      if (_motionProcessingMode == MotionProcessingMode.neural ||
+      if ((_motionProcessingMode.usesNeuralInterpolation && capabilities.neural) ||
           (widget.player.playerType == 'tvmpv' && _motionProcessingMode == MotionProcessingMode.mpv)) ...[
         SettingSelectionTile<NeuralInterpolationPreset>(
           pref: SettingsService.neuralInterpolationPreset,
@@ -2663,7 +2657,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
               ? t.videoSettings.motionClarity
               : t.settings.neuralInterpolationPresets,
           defaultValue: _activeMotionPreset(widget.player),
-          subtitleBuilder: _neuralInterpolationPresetLabel,
+          subtitleBuilder: neuralInterpolationPresetLabel,
           onAfterWrite: (preset) async {
             if (MotionProcessingService.canChangeLive(
                   widget.player,
@@ -2689,7 +2683,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
             }
           },
           options: NeuralInterpolationPreset.values
-              .map((preset) => DialogOption(value: preset, title: _neuralInterpolationPresetLabel(preset)))
+              .map((preset) => DialogOption(value: preset, title: neuralInterpolationPresetLabel(preset)))
               .toList(growable: false),
         ),
         if (widget.player.playerType != 'tvmpv')
