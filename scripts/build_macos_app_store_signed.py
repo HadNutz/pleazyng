@@ -1143,6 +1143,40 @@ def store_category_receipt(store_info_plist: dict[str, object], archived_info_pl
     }
 
 
+def exclude_store_updater(source_dir: Path) -> None:
+    """Keep the direct-download updater out of the App Store archive."""
+    plugins_path = source_dir / ".flutter-plugins-dependencies"
+    plugins = json.loads(plugins_path.read_text(encoding="utf-8"))
+    macos_plugins = plugins["plugins"]["macos"]
+    plugins["plugins"]["macos"] = [
+        item for item in macos_plugins if item["name"] != "auto_updater_macos"
+    ]
+    plugins_path.write_text(json.dumps(plugins), encoding="utf-8")
+
+    registrant = source_dir / "macos/Flutter/GeneratedPluginRegistrant.swift"
+    swift = registrant.read_text(encoding="utf-8")
+    swift = re.sub(r"(?m)^import auto_updater_macos\n", "", swift)
+    swift = re.sub(r"(?m)^  AutoUpdaterMacosPlugin\.register[^\n]*\n", "", swift)
+    if "auto_updater_macos" in swift or "AutoUpdaterMacosPlugin" in swift:
+        raise ValueError("Unexpected macOS updater registration format")
+    registrant.write_text(swift, encoding="utf-8")
+
+    lock = source_dir / "macos/Podfile.lock"
+    locked = lock.read_text(encoding="utf-8")
+    for pattern in (
+        r"(?m)^  - auto_updater_macos \([^\n]+\):\n(?:    - [^\n]+\n)+",
+        r"(?m)^  - auto_updater_macos \(from [^\n]+\)\n",
+        r"(?m)^  auto_updater_macos:\n    :path: [^\n]+\n",
+        r"(?m)^  - Sparkle \([^\n]+\)\n",
+        r"(?m)^    - Sparkle\n",
+        r"(?m)^  (?:auto_updater_macos|Sparkle): [0-9a-f]+\n",
+    ):
+        locked = re.sub(pattern, "", locked)
+    if "auto_updater_macos" in locked or "Sparkle" in locked:
+        raise ValueError("Unexpected dependency on the direct-download updater in the Store pod lock")
+    lock.write_text(locked, encoding="utf-8")
+
+
 def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: Path,
                          archive_path: Path, derived_data: Path,
                          app_keychain: Path, installer_keychain: Path,
@@ -1157,7 +1191,14 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
     derived_data.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
 
     project_path = source_dir / "macos/Runner.xcodeproj/project.pbxproj"
-    original_project = project_path.read_bytes()
+    restored_paths = {
+        path: path.read_bytes()
+        for path in (
+            project_path,
+            source_dir / "macos/Podfile.lock",
+            source_dir / "macos/Flutter/GeneratedPluginRegistrant.swift",
+        )
+    }
     installed_profiles: list[Path] = []
     try:
         build_env = _build_environment()
@@ -1169,6 +1210,7 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
             f"--dart-define=PLEAZYNG_DISCORD_APPLICATION_ID={os.environ.get('PLEAZYNG_DISCORD_APPLICATION_ID', '')}",
             "--split-debug-info=debug-info/macos-app-store-signed",
         ], cwd=source_dir, env=build_env)
+        exclude_store_updater(source_dir)
         _run_visible(["pod", "install", "--deployment"], cwd=source_dir / "macos", env=build_env)
 
         store_info_plist = prepare_store_info_plist(source_dir, source_sha)
@@ -1197,6 +1239,9 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
             "CODE_SIGNING_REQUIRED=YES", "COMPILER_INDEX_STORE_ENABLE=NO",
         ], cwd=source_dir, env=archive_env)
         app_path = archive_path / ARCHIVE_APP_SUFFIX
+        frameworks = app_path / "Contents/Frameworks"
+        if any((frameworks / name).exists() for name in ("Sparkle.framework", "auto_updater_macos.framework")):
+            raise ValueError("The direct-download updater is still bundled in the Mac App Store archive")
         app_info, architectures = inspect_app(app_path)
         archive_info_plist = app_path / "Contents/Info.plist"
         category_receipt = store_category_receipt(store_info_plist, archive_info_plist)
@@ -1263,7 +1308,8 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
         }
         return package_path, receipt
     finally:
-        project_path.write_bytes(original_project)
+        for path, original in restored_paths.items():
+            path.write_bytes(original)
         for installed in installed_profiles:
             installed.unlink(missing_ok=True)
 
