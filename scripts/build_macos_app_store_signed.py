@@ -1150,8 +1150,8 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
         raise FileExistsError("Refusing to overwrite an existing Mac App Store signing output")
     validate_source_entitlements(source_dir)
     output_dir.mkdir(mode=0o700, parents=True)
-    archive_path.parent.mkdir(mode=0o700, parents=True)
-    derived_data.parent.mkdir(mode=0o700, parents=True)
+    archive_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    derived_data.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
 
     build_env = _build_environment()
     source_sha = source["source_commit"]
