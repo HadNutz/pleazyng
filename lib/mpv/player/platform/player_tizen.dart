@@ -239,7 +239,7 @@ class PlayerTizen extends PlayerBase
         if (!_current(generation)) return;
         if (sourcePositionFor(start) > Duration.zero) await controller.seekTo(sourcePositionFor(start));
         if (!_current(generation)) return;
-        await controller.setVolume(state.volume / 100);
+        if (state.volume != 100) await controller.setVolume(state.volume / 100);
         await controller.setPlaybackSpeed(state.rate);
         if (_current(generation) && play) await controller.play();
       } catch (_) {

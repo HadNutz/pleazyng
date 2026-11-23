@@ -98,6 +98,12 @@ void main() {
     expect(player.state.track.subtitle?.id, 'no');
   });
 
+  test('a freshly prepared player leaves native unity gain alone', () async {
+    await player.open(Media('/movie.mp4'));
+    expect(backend.volumes, isEmpty);
+    expect(player.state.playing, isTrue);
+  });
+
   test('native audio channel, rate and bitrate reach performance properties', () async {
     await player.open(Media('/movie.mp4'));
     expect(await player.getProperty('audio-params/channel-count'), isNull);

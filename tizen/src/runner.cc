@@ -1,3 +1,5 @@
+#include <clocale>
+
 #include <flutter.h>
 
 #include "generated_plugin_registrant.h"
@@ -7,6 +9,9 @@
 class PleazyngApp : public FlutterApp {
  public:
   bool OnCreate() override {
+    // Tizen initializes the process locale before this callback. libmpv
+    // requires C numeric parsing when the native player falls back to it.
+    std::setlocale(LC_NUMERIC, "C");
     if (FlutterApp::OnCreate()) {
       RegisterPlugins(this);
     }

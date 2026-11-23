@@ -470,7 +470,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             initializingCompleter.complete(null);
           }
           _applyLooping();
-          _applyVolume();
+          // A new native player already has unity gain. Some Samsung TV
+          // runtimes reject writing that default even after preparation.
+          if (value.volume != 1.0) {
+            _applyVolume();
+          }
           if (VideoEventType.restored == event.eventType && _onRestoreDataSource != null) {
             play();
           } else {
@@ -1045,7 +1049,8 @@ class _VideoPlayerState extends State<VideoPlayer> {
       if (crop != _appliedCrop) {
         _appliedCrop = crop;
         _videoPlayerPlatform.setSourceCrop(_playerId, crop).catchError((Object error, StackTrace stack) {
-          FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stack, library: 'video_player_videohole'));
+          FlutterError.reportError(
+              FlutterErrorDetails(exception: error, stack: stack, library: 'video_player_videohole'));
         });
       }
       final Rect currentRect = _getCurrentRect();

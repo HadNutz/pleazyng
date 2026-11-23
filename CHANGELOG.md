@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Keep Samsung TV playback from retrying the player's default volume at startup and initialize the mpv fallback with the required numeric locale.
+
 - Keep WebDAV backup credentials private to their configured profile. Older device-wide destinations must be entered again. Serialize settings restores and apply the same 4 MiB limit to local and cloud settings files.
 - Stream artwork, playlists, reading lists, podcast subscriptions, source recovery files, certificates, subtitles, media extension manifests and game saves within their import size limits. Metadata artwork now shares the 10 MiB playlist artwork upload limit.
 - Keep opaque server and media identifiers inside their offline download directories and preserve sidecar lookup for extensionless videos in dotted folders.
