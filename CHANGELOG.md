@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update the GitHub Actions Java setup to 6.3.0 and keep the Windows native JDK check aligned with the pinned action.
+
 - Update the optional karaoke audio analysis environment to librosa 1.0.1.
 
 - Update the Google Tensor LiteRT AOT compiler nightly to its November 17 build.

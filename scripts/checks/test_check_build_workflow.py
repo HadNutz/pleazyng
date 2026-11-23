@@ -676,7 +676,7 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
         prefix, windows = self._workflow().split("  build-windows:\n", 1)
         java_step = (
             '      - name: Setup Java\n'
-            '        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0\n'
+            '        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0\n'
             '        with:\n'
             '          distribution: "temurin"\n'
             '          java-version: "21"\n'
