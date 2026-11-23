@@ -42,6 +42,14 @@ import '../../test_helpers/pump.dart';
 /// `reason=error`, the screen latches the fatal error, and the `loadfile` that
 /// raised it throws out of the open.
 void main() {
+  runStartupFailureScenario(
+    label: 'Jellyfin startup clears the spinner and reports HTTP 500',
+    backend: MediaBackend.jellyfin,
+  );
+}
+
+// Native channel ownership requires a separate test isolate for each screen.
+void runStartupFailureScenario({required String label, required MediaBackend backend, bool recovered = false}) {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late Directory tmpRoot;
@@ -81,10 +89,8 @@ void main() {
   // `_isCurrentPlaybackGeneration` and is now spelled out on the reload
   // guard alone, because only a reload has a previous session to roll back
   // to instead of an error view to raise.
-  testWidgets('a fatal player error during the initial start clears the loading spinner and reports the failure', (
-    tester,
-  ) async {
-    final client = _FailingStreamClient();
+  testWidgets(label, (tester) async {
+    final client = _FailingStreamClient(backend);
     final multi = testMultiServer(clients: [client]);
     final offlineWatch = OfflineWatchSyncService(database: db, serverManager: multi.manager);
     final accountPreferences = AccountPreferencesController();
@@ -93,11 +99,17 @@ void main() {
     // and the Watch Together indicator.
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
     const windowChannel = MethodChannel('window_manager');
+    const mediaControlMethods = MethodChannel('com.edde746.os_media_controls/methods');
+    const mediaControlEvents = MethodChannel('com.edde746.os_media_controls/events');
+    messenger.setMockMethodCallHandler(mediaControlMethods, (_) async => null);
+    messenger.setMockMethodCallHandler(mediaControlEvents, (_) async => null);
     messenger.setMockMethodCallHandler(windowChannel, (call) async => call.method.startsWith('is') ? false : null);
     tester.view.physicalSize = const Size(1200, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(() {
       messenger.setMockMethodCallHandler(windowChannel, null);
+      messenger.setMockMethodCallHandler(mediaControlMethods, null);
+      messenger.setMockMethodCallHandler(mediaControlEvents, null);
       tester.view.reset();
       offlineWatch.dispose();
       accountPreferences.dispose();
@@ -119,13 +131,16 @@ void main() {
         final args = (call.arguments as Map?)?['args'];
         if (args is! List || args.isEmpty || args.first != 'loadfile') return null;
         loadfileCalls++;
+        final player = key.currentState!.player! as PlayerBase;
+        if (recovered && loadfileCalls == 2) {
+          player.handlePlayerEvent('start-file', {'sourceId': 2});
+          player.handlePlayerEvent('file-loaded', {'sourceId': 2});
+          player.handlePlayerEvent('playback-restart', {'sourceId': 2, 'positionSeconds': 0.0});
+          return null;
+        }
         // The server rejected the stream with HTTP 500, so mpv ends the file
         // with reason=error before the failed `loadfile` reply lands.
-        (key.currentState!.player! as PlayerBase).handlePlayerEvent('end-file', {
-          'reason': 4,
-          'message': 'HTTP 500',
-          'cause': PlayerError.serverHttp500,
-        });
+        player.handlePlayerEvent('end-file', {'reason': 4, 'message': 'HTTP 500', 'cause': PlayerError.serverHttp500});
         throw PlatformException(code: 'COMMAND_FAILED', message: 'loadfile failed');
       },
       testBody: () async {
@@ -147,7 +162,7 @@ void main() {
                   id: 'movie-fatal-start',
                   serverId: 'srv-1',
                   title: 'Fatal start',
-                  backend: MediaBackend.jellyfin,
+                  backend: backend,
                 ),
                 // Non-null so startup skips the OfflineModeProvider lookup.
                 selectedQualityPreset: TranscodeQualityPreset.original,
@@ -169,28 +184,29 @@ void main() {
           // full private-JIT suite.
           timeout: const Duration(seconds: 30),
         );
-        await pumpUntil(
-          tester,
-          () => find.text(t.messages.serverLimitTitle).evaluate().isNotEmpty,
-          describe: () => 'no HTTP 500 dialog',
-        );
-        expect(find.text('Server error (HTTP 500).'), findsOneWidget);
+        if (recovered) {
+          await pumpUntil(tester, () => find.text(t.fileInfo.transcoding).evaluate().isNotEmpty);
+          expect(find.text(t.messages.serverLimitTitle), findsNothing);
+        } else {
+          await pumpUntil(
+            tester,
+            () => find.text(t.messages.serverLimitTitle).evaluate().isNotEmpty,
+            describe: () => 'no HTTP 500 dialog',
+          );
+          expect(find.text('Server error (HTTP 500).'), findsOneWidget);
+          expect(find.byType(CircularProgressIndicator), findsNothing);
+          expect(find.text(t.messages.serverLimitTranscode), findsNothing);
+          if (backend == MediaBackend.jellyfin) {
+            expect(find.byType(SnackBar), findsNothing);
+            expect(find.textContaining('loadfile failed'), findsOneWidget);
+            expect(find.widgetWithText(FilledButton, t.common.retry), findsOneWidget);
+          }
+        }
 
-        expect(
-          find.byType(CircularProgressIndicator),
-          findsNothing,
-          reason: 'the loading spinner must not survive behind the error dialog',
-        );
-        // The thrown open no longer lands in a snackbar behind the dialog:
-        // the failure view carries it, so it survives the dialog's close and
-        // is where Back/Retry live once the route stays.
-        expect(find.byType(SnackBar), findsNothing);
-        expect(
-          find.textContaining('loadfile failed'),
-          findsOneWidget,
-          reason: 'the failed start owes the user the error it failed on',
-        );
-        expect(find.widgetWithText(FilledButton, t.common.retry), findsOneWidget);
+        final expectedConversions = backend == MediaBackend.plex ? [false, true] : [false];
+        expect(loadfileCalls, expectedConversions.length);
+        expect(client.requests.map((request) => request.forceTranscode), expectedConversions);
+        expect(client.requests.map((request) => request.qualityPreset), everyElement(TranscodeQualityPreset.original));
 
         var shutdownDone = false;
         final shutdown = PlaybackCoordinator.instance.shutdownVideo().whenComplete(() => shutdownDone = true);
@@ -205,14 +221,19 @@ void main() {
 
 /// Resolves to a stream URL the mocked mpv plane then refuses.
 class _FailingStreamClient with PlaybackReportRecorder implements MediaServerClient {
+  _FailingStreamClient(this.backend);
+
+  final requests = <PlaybackInitializationOptions>[];
+
   @override
   ServerId get serverId => ServerId('srv-1');
   @override
   String get serverName => 'Server';
   @override
-  MediaBackend get backend => MediaBackend.jellyfin;
+  final MediaBackend backend;
   @override
-  ServerCapabilities get capabilities => ServerCapabilities.jellyfin;
+  ServerCapabilities get capabilities =>
+      backend == MediaBackend.plex ? ServerCapabilities.plex : ServerCapabilities.jellyfin;
   @override
   double get watchedThreshold => 0.9;
   @override
@@ -221,11 +242,15 @@ class _FailingStreamClient with PlaybackReportRecorder implements MediaServerCli
   Map<String, String> get streamHeaders => const {};
 
   @override
-  Future<PlaybackInitializationResult> getPlaybackInitialization(PlaybackInitializationOptions options) async =>
-      PlaybackInitializationResult(
-        availableVersions: const [],
-        videoUrl: 'https://example.invalid/${options.metadata.id}',
-      );
+  Future<PlaybackInitializationResult> getPlaybackInitialization(PlaybackInitializationOptions options) async {
+    requests.add(options);
+    return PlaybackInitializationResult(
+      availableVersions: const [],
+      videoUrl: 'https://example.invalid/${options.metadata.id}${options.forceTranscode ? ".m3u8" : ".mkv"}',
+      isTranscoding: options.forceTranscode,
+      playMethod: options.forceTranscode ? 'Transcode' : 'DirectPlay',
+    );
+  }
 
   // Nothing under test reads these, but the screen's extras load runs anyway
   // and a noSuchMethod miss would surface as an unrelated logged error.

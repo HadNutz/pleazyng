@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Automatically try Plex conversion once when Original playback fails to start with HTTP 500. Pleazyng adapted the fallback from [Plezy PR #2911](https://github.com/edde746/plezy/pull/2911), contributed upstream by [@yellowleadarr](https://github.com/yellowleadarr) with the uncapped request refined by [@edde746](https://github.com/edde746).
+
 - Report playback HTTP 500 as a server error without attributing it to a bandwidth or transcoding limit.
 
 - Check iOS and tvOS App Store upload readiness independently.

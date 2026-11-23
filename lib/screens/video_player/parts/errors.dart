@@ -23,6 +23,8 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
     // reporting again, and re-running the policy per event is what turned a
     // failed HLS open into an ANR. A new open resets the latch.
     if (_hasFatalPlaybackError) return;
+    final pendingServerFallback = _serverLimitFallbackPending;
+    if (pendingServerFallback != null && identical(pendingServerFallback, _playbackAttempt)) return;
     // The local open has failed and its one compatibility retry owns the
     // player now. Ignore duplicate events from that same failed open.
     if (_dolbyVisionCompatibilityFallbackInFlight ||
@@ -53,6 +55,12 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
         _latchFatalPlaybackError(action);
         unawaited(_showPlaybackNotAllowedDialog());
       case PlaybackFailureAction.serverLimitDialog:
+        if (_tryAutomaticServerLimitTranscode()) return;
+        if (_serverLimitFallbackItemKey != null &&
+            _serverLimitFallbackItemKey == _currentOpenRequest?.metadata.globalKey &&
+            _currentOpenRequest?.forceTranscode == true) {
+          _firstFrame.forceUiReadyOnFailure();
+        }
         _latchFatalPlaybackError(action);
         unawaited(_showServerLimitDialog());
       case PlaybackFailureAction.mediaUnreadableDialog:
@@ -496,44 +504,67 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
     if (mounted) unawaited(_handleBackButton());
   }
 
-  /// The HTTP 500 modal. Where [offersServerLimitTranscode] allows, it also
-  /// offers to have the server transcode the item; picking that reopens the
-  /// item as a transcode instead of leaving the route.
-  Future<void> _showServerLimitDialog() async {
-    if (!mounted) return;
-    final offerTranscode = offersServerLimitTranscode(
+  bool _canTryServerLimitTranscode(_PlaybackOpenRequest? request) {
+    if (request == null || request.forceTranscode) return false;
+    final itemKey = request.metadata.globalKey;
+    if (_isTranscoding && _playbackSession?.metadata.globalKey == itemKey) return false;
+    return offersServerLimitTranscode(
       isLive: widget.isLive,
       isPlexBacked:
           !_offlineLibraryMode &&
           _activeExternalPlaybackSource == null &&
           _pendingExternalPlaybackSource == null &&
-          _currentMetadata.backend == MediaBackend.plex,
+          request.metadata.backend == MediaBackend.plex,
       serverSupportsTranscoding: _serverSupportsTranscoding,
-      requestedPreset: _currentOpenRequest?.qualityPreset ?? _selectedQualityPreset,
-      fallbackAlreadyUsed: _serverLimitFallbackUsed,
+      requestedPreset: request.qualityPreset,
+      fallbackAlreadyUsed: _serverLimitFallbackItemKey == itemKey,
     );
+  }
+
+  bool _tryAutomaticServerLimitTranscode() {
+    final attempt = _playbackAttempt;
+    final request = _currentOpenRequest;
+    if (_firstFrame.rendered ||
+        attempt == null ||
+        !attempt.isCurrent ||
+        request == null ||
+        !_canTryServerLimitTranscode(request)) {
+      return false;
+    }
+
+    // Duplicate error events still belong to the failed open until the
+    // replacement takes ownership. A reload must release its lease first.
+    _serverLimitFallbackPending = attempt;
+    _abortCurrentOpen('retrying HTTP 500 with Plex conversion');
+    unawaited(_runAutomaticServerLimitTranscode(attempt, request));
+    return true;
+  }
+
+  Future<void> _runAutomaticServerLimitTranscode(_PlaybackAttempt attempt, _PlaybackOpenRequest request) async {
+    if (_transitionGate.transition != PlaybackTransition.idle) {
+      await _transitionGate.waitForIdle(() => attempt.isCurrent && !_isExiting.value);
+    }
+    if (identical(_serverLimitFallbackPending, attempt)) _serverLimitFallbackPending = null;
+    if (!attempt.isCurrent || _isExiting.value) return;
+    await _reopenAsServerLimitTranscode(request, automatic: true);
+  }
+
+  Future<void> _showServerLimitDialog() async {
+    if (!mounted) return;
+    final request = _retryRequestForFailure();
+    final offerTranscode = _canTryServerLimitTranscode(request);
     final transcode = await showServerLimitDialog(context, offerTranscode: offerTranscode);
     if (!mounted) return;
-    if (transcode && offerTranscode) {
-      await _reopenAsServerLimitTranscode();
+    if (transcode && offerTranscode && request != null) {
+      await _reopenAsServerLimitTranscode(request);
       return;
     }
     unawaited(_handleBackButton());
   }
 
-  /// Reopen the item the server refused (HTTP 500) as a server transcode at
-  /// the same preset, once. The server chooses the output. The
-  /// raw file is never requested again: the reload withholds direct play and
-  /// fails instead of falling back to the file. A refused transcode, before
-  /// or after its open, brings the dialog back without the offer, because
-  /// [_serverLimitFallbackUsed] is set.
-  Future<void> _reopenAsServerLimitTranscode() async {
-    final request = _retryRequestForFailure();
-    if (request == null || player == null) {
-      unawaited(_handleBackButton());
-      return;
-    }
-    _serverLimitFallbackUsed = true;
+  /// Ask Plex once for an HLS stream at the same preset with direct play disabled.
+  Future<void> _reopenAsServerLimitTranscode(_PlaybackOpenRequest request, {bool automatic = false}) async {
+    _serverLimitFallbackItemKey = request.metadata.globalKey;
     // The raw file's 500 must not classify the transcode's own failure.
     _fatalHttpStatuses.clear();
     final outcome = await _reloadMediaInPlace(
@@ -552,18 +583,21 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
       preservedSubtitleTrack: _sessionSubtitlePreference ?? _preferredSubtitleTrack,
       preservedSecondarySubtitleTrack: _sessionSecondarySubtitlePreference ?? _preferredSecondarySubtitleTrack,
       showErrorUi: false,
-      reason: 'server limit transcode',
+      reason: 'HTTP 500 Plex fallback',
     );
     if (!mounted) return;
     switch (outcome) {
       // Playing, or a newer transition owns the player now; a failure after
       // the open arrives through _onPlayerError like any other.
       case MediaReloadOutcome.opened:
+        if (automatic && _isTranscoding) showAppSnackBar(context, t.fileInfo.transcoding);
+        return;
       case MediaReloadOutcome.superseded:
       case MediaReloadOutcome.rejected:
         return;
       // The transcode failed to start.
       case MediaReloadOutcome.failed:
+        _firstFrame.forceUiReadyOnFailure();
         _latchFatalPlaybackError(PlaybackFailureAction.serverLimitDialog);
         unawaited(_showServerLimitDialog());
     }

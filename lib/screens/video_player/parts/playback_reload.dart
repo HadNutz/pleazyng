@@ -428,6 +428,7 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
       bool isCurrentReload() =>
           attempt.isCurrent &&
           !_hasFatalPlaybackError &&
+          !identical(_serverLimitFallbackPending, attempt) &&
           (_activeExternalPlaybackSource == null || _externalSourceProfileIsCurrent(_activeExternalPlaybackSource!)) &&
           (_pendingExternalPlaybackSource == null || _externalSourceProfileIsCurrent(_pendingExternalPlaybackSource!));
 
@@ -821,7 +822,9 @@ extension _VideoPlayerReloadMethods on VideoPlayerScreenState {
             if (!isCurrentReload() || !attempt.isCurrent) return;
             didOpenReplacement = true;
             _commitPlaybackSession(session, externalPlaybackSource: activeExternalSource);
-            if (isItemChange) _serverLimitFallbackUsed = false;
+            if (isItemChange && _serverLimitFallbackItemKey != metadata.globalKey) {
+              _serverLimitFallbackItemKey = null;
+            }
           },
         );
         if (!opened) return MediaReloadOutcome.superseded;

@@ -1,5 +1,7 @@
 # Upstream source attribution
 
+- [Plezy PR #2911](https://github.com/edde746/plezy/pull/2911) introduced manual Plex conversion after an HTTP 500 on Original. [@yellowleadarr](https://github.com/yellowleadarr) contributed the PR upstream and [@edde746](https://github.com/edde746) refined it to use the Original preset with direct play disabled. Pleazyng independently adapted that uncapped fallback to run automatically once during startup.
+
 - Open individual Plex and Jellyfin photos full-screen and browse nested photo albums with pagination. The viewer bounds decoded images and uses the profile navigator’s Back handling. [jmtagarro](https://github.com/jmtagarro) proposed [Plezy PR #3020](https://github.com/edde746/plezy/pull/3020).
 
 - Allow the finish clock next to remaining time to be hidden independently on desktop, touch and remote controls. Existing users keep their visible finish clock. [jtlopezdev](https://github.com/jtlopezdev) proposed [Plezy PR #3070](https://github.com/edde746/plezy/pull/3070).

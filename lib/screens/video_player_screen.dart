@@ -467,8 +467,7 @@ class _PlaybackOpenRequest {
   final int? audioStreamId;
   final Duration? resumePosition;
 
-  /// A server transcode the viewer asked for after the server refused the
-  /// file itself (HTTP 500); see [PlaybackInitializationOptions.forceTranscode].
+  /// A request to withhold direct play. See [PlaybackInitializationOptions.forceTranscode].
   final bool forceTranscode;
   final bool forceAudioConversion;
   final bool forceVideoConversion;
@@ -3655,10 +3654,9 @@ class VideoPlayerScreenState extends State<VideoPlayerScreen>
   /// transient status must never mask the fatal one that follows.
   final Set<int> _fatalHttpStatuses = <int>{};
 
-  /// The HTTP 500 dialog's transcode was already tried for the item on
-  /// screen, so a further 500 shows the dialog without it. Cleared when an
-  /// in-place reload opens another item.
-  bool _serverLimitFallbackUsed = false;
+  /// Item that has already tried the HTTP 500 fallback.
+  String? _serverLimitFallbackItemKey;
+  _PlaybackAttempt? _serverLimitFallbackPending;
 
   /// Bounds an open the server keeps answering with HTTP 503 — that loop
   /// otherwise never raises an error (#1830). Armed from [_onPlayerLog],

@@ -90,16 +90,12 @@ PlaybackFailureAction resolvePlaybackFailureAction({
   return PlaybackFailureAction.fatal;
 }
 
-/// Whether the HTTP 500 dialog may offer to have the server transcode the item
-/// instead.
+/// Whether a failed HTTP 500 open can fall back to a Plex transcode.
 ///
 /// The 500 itself stays terminal (see [resolvePlaybackFailureAction]): this
-/// never retries the refused request. It only lets the viewer ask for a
-/// different one: a Plex transcode with direct play withheld and no client
-/// bitrate cap, so the server chooses the output. Only an on-demand Plex open
-/// at Original quality qualifies, on a server that can transcode, and only
-/// once per item ([fallbackAlreadyUsed]): a transcode that is refused too is
-/// the server's final answer.
+/// never retries the refused request. The fallback disables direct play and
+/// leaves the bitrate to the server. It is available once per item for
+/// on-demand Plex playback at Original quality when the server can transcode.
 bool offersServerLimitTranscode({
   required bool isLive,
   required bool isPlexBacked,
