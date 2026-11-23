@@ -1036,7 +1036,10 @@ def capture(args: argparse.Namespace) -> None:
         platform, args.app, args.build_receipt, args.producer_run_id, args.producer_run_attempt
     )
     receipt_lineage = receipt.get("source_lineage")
-    if (receipt_lineage != lineage
+    producer_lineage = dict(lineage)
+    if "workflow_source_sha" in producer_lineage:
+        producer_lineage["workflow_source_sha"] = receipt["capture_tools_sha"]
+    if (receipt_lineage != producer_lineage
             and (receipt_lineage is not None or SOURCE_SHA != capture_tools.DEFAULT_SOURCE_SHA)):
         raise ValueError("Retained app build receipt does not match its approved frozen-product source lineage")
     static_dependency_receipt: dict[str, Any] | None = None
