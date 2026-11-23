@@ -217,9 +217,9 @@ Microsoft company enrollment is submitted and awaits business/employment
 verification before listing/package identity assignment. Company registration
 is complete; D-U-N-S issuance and GST/HST validation remain separate gates.
 
-The three first-store readiness flags remain false:
+First-store readiness is configured per channel:
 `GOOGLE_PLAY_BOOTSTRAP_COMPLETE`, `AMAZON_APPSTORE_BOOTSTRAP_COMPLETE` and
-`APPLE_STORE_UPLOAD_READY`. Keep them false until the corresponding first setup,
+`APPLE_IOS_STORE_UPLOAD_READY` and `APPLE_TVOS_STORE_UPLOAD_READY`. Keep each flag false until the corresponding first setup,
 signed upload/processing and actual purchase/reviewer-access checks pass. The
 owner requested a roughly 24-hour hold on GST/HST-dependent submissions while
 CRA accepts the new number. No tax or incorporation number is interchangeable

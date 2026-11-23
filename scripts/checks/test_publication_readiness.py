@@ -37,7 +37,19 @@ class PublicationReadinessTests(unittest.TestCase):
         calls, (_, skipped, _) = self.run_channels({})
         self.assertFalse(any(x[0] == 'publish-app-stores.yml' for x in calls))
         self.assertTrue(any('GOOGLE_PLAY_BOOTSTRAP_COMPLETE' in x['reason'] for x in skipped))
-        self.assertTrue(any('APPLE_STORE_UPLOAD_READY' in x['reason'] for x in skipped))
+        for platform in ('IOS', 'TVOS'):
+            self.assertTrue(any(f'APPLE_{platform}_STORE_UPLOAD_READY' in x['reason'] for x in skipped))
+
+    def test_apple_platform_readiness_is_independent(self):
+        for platform in ('ios', 'tvos'):
+            with self.subTest(platform=platform):
+                calls, _ = self.run_channels({
+                    'APPLE_STORE_UPLOAD_READY': 'true',
+                    f'APPLE_{platform.upper()}_STORE_UPLOAD_READY': 'true',
+                })
+                channels = [fields['channel'] for workflow, _, fields in calls
+                            if workflow == 'publish-app-stores.yml']
+                self.assertEqual(channels, [f'app-store-{platform}'])
 
     def test_closed_beta_activation_uses_public_runner_and_configured_track(self):
         calls, _ = self.run_channels({
@@ -63,7 +75,8 @@ class PublicationReadinessTests(unittest.TestCase):
     def test_blocked_apple_signing_skips_store_channels_without_failing_core_delivery(self):
         calls = []
         settings = {
-            'APPLE_STORE_UPLOAD_READY': 'true',
+            'APPLE_IOS_STORE_UPLOAD_READY': 'true',
+            'APPLE_TVOS_STORE_UPLOAD_READY': 'true',
             'GOOGLE_PLAY_BOOTSTRAP_COMPLETE': 'true',
             'GOOGLE_PLAY_TRACK': 'internal',
         }

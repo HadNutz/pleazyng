@@ -102,10 +102,11 @@ Apple uploads do not submit App Review or configure
 TestFlight groups. Amazon's initial submission must go through its console.
 
 `AMAZON_APPSTORE_BOOTSTRAP_COMPLETE` similarly enables subsequent Amazon API
-updates after the required first console submission. `APPLE_STORE_UPLOAD_READY`
-enables signed iOS/tvOS uploads once signing and processing are verified; it does
-not claim paid-agreement activation or enable review submission. Both currently
-remain false. App-store publishers use public hosted runners by default with
+updates after the required first console submission.
+Set `APPLE_IOS_STORE_UPLOAD_READY` and `APPLE_TVOS_STORE_UPLOAD_READY` independently
+once signing and processing are verified for the corresponding platform. The
+former shared `APPLE_STORE_UPLOAD_READY` variable no longer enables uploads.
+These flags control upload dispatch only. App-store publishers use public hosted runners by default with
 optional native private routing. These revisions still need live validation
 against qualified store assets; no extra build was dispatched for this change.
 

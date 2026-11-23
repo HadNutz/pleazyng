@@ -2911,7 +2911,7 @@ def publish_configured_channels(
         },
         {
             "name": "Apple App Store Connect iOS upload",
-            "readiness_flag": "APPLE_STORE_UPLOAD_READY",
+            "readiness_flag": "APPLE_IOS_STORE_UPLOAD_READY",
             "workflow": "publish-app-stores.yml",
             "title": f"action:publish-app-stores:pool:public:tag:{tag}:channel:app-store-ios",
             "fields": {"action": "publish-app-stores", "runner_pool": "public", "release_tag": tag,
@@ -2921,7 +2921,7 @@ def publish_configured_channels(
         },
         {
             "name": "Apple App Store Connect tvOS upload",
-            "readiness_flag": "APPLE_STORE_UPLOAD_READY",
+            "readiness_flag": "APPLE_TVOS_STORE_UPLOAD_READY",
             "workflow": "publish-app-stores.yml",
             "title": f"action:publish-app-stores:pool:public:tag:{tag}:channel:app-store-tvos",
             "fields": {"action": "publish-app-stores", "runner_pool": "public", "release_tag": tag,
