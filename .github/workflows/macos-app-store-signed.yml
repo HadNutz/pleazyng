@@ -349,7 +349,7 @@ jobs:
       cancel-in-progress: false
       queue: max
     needs: build-upload
-    if: inputs.preflight_only != true && inputs.profile_inspection_only != true
+    if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
     runs-on: macos-26
     permissions:
       contents: read
