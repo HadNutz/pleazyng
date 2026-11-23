@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update GitHub release packaging to version 3.0.50 on all supported platforms.
+
 - Update the vendored wakelock package’s Linux D-Bus development lock to 0.8.1.
 
 - Regenerate the wakelock platform bindings with Pigeon 30.0.4.
@@ -39,6 +41,8 @@
 - Check iOS and tvOS App Store upload readiness independently.
 
 - Prefer Google's Maven Central mirror in Android emulator integration checks to avoid transient CI failures when Maven Central rate-limits requests.
+
+## [3.0.49] - 2026-11-22
 
 - Fix TV MPV patch ordering so the source tree exists before shared subtitle and webOS NDL patches run, install ImageMagick for Flatpak icon generation, and keep iOS Simulator motion playback tests off the simulator's crashing MoltenVK shared-memory path.
 
