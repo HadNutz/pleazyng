@@ -12,6 +12,7 @@ import '../../sources/comic_reading_list.dart';
 import '../../sources/publication_shelf.dart';
 import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
+import '../../utils/bounded_picked_file.dart';
 import '../../utils/snackbar_helper.dart';
 import 'publication_reader_screen.dart';
 
@@ -97,16 +98,7 @@ class _ReadingListsState extends State<_ReadingLists> {
       );
       if (!mounted || !valid(sources, epoch) || pick == null) return;
       final file = pick.files.single;
-      if (file.size > ComicReadingList.maxBytes) throw const FormatException();
-      final bytes = <int>[];
-      if (file.readStream != null) {
-        await for (final part in file.readStream!) {
-          if (bytes.length + part.length > ComicReadingList.maxBytes) throw const FormatException();
-          bytes.addAll(part);
-        }
-      } else {
-        bytes.addAll(file.bytes ?? const []);
-      }
+      final bytes = await readBoundedPickedFile(file, ComicReadingList.maxBytes);
       final list = ComicReadingList.parse(bytes, file.name);
       final data = list.toJson();
       final id = sha256.convert(utf8.encode(jsonEncode(data))).toString();
@@ -123,6 +115,7 @@ class _ReadingListsState extends State<_ReadingLists> {
         });
       }
     } catch (_) {
+      // Picker and parser errors share the invalid reading list message.
       if (mounted && valid(sources, epoch)) showErrorSnackBar(context, t.fileSources.errorInvalidData);
     }
   }

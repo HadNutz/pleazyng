@@ -57,6 +57,7 @@ class _Picker extends Fake implements FilePickerDelegate {
     List<String>? allowedExtensions,
     bool allowMultiple = false,
     bool withData = false,
+    bool withReadStream = false,
   }) {
     this.withData = withData;
     return result.future;

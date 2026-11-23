@@ -1521,7 +1521,7 @@ class IptvSourceRepository {
         if (await file.exists()) {
           final archive = await IptvHlsArchive.mediaDirectory(file);
           if (archive != null) {
-            await IptvHlsArchive.finalizeInterrupted(file);
+            await IptvHlsArchive.finalizeInterrupted(file, id);
             if (p.extension(file.path).toLowerCase() != '.m3u8') {
               final recovered = '${file.path}.incomplete.m3u8';
               await updateLocalRecordingFilePath(profileId: profile, recordingId: id, filePath: recovered);

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -8,9 +7,9 @@ import 'package:provider/provider.dart';
 import '../../i18n/strings.g.dart';
 import '../../i18n/presentation_formats.dart';
 import '../../services/file_picker_service.dart';
+import '../../sources/source_picked_file.dart';
 import '../../sources/podcast_opml.dart';
 import '../../sources/source_controller.dart';
-import '../../sources/source_models.dart';
 import '../../utils/dialogs.dart';
 import '../../utils/snackbar_helper.dart';
 import '../../widgets/app_icon.dart';
@@ -18,17 +17,18 @@ import '../../widgets/dialog_action_button.dart';
 
 Future<void> importPodcastOpml(BuildContext context) async {
   final sources = context.read<SourceController>();
-  sources.requireSession();
   final epoch = sources.generation;
+  sources.requireSession(epoch);
   final picked = await FilePickerService.instance.pickFiles(
     type: FileType.custom,
     allowedExtensions: const ['opml', 'xml'],
-    withData: true,
+    withReadStream: true,
   );
   sources.requireSession(epoch);
-  final bytes = picked?.files.firstOrNull?.bytes;
-  if (bytes == null || bytes.isEmpty) return;
-  if (bytes.length > PodcastOpml.maxBytes) throw const SourceException(SourceFailure.invalidData);
+  final file = picked?.files.firstOrNull;
+  if (file == null) return;
+  final bytes = await readSourceFile(file, PodcastOpml.maxBytes);
+  sources.requireSession(epoch);
   final preview = PodcastOpml.preview(utf8.decode(bytes));
   final httpFeeds = preview.feeds.where((feed) => feed.url.scheme == 'http').toList();
   if (!context.mounted) return;
@@ -127,7 +127,6 @@ Future<Set<Uri>?> _reviewHttpFeeds(BuildContext context, List<PodcastSubscriptio
 
 Future<void> exportPodcastOpml(BuildContext context) async {
   final sources = context.read<SourceController>();
-  sources.requireSession();
   final epoch = sources.generation;
   final subscriptions = await sources.podcastSubscriptions();
   sources.requireSession(epoch);

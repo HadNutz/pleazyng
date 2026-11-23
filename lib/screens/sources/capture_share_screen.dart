@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import '../../utils/bounded_picked_file.dart';
 import '../../utils/local_server_security.dart';
 
 import 'package:file_picker/file_picker.dart';
@@ -529,19 +530,18 @@ class _MediaToolsScreenState extends State<MediaToolsScreen> with WidgetsBinding
     final selection = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['json'],
-      withData: true,
+      withReadStream: true,
       allowMultiple: false,
     );
     if (selection == null || selection.files.isEmpty || !mounted) return;
     try {
       _requireSession(generation: generation, profile: profile);
-      final picked = selection.files.single;
-      if (picked.size > MediaSearchExtension.maxManifestBytes) {
-        setState(() => _failure = t.universalMedia.extensionInvalidManifest);
-        return;
-      }
-      final bytes = picked.bytes ?? (picked.path == null ? null : await File(picked.path!).readAsBytes());
-      if (bytes == null) throw const MediaExtensionException(MediaExtensionFailure.invalidManifest);
+      final bytes = await readBoundedPickedFile(
+        selection.files.single,
+        MediaSearchExtension.maxManifestBytes,
+        invalid: const MediaExtensionException(MediaExtensionFailure.invalidManifest),
+      );
+      _requireSession(generation: generation, profile: profile);
       final extension = MediaSearchExtension.parseManifest(bytes);
       final replaces = _extensions.any((installed) => installed.id == extension.id);
       if (!mounted) return;

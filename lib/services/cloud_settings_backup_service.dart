@@ -9,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../utils/app_logger.dart';
 import '../utils/bounded_http_response.dart';
+import '../utils/bounded_json_bytes.dart';
 import '../utils/safe_http_redirects.dart';
 import 'credential_vault.dart';
 import 'settings_export_service.dart';
@@ -22,11 +23,7 @@ class CloudSettingsBackupService {
   CloudSettingsBackupService({http.Client? httpClient, this.requestTimeout = const Duration(seconds: 30)})
     : _http = httpClient ?? http.Client();
 
-  static const _urlKey = 'cloud_settings_backup_url';
-  static const _usernameKey = 'cloud_settings_backup_username';
-  static const _passwordKey = 'cloud_settings_backup_password';
   final Duration requestTimeout;
-  static const _maxBackupBytes = 4 * 1024 * 1024;
 
   final http.Client _http;
   final Set<Completer<void>> _active = {};
@@ -48,14 +45,14 @@ class CloudSettingsBackupService {
 
   Future<CloudSettingsBackupConfiguration> _loadConfiguration(String key) async {
     final prefs = (await SettingsService.getInstance()).prefs;
-    // Earlier versions configured one endpoint per device. Keep that endpoint
-    // as the initial value until this profile saves its own configuration.
+    // Device-wide legacy credentials have no recorded owner.
     final stored = prefs.getString('cloud_settings_backup_config_$key');
-    final data = stored == null ? null : jsonDecode(stored) as Map<String, dynamic>;
-    final ciphertext = (data == null ? prefs.getString(_passwordKey) : data['password'] as String?) ?? '';
+    if (stored == null) return const CloudSettingsBackupConfiguration(url: '', username: '', password: '');
+    final data = jsonDecode(stored) as Map<String, dynamic>;
+    final ciphertext = data['password'] as String? ?? '';
     return CloudSettingsBackupConfiguration(
-      url: (data == null ? prefs.getString(_urlKey) : data['url'] as String?) ?? '',
-      username: (data == null ? prefs.getString(_usernameKey) : data['username'] as String?) ?? '',
+      url: data['url'] as String? ?? '',
+      username: data['username'] as String? ?? '',
       password: ciphertext.isEmpty ? '' : (await CredentialVault.reveal(ciphertext) ?? ''),
     );
   }
@@ -123,7 +120,11 @@ class CloudSettingsBackupService {
       appVersion: appVersion,
     );
     data['backupProfile'] = key;
-    final bodyBytes = _encodeBackupBody(data);
+    final bodyBytes = boundedJsonBytes(
+      data,
+      SettingsExportService.maxFileBytes,
+      invalid: const CloudSettingsBackupException('The settings backup exceeds the 4 MiB limit.'),
+    );
     final response = await _request(
       () => _boundedRequest(
         'PUT',
@@ -165,7 +166,13 @@ class CloudSettingsBackupService {
       throw const CloudSettingsBackupException('The active profile changed before the backup was downloaded.');
     }
     final response = await _request(
-      () => _boundedRequest('GET', uri, _headers(configuration), maxBytes: _maxBackupBytes, isCurrent: isOwnerCurrent),
+      () => _boundedRequest(
+        'GET',
+        uri,
+        _headers(configuration),
+        maxBytes: SettingsExportService.maxFileBytes,
+        isCurrent: isOwnerCurrent,
+      ),
     );
     if (!isOwnerCurrent()) {
       throw const CloudSettingsBackupException('The active profile changed while the backup was downloading.');
@@ -207,17 +214,6 @@ class CloudSettingsBackupService {
       (isCurrentSession?.call() ?? true) &&
       storage.getActiveProfileId() == profileId &&
       storage.activeUserScope() == owner;
-
-  static Uint8List _encodeBackupBody(Map<String, dynamic> data) {
-    final sink = _BoundedBackupBodySink(_maxBackupBytes);
-    final encoder = JsonUtf8Encoder().startChunkedConversion(sink);
-    encoder.add(data);
-    encoder.close();
-    if (sink.exceededLimit) {
-      throw const CloudSettingsBackupException('The settings backup exceeds the 4 MiB limit.');
-    }
-    return sink.takeBytes();
-  }
 
   Future<http.Response> _boundedRequest(
     String method,
@@ -335,29 +331,4 @@ class CloudSettingsBackupException implements Exception {
 
   @override
   String toString() => 'CloudSettingsBackupException: $message';
-}
-
-class _BoundedBackupBodySink implements Sink<List<int>> {
-  _BoundedBackupBodySink(this.maximumBytes);
-
-  final int maximumBytes;
-  final BytesBuilder _bytes = BytesBuilder(copy: false);
-  var _length = 0;
-  var exceededLimit = false;
-
-  @override
-  void add(List<int> chunk) {
-    if (exceededLimit) return;
-    if (chunk.length > maximumBytes - _length) {
-      exceededLimit = true;
-      return;
-    }
-    _length += chunk.length;
-    _bytes.add(chunk);
-  }
-
-  Uint8List takeBytes() => _bytes.takeBytes();
-
-  @override
-  void close() {}
 }

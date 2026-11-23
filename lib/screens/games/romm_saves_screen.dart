@@ -1,3 +1,4 @@
+import '../../utils/bounded_picked_file.dart';
 import '../../widgets/app_icon.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'dart:async';
@@ -126,24 +127,18 @@ class _RommSavesScreenState extends State<RommSavesScreen> {
           !RegExp(r'^[a-zA-Z0-9_.-]{1,100}$').hasMatch(slot.text)) {
         throw const RommFailure('romm.invalidFile');
       }
-      final picked = await FilePickerService.instance.pickFiles(withData: false);
+      final picked = await FilePickerService.instance.pickFiles(withReadStream: true);
       if (!mounted || !live || picked == null) {
         return;
       }
       final file = picked.files.single;
-      if (file.size <= 0 || file.size > 128 * 1024 * 1024) {
-        throw const RommFailure('romm.invalidFile');
-      }
-      if (file.path != null && await File(file.path!).length() != file.size) {
-        throw const RommFailure('romm.invalidFile');
-      }
-      final bytes = file.bytes ?? (file.path == null ? null : await File(file.path!).readAsBytes());
-      if (!mounted || !live || bytes == null) {
-        return;
-      }
-      if (bytes.length != file.size) {
-        throw const RommFailure('romm.invalidFile');
-      }
+      final bytes = await readBoundedPickedFile(
+        file,
+        128 * 1024 * 1024,
+        invalid: const RommFailure('romm.invalidFile'),
+        matchReportedSize: true,
+      );
+      if (!mounted || !live) return;
       final id = await widget.controller.storage.enqueue(
         game: _game,
         bytes: bytes,

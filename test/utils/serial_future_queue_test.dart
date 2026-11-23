@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/utils/serial_future_queue.dart';
 
@@ -10,6 +11,18 @@ void main() {
     await expectLater(queue.run<void>(() async => throw StateError('failed')), throwsStateError);
     expect(await queue.run(() async => 42), 42);
     await queue.settled;
+  });
+
+  test('an idle queue can start in a new event loop', () {
+    final queue = SerialFutureQueue();
+    final results = <int>[];
+    for (final value in [1, 2]) {
+      fakeAsync((clock) {
+        unawaited(queue.run(() async => value).then(results.add));
+        clock.flushMicrotasks();
+        expect(results.last, value);
+      });
+    }
   });
 
   test('operations remain serialized while callers receive their own results', () async {

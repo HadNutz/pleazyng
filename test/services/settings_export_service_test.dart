@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -972,6 +973,63 @@ void main() {
       picker.saveResult = '/tmp/recovered.json';
       expect(await SettingsExportService.exportToFile(), '/tmp/recovered.json');
       expect(picker.saveCalls, 3);
+    });
+
+    test('a later settings import waits for the earlier import to finish', () async {
+      final prefs = await BaseSharedPreferencesService.sharedCache();
+      final waiting = Completer<void>(), resume = Completer<void>();
+      var writes = 0;
+      SettingsExportService.debugBeforeImportWrite = (key) async {
+        if (++writes == 1) {
+          waiting.complete();
+          await resume.future;
+        }
+      };
+      addTearDown(() => SettingsExportService.debugBeforeImportWrite = null);
+      Future<ImportResult> apply(bool enabled) => SettingsExportService.applyImportMap(
+        jsonDecode(utf8.decode(importBytes(enableHdr: enabled))) as Map<String, dynamic>,
+        prefs,
+        currentUserUuid: 'owner',
+      );
+      final first = apply(true);
+      await waiting.future;
+      final second = apply(false);
+      await Future<void>.delayed(Duration.zero);
+      expect(writes, 1);
+      resume.complete();
+      await Future.wait([first, second]);
+      expect(writes, 2);
+      expect(prefs.getBool('enable_hdr'), isFalse);
+    });
+
+    test('settings import streams picker data and rejects unsupported versions before mutation', () async {
+      await seedActiveProfile();
+      final prefs = await BaseSharedPreferencesService.sharedCache();
+      final data = jsonDecode(utf8.decode(importBytes())) as Map<String, dynamic>;
+      for (final version in [0, -1, SettingsExportService.formatVersion + 1]) {
+        data['formatVersion'] = version;
+        final bytes = utf8.encode(jsonEncode(data));
+        picker.pickResult = FilePickerResult([
+          PlatformFile(name: 'settings.json', size: bytes.length, readStream: Stream.value(bytes)),
+        ]);
+        await expectLater(SettingsExportService.importFromFile(), throwsA(isA<InvalidExportFileException>()));
+        expect(prefs.getBool('enable_hdr'), isTrue);
+      }
+      picker.pickResult = FilePickerResult([
+        PlatformFile(
+          name: 'settings.json',
+          size: 1,
+          readStream: Stream.value(Uint8List(SettingsExportService.maxFileBytes + 1)),
+        ),
+      ]);
+      await expectLater(SettingsExportService.importFromFile(), throwsA(isA<InvalidExportFileException>()));
+      expect(prefs.getBool('enable_hdr'), isTrue);
+      final bytes = importBytes();
+      picker.pickResult = FilePickerResult([
+        PlatformFile(name: 'settings.json', size: bytes.length, readStream: Stream.value(bytes)),
+      ]);
+      expect((await SettingsExportService.importFromFile())?.keysImported, 1);
+      expect(prefs.getBool('enable_hdr'), isFalse);
     });
 
     test('imports in-memory bytes and path-backed files', () async {

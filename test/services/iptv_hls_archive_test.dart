@@ -176,6 +176,25 @@ void main() {
     expect(await IptvHlsArchive.retainedBytes(output), greaterThan(0));
   });
 
+  test('recovery finalizes the owned playlist in place and preserves unrelated staging files', () async {
+    final dir = await Directory.systemTemp.createTemp('plezy-finalize-track-');
+    addTearDown(() => dir.delete(recursive: true));
+    final master = await File('${dir.path}/entry.m3u8').writeAsString('#EXTM3U\n#PLEZY-ARCHIVE:.id.media\n');
+    final media = await Directory('${dir.path}/.id.media').create();
+    final video = await File(
+      '${media.path}/video.m3u8',
+    ).writeAsString('#EXTM3U\n#EXT-X-PLAYLIST-TYPE:EVENT\n#EXTINF:1,\nvideo.bin\n');
+    final prior = await File('${video.path}.tmp').writeAsString('unrelated');
+    await IptvHlsArchive.finalizeInterrupted(master, 'id');
+    final completed = await video.readAsString();
+    expect(completed, contains('#EXT-X-PLAYLIST-TYPE:VOD'));
+    expect(completed, endsWith('#EXT-X-ENDLIST\n'));
+    expect(await prior.readAsString(), 'unrelated');
+    expect(await IptvHlsArchive.retainedDuration(master), const Duration(seconds: 1));
+    await IptvHlsArchive.finalizeInterrupted(master, 'id');
+    expect(await video.readAsString(), completed);
+  });
+
   test('an archive marker cannot select a parent directory or symlink', () async {
     final directory = await Directory.systemTemp.createTemp('plezy-hls-marker-');
     addTearDown(() => directory.delete(recursive: true));

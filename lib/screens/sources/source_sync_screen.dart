@@ -10,6 +10,7 @@ import '../../focus/focusable_button.dart';
 import '../../focus/focusable_text_field.dart';
 import '../../i18n/presentation_formats.dart';
 import '../../i18n/strings.g.dart';
+import '../../sources/source_picked_file.dart';
 import '../../sources/source_controller.dart';
 import '../../sources/source_models.dart';
 import '../../sources/sync/publication_sync.dart';
@@ -85,10 +86,8 @@ class _SourceSyncScreenState extends State<SourceSyncScreen> {
   }
 
   String _device(SyncVersion version) {
-    final actor = version.actor;
-    final device = actor == null || actor.isEmpty
-        ? t.audiobook.syncUnknownDevice
-        : actor.substring(0, actor.length < 8 ? actor.length : 8);
+    final actor = version.actor ?? '';
+    final device = actor.isEmpty ? t.audiobook.syncUnknownDevice : actor.substring(0, actor.length.clamp(0, 8));
     return t.audiobook.syncDevice(device: device);
   }
 
@@ -141,6 +140,7 @@ class _SourceSyncScreenState extends State<SourceSyncScreen> {
   }
 
   Future<void> _importRecovery(SourceController controller) async {
+    final generation = controller.generation;
     final confirmed = await showScopedDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -166,13 +166,12 @@ class _SourceSyncScreenState extends State<SourceSyncScreen> {
       final selection = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: const ['json'],
-        withData: true,
+        withReadStream: true,
       );
-      if (selection == null || selection.files.isEmpty) return;
-      final bytes = selection.files.first.bytes;
-      if (bytes == null || bytes.length > 7 * 1024 * 1024) {
-        throw const SourceException(SourceFailure.invalidData);
-      }
+      if (!mounted || selection == null || selection.files.isEmpty) return;
+      final bytes = await readSourceFile(selection.files.first, 7 * 1024 * 1024);
+      controller.requireSession(generation);
+      if (!mounted) return;
       await controller.importCloudSyncRecovery(utf8.decode(bytes));
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t.audiobook.recoveryImported)));
     });

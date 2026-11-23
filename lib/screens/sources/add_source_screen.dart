@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
+import '../../sources/source_picked_file.dart';
 import '../../sources/local_file_relink.dart';
 
 import 'package:file_picker/file_picker.dart';
@@ -374,14 +375,11 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
       final selection = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: const ['pem', 'crt', 'cer'],
-        withData: true,
+        withReadStream: true,
       );
       final file = selection?.files.single;
       if (file == null) return;
-      final bytes = file.bytes;
-      if (bytes == null || bytes.length > 256 * 1024) {
-        throw const SourceException(SourceFailure.invalidData);
-      }
+      final bytes = await readSourceFile(file, 256 * 1024);
       final pem = utf8.decode(bytes).trim();
       if (!pem.contains('-----BEGIN CERTIFICATE-----') || pem.contains('PRIVATE KEY')) {
         throw const SourceException(SourceFailure.invalidData);
@@ -402,14 +400,11 @@ class _AddSourceScreenState extends State<AddSourceScreen> {
       final selection = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: const ['p12', 'pfx'],
-        withData: true,
+        withReadStream: true,
       );
       final file = selection?.files.single;
       if (file == null) return;
-      final bytes = file.bytes;
-      if (bytes == null || bytes.isEmpty || bytes.length > 1024 * 1024) {
-        throw const SourceException(SourceFailure.invalidData);
-      }
+      final bytes = await readSourceFile(file, 1024 * 1024);
       if (!mounted) return;
       setState(() {
         field('nfsTlsClientIdentity').text = base64Encode(bytes);

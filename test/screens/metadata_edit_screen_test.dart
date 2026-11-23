@@ -368,6 +368,21 @@ void main() {
     expect(result.value, isNull);
   });
 
+  testWidgets('metadata artwork checks the actual picker bytes before starting the upload', (tester) async {
+    final picker = _FakeFilePicker()
+      ..queueResult(
+        FilePickerResult([PlatformFile(name: 'poster.png', size: 1, bytes: Uint8List(10 * 1024 * 1024 + 1))]),
+      );
+    FilePickerService.setDelegateForTesting(picker);
+    addTearDown(() => FilePickerService.setDelegateForTesting(null));
+    final adapter = _ArtworkAdapter();
+    await _pumpArtworkDialog(tester, adapter, _DialogResult());
+    await tester.tap(find.text('Upload File'));
+    await tester.pumpAndSettle();
+    expect(adapter.uploadCalls, 0);
+    expect(find.text('Failed to update artwork'), findsOneWidget);
+  });
+
   testWidgets('picker cancellation and stale picker completion never start an upload', (tester) async {
     final picker = _FakeFilePicker()..queueResult(null);
     FilePickerService.setDelegateForTesting(picker);

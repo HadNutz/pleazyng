@@ -21,9 +21,14 @@ import '../test_helpers/prefs.dart';
 
 class _BackupProfile extends Fake with ChangeNotifier implements ActiveProfileProvider {
   @override
-  String get activeId => 'audit-local';
+  String activeId = 'audit-local';
   @override
-  int get identityMutationGeneration => 0;
+  int identityMutationGeneration = 0;
+  void switchTo(String id) {
+    activeId = id;
+    identityMutationGeneration++;
+    notifyListeners();
+  }
 }
 
 class _LateBackupClient extends http.BaseClient {
@@ -69,6 +74,59 @@ void main() {
   Future<void> configure(CloudSettingsBackupService service, String url) =>
       service.saveConfiguration(url: url, username: 'dummy-user', password: 'dummy-password');
   Future<double?> volume() async => (await SettingsService.getInstance()).prefs.getDouble('volume');
+
+  test('unowned WebDAV defaults are never loaded or sent for a profile', () async {
+    final prefs = (await SettingsService.getInstance()).prefs;
+    await prefs.setString('cloud_settings_backup_url', 'https://legacy.test/private.json');
+    await prefs.setString('cloud_settings_backup_username', 'legacy-user');
+    await prefs.setString('cloud_settings_backup_password', 'fixture');
+    var requests = 0;
+    final service = CloudSettingsBackupService(
+      httpClient: MockClient((_) async {
+        requests++;
+        return http.Response('', 200);
+      }),
+    );
+    addTearDown(service.dispose);
+    final storage = await StorageService.getInstance();
+    for (final id in ['audit-local', 'second']) {
+      await storage.setActiveProfileId(id);
+      final config = await service.loadConfiguration();
+      expect([config.url, config.username, config.password], ['', '', '']);
+      await expectLater(
+        service.backUp(expectedProfileId: id, expectedOwner: id),
+        throwsA(isA<CloudSettingsBackupException>()),
+      );
+    }
+    expect(requests, 0);
+    await configure(service, 'https://backup.test/second.json');
+    expect((await service.loadConfiguration()).username, 'dummy-user');
+    await storage.setActiveProfileId('audit-local');
+    expect((await service.loadConfiguration()).url, isEmpty);
+  });
+
+  testWidgets('an open WebDAV form hides the previous profile on a session change', (tester) async {
+    final profile = _BackupProfile();
+    addTearDown(profile.dispose);
+    final service = CloudSettingsBackupService();
+    await service.saveConfiguration(url: 'https://backup.test/private.json', username: 'dummy-user', password: '');
+    service.dispose();
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ActiveProfileProvider>.value(
+        value: profile,
+        child: MaterialApp(
+          home: CloudSettingsBackupDialog(beforeRestore: () {}, afterRestore: (_) async {}),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('dummy-user'), findsOneWidget);
+    profile.switchTo('second');
+    await tester.pumpAndSettle();
+    expect(find.text('dummy-user'), findsNothing);
+    expect(find.byType(EditableText), findsNothing);
+    expect(find.text(t.settings.cloudBackupNow), findsNothing);
+  });
 
   for (final applyVolume in [false, true]) {
     testWidgets('portable cloud import reports skipped keys and refreshes only when settings apply ($applyVolume)', (

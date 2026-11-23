@@ -1,3 +1,4 @@
+import '../../../utils/bounded_picked_file.dart';
 import '../../../i18n/subtitle_capture_status_text.dart';
 import '../../../services/subtitle_capture_status.dart';
 import '../../../services/subtitle_speech_progress.dart';
@@ -379,7 +380,7 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     final result = await FilePickerService.instance.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['ass', 'srt', 'ssa', 'vtt'],
-      withData: true,
+      withReadStream: true,
     );
     if (!mounted || result == null || result.files.isEmpty) {
       return null;
@@ -389,24 +390,12 @@ class _SubtitleAiSheetState extends State<SubtitleAiSheet> {
     if (!const {'.ass', '.srt', '.ssa', '.vtt'}.contains(extension)) {
       throw const FormatException('Choose an SRT, VTT, ASS, or SSA text subtitle.');
     }
-    if (file.size <= 0 || file.size > SubtitleRetimer.maximumInputBytes) {
-      throw const FormatException('Subtitle input must be between 1 byte and 5 MiB.');
-    }
-    Uint8List bytes;
-    if (file.bytes != null) {
-      bytes = Uint8List.fromList(file.bytes!);
-    } else if (file.path != null) {
-      final source = File(file.path!);
-      if (await source.length() != file.size) {
-        throw const FormatException('Subtitle file changed while it was being selected.');
-      }
-      bytes = await source.readAsBytes();
-    } else {
-      throw const FormatException('This platform did not provide subtitle file bytes.');
-    }
-    if (bytes.isEmpty || bytes.lengthInBytes > SubtitleRetimer.maximumInputBytes) {
-      throw const FormatException('Subtitle input must be between 1 byte and 5 MiB.');
-    }
+    final bytes = await readBoundedPickedFile(
+      file,
+      SubtitleRetimer.maximumInputBytes,
+      matchReportedSize: true,
+      invalid: const FormatException('Subtitle input must be between 1 byte and 5 MiB.'),
+    );
     if (!mounted) return null;
     final preview = await showDialog<SubtitleEncodingPreview>(
       context: context,

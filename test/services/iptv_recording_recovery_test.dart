@@ -48,6 +48,27 @@ void main() {
     );
   });
 
+  test('recovery leaves a different recording’s media directory unchanged', () async {
+    final directory = await Directory.systemTemp.createTemp('plezy-recording-owner-');
+    final database = AppDatabase.forTesting(NativeDatabase.memory());
+    addTearDown(() async {
+      await database.close();
+      await directory.delete(recursive: true);
+    });
+    await _profile(database);
+    final repository = IptvSourceRepository(database);
+    final master = File('${directory.path}/first.m3u8');
+    final other = await Directory('${directory.path}/second.media').create();
+    final playlist = File('${other.path}/video.m3u8');
+    const original = '#EXTM3U\n#EXT-X-PLAYLIST-TYPE:EVENT\n#EXTINF:1,\nsegment.bin\n';
+    await playlist.writeAsString(original);
+    await master.writeAsString('#EXTM3U\n#PLEZY-ARCHIVE:second.media\n');
+    await repository.beginLocalRecording(_recording('first', master.path));
+    await repository.recoverLocalRecordingSchedules();
+    expect(await playlist.readAsString(), original);
+    expect((await repository.localRecordings('p')).single.errorCode, 'recovery_data_invalid');
+  });
+
   test('an unreadable archive cannot prevent another interrupted recording from recovering', () async {
     final directory = await Directory.systemTemp.createTemp('plezy-recording-recovery-');
     final database = AppDatabase.forTesting(NativeDatabase.memory());

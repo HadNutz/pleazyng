@@ -8,6 +8,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../utils/bounded_picked_file.dart';
+
 /// A supported subtitle entry inside a bounded local archive.
 final class SubtitleArchiveCandidate {
   const SubtitleArchiveCandidate._({
@@ -33,41 +35,12 @@ abstract final class SubtitleArchiveImporter {
   static const int maximumMemberBytes = 32 * 1024 * 1024;
   static const int maximumCandidateBytes = 48 * 1024 * 1024;
 
-  static Future<Uint8List> readPickedArchive(PlatformFile file) async {
-    if (file.size <= 0 || file.size > maximumArchiveBytes) {
-      throw const FormatException('Selected file must be between 1 byte and 50 MiB.');
-    }
-    final inlineBytes = file.bytes;
-    if (inlineBytes != null) {
-      if (inlineBytes.lengthInBytes != file.size || inlineBytes.lengthInBytes > maximumArchiveBytes) {
-        throw const FormatException('Picked archive does not match its declared size.');
-      }
-      return Uint8List.fromList(inlineBytes);
-    }
-    final path = file.path;
-    if (path == null) {
-      throw const FormatException('This platform did not provide archive bytes or a local file path.');
-    }
-    final input = File(path);
-    final actualSize = await input.length();
-    if (actualSize <= 0 || actualSize > maximumArchiveBytes || actualSize != file.size) {
-      throw const FormatException('Selected file must be between 1 byte and 50 MiB.');
-    }
-    final output = BytesBuilder(copy: false);
-    var bytesRead = 0;
-    await for (final chunk in input.openRead()) {
-      bytesRead += chunk.length;
-      if (bytesRead > maximumArchiveBytes) {
-        throw const FormatException('Selected file must be between 1 byte and 50 MiB.');
-      }
-      output.add(chunk);
-    }
-    final bytes = output.takeBytes();
-    if (bytes.lengthInBytes != actualSize) {
-      throw const FormatException('Picked archive changed while it was being read.');
-    }
-    return bytes;
-  }
+  static Future<Uint8List> readPickedArchive(PlatformFile file) => readBoundedPickedFile(
+    file,
+    maximumArchiveBytes,
+    matchReportedSize: true,
+    invalid: const FormatException('Selected archive is empty, changed, or exceeds 50 MiB.'),
+  );
 
   static bool isSupportedArchiveName(String fileName) {
     final normalized = fileName.replaceAll('\\', '/').split('/').last.toLowerCase();

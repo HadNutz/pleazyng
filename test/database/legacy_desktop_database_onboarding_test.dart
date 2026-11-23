@@ -23,6 +23,7 @@ final class _SelectedFilePicker implements FilePickerDelegate {
     List<String>? allowedExtensions,
     bool allowMultiple = false,
     bool withData = false,
+    bool withReadStream = false,
   }) async {
     pickCount++;
     return FilePickerResult([PlatformFile(name: 'renamed.sqlite', path: path, size: 256)]);

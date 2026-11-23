@@ -7,6 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:pointycastle/export.dart';
 
 import '../sources/source_models.dart';
+import 'iptv_recording_files.dart';
 import '../sources/source_transport.dart';
 
 /// A self-contained HLS recording. Keeping complete segments and local
@@ -300,22 +301,18 @@ class IptvHlsArchive {
       throw const FileSystemException('Recording storage budget exceeded');
     }
     final target = File(p.join(directory.path, name));
-    final partial = File('${target.path}.partial');
     mediaBytes += bytes.length;
     try {
-      await partial.writeAsBytes(bytes, flush: true);
-      await partial.rename(target.path);
+      await publishRecordingFile(target, (file) => file.writeAsBytes(bytes, flush: true));
     } catch (_) {
+      // Release the reserved space when publishing the segment fails.
       mediaBytes -= bytes.length;
       rethrow;
     }
   }
 
-  Future<void> _atomicText(File file, String text) async {
-    final temporary = File('${file.path}.tmp');
-    await temporary.writeAsString(text, flush: true);
-    await temporary.rename(file.path);
-  }
+  static Future<void> _atomicText(File file, String text) =>
+      publishRecordingFile(file, (temporary) => temporary.writeAsString(text, flush: true));
 
   Future<void> _writeMaster(List<_ArchiveTrack> tracks, int bandwidth) async {
     final folder = p.basename(directory.path);
@@ -366,7 +363,9 @@ class IptvHlsArchive {
   /// Only an archive explicitly created beside this recording can be removed
   /// with it. A marker cannot name a parent, absolute path or symbolic link.
   static Future<Directory?> mediaDirectory(File manifest) async {
-    if (!await manifest.exists()) return null;
+    final type = await FileSystemEntity.type(manifest.path, followLinks: false);
+    if (type == FileSystemEntityType.notFound) return null;
+    if (type != FileSystemEntityType.file) throw const FormatException('Invalid recording manifest');
     final input = await manifest.open();
     final String prefix;
     try {
@@ -414,12 +413,7 @@ class IptvHlsArchive {
     }
     if (type != FileSystemEntityType.file) throw FileSystemException('Invalid recording file', path);
     final folder = await mediaDirectory(file);
-    if (folder != null) {
-      final filename = p.basename(path);
-      final stem = p.basenameWithoutExtension(path);
-      final owned = {'.$recordingId.media', '$filename.media', '$stem.media', '.$stem.media'};
-      if (owned.contains(p.basename(folder.path))) await folder.delete(recursive: true);
-    }
+    if (folder != null && ownsRecordingDirectory(file, folder, recordingId)) await folder.delete(recursive: true);
     await file.delete();
   }
 
@@ -439,12 +433,8 @@ class IptvHlsArchive {
       if (prefix.startsWith('#EXTM3U') && RegExp(r'^#PLEZY-ARCHIVE:', multiLine: true).hasMatch(prefix)) return 0;
       return manifest.length();
     }
-    final video = File(p.join(folder.path, 'video.m3u8'));
-    if (!await video.exists() ||
-        await video.length() > 16 * 1024 * 1024 ||
-        !utf8.decode(await video.readAsBytes()).contains('#EXTINF:')) {
-      return 0;
-    }
+    final video = await readRecordingPlaylist(File(p.join(folder.path, 'video.m3u8')));
+    if (video == null || !video.contains('#EXTINF:')) return 0;
     var bytes = 0, entries = 0;
     await for (final file in folder.list(followLinks: false)) {
       if (++entries > 100100) throw const FileSystemException('Recording archive contains too many files');
@@ -460,11 +450,10 @@ class IptvHlsArchive {
     if (directory == null) return null;
     final durations = <Duration>[];
     for (final name in const ['video', 'audio']) {
-      final playlist = File(p.join(directory.path, '$name.m3u8'));
-      if (!await playlist.exists()) continue;
-      if (await playlist.length() > 16 * 1024 * 1024) throw const FormatException('Invalid HLS capture');
+      final playlist = await readRecordingPlaylist(File(p.join(directory.path, '$name.m3u8')));
+      if (playlist == null) continue;
       var microseconds = 0;
-      for (final line in const LineSplitter().convert(await playlist.readAsString())) {
+      for (final line in const LineSplitter().convert(playlist)) {
         if (!line.startsWith('#EXTINF:')) continue;
         final value = double.tryParse(line.substring(8).split(',').first);
         if (value == null || !value.isFinite || value <= 0 || value > 120) {
@@ -477,21 +466,17 @@ class IptvHlsArchive {
     return durations.isEmpty ? Duration.zero : durations.reduce((a, b) => a < b ? a : b);
   }
 
-  static Future<void> finalizeInterrupted(File manifest) async {
+  static Future<void> finalizeInterrupted(File manifest, String recordingId) async {
     final folder = await mediaDirectory(manifest);
     if (folder == null) return;
+    if (!ownsRecordingDirectory(manifest, folder, recordingId)) throw const FormatException('Invalid recording owner');
     for (final name in const ['video', 'audio']) {
       final playlist = File(p.join(folder.path, '$name.m3u8'));
-      if (!await playlist.exists() || await playlist.length() > 16 * 1024 * 1024) continue;
-      // Decode separately so malformed playlist data remains distinguishable
-      // from a filesystem error during per-recording recovery.
-      var text = utf8.decode(await playlist.readAsBytes());
-      if (!text.startsWith('#EXTM3U')) continue;
+      var text = await readRecordingPlaylist(playlist);
+      if (text == null || !text.startsWith('#EXTM3U')) continue;
       text = text.replaceAll('#EXT-X-PLAYLIST-TYPE:EVENT', '#EXT-X-PLAYLIST-TYPE:VOD');
       if (!text.contains('#EXT-X-ENDLIST')) text = '${text.trimRight()}\n#EXT-X-ENDLIST\n';
-      final temporary = File('${playlist.path}.tmp');
-      await temporary.writeAsString(text, flush: true);
-      await temporary.rename(playlist.path);
+      await _atomicText(playlist, text);
     }
   }
 

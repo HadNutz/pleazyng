@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:file_picker/file_picker.dart';
@@ -11,6 +9,7 @@ import '../../i18n/strings.g.dart';
 import '../../media/media_playlist.dart';
 import '../../media/media_server_client.dart';
 import '../../services/file_picker_service.dart';
+import '../../utils/bounded_picked_file.dart';
 import '../../utils/error_message_utils.dart';
 import '../../utils/media_image_helper.dart';
 import '../../widgets/app_icon.dart';
@@ -83,29 +82,12 @@ class _PlaylistArtworkEditorState extends State<PlaylistArtworkEditor> {
   }
 
   Future<MediaPlaylist?> _upload() async {
-    final picked = await FilePickerService.instance.pickFiles(type: FileType.image, withData: false);
+    final picked = await FilePickerService.instance.pickFiles(type: FileType.image, withReadStream: true);
     _requireCurrent();
     if (picked == null || picked.files.isEmpty) return null;
     final file = picked.files.single;
-    const maxBytes = PlaylistArtworkClient.maxUploadBytes;
-    if (file.size <= 0 || file.size > maxBytes) throw const FormatException('Image exceeds upload limit');
-    Uint8List bytes;
-    if (file.bytes != null) {
-      if (file.bytes!.length > maxBytes) throw const FormatException('Image exceeds upload limit');
-      bytes = file.bytes!;
-    } else {
-      final path = file.path;
-      if (path == null) throw const FormatException('Missing image data');
-      final builder = BytesBuilder(copy: false);
-      await for (final chunk in File(path).openRead(0, maxBytes + 1)) {
-        _requireCurrent();
-        builder.add(chunk);
-        if (builder.length > maxBytes) throw const FormatException('Image exceeds upload limit');
-      }
-      bytes = builder.takeBytes();
-    }
+    final bytes = await readBoundedPickedFile(file, maxArtworkUploadBytes, checkCurrent: _requireCurrent);
     _requireCurrent();
-    if (bytes.isEmpty) throw const FormatException('Missing image data');
     final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
     try {
       final descriptor = await ui.ImageDescriptor.encoded(buffer);

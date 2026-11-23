@@ -11,6 +11,7 @@ import 'package:path/path.dart' as path;
 import '../media/media_item.dart';
 import '../media/media_item_types.dart';
 import '../utils/app_logger.dart';
+import '../utils/download_path_component.dart';
 import '../utils/formatters.dart';
 import 'settings_service.dart';
 
@@ -265,27 +266,22 @@ class DownloadStorageService {
   }
 
   Future<Directory> getMediaDirectory(ServerId serverId, String ratingKey) async {
-    final baseDir = await getDownloadsDirectory();
-    return _ensureDirectoryExists(Directory(path.join(baseDir.path, serverId, ratingKey)));
+    return _downloadsSubdirectory([downloadIdComponent(serverId), downloadIdComponent(ratingKey)]);
   }
 
   Future<String> getVideoFilePath(ServerId serverId, String ratingKey, String extension) async {
     final mediaDir = await getMediaDirectory(serverId, ratingKey);
-    return path.join(mediaDir.path, 'video.$extension');
+    return path.join(mediaDir.path, 'video.${downloadFileExtension(extension)}');
   }
 
   Future<Directory> getSubtitlesDirectory(ServerId serverId, String ratingKey) async {
     final mediaDir = await getMediaDirectory(serverId, ratingKey);
-    final subtitlesDir = Directory(path.join(mediaDir.path, 'subtitles'));
-    if (!await subtitlesDir.exists()) {
-      await subtitlesDir.create(recursive: true);
-    }
-    return subtitlesDir;
+    return _ensureDirectoryExists(Directory(path.join(mediaDir.path, 'subtitles')));
   }
 
   Future<String> getSubtitlePath(ServerId serverId, String ratingKey, int trackId, String extension) async {
     final subtitlesDir = await getSubtitlesDirectory(serverId, ratingKey);
-    return path.join(subtitlesDir.path, '$trackId.$extension');
+    return path.join(subtitlesDir.path, '$trackId.${downloadFileExtension(extension)}');
   }
 
   /// App-managed subtitle directory of file [partIndex] (0-based, > 0) of an
@@ -295,7 +291,15 @@ class DownloadStorageService {
   /// here; the subtitle download creates it.
   Future<Directory> getPartSubtitlesDirectory(ServerId serverId, String ratingKey, int partIndex) async {
     final baseDir = await getDownloadsDirectory();
-    return Directory(path.join(baseDir.path, serverId, ratingKey, 'subtitles', 'part${partIndex + 1}'));
+    return Directory(
+      path.join(
+        baseDir.path,
+        downloadIdComponent(serverId),
+        downloadIdComponent(ratingKey),
+        'subtitles',
+        'part${partIndex + 1}',
+      ),
+    );
   }
 
   /// Path (or bare file name) of file [partIndex] (0-based, > 0) of an item
@@ -305,7 +309,7 @@ class DownloadStorageService {
   /// with another download.
   String partFilePath(String firstFilePath, int partIndex, String extension) {
     assert(partIndex > 0, 'part 0 is the first file itself');
-    return '${path.withoutExtension(firstFilePath)} - part${partIndex + 1}.$extension';
+    return '${path.withoutExtension(firstFilePath)} - part${partIndex + 1}.${downloadFileExtension(extension)}';
   }
 
   /// Whether [fileBaseName] (no extension) names a later file of the stacked
@@ -431,7 +435,7 @@ class DownloadStorageService {
   /// [showYear]: Pass the show's premiere year (not episode year)
   Future<String> getEpisodeVideoPath(MediaItem episode, String extension, {int? showYear}) async {
     final base = await _getEpisodeBasePath(episode, showYear: showYear);
-    return path.join(base.seasonDirPath, '${base.fileName}.$extension');
+    return path.join(base.seasonDirPath, '${base.fileName}.${downloadFileExtension(extension)}');
   }
 
   /// Get episode thumbnail path: .../Season XX/S{XX}E{XX} - {Title} [{tag}].jpg
@@ -451,7 +455,7 @@ class DownloadStorageService {
   /// [showYear]: Pass the show's premiere year (not episode year)
   Future<String> getEpisodeSubtitlePath(MediaItem episode, int trackId, String extension, {int? showYear}) async {
     final subsDir = await getEpisodeSubtitlesDirectory(episode, showYear: showYear);
-    return path.join(subsDir.path, '$trackId.$extension');
+    return path.join(subsDir.path, '$trackId.${downloadFileExtension(extension)}');
   }
 
   Future<Directory> getMovieSubtitlesDirectory(MediaItem movie) async {
@@ -462,11 +466,11 @@ class DownloadStorageService {
   /// Sidecar subtitle directory of a downloaded video file: the video path with
   /// its extension replaced by `_subs`. Playback looks subtitles up there, so
   /// they must follow the name the video actually has on disk.
-  String sidecarSubtitlesDirectoryPath(String videoPath) => videoPath.replaceAll(RegExp(r'\.[^.]+$'), '_subs');
+  String sidecarSubtitlesDirectoryPath(String videoPath) => '${path.withoutExtension(videoPath)}_subs';
 
   Future<String> getMovieSubtitlePath(MediaItem movie, int trackId, String extension) async {
     final subsDir = await getMovieSubtitlesDirectory(movie);
-    return path.join(subsDir.path, '$trackId.$extension');
+    return path.join(subsDir.path, '$trackId.${downloadFileExtension(extension)}');
   }
 
   /// Get album directory for a track: downloads/Music/{Artist}/{Album}/
@@ -637,19 +641,17 @@ class DownloadStorageService {
   }
 
   String getMovieSafFileName(MediaItem movie, String extension) {
-    return '${_getMovieFileBaseName(movie)}.$extension';
+    return '${_getMovieFileBaseName(movie)}.${downloadFileExtension(extension)}';
   }
 
   /// Get the extension-less movie filename used for SAF lookups.
   String getMovieSafBaseName(MediaItem movie) => _getMovieFileBaseName(movie);
 
-  String getEpisodeSafFileName(MediaItem episode, String extension) {
-    final fileName = _formatEpisodeFileName(episode);
-    return '$fileName.$extension';
-  }
+  String getEpisodeSafFileName(MediaItem episode, String extension) =>
+      '${_formatEpisodeFileName(episode)}.${downloadFileExtension(extension)}';
 
   String getTrackSafFileName(MediaItem track, String extension) {
-    return '${_formatTrackFileName(track)}.$extension';
+    return '${_formatTrackFileName(track)}.${downloadFileExtension(extension)}';
   }
 
   /// Get the extension-less episode filename used for SAF lookups.
@@ -677,20 +679,18 @@ class DownloadStorageService {
     if (metadata.isTrack) {
       return (components: getTrackSafPathComponents(metadata), fileName: getTrackSafFileName(metadata, extension));
     }
-    return (components: [serverId!, metadata.id], fileName: 'video.$extension');
+    return (
+      components: [downloadIdComponent(serverId!), downloadIdComponent(metadata.id)],
+      fileName: 'video.${downloadFileExtension(extension)}',
+    );
   }
 
   bool isSafUri(String storedPath) {
     return storedPath.startsWith('content://');
   }
 
-  /// Get a readable path for a stored path (handles both SAF URIs and file paths)
-  /// For SAF URIs, returns the URI as-is (content:// URIs work with media players)
-  /// For file paths, ensures the path is absolute
+  /// Resolve filesystem paths and preserve SAF document URIs.
   Future<String> getReadablePath(String storedPath) async {
-    if (isSafUri(storedPath)) {
-      return storedPath;
-    }
-    return await ensureAbsolutePath(storedPath);
+    return isSafUri(storedPath) ? storedPath : ensureAbsolutePath(storedPath);
   }
 }

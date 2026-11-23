@@ -14,6 +14,7 @@ import '../../focus/focusable_text_field.dart';
 import '../../i18n/strings.g.dart';
 import '../../media/runtime_playback_capabilities.dart';
 import '../../services/settings_service.dart';
+import '../../sources/source_picked_file.dart';
 import '../../sources/source_controller.dart';
 import '../../sources/media_capture.dart';
 import '../../sources/source_models.dart';
@@ -374,36 +375,19 @@ class _OpenMediaScreenState extends State<OpenMediaScreen> {
     });
   }
 
-  Future<List<int>> _readPlaylistFile(PlatformFile file) async {
-    if (file.size < 1 || file.size > UniversalMediaPlaylistParser.maxCharacters) {
-      throw const SourceException(SourceFailure.invalidData);
-    }
-    if (file.bytes != null) return file.bytes!;
-    if (file.readStream != null) {
-      final bytes = <int>[];
-      await for (final chunk in file.readStream!) {
-        if (bytes.length + chunk.length > UniversalMediaPlaylistParser.maxCharacters) {
-          throw const SourceException(SourceFailure.invalidData);
-        }
-        bytes.addAll(chunk);
-      }
-      return bytes;
-    }
-    if (file.path != null) return File(file.path!).readAsBytes();
-    throw const SourceException(SourceFailure.unavailable);
-  }
-
   Future<void> _pickPlaylist() async {
     final choice = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['m3u', 'm3u8', 'pls'],
-      withData: true,
       withReadStream: true,
     );
     if (choice == null || choice.files.isEmpty || !mounted) return;
     await _run(() async {
       final file = choice.files.first;
-      final text = utf8.decode(await _readPlaylistFile(file), allowMalformed: true);
+      final text = utf8.decode(
+        await readSourceFile(file, UniversalMediaPlaylistParser.maxCharacters),
+        allowMalformed: true,
+      );
       final isHls = text.split(RegExp(r'\r?\n')).any((line) => line.trimLeft().toUpperCase().startsWith('#EXT-X-'));
       if (isHls) {
         final originalPath = file.path;

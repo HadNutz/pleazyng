@@ -11,6 +11,7 @@ abstract interface class FilePickerDelegate {
     List<String>? allowedExtensions,
     bool allowMultiple = false,
     bool withData = false,
+    bool withReadStream = false,
   });
 
   Future<String?> getDirectoryPath({String? dialogTitle});
@@ -34,6 +35,7 @@ class _PluginFilePickerDelegate implements FilePickerDelegate {
     List<String>? allowedExtensions,
     bool allowMultiple = false,
     bool withData = false,
+    bool withReadStream = false,
   }) {
     return FilePicker.pickFiles(
       dialogTitle: dialogTitle,
@@ -41,13 +43,12 @@ class _PluginFilePickerDelegate implements FilePickerDelegate {
       allowedExtensions: allowedExtensions,
       allowMultiple: allowMultiple,
       withData: withData,
+      withReadStream: withReadStream,
     );
   }
 
   @override
-  Future<String?> getDirectoryPath({String? dialogTitle}) {
-    return FilePicker.getDirectoryPath(dialogTitle: dialogTitle);
-  }
+  Future<String?> getDirectoryPath({String? dialogTitle}) => FilePicker.getDirectoryPath(dialogTitle: dialogTitle);
 
   @override
   Future<String?> saveFile({
@@ -67,8 +68,7 @@ class _PluginFilePickerDelegate implements FilePickerDelegate {
   }
 }
 
-/// Serializes file_picker invocations to avoid
-/// `PlatformException(already_active, File picker is already active)`.
+/// Serializes file-picker dialogs.
 class FilePickerService {
   static final FilePickerService _instance = FilePickerService._();
   static FilePickerService get instance => _instance;
@@ -76,7 +76,6 @@ class FilePickerService {
 
   FilePickerDelegate _delegate = const _PluginFilePickerDelegate();
   bool _active = false;
-
   @visibleForTesting
   static void setDelegateForTesting(FilePickerDelegate? delegate) {
     _instance
@@ -108,6 +107,7 @@ class FilePickerService {
     List<String>? allowedExtensions,
     bool allowMultiple = false,
     bool withData = false,
+    bool withReadStream = false,
   }) {
     return _guard(
       'pickFiles',
@@ -117,13 +117,13 @@ class FilePickerService {
         allowedExtensions: allowedExtensions,
         allowMultiple: allowMultiple,
         withData: withData,
+        withReadStream: withReadStream,
       ),
     );
   }
 
-  Future<String?> getDirectoryPath({String? dialogTitle}) {
-    return _guard('getDirectoryPath', () => _delegate.getDirectoryPath(dialogTitle: dialogTitle));
-  }
+  Future<String?> getDirectoryPath({String? dialogTitle}) =>
+      _guard('getDirectoryPath', () => _delegate.getDirectoryPath(dialogTitle: dialogTitle));
 
   Future<String?> saveFile({
     String? dialogTitle,

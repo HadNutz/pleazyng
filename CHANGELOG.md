@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Keep WebDAV backup credentials private to their configured profile. Older device-wide destinations must be entered again. Serialize settings restores and apply the same 4 MiB limit to local and cloud settings files.
+- Stream artwork, playlists, reading lists, podcast subscriptions, source recovery files, certificates, subtitles, media extension manifests and game saves within their import size limits. Metadata artwork now shares the 10 MiB playlist artwork upload limit.
+- Keep opaque server and media identifiers inside their offline download directories and preserve sidecar lookup for extensionless videos in dotted folders.
+- Prevent interrupted IPTV recovery from finalizing another recording’s playlists and stage recording writes in private temporary directories.
+
 - Honor smaller music prefetch quotas on cache hits and resume same-track prefetch after clearing the cache.
 - Limit relay room snapshot reads to 4 MiB and save reconnect state with owner-only file permissions.
 - Make interrupted macOS notarization restores retryable and stream archive verification to bound memory use.

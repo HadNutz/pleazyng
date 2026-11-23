@@ -8,6 +8,9 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../utils/bounded_json_bytes.dart';
+import '../utils/bounded_picked_file.dart';
+import '../utils/serial_future_queue.dart';
 import '../models/shader_preset.dart';
 import '../i18n/presentation_formats.dart';
 import '../i18n/strings.g.dart';
@@ -80,6 +83,8 @@ class SettingsExportService {
   static const _profileChanged = SettingsExportException('The active profile changed during settings import');
   static const int formatVersion = 1;
   static const String fileExtension = 'json';
+  static final _imports = SerialFutureQueue();
+  static const maxFileBytes = 4 * 1024 * 1024;
 
   // Type markers written into the export JSON. One per SharedPreferences setter.
   static const String _typeBool = 'bool';
@@ -247,7 +252,7 @@ class SettingsExportService {
     SharedPreferencesWithCache prefs, {
     required String currentUserUuid,
     bool Function()? isCurrent,
-  }) async {
+  }) => _imports.run(() async {
     void checkCurrent() {
       if (isCurrent != null && !isCurrent()) {
         throw _profileChanged;
@@ -259,7 +264,7 @@ class SettingsExportService {
     if (version is! int) {
       throw const InvalidExportFileException('Missing formatVersion');
     }
-    if (version > formatVersion) {
+    if (version != formatVersion) {
       throw InvalidExportFileException('Unsupported formatVersion: $version');
     }
 
@@ -369,7 +374,7 @@ class SettingsExportService {
     }
 
     return ImportResult(keysImported: pending.length, keysSkipped: skipped);
-  }
+  });
 
   /// Whether [stored], already checked against the storage type, is a value
   /// the settings screens could have saved for [pref]: an enum name this build
@@ -469,8 +474,12 @@ class SettingsExportService {
     final storage = await StorageService.getInstance();
     final appVersion = (await AppVersion.current()).versionOrUnknown;
     final exportMap = buildExportMap(prefs, currentUserUuid: storage.activeUserScope(), appVersion: appVersion);
-    final jsonString = const JsonEncoder.withIndent('  ').convert(exportMap);
-    final bytes = Uint8List.fromList(utf8.encode(jsonString));
+    final bytes = boundedJsonBytes(
+      exportMap,
+      maxFileBytes,
+      indent: '  ',
+      invalid: const SettingsExportException('Settings export exceeds the 4 MiB limit.'),
+    );
     final fileName = await _defaultFileName();
 
     // Android TV has no document picker — write to the app docs dir and let
@@ -518,29 +527,19 @@ class SettingsExportService {
     final picked = await FilePickerService.instance.pickFiles(
       type: FileType.custom,
       allowedExtensions: const [fileExtension],
-      withData: true,
+      withReadStream: true,
     );
     if (picked == null || picked.files.isEmpty) return null;
 
     if (!isCurrent()) throw _profileChanged;
-    final file = picked.files.first;
-    String contents;
-    final bytes = file.bytes;
-    if (bytes != null) {
-      try {
-        contents = utf8.decode(bytes);
-      } on FormatException {
-        throw const InvalidExportFileException('Could not read the selected file');
-      }
-    } else if (file.path != null) {
-      contents = await File(file.path!).readAsString();
-    } else {
-      throw const InvalidExportFileException('Could not read the selected file');
-    }
-
+    final bytes = await readBoundedPickedFile(
+      picked.files.first,
+      maxFileBytes,
+      invalid: const InvalidExportFileException('Invalid or oversized settings file'),
+    );
     final Object? decoded;
     try {
-      decoded = json.decode(contents);
+      decoded = jsonDecode(utf8.decode(bytes));
     } on FormatException {
       throw const InvalidExportFileException('Invalid export file');
     }

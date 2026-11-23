@@ -715,6 +715,25 @@ void main() {
       expect(dir.path, p.join(downloads.path, 'srv-1', '42'));
     });
 
+    test('opaque server and item IDs use the same single components on disk and SAF', () async {
+      final dss = DownloadStorageService.instance;
+      await dss.initialize(await SettingsService.getInstance());
+      final root = await dss.getDownloadsDirectory();
+      final server = ServerId('library/zone'), id = 'season/episode';
+      final media = testMediaItem(id: id, backend: MediaBackend.plex, kind: MediaKind.show, title: 'Show');
+      final dest = dss.safTarget(media, 'mkv', serverId: server);
+      expect(dest.components, hasLength(2));
+      expect(dest.components, everyElement(matches(r'^id-sha256-[0-9a-f]{64}$')));
+      final local = await dss.getMediaDirectory(server, id);
+      expect(local.path, p.joinAll([root.path, ...dest.components]));
+      final part = await dss.getPartSubtitlesDirectory(server, id, 1);
+      expect(part.path, p.join(local.path, 'subtitles', 'part2'));
+      expect((await dss.getMediaDirectory(server, dest.components.last)).path, isNot(local.path));
+      expect(() => dss.partFilePath('part.mkv', 1, 'media/type'), throwsFormatException);
+      expect(() => dss.safTarget(media, 'media/type', serverId: server), throwsFormatException);
+      expect(dss.sidecarSubtitlesDirectoryPath(p.join('series.v2', 'episode')), p.join('series.v2', 'episode_subs'));
+    });
+
     test('getMovieDirectory + getMovieVideoPath produce consistent output', () async {
       final settings = await SettingsService.getInstance();
       final dss = DownloadStorageService.instance;

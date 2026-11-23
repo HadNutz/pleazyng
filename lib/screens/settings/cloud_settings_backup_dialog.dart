@@ -34,8 +34,7 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
   final _saveFocus = FocusNode(debugLabel: 'CloudSettingsBackup:Save');
   final _backup = CloudSettingsBackupService();
   bool Function()? _formOwner;
-  bool _loading = true;
-  bool _working = false;
+  bool _loading = true, _working = false;
   String? _message;
   Uri? _recoveryUrl;
 
@@ -47,13 +46,12 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
 
   @override
   void dispose() {
-    _url.dispose();
-    _username.dispose();
-    _password.dispose();
-    _urlFocus.dispose();
-    _usernameFocus.dispose();
-    _passwordFocus.dispose();
-    _saveFocus.dispose();
+    for (final controller in [_url, _username, _password]) {
+      controller.dispose();
+    }
+    for (final node in [_urlFocus, _usernameFocus, _passwordFocus, _saveFocus]) {
+      node.dispose();
+    }
     _backup.dispose();
     super.dispose();
   }
@@ -75,14 +73,16 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
     }
   }
 
+  Future<void> _saveForm() => _backup.saveConfiguration(
+    url: _url.text,
+    username: _username.text,
+    password: _password.text,
+    isCurrentSession: _formOwner,
+  );
+
   Future<void> _save() async {
     await _run(() async {
-      await _backup.saveConfiguration(
-        url: _url.text,
-        username: _username.text,
-        password: _password.text,
-        isCurrentSession: _formOwner,
-      );
+      await _saveForm();
       return t.settings.cloudBackupSaved;
     });
   }
@@ -90,12 +90,7 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
   Future<void> _backUp() async {
     await _run(() async {
       final owner = await _captureOwner();
-      await _backup.saveConfiguration(
-        url: _url.text,
-        username: _username.text,
-        password: _password.text,
-        isCurrentSession: _formOwner,
-      );
+      await _saveForm();
       final recoveryUrl = await _backup.backUp(
         expectedProfileId: owner.profileId,
         expectedOwner: owner.owner,
@@ -124,12 +119,7 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
     if (confirmed != true || !mounted) return;
     await _run(() async {
       final owner = await _captureOwner();
-      await _backup.saveConfiguration(
-        url: _url.text,
-        username: _username.text,
-        password: _password.text,
-        isCurrentSession: _formOwner,
-      );
+      await _saveForm();
       widget.beforeRestore();
       final result = await _backup.restore(
         importPortableFile: portable,
@@ -164,9 +154,7 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
       _recoveryUrl = null;
     });
     try {
-      if (_formOwner?.call() != true) {
-        throw const CloudSettingsBackupException('Reopen backup settings for the active profile.');
-      }
+      if (_formOwner?.call() != true) throw const CloudSettingsBackupException('Reopen backup settings.');
       final message = await operation();
       if (mounted) setState(() => _message = message);
     } catch (error, stackTrace) {
@@ -181,7 +169,18 @@ class _CloudSettingsBackupDialogState extends State<CloudSettingsBackupDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) {
+    context.watch<ActiveProfileProvider>();
+    if (_formOwner?.call() == false) {
+      return AlertDialog(
+        content: Text(t.errors.unableToLoad(context: t.settings.cloudBackup)),
+        actions: [DialogActionButton(onPressed: () => Navigator.pop(context), label: t.common.close)],
+      );
+    }
+    return _dialog(context);
+  }
+
+  Widget _dialog(BuildContext context) => AlertDialog(
     scrollable: true,
     title: Text(t.settings.cloudBackup),
     content: SizedBox(

@@ -32,6 +32,7 @@ class _OpmlPicker extends Fake implements FilePickerDelegate {
     List<String>? allowedExtensions,
     bool allowMultiple = false,
     bool withData = false,
+    bool withReadStream = false,
   }) async {
     final bytes = Uint8List.fromList(utf8.encode(_mixed));
     return FilePickerResult([PlatformFile(name: 'radio.opml', size: bytes.length, bytes: bytes)]);

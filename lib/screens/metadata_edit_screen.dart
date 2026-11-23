@@ -1,10 +1,11 @@
 import 'dart:async';
-
 import 'package:file_picker/file_picker.dart';
+import '../media/media_server_client.dart' show maxArtworkUploadBytes;
 import '../media/ids.dart';
 import '../media/media_kind.dart';
 import '../providers/multi_server_provider.dart';
 import '../providers/hidden_libraries_provider.dart';
+import '../utils/bounded_picked_file.dart';
 import '../utils/media_collection_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -544,10 +545,8 @@ class _ArtworkPickerDialogState extends State<ArtworkPickerDialog> {
     }
   }
 
-  Future<void> _selectArtwork(MetadataArtworkOption artwork) async {
-    if (!_current || _isApplying) return;
-    await _runArtworkUpdate(() => widget.adapter.applyArtworkOption(widget.draft, widget.field, artwork));
-  }
+  Future<void> _selectArtwork(MetadataArtworkOption artwork) =>
+      _runArtworkUpdate(() => widget.adapter.applyArtworkOption(widget.draft, widget.field, artwork));
 
   Future<void> _addFromUrl() async {
     if (!_current || _isApplying) return;
@@ -564,12 +563,13 @@ class _ArtworkPickerDialogState extends State<ArtworkPickerDialog> {
 
   Future<void> _uploadFile() async {
     if (!_current || _isApplying) return;
-    final result = await FilePickerService.instance.pickFiles(type: FileType.image, withData: true);
-    if (result == null || result.files.isEmpty || !_current) return;
-    final file = result.files.first;
-    final bytes = file.bytes;
-    if (bytes == null) return;
-    await _runArtworkUpdate(() => widget.adapter.uploadArtwork(widget.draft, widget.field, bytes, fileName: file.name));
+    final pick = await FilePickerService.instance.pickFiles(type: FileType.image, withReadStream: true);
+    final file = pick?.files.firstOrNull;
+    if (file == null || !_current) return;
+    await _runArtworkUpdate(() async {
+      final bytes = await readBoundedPickedFile(file, maxArtworkUploadBytes);
+      return _current && await widget.adapter.uploadArtwork(widget.draft, widget.field, bytes, fileName: file.name);
+    });
   }
 
   Future<void> _runArtworkUpdate(Future<bool> Function() action) async {
