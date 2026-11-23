@@ -2157,8 +2157,8 @@ require(
     "iOS recovery must stage the locked device worker and require a successful fresh artifact",
 )
 require(
-    "|| 'macos-26' }}" in job("build-tvos").split("permissions:", 1)[0]
-    and "hosted-xcode-version: '26.5'" in job("build-tvos")
+    "outputs.mode == 'tvos-store' && 'xcode-27' || 'macos-26'" in job("build-tvos").split("permissions:", 1)[0]
+    and "outputs.mode == 'tvos-store' && '27.1' || '26.5'" in job("build-tvos")
     and 'test "$(uname -m)" = arm64' in named_step(job("build-tvos"), "Require native ARM host for tvOS AOT")
     and "(inputs.reuse_platform_run_id == '' || inputs.rebuild_tvos)" in job("build-tvos")
     and "--rebuild-tvos" in recovery_gate and "--rebuild-tvos" in recovery_download
