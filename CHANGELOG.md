@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Regenerate the wakelock platform bindings with Pigeon 30.0.4.
+
 - Update Ruby setup to 1.342.0 for Store and Play qualification workflows.
 
 - Update the GitHub Actions Java setup to 6.3.0 and keep the Windows native JDK check aligned with the pinned action.

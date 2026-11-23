@@ -7,8 +7,8 @@
   },
   "generator": {
     "package": "pigeon",
-    "version": "30.0.2",
-    "archiveSha256": "1214707e7b0180fad43d8e4747a892b0f03d84963030048787a0b230e03df5ed",
+    "version": "30.0.4",
+    "archiveSha256": "5c2ac8dd19571590eaf4c178bf4a093b5646dc376d2d2619943ce2aa0aa860d0",
     "command": "dart run pigeon --input pigeons/messages.dart"
   },
   "externalDartClient": {
@@ -27,9 +27,9 @@
   ],
   "artifacts": {
     "pigeons/messages.dart": "37c48310b98b434673409270dc1272ce01fc1c9655b1eb2f662063529ff54eaf",
-    "android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/WakelockPlusMessages.g.kt": "a33731e702342c3e9b860dd75e68bfc0784ce98cd86a48c44085c686664ffc11",
-    "ios/wakelock_plus/Sources/wakelock_plus/include/wakelock_plus/messages.g.h": "a293d825097d72ccb515828fcfc86b230f76d23d3af2cd18fd154e21cbabdd34",
-    "ios/wakelock_plus/Sources/wakelock_plus/messages.g.m": "6f6c1a03996faa3483d943b618d11736aaf2ad805972fa1bc42fd874aeffed00"
+    "android/src/main/kotlin/dev/fluttercommunity/plus/wakelock/WakelockPlusMessages.g.kt": "544e8802e5858eeac62264444e566b2898460b786256a1f6e9bf40dd98a8f8fe",
+    "ios/wakelock_plus/Sources/wakelock_plus/include/wakelock_plus/messages.g.h": "533620371531860b9ec4afe2f286c815d088c941511d39f4ba786e49cb43424d",
+    "ios/wakelock_plus/Sources/wakelock_plus/messages.g.m": "35f0a4e61b953281149c03e538368744392ea90b48a413dfd77e903d53cb1fa9"
   },
   "refreshContract": [
     "Audit a new immutable upstream commit and update it together with the package version.",
