@@ -1323,7 +1323,8 @@ def deliver_package(output, release_tag, source_commit, stage):
     report_path = output / "pleazyng-macos-appstore.json"
     report = json.loads(report_path.read_text())
     package_path = output / "pleazyng-macos-appstore.pkg"
-    if (report.get("release_tag") != release_tag or report.get("source_commit") != source_commit or report.get("workflow_commit") != os.environ["GITHUB_SHA"]
+    signing_commit = os.environ.get("PLEAZYNG_MACOS_SIGNING_WORKFLOW_SHA") or os.environ["GITHUB_SHA"]
+    if (report.get("release_tag") != release_tag or report.get("source_commit") != source_commit or report.get("workflow_commit") != signing_commit
             or report.get("candidate_state") != "signed-awaiting-upload"
             or hashlib.sha256((output / "signed-app-info.plist").read_bytes()).hexdigest()
             != report["application_category"]["archived_info_plist_sha256"]

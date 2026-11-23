@@ -24,6 +24,10 @@ on:
         required: false
         type: boolean
         default: false
+      signed_checkpoint_run_id:
+        description: Resume upload from the attested signed package in this exact workflow run
+        required: false
+        type: string
 
 permissions:
   actions: read
@@ -47,7 +51,7 @@ jobs:
       group: pleazyng-macos-app-store-signing
       cancel-in-progress: false
       queue: max
-    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && inputs.profile_inspection_only != true
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main' && inputs.profile_inspection_only != true && inputs.signed_checkpoint_run_id == ''
     runs-on: ${{ fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","gha-{0}-build-upload"]}}', github.run_id)) }}
     timeout-minutes: 240
     steps:
@@ -349,11 +353,16 @@ jobs:
       cancel-in-progress: false
       queue: max
     needs: build-upload
-    if: inputs.preflight_only != true && inputs.profile_inspection_only != true && inputs.keychain_migration_only != true
-    runs-on: macos-26
+    if: >-
+      always() && !cancelled() && github.repository == 'snapetech-org/pleazyng' &&
+      github.ref == 'refs/heads/main' && inputs.preflight_only != true &&
+      inputs.profile_inspection_only != true && inputs.keychain_migration_only != true &&
+      (needs.build-upload.result == 'success' || inputs.signed_checkpoint_run_id != '')
+    runs-on: macos-26-intel
     permissions:
       contents: read
       actions: read
+      attestations: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -367,10 +376,46 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Resolve trusted signed checkpoint
+        id: checkpoint
+        env:
+          CHECKPOINT_RUN_ID: ${{ inputs.signed_checkpoint_run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$CHECKPOINT_RUN_ID" ]]; then
+            echo "run_id=$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
+            echo "signer_sha=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          [[ "$CHECKPOINT_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          route="repos/$GITHUB_REPOSITORY/actions/runs/$CHECKPOINT_RUN_ID"
+          signer_sha="$(gh api "$route" --jq '
+            select(.event == "workflow_dispatch" and .head_branch == "main" and
+              .path == ".github/workflows/macos-app-store-signed.yml" and
+              .status == "completed" and .head_repository.full_name == .repository.full_name) |
+            .head_sha')"
+          [[ "$signer_sha" =~ ^[0-9a-f]{40}$ ]]
+          gh api --paginate "$route/jobs?per_page=100" --jq '
+            .jobs[] | select(.name == "Build and upload signed Mac App Store package" and
+              .conclusion == "success") | .id' | grep -q '[0-9]'
+          echo "run_id=$CHECKPOINT_RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "signer_sha=$signer_sha" >> "$GITHUB_OUTPUT"
+
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: pleazyng-macos-signed-checkpoint-${{ inputs.release_tag }}-${{ github.run_id }}
+          name: pleazyng-macos-signed-checkpoint-${{ inputs.release_tag }}-${{ steps.checkpoint.outputs.run_id }}
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.checkpoint.outputs.run_id }}
           path: ${{ runner.temp }}/macos-app-store-output
+      - name: Verify the signed package attestation
+        env:
+          SIGNER_SHA: ${{ steps.checkpoint.outputs.signer_sha }}
+        run: |
+          gh attestation verify "$RUNNER_TEMP/macos-app-store-output/pleazyng-macos-appstore.pkg" \
+            --repo "$GITHUB_REPOSITORY" \
+            --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/macos-app-store-signed.yml" \
+            --signer-digest "$SIGNER_SHA"
       - uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
         with:
           ruby-version: '3.3'
@@ -381,6 +426,7 @@ jobs:
           APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
           APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
           RELEASE_TAG: ${{ inputs.release_tag }}
+          PLEAZYNG_MACOS_SIGNING_WORKFLOW_SHA: ${{ steps.checkpoint.outputs.signer_sha }}
         run: python3 scripts/build_macos_app_store_signed.py --deliver-only --release-tag "$RELEASE_TAG" --source-dir "$GITHUB_WORKSPACE/source" --output-dir "$RUNNER_TEMP/macos-app-store-output"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:

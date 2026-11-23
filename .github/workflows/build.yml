@@ -237,7 +237,8 @@ jobs:
     name: Preflight iOS Store signing entitlements
     needs: capture-candidate
     if: ${{ always() && !cancelled() && (inputs.action == 'release' || inputs.action == 'build') && inputs.mode != 'tvos-store' && inputs.include_apple_store_build && (inputs.candidate_ref == '' || needs.capture-candidate.result == 'success') }}
-    runs-on: macos-26
+    # This lane inspects certificate and profile metadata and does not compile app code.
+    runs-on: macos-26-intel
     timeout-minutes: 15
     outputs:
       ios_store_signing_ready: ${{ steps.ios-store-preflight.outcome == 'success' }}
