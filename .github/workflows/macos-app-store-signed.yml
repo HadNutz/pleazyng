@@ -130,21 +130,22 @@ jobs:
           trap lock_keychains EXIT
           identity_state() {
             local output count digest
-            output="$(/usr/bin/security find-identity -v -p codesigning "$1" 2>/dev/null)" || return 1
-            count="$(printf '%s\n' "$output" | sed -nE 's/^([0-9]+) valid identities found$/\1/p')"
+            output="$(/usr/bin/security find-identity -v -p "$2" "$1" 2>/dev/null)" || return 1
+            count="$(printf '%s\n' "$output" | sed -nE 's/^[[:space:]]*([0-9]+) valid identities found[[:space:]]*$/\1/p')"
             [[ "$count" =~ ^[1-9][0-9]*$ ]] || return 1
             digest="$(printf '%s\n' "$output" | shasum -a 256 | awk '{print $1}')"
             printf '%s:%s\n' "$count" "$digest"
           }
           migrate_keychain() {
             local keychain="$1"
+            local policy="$2"
             local before after
             if ! /usr/bin/security unlock-keychain -p "$new_password" "$keychain" >/dev/null 2>&1; then
               /usr/bin/security unlock-keychain -p "$old_password" "$keychain" >/dev/null 2>&1 || {
                 echo "An existing App Store keychain could not be opened with configured signing credentials." >&2
                 return 1
               }
-              before="$(identity_state "$keychain")" || {
+              before="$(identity_state "$keychain" "$policy")" || {
                 echo "An existing App Store keychain has no verifiable signing identity." >&2
                 return 1
               }
@@ -157,7 +158,7 @@ jobs:
                 return 1
               }
             fi
-            after="$(identity_state "$keychain")" || {
+            after="$(identity_state "$keychain" "$policy")" || {
               echo "App Store keychain signing identities could not be verified." >&2
               return 1
             }
@@ -166,12 +167,12 @@ jobs:
               return 1
             fi
           }
-          migrate_keychain "$app_keychain"
+          migrate_keychain "$app_keychain" codesigning
           if [[ -L "$installer_keychain" ]]; then
             echo "The persistent App Store Installer keychain path is unsafe." >&2
             exit 1
           elif [[ -f "$installer_keychain" ]]; then
-            migrate_keychain "$installer_keychain"
+            migrate_keychain "$installer_keychain" basic
           fi
           unset APPLE_CERTIFICATE_PASSWORD old_password new_password
           echo "Persistent App Store signing keychains now use the slow password derivation; identities were preserved."
