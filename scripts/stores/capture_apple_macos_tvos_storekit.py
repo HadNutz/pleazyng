@@ -819,11 +819,12 @@ def simctl_launch_pid(stdout_path: Path) -> int | None:
     return int(matches[0]) if len(matches) == 1 else None
 
 
-def simulator_ps_contains_pid(stdout_path: Path, pid: int) -> bool:
-    return any(
-        re.match(rf"^\s*{pid}\s+", line) is not None
-        for line in stdout_path.read_text(encoding="utf-8", errors="replace").splitlines()
+def tvos_app_service_pid(line: str) -> int | None:
+    match = re.fullmatch(
+        rf"([0-9]+)\s+-?[0-9]+\s+UIKitApplication:{re.escape(BUNDLE_ID)}(?:\[[^\]]+\])+",
+        line.strip(),
     )
+    return int(match[1]) if match else None
 
 
 def _matches_tvos_crash_report(path: Path) -> bool:
@@ -932,26 +933,20 @@ def diagnose_tvos_retained_app(
     evidence["product_pid"] = pid
     time.sleep(5)
 
-    process = None
     if pid is not None:
-        process = run(
-            "product_process_after_launch",
-            ["xcrun", "simctl", "spawn", udid, "ps", "-p", str(pid), "-o", "pid,ppid,state,comm,args"],
-        )
-        process_stdout = diagnostic_dir / process["stdout_path"]
-        process_alive = process["returncode"] == 0 and simulator_ps_contains_pid(process_stdout, pid)
         run(
             "product_launchctl_process_info",
             ["xcrun", "simctl", "spawn", udid, "launchctl", "procinfo", str(pid)],
         )
-    else:
-        process_alive = False
 
     launchctl_after = run("launchctl_after", ["xcrun", "simctl", "spawn", udid, "launchctl", "list"])
     launchctl_text = (diagnostic_dir / launchctl_after["stdout_path"]).read_text(encoding="utf-8", errors="replace")
     evidence["launchctl_app_service_lines"] = [
         line for line in launchctl_text.splitlines() if BUNDLE_ID in line
     ]
+    process_alive = pid is not None and launchctl_after["returncode"] == 0 and any(
+        tvos_app_service_pid(line) == pid for line in evidence["launchctl_app_service_lines"]
+    )
     unified_predicate = f'process == "Runner" OR processIdentifier == {pid or 0} OR subsystem CONTAINS[c] "StoreKit"'
     run(
         "unified_log_after_launch",
@@ -1001,13 +996,16 @@ def diagnose_tvos_retained_app(
                 evidence["termination_error"] = "simctl terminate failed for the preflight product app"
         after_terminate = run(
             "product_process_after_terminate",
-            ["xcrun", "simctl", "spawn", udid, "ps", "-p", str(pid), "-o", "pid,ppid,state,comm,args"],
+            ["xcrun", "simctl", "spawn", udid, "launchctl", "list"],
         )
         after_stdout = diagnostic_dir / after_terminate["stdout_path"]
         evidence["process_alive_after_terminate"] = (
-            after_terminate["returncode"] == 0 and simulator_ps_contains_pid(after_stdout, pid)
+            any(tvos_app_service_pid(line) is not None for line in after_stdout.read_text(encoding="utf-8").splitlines())
         )
-        if evidence["process_alive_after_terminate"]:
+        if after_terminate["returncode"] != 0:
+            evidence["ready_for_xctest"] = False
+            evidence["termination_error"] = "Could not verify the preflight app stopped using launchctl"
+        elif evidence["process_alive_after_terminate"]:
             evidence["ready_for_xctest"] = False
             evidence["termination_error"] = "The preflight tvOS product process remained alive after simctl terminate"
     receipt_path = output / "tvos-pre-xctest-diagnostic.json"

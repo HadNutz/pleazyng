@@ -270,15 +270,10 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
                 returncode = 0
                 if name == "simctl_launch":
                     stdout = f"{capture.BUNDLE_ID}: 1234\n"
-                elif name in {"product_process_after_launch", "product_process_after_terminate"}:
-                    stdout = "PID PPID STAT COMMAND ARGS\n"
-                    if name == "product_process_after_launch":
-                        stdout += "1234 1 S Runner Runner\n"
-                        returncode = 0
-                    else:
-                        returncode = 1
                 elif name == "launchctl_after":
-                    stdout = f"1234\t0\tapplication.{capture.BUNDLE_ID}\n"
+                    stdout = f"1234\t0\tUIKitApplication:{capture.BUNDLE_ID}[a0e8][rb-legacy]\n"
+                elif name == "product_process_after_terminate":
+                    stdout = f"-\t0\tUIKitApplication:{capture.BUNDLE_ID}[a0e8][rb-legacy]\n"
                 stdout_path = directory / f"{name}.stdout.txt"
                 stderr_path = directory / f"{name}.stderr.txt"
                 stdout_path.write_text(stdout, encoding="utf-8")
