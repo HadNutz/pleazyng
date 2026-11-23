@@ -78,6 +78,15 @@ instead of redispatching it. The Play Console reservation state for the earlier
 rejected v3.0.33+188 upload remains unverified; inspect the Console before any
 manual recovery.
 
+For v3.0.49 (code 208), the [upload retry](https://github.com/snapetech-org/pleazyng/actions/runs/45011390151)
+hit the same unavailable-edit guard. The [reconciler](https://github.com/snapetech-org/pleazyng/actions/runs/45080807552)
+reported `manual_review`. In Play Console, look up code 208 in App Bundle
+Explorer and inspect the internal track and Publishing overview. If code 208
+is already assigned or in review, preserve that state and record the track and
+status. If it is available for assignment, use the existing bundle. If Play
+has reserved the code and will not let you assign it, use a higher code in the
+next Android delivery. Keep the published v3.0.49 artifacts intact.
+
 Do not change Console release state while a delivery owns a pending edit.
 Inspect the retained receipt and actual track before retrying. Retry delivery
 against the immutable release; keep core publication successful when a store
