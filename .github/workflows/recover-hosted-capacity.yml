@@ -1,18 +1,22 @@
 name: Recover hosted runner capacity
 on:
-  workflow_run:
-    workflows: [CI - Sanity Checks, Pleazyng Release]
-    types: [completed]
-    branches: [main]
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Check one failed run, or leave blank to scan recent runs
+        type: string
+
+concurrency:
+  group: pleazyng-hosted-capacity-recovery
+  cancel-in-progress: false
 
 permissions: {}
 
 jobs:
   recover:
-    if: >-
-      github.event.workflow_run.event == 'workflow_dispatch' &&
-      github.event.workflow_run.head_repository.full_name == github.repository &&
-      github.event.workflow_run.conclusion == 'failure'
+    if: github.repository == 'snapetech-org/pleazyng' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -26,6 +30,10 @@ jobs:
       - name: Retry confirmed hosted allocation failures
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_ID: ${{ github.event.workflow_run.id }}
-          ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
-        run: python3 scripts/recover_hosted_capacity.py "$RUN_ID" "$ATTEMPT" --retry
+          RUN_ID: ${{ inputs.run_id }}
+        run: |
+          if [[ -n "$RUN_ID" ]]; then
+            python3 scripts/recover_hosted_capacity.py --retry -- "$RUN_ID"
+          else
+            python3 scripts/recover_hosted_capacity.py --recent --retry
+          fi
