@@ -127,7 +127,7 @@ require(
 )
 require(
     "timeout-minutes: 240" in job("build-ios")
-    and "timeout-minutes: 180" in job("build-tvos")
+    and "include_apple_store_build == 'true' && 300 || 180" in job("build-tvos")
     and "timeout-minutes: 210" in job("build-macos")
     and "timeout-minutes: 150" in named_step(job("build-macos"), "Build macOS"),
     "Apple package jobs and the macOS compile step must have explicit bounded timeouts",
@@ -1689,6 +1689,38 @@ tvos_dependency_gate = named_step(tvos_job, "Verify tvOS runtime dependencies")
 tvos_dependency_report = named_step(tvos_job, "Retain tvOS runtime dependency report")
 tvos_package_upload = named_step(tvos_job, "Upload tvOS package")
 tvos_unsigned_attestation = named_step(tvos_job, "Attest unsigned tvOS developer package")
+ios_job = job("build-ios")
+require(
+    all(
+        "mode != 'ios-store'" in named_step(ios_job, step)
+        for step in (
+            "Build iOS (no codesign)", "Create unsigned developer IPA",
+            "Checkpoint unsigned iOS developer IPA", "Attest unsigned developer IPA",
+            "Retain unsigned iOS developer checkpoint",
+        )
+    )
+    and "--config-only" in named_step(ios_job, "Build signed iOS App Store IPA")
+    and "steps.ios-store-package.outcome" in named_step(
+        ios_job, "Require a signed IPA for a focused iOS Store build"
+    ),
+    "focused iOS signing must build just the Store flavor and require the signed output",
+)
+require(
+    all(
+        "env.TVOS_STORE_ONLY != 'true'" in named_step(tvos_job, step)
+        for step in (
+            "Build tvOS app", "Package unsigned tvOS developer IPA",
+            "Verify unsigned tvOS runtime dependencies", "Attest unsigned tvOS checkpoint",
+            "Upload durable unsigned tvOS checkpoint", "Attest unsigned tvOS developer package",
+        )
+    )
+    and "steps.tvos-store-package.outcome" in named_step(
+        tvos_job, "Require a signed IPA for a focused tvOS Store build"
+    )
+    and "ref: ${{ github.sha }}" in named_step(tvos_job, "Checkout signed-only tvOS verification tooling")
+    and "tvos-runtime-dependency-receipt.json" in named_step(tvos_job, "Attest signed tvOS App Store package"),
+    "focused tvOS signing must skip the developer build and attest the verified Store package and receipt",
+)
 require(
     'minitest' not in tvos_wiring_regression
     and 'ruby test/native/tvos_plugin_wiring_test.rb' in tvos_wiring_regression

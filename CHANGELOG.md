@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Build signed iOS and tvOS App Store packages directly in focused Store runs, saving the developer builds for GitHub release runs.
+
 - Keep Samsung TV playback from retrying the player's default volume at startup and initialize the mpv fallback with the required numeric locale.
 
 - Keep WebDAV backup credentials private to their configured profile. Older device-wide destinations must be entered again. Serialize settings restores and apply the same 4 MiB limit to local and cloud settings files.

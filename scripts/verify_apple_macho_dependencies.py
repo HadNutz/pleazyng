@@ -620,7 +620,7 @@ def _write_receipt(path: Path, receipt: dict[str, Any]) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--product-root", type=Path, required=True)
-    parser.add_argument("--unsigned-ipa", type=Path, required=True)
+    parser.add_argument("--unsigned-ipa", type=Path)
     parser.add_argument("--signed-ipa", type=Path)
     parser.add_argument("--require-signed", action="store_true")
     parser.add_argument("--product-source-sha", required=True)
@@ -674,6 +674,8 @@ def main(argv: list[str] | None = None) -> int:
         receipt["errors"].append(f"invalid tvOS SDK version: {args.sdk_version!r}")
     if args.require_signed and args.signed_ipa is None:
         receipt["errors"].append("signed App Store IPA is required but was not provided")
+    elif args.signed_ipa is None and args.unsigned_ipa is None:
+        receipt["errors"].append("provide an unsigned developer IPA or a signed App Store IPA")
 
     try:
         actual_checkout_sha = _checkout_sha(args.product_root)
@@ -684,10 +686,9 @@ def main(argv: list[str] | None = None) -> int:
             )
         version, build = _source_version(args.product_root)
         receipt["product_version"], receipt["product_build"] = version, build
-        ipa_paths = [args.unsigned_ipa]
-        if args.signed_ipa is not None:
-            ipa_paths.append(args.signed_ipa)
-        for ipa in ipa_paths:
+        for ipa in (args.unsigned_ipa, args.signed_ipa):
+            if ipa is None:
+                continue
             if not ipa.is_file():
                 receipt["errors"].append(f"required IPA is missing: {ipa.name}")
                 continue

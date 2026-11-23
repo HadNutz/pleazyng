@@ -224,6 +224,38 @@ class AppleMachODependencyTests(unittest.TestCase):
         self.assertEqual("failed", result["status"])
         self.assertTrue(any("which lacks arm64" in error for error in result["errors"]))
 
+    def test_signed_only_store_build_passes_with_a_signed_receipt(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            signed = root / "pleazyng-tvos-appstore.ipa"
+            receipt_path = root / "receipt.json"
+            _write_ipa(signed)
+            (root / "pubspec.yaml").write_text(f"version: {VERSION}+{BUILD}\n", encoding="utf-8")
+            with mock.patch.object(VERIFY, "_checkout_sha", return_value=SOURCE_SHA), \
+                    mock.patch.object(VERIFY, "_architectures", return_value=("arm64",)), \
+                    mock.patch.object(VERIFY, "_load_commands", return_value=((), ())), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                arguments = [
+                    "--product-root", str(root),
+                    "--product-source-sha", SOURCE_SHA,
+                    "--workflow-source-sha", WORKFLOW_SHA,
+                    "--run-id", "44094749688",
+                    "--run-attempt", "2",
+                    "--repository", "snapetech-org/pleazyng",
+                    "--sdk-root", str(root),
+                    "--sdk-version", "27.2",
+                    "--receipt", str(receipt_path),
+                    "--require-signed",
+                ]
+                self.assertEqual(1, VERIFY.main(arguments))
+                self.assertEqual(0, VERIFY.main([*arguments, "--signed-ipa", str(signed)]))
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            self.assertEqual("passed", receipt["status"])
+            self.assertEqual(
+                [hashlib.sha256(signed.read_bytes()).hexdigest()],
+                [ipa["ipa_sha256"] for ipa in receipt["inputs"]],
+            )
+
     def test_receipt_binds_both_ipa_hashes_and_keeps_failed_audit(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

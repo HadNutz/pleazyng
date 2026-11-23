@@ -1931,10 +1931,12 @@ jobs:
           key: ${{ env.TRUSTED_BUILD_CACHE_VERSION }}-ios-worker-v1-${{ runner.arch }}-${{ steps.worker-input.outputs.digest }}
 
       - name: Build iOS (no codesign)
+        if: needs.validate-trusted-ref.outputs.mode != 'ios-store'
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: flutter build ios --release --no-codesign --no-pub --verbose ${{ env.RELEASE_DART_DEFINES }} --dart-define=ENABLE_UPDATE_CHECK=true --split-debug-info=debug-info/ios
 
       - name: Create unsigned developer IPA
+        if: needs.validate-trusted-ref.outputs.mode != 'ios-store'
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: |
           mkdir -p Payload
@@ -1944,15 +1946,18 @@ jobs:
 
 
       - name: Checkpoint unsigned iOS developer IPA
+        if: needs.validate-trusted-ref.outputs.mode != 'ios-store'
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: cp -f pleazyng-ios-unsigned.ipa "$GITHUB_WORKSPACE/"
 
       - name: Attest unsigned developer IPA
+        if: needs.validate-trusted-ref.outputs.mode != 'ios-store'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: pleazyng-ios-unsigned.ipa
 
       - name: Retain unsigned iOS developer checkpoint
+        if: needs.validate-trusted-ref.outputs.mode != 'ios-store'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ios-unsigned-checkpoint
@@ -1976,7 +1981,7 @@ jobs:
         run: |
           set -euo pipefail
           bash "$GITHUB_WORKSPACE/scripts/clean_appledouble_sidecars.sh" "$PLEZYNG_APPLE_WORKSPACE"
-          flutter build ios --release --no-codesign \
+          flutter build ios --release --no-codesign --config-only \
             ${{ env.RELEASE_DART_DEFINES }} \
             --dart-define=SUPPORTER_MODE=iap \
             --dart-define=ENABLE_UPDATE_CHECK=false \
@@ -1988,11 +1993,10 @@ jobs:
             --derived-data "$APPLE_LOCAL_BUILD_DIR/ios-store-derived-data"
 
 
-      - name: Copy iOS packages to the workflow workspace
+      - name: Copy signed iOS package to the workflow workspace
         working-directory: ${{ env.PLEZYNG_APPLE_WORKSPACE }}
         run: |
           set -euo pipefail
-          cp -f pleazyng-ios-unsigned.ipa "$GITHUB_WORKSPACE/"
           if [[ -f pleazyng-ios-appstore.ipa ]]; then
             cp -f pleazyng-ios-appstore.ipa "$GITHUB_WORKSPACE/"
           fi
@@ -2021,6 +2025,10 @@ jobs:
           rm -rf "$APPLE_LOCAL_BUILD_DIR/ios-store.xcarchive" \
             "$APPLE_LOCAL_BUILD_DIR/ios-store-export" \
             "$APPLE_LOCAL_BUILD_DIR/ios-store-derived-data"
+
+      - name: Require a signed IPA for a focused iOS Store build
+        if: needs.validate-trusted-ref.outputs.mode == 'ios-store'
+        run: test "${{ steps.ios-store-package.outcome }}" = success
 
       - name: Upload IPA
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -2060,7 +2068,7 @@ jobs:
     needs: validate-trusted-ref
     outputs:
       tvos_store_package_available: ${{ steps.tvos-store-package.outcome == 'success' }}
-    timeout-minutes: 180
+    timeout-minutes: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && 300 || 180 }}
     name: Build tvOS developer package (arm64)
     runs-on: ${{ needs.validate-trusted-ref.outputs.include_apple_store_build == 'true' && needs.validate-trusted-ref.outputs.tvos_runner_pool == 'private' && fromJSON(format('{{"group":"private-apple-builds","labels":["self-hosted","macOS","ARM64","private-apple","ng-shared-main-pleazyng","ng-main-run-{0}","gha-{0}-build-tvos"]}}', github.run_id)) || (needs.validate-trusted-ref.outputs.mode == 'tvos-store' && 'xcode-27' || 'macos-26') }}
     permissions:
@@ -2069,6 +2077,7 @@ jobs:
       contents: read
     env:
       COMPILE_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.mode == 'tvos-store' && needs.validate-trusted-ref.outputs.release_commit || inputs.recovery_source_sha || github.sha }}
+      TVOS_STORE_ONLY: ${{ needs.validate-trusted-ref.outputs.mode == 'tvos-store' }}
       PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
       LANG: en_US.UTF-8
     steps:
@@ -2219,6 +2228,7 @@ jobs:
           echo "configured=true" >> "$GITHUB_OUTPUT"
 
       - name: Build tvOS app
+        if: env.TVOS_STORE_ONLY != 'true'
         run: |
           xcodebuild build \
             -workspace tvos/Runner.xcworkspace \
@@ -2233,6 +2243,7 @@ jobs:
             COMPILER_INDEX_STORE_ENABLE=NO
 
       - name: Package unsigned tvOS developer IPA
+        if: env.TVOS_STORE_ONLY != 'true'
         run: |
           set -euo pipefail
           app_path=$(find "$APPLE_DERIVED_DATA_PATH/Build/Products" -type d -name Runner.app -print -quit)
@@ -2245,6 +2256,7 @@ jobs:
           (cd tvos-payload && zip -qr ../pleazyng-tvos-unsigned.ipa Payload)
 
       - name: Verify unsigned tvOS runtime dependencies
+        if: env.TVOS_STORE_ONLY != 'true'
         env:
           TVOS_PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.mode == 'tvos-store' && needs.validate-trusted-ref.outputs.release_commit || inputs.recovery_product_sha || github.sha }}
         run: |
@@ -2264,6 +2276,7 @@ jobs:
             --receipt "$GITHUB_WORKSPACE/tvos-unsigned-runtime-dependency-receipt.json"
 
       - name: Attest unsigned tvOS checkpoint
+        if: env.TVOS_STORE_ONLY != 'true'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: |
@@ -2271,6 +2284,7 @@ jobs:
             tvos-unsigned-runtime-dependency-receipt.json
 
       - name: Upload durable unsigned tvOS checkpoint
+        if: env.TVOS_STORE_ONLY != 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: tvos-unsigned-checkpoint
@@ -2300,6 +2314,20 @@ jobs:
             --derived-data "$APPLE_LOCAL_BUILD_DIR/tvos-store-derived-data" \
             --source-packages "$APPLE_SOURCE_PACKAGES_DIR"
 
+      - name: Require a signed IPA for a focused tvOS Store build
+        if: env.TVOS_STORE_ONLY == 'true'
+        run: test "${{ steps.tvos-store-package.outcome }}" = success
+
+      - name: Checkout signed-only tvOS verification tooling
+        if: env.TVOS_STORE_ONLY == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          path: .workflow-tools
+          sparse-checkout: /scripts/verify_apple_macho_dependencies.py
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
       - name: Verify tvOS runtime dependencies
         env:
           TVOS_SIGNED_BUILD: ${{ steps.tvos-store-package.outcome == 'success' }}
@@ -2310,7 +2338,6 @@ jobs:
           sdk_version="$(xcrun --sdk appletvos --show-sdk-version)"
           args=(
             --product-root "$GITHUB_WORKSPACE"
-            --unsigned-ipa "$GITHUB_WORKSPACE/pleazyng-tvos-unsigned.ipa"
             --product-source-sha "$TVOS_PRODUCT_SOURCE_SHA"
             --packaging-source-sha "$COMPILE_SOURCE_SHA"
             --workflow-source-sha "$GITHUB_SHA"
@@ -2321,13 +2348,19 @@ jobs:
             --sdk-version "$sdk_version"
             --receipt "$GITHUB_WORKSPACE/tvos-runtime-dependency-receipt.json"
           )
+          verifier=scripts/verify_apple_macho_dependencies.py
+          if [[ "$TVOS_STORE_ONLY" == true ]]; then
+            verifier=.workflow-tools/$verifier
+          else
+            args+=(--unsigned-ipa "$GITHUB_WORKSPACE/pleazyng-tvos-unsigned.ipa")
+          fi
           if [[ "$TVOS_SIGNED_BUILD" == true ]]; then
             args+=(
               --signed-ipa "$GITHUB_WORKSPACE/pleazyng-tvos-appstore.ipa"
               --require-signed
             )
           fi
-          python3 scripts/verify_apple_macho_dependencies.py "${args[@]}"
+          python3 "$verifier" "${args[@]}"
 
       - name: Retain tvOS runtime dependency report
         if: always()
@@ -2340,6 +2373,7 @@ jobs:
           retention-days: 14
 
       - name: Attest unsigned tvOS developer package
+        if: env.TVOS_STORE_ONLY != 'true'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
           subject-path: |
@@ -2350,7 +2384,9 @@ jobs:
         if: steps.tvos-store-package.outcome == 'success'
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
         with:
-          subject-path: pleazyng-tvos-appstore.ipa
+          subject-path: |
+            pleazyng-tvos-appstore.ipa
+            tvos-runtime-dependency-receipt.json
 
       - name: Retain tvOS signing report
         if: always() && steps.tvos-signing.outputs.configured == 'true'
@@ -2379,10 +2415,6 @@ jobs:
             pleazyng-tvos-appstore.ipa
             tvos-runtime-dependency-receipt.json
           if-no-files-found: error
-
-      - name: Require a signed IPA for a focused tvOS Store build
-        if: needs.validate-trusted-ref.outputs.mode == 'tvos-store'
-        run: test "${{ steps.tvos-store-package.outcome }}" = success
 
       - name: Clean tvOS source and Xcode scratch
         if: always()
