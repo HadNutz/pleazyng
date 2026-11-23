@@ -225,7 +225,7 @@ jobs:
           command -v pkg-config
           pkg-config --exists openssl yaml-0.1 libffi zlib
 
-      - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+      - uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
         with:
           ruby-version: "3.3"
           bundler-cache: true
@@ -355,7 +355,7 @@ jobs:
           command -v pkg-config
           pkg-config --exists openssl yaml-0.1 libffi zlib
 
-      - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+      - uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
         with:
           ruby-version: "3.3"
           bundler-cache: true
@@ -431,7 +431,7 @@ jobs:
           python3 "$GITHUB_WORKSPACE/scripts/verify_apple_store_ipa.py" "$IPA_ASSET" \
             --platform "$APPLE_STORE_PLATFORM" --expected-version "${RELEASE_TAG#v}"
 
-      - uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+      - uses: ruby/setup-ruby@f9c4492e86def3e644ab32a0ef185eda5b0c20d0 # v1.342.0
         with:
           ruby-version: "3.3"
           bundler-cache: true

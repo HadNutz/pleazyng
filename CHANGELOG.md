@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update Ruby setup to 1.342.0 for Store and Play qualification workflows.
+
 - Update the GitHub Actions Java setup to 6.3.0 and keep the Windows native JDK check aligned with the pinned action.
 
 - Update the optional karaoke audio analysis environment to librosa 1.0.1.
