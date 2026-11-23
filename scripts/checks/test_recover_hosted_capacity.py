@@ -132,6 +132,28 @@ class HostedCapacityTests(unittest.TestCase):
             self.recover()
         self.mutate.assert_not_called()
 
+    def test_recent_scan_only_recovers_latest_failed_run_per_title(self):
+        def list_runs(path, *, pages=False):
+            self.assertTrue(pages)
+            if "/workflows/build.yml/" not in path:
+                return []
+            return [
+                {"workflow_runs": [
+                    {"id": 51, "display_title": "iOS", "conclusion": None, "run_attempt": 1},
+                    {"id": 50, "display_title": "tvOS", "conclusion": "failure", "run_attempt": 2},
+                ]},
+                {"workflow_runs": [
+                    {"id": 49, "display_title": "iOS", "conclusion": "failure", "run_attempt": 1},
+                    {"id": 48, "display_title": "tvOS", "conclusion": "failure", "run_attempt": 1},
+                    {"id": 47, "display_title": "old run", "conclusion": "failure", "run_attempt": 8},
+                ]},
+            ]
+
+        with patch.object(capacity, "api", side_effect=list_runs), patch.object(capacity, "recover") as recover:
+            capacity.recover_recent(self.repository, retry=True)
+
+        recover.assert_called_once_with(self.repository, 50, 2, True)
+
 
 if __name__ == "__main__":
     unittest.main()
