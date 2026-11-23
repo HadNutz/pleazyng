@@ -102,7 +102,6 @@
     "authenticationTimeout": "Растау уақыты өтті. Қайтадан байқап көріңіз.",
     "scanQRToSignIn": "Кіру үшін осы QR кодты сканерлеңіз",
     "waitingForAuth": "Растау күтілуде...\nБраузеріңізден кіріңіз.",
-    "useBrowser": "Браузерді пайдалану",
     "or": "немесе",
     "connectToMediaBrowser": "${product} қосылу",
     "quickConnect": "Жылдам қосылу",

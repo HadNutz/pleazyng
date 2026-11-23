@@ -102,7 +102,6 @@
     "authenticationTimeout": "Authentifizierung abgelaufen. Bitte erneut versuchen.",
     "scanQRToSignIn": "Scanne diesen QR-Code, um dich anzumelden",
     "waitingForAuth": "Warte auf die Authentifizierung …\nMelde dich über deinen Browser an.",
-    "useBrowser": "Browser verwenden",
     "or": "oder",
     "connectToMediaBrowser": "Mit ${product} verbinden",
     "quickConnect": "Quick Connect",

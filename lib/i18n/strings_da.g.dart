@@ -247,7 +247,6 @@ class _Translations$auth$da extends Translations$auth$en {
 	@override String get authenticationTimeout => 'Godkendelsen tog for lang tid. Prøv igen.';
 	@override String get scanQRToSignIn => 'Scan denne QR-kode for at logge ind';
 	@override String get waitingForAuth => 'Venter på godkendelse...\nLog ind fra din browser.';
-	@override String get useBrowser => 'Brug browseren';
 	@override String get or => 'eller';
 	@override String connectToMediaBrowser({required Object product}) => 'Opret forbindelse til ${product}';
 	@override String get quickConnect => 'Quick Connect';
@@ -5773,7 +5772,6 @@ extension on TranslationsDa {
 			'auth.authenticationTimeout' => 'Godkendelsen tog for lang tid. Prøv igen.',
 			'auth.scanQRToSignIn' => 'Scan denne QR-kode for at logge ind',
 			'auth.waitingForAuth' => 'Venter på godkendelse...\nLog ind fra din browser.',
-			'auth.useBrowser' => 'Brug browseren',
 			'auth.or' => 'eller',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'Opret forbindelse til ${product}',
 			'auth.quickConnect' => 'Quick Connect',
@@ -6195,9 +6193,9 @@ extension on TranslationsDa {
 			'settings.manageLibrariesDescription' => 'Omarranger og skjul biblioteker',
 			'settings.companionRemoteServer' => 'Fjernbetjeningsserver',
 			'settings.companionRemoteServerDescription' => 'Tillad mobilenheder på dit netværk at styre denne app',
+			'settings.companionRemoteServerStartFailed' => 'Fjernbetjeningsserveren kunne ikke startes',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Fjernbetjeningsserveren kunne ikke startes',
 			'settings.companionRemoteServerStopFailed' => 'Fjernbetjeningsserveren kunne ikke stoppes',
 			'settings.autoPip' => 'Automatisk billede-i-billede',
 			'settings.autoPipDescription' => 'Skift automatisk til billede-i-billede, når du forlader appen under afspilning',
@@ -6709,9 +6707,9 @@ extension on TranslationsDa {
 			'accessibility.interaction' => 'Motion og interaktion',
 			'accessibility.reduceMotion' => 'Reduktion af bevægelsen',
 			'accessibility.reduceMotionHint' => 'Stop bevægelse i fokusmarkeringer, sideovergange og dekorative effekter.',
+			'accessibility.largeTargets' => 'Større touch mål',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'Større touch mål',
 			'accessibility.largeTargetsHint' => 'Giv delte kontroller mere plads til touch og assistive navigation.',
 			'accessibility.navigationHint' => 'Brug Tab og Shift+Tab til at flytte mellem kontrolelementer, Enter eller mellemrum til at aktivere og Escape eller Tilbage til at lukke. Zoom og læseindstillinger er tilgængelige, når en bog er åben.',
 			'accessibility.textSizeDescription' => 'Skalagrænsefladet tekst i Pleazyng ud over enhedens systemtekst-størrelsesindstilling.',
@@ -7223,9 +7221,9 @@ extension on TranslationsDa {
 			'discover.findNext.controlsHelp' => 'Tastatur eller fjernbetjening: vælg en knap, og tryk Enter eller Vælg. Fortryd gendanner dit sidste valg.',
 			'discover.findNext.artworkLoading' => 'Indlæser billede…',
 			'discover.findNext.artworkUnavailable' => 'Billede ikke tilgængeligt',
+			'discover.findNext.savedFeedback' => 'Føjet til gemte valg',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'Føjet til gemte valg',
 			'discover.findNext.skippedFeedback' => 'Sprunget over for nu',
 			'discover.findNext.releaseToConfirm' => 'Slip for at bekræfte',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → vælg · Vælg: detaljer · ↑ / ↓ flyt fokus',
@@ -7737,9 +7735,9 @@ extension on TranslationsDa {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Kunne ikke slette samling: ${error}',
 			'collections.selectCollection' => 'Vælg samling',
 			'collections.collectionName' => 'Samlingsnavn',
+			'collections.enterCollectionName' => 'Indtast samlingsnavn',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'Indtast samlingsnavn',
 			'collections.addedToCollection' => 'Tilføjet til samling',
 			'collections.errorAddingToCollection' => 'Kunne ikke tilføje til samling',
 			'collections.created' => 'Samling oprettet',
@@ -8251,9 +8249,9 @@ extension on TranslationsDa {
 			'performanceOverlay.app' => 'App',
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
+			'performanceOverlay.tunneling' => 'Tunneling',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'Tunneling',
 			'performanceOverlay.passthrough' => 'Passthrough',
 			'performanceOverlay.aspect' => 'Billedformat',
 			'performanceOverlay.rotation' => 'Rotation',
@@ -8765,9 +8763,9 @@ extension on TranslationsDa {
 			'homeLayout.managePlexRows' => 'Ledelse Plex rækker i Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Åbent til at organisere de hjemmelavede rækker',
 			'homeLayout.organizeHomeRows' => 'Organiser hjemmebane',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rækker: bevæge sig, Hero, Auto-slide, fjerne',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rækker: bevæge sig, Hero, Auto-slide, fjerne',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Udvikle ${library} rækker',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsæt at se + ${n} rækker: bevæge sig, Biblioteket, Hjem, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render som en helt kort',
@@ -9279,9 +9277,9 @@ extension on TranslationsDa {
 			'audiobook.undoSeek' => 'Sidste søgning',
 			'audiobook.customSpeed' => 'Custom playback hastighed',
 			'audiobook.speedHelp' => 'Vælg en hastighed fra 0.25× til 4×.',
+			'audiobook.apply' => 'Anvendelse',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'Anvendelse',
 			'audiobook.customSleep' => 'Personlig søvn timer',
 			'audiobook.sleepMinutes' => 'Minuter (1 til 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stop efter ${count} kapitel',
@@ -9793,9 +9791,9 @@ extension on TranslationsDa {
 			'musicExperience.bluetoothDriving' => 'Bluetooth-udgange til kørsel',
 			'musicExperience.bluetoothDrivingHint' => 'Vælg tilsluttede Bluetooth-udgange, der automatisk åbner kørevisningen.',
 			'musicTools.loudnessMissing' => 'Ingen data om lydstyrke modtaget',
+			'musicTools.loudnessRequested' => 'Anmodning om analyse sendt',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'Anmodning om analyse sendt',
 			'musicTools.loudnessUnsupported' => 'Denne serverversion understøtter ikke analyseanmodninger',
 			'musicTools.serverHistory' => 'Afspilningshistorik på serveren',
 			'musicTools.nfcWrite' => 'Skriv NFC-mærke',

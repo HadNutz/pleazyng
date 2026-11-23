@@ -102,7 +102,6 @@
     "authenticationTimeout": "Времето за удостоверяване изтече. Моля, опитайте отново.",
     "scanQRToSignIn": "Сканирайте този QR код, за да влезете",
     "waitingForAuth": "Изчакване на удостоверяване...\nВлезте от браузъра си.",
-    "useBrowser": "Използвай браузър",
     "or": "или",
     "connectToMediaBrowser": "Свържи се с ${product}",
     "quickConnect": "Quick Connect",

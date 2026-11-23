@@ -247,7 +247,6 @@ class _Translations$auth$tr extends Translations$auth$en {
 	@override String get authenticationTimeout => 'Doğrulama zaman aşımına uğradı. Lütfen tekrar deneyin.';
 	@override String get scanQRToSignIn => 'Giriş yapmak için bu QR kodunu tarayın';
 	@override String get waitingForAuth => 'Doğrulama bekleniyor...\nTarayıcınızdan giriş yapın.';
-	@override String get useBrowser => 'Tarayıcı kullan';
 	@override String get or => 'veya';
 	@override String connectToMediaBrowser({required Object product}) => '${product} ile Bağlan';
 	@override String get quickConnect => 'Quick Connect';
@@ -5773,7 +5772,6 @@ extension on TranslationsTr {
 			'auth.authenticationTimeout' => 'Doğrulama zaman aşımına uğradı. Lütfen tekrar deneyin.',
 			'auth.scanQRToSignIn' => 'Giriş yapmak için bu QR kodunu tarayın',
 			'auth.waitingForAuth' => 'Doğrulama bekleniyor...\nTarayıcınızdan giriş yapın.',
-			'auth.useBrowser' => 'Tarayıcı kullan',
 			'auth.or' => 'veya',
 			'auth.connectToMediaBrowser' => ({required Object product}) => '${product} ile Bağlan',
 			'auth.quickConnect' => 'Quick Connect',
@@ -6195,9 +6193,9 @@ extension on TranslationsTr {
 			'settings.manageLibrariesDescription' => 'Kitaplıkları yeniden sıralayın ve gizleyin',
 			'settings.companionRemoteServer' => 'Yardımcı Uzaktan Kumanda Sunucusu',
 			'settings.companionRemoteServerDescription' => 'Ağınızdaki mobil cihazların bu uygulamayı kontrol etmesine izin verin',
+			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Yardımcı sunucu başlatılamadı',
 			'settings.companionRemoteServerStopFailed' => 'Yardımcı sunucu durdurulamadı',
 			'settings.autoPip' => 'Otomatik Pencere İçinde Pencere (PiP)',
 			'settings.autoPipDescription' => 'Oynatma sırasında uygulamadan çıktığınızda otomatik olarak pencere içinde pencere moduna geç',
@@ -6709,9 +6707,9 @@ extension on TranslationsTr {
 			'accessibility.interaction' => 'Hareket ve etkileşim',
 			'accessibility.reduceMotion' => 'hareketleri azaltmak',
 			'accessibility.reduceMotionHint' => 'Odak göstergesi hareketini, sayfa geçişlerini ve dekoratif efektleri durdurun.',
+			'accessibility.largeTargets' => 'Daha büyük dokunmatik hedefler',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'Daha büyük dokunmatik hedefler',
 			'accessibility.largeTargetsHint' => 'Paylaşılan kontroller dokunmatik ve yardımcı navigasyon için daha fazla yer verir.',
 			'accessibility.navigationHint' => 'Kontroller arasında geçiş yapmak için Tab ve Shift+Tab, etkinleştirmek için Enter veya boşluk tuşu, kapatmak için Escape veya Geri düğmesini kullanın. Kitap açıkken yakınlaştırma ve okuma tercihleri kullanılabilir.',
 			'accessibility.textSizeDescription' => 'Pleazyng\'de ölçekli arayüz metni, cihazınızın sistem metin boyutu ayarına ek olarak.',
@@ -7223,9 +7221,9 @@ extension on TranslationsTr {
 			'discover.findNext.controlsHelp' => 'Klavye veya kumanda: bir düğmeye odaklanın, ardından Enter veya Seç tuşuna basın. Geri al son seçiminizi geri getirir.',
 			'discover.findNext.artworkLoading' => 'Görsel yükleniyor…',
 			'discover.findNext.artworkUnavailable' => 'Görsel kullanılamıyor',
+			'discover.findNext.savedFeedback' => 'Kayıtlı seçimlere eklendi',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'Kayıtlı seçimlere eklendi',
 			'discover.findNext.skippedFeedback' => 'Şimdilik atlandı',
 			'discover.findNext.releaseToConfirm' => 'Onaylamak için bırakın',
 			'discover.findNext.remoteHint' => 'Kapak odakta: ← / → seç · Seç tuşu: ayrıntılar · ↑ / ↓ odağı taşı',
@@ -7737,9 +7735,9 @@ extension on TranslationsTr {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Koleksiyon silinemedi: ${error}',
 			'collections.selectCollection' => 'Koleksiyon Seç',
 			'collections.collectionName' => 'Koleksiyon Adı',
+			'collections.enterCollectionName' => 'Koleksiyon adını girin',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'Koleksiyon adını girin',
 			'collections.addedToCollection' => 'Koleksiyona eklendi',
 			'collections.errorAddingToCollection' => 'Koleksiyona eklenemedi',
 			'collections.created' => 'Koleksiyon oluşturuldu',
@@ -8251,9 +8249,9 @@ extension on TranslationsTr {
 			'performanceOverlay.app' => 'Uygulama',
 			'performanceOverlay.decoder' => 'Çözücü',
 			'performanceOverlay.rawDecoder' => 'Ham Çözücü',
+			'performanceOverlay.tunneling' => 'Tünelleme',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'Tünelleme',
 			'performanceOverlay.passthrough' => 'Doğrudan geçiş',
 			'performanceOverlay.aspect' => 'Oran',
 			'performanceOverlay.rotation' => 'Döndürme',
@@ -8765,9 +8763,9 @@ extension on TranslationsTr {
 			'homeLayout.managePlexRows' => 'Plex satırları Pleazyng\'de yönetin',
 			'homeLayout.managePlexRowsDescription' => 'Ev seçimi için açık düzenleme',
 			'homeLayout.organizeHomeRows' => 'Home Routes düzenlemek',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} satırları: hareket, kahraman, otomatik kaydırma, kaldırma',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} satırları: hareket, kahraman, otomatik kaydırma, kaldırma',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} satırları düzenleyin',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Devamını oku + ${n} satırları: hareket, Kütüphane, Ev, Kahraman, Otomatik slide',
 			'homeLayout.renderAsHero' => 'Bir kahraman kartı olarak',
@@ -9279,9 +9277,9 @@ extension on TranslationsTr {
 			'audiobook.undoSeek' => 'Son arama',
 			'audiobook.customSpeed' => 'Custom Playback Hızları',
 			'audiobook.speedHelp' => '0.25× ile 4× arasında bir hız seçin.',
+			'audiobook.apply' => 'Uygulama',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'Uygulama',
 			'audiobook.customSleep' => 'Özel uyku saatleri',
 			'audiobook.sleepMinutes' => 'Dakikalar (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} bölümlerinden sonra durun',
@@ -9793,9 +9791,9 @@ extension on TranslationsTr {
 			'musicExperience.bluetoothDriving' => 'Sürüş için Bluetooth çıkışları',
 			'musicExperience.bluetoothDrivingHint' => 'Sürüş görünümünü otomatik açan bağlı Bluetooth çıkışlarını seçin.',
 			'musicTools.loudnessMissing' => 'Ses yüksekliği verisi alınmadı',
+			'musicTools.loudnessRequested' => 'Analiz isteği gönderildi',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'Analiz isteği gönderildi',
 			'musicTools.loudnessUnsupported' => 'Bu sunucu sürümü analiz isteklerini desteklemiyor',
 			'musicTools.serverHistory' => 'Sunucudaki oynatma geçmişi',
 			'musicTools.nfcWrite' => 'NFC etiketi yaz',

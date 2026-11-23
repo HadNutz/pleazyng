@@ -102,7 +102,6 @@
     "authenticationTimeout": "Autentiseringen tok for lang tid. Prøv igjen.",
     "scanQRToSignIn": "Skann denne QR-koden for å logge inn",
     "waitingForAuth": "Venter på autentisering...\nLogg inn fra nettleseren.",
-    "useBrowser": "Bruk nettleser",
     "or": "eller",
     "connectToMediaBrowser": "Koble til ${product}",
     "quickConnect": "Quick Connect",

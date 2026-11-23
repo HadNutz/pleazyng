@@ -247,7 +247,6 @@ class Translations$auth$pt extends Translations$auth$en {
 	@override String get authenticationTimeout => 'A autenticação expirou. Tente novamente.';
 	@override String get scanQRToSignIn => 'Leia este código QR para entrar';
 	@override String get waitingForAuth => 'Aguardando autenticação...\nEntre pelo navegador.';
-	@override String get useBrowser => 'Usar navegador';
 	@override String get or => 'ou';
 	@override String connectToMediaBrowser({required Object product}) => 'Conectar ao ${product}';
 	@override String get quickConnect => 'Quick Connect';
@@ -5780,7 +5779,6 @@ extension on TranslationsPt {
 			'auth.authenticationTimeout' => 'A autenticação expirou. Tente novamente.',
 			'auth.scanQRToSignIn' => 'Leia este código QR para entrar',
 			'auth.waitingForAuth' => 'Aguardando autenticação...\nEntre pelo navegador.',
-			'auth.useBrowser' => 'Usar navegador',
 			'auth.or' => 'ou',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'Conectar ao ${product}',
 			'auth.quickConnect' => 'Quick Connect',
@@ -6202,9 +6200,9 @@ extension on TranslationsPt {
 			'settings.manageLibrariesDescription' => 'Reordene e oculte bibliotecas',
 			'settings.companionRemoteServer' => 'Servidor de controle remoto',
 			'settings.companionRemoteServerDescription' => 'Permitir que dispositivos móveis na sua rede controlem este app',
+			'settings.companionRemoteServerStartFailed' => 'Não foi possível iniciar o servidor de controle remoto',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Não foi possível iniciar o servidor de controle remoto',
 			'settings.companionRemoteServerStopFailed' => 'Não foi possível parar o servidor de controle remoto',
 			'settings.autoPip' => 'Picture-in-picture automático',
 			'settings.autoPipDescription' => 'Entrar automaticamente no modo picture-in-picture ao sair do app durante a reprodução',
@@ -6716,9 +6714,9 @@ extension on TranslationsPt {
 			'accessibility.interaction' => 'Moção e Interação',
 			'accessibility.reduceMotion' => 'Reduzir a movimentação',
 			'accessibility.reduceMotionHint' => 'Parar as animações do indicador de foco, as transições de página e os efeitos decorativos.',
+			'accessibility.largeTargets' => 'Objetivos de toque mais grandes',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'Objetivos de toque mais grandes',
 			'accessibility.largeTargetsHint' => 'Dê controles compartilhados mais espaço para toque e navegação assistiva.',
 			'accessibility.navigationHint' => 'Use Tab e Shift+Tab para navegar entre os controles, Enter ou a barra de espaço para ativar e Escape ou Voltar para fechar. O zoom e as preferências de leitura ficam disponíveis quando um livro está aberto.',
 			'accessibility.textSizeDescription' => 'Escala o texto de interface em Pleazyng, além da configuração do tamanho de texto do sistema do seu dispositivo.',
@@ -7230,9 +7228,9 @@ extension on TranslationsPt {
 			'discover.findNext.controlsHelp' => 'Teclado ou comando: selecione um botão e prima Enter ou Selecionar. Anular restaura a sua última escolha.',
 			'discover.findNext.artworkLoading' => 'A carregar a imagem…',
 			'discover.findNext.artworkUnavailable' => 'Imagem indisponível',
+			'discover.findNext.savedFeedback' => 'Adicionado às escolhas guardadas',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'Adicionado às escolhas guardadas',
 			'discover.findNext.skippedFeedback' => 'Ignorado por agora',
 			'discover.findNext.releaseToConfirm' => 'Solte para confirmar',
 			'discover.findNext.remoteHint' => 'Capa em foco: ← / → escolher · Selecionar: detalhes · ↑ / ↓ mover o foco',
@@ -7744,9 +7742,9 @@ extension on TranslationsPt {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Falha ao excluir coleção: ${error}',
 			'collections.selectCollection' => 'Selecionar Coleção',
 			'collections.collectionName' => 'Nome da Coleção',
+			'collections.enterCollectionName' => 'Insira o nome da coleção',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'Insira o nome da coleção',
 			'collections.addedToCollection' => 'Adicionado à coleção',
 			'collections.errorAddingToCollection' => 'Falha ao adicionar à coleção',
 			'collections.created' => 'Coleção criada',
@@ -8258,9 +8256,9 @@ extension on TranslationsPt {
 			'performanceOverlay.app' => 'App',
 			'performanceOverlay.decoder' => 'Decodificador',
 			'performanceOverlay.rawDecoder' => 'Decodificador bruto',
+			'performanceOverlay.tunneling' => 'Túnel',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'Túnel',
 			'performanceOverlay.passthrough' => 'Passagem direta',
 			'performanceOverlay.aspect' => 'Aspecto',
 			'performanceOverlay.rotation' => 'Rotação',
@@ -8772,9 +8770,9 @@ extension on TranslationsPt {
 			'homeLayout.managePlexRows' => 'Gestão Plex linhas em Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Abre para organizar as linhas selecionadas em casa',
 			'homeLayout.organizeHomeRows' => 'Organize as linhas domésticas',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} linhas: movimento, herói, auto-slide, remover',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} linhas: movimento, herói, auto-slide, remover',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organize ${library} linhas',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue a assistir + ${n} linhas: movimento, Biblioteca, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render como um cartão de herói',
@@ -9286,9 +9284,9 @@ extension on TranslationsPt {
 			'audiobook.undoSeek' => 'Última busca',
 			'audiobook.customSpeed' => 'Velocidade Custom Playback',
 			'audiobook.speedHelp' => 'Escolha uma velocidade de 0,25× a 4×.',
+			'audiobook.apply' => 'Aplique',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'Aplique',
 			'audiobook.customSleep' => 'Tempo de sono personalizado',
 			'audiobook.sleepMinutes' => 'Minutos (1 a 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Parar após ${count} capítulos',
@@ -9800,9 +9798,9 @@ extension on TranslationsPt {
 			'musicExperience.bluetoothDriving' => 'Saídas Bluetooth para condução',
 			'musicExperience.bluetoothDrivingHint' => 'Escolha as saídas Bluetooth ligadas que abrem automaticamente a vista de condução.',
 			'musicTools.loudnessMissing' => 'Não foram recebidos dados de intensidade sonora',
+			'musicTools.loudnessRequested' => 'Pedido de análise enviado',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'Pedido de análise enviado',
 			'musicTools.loudnessUnsupported' => 'Esta versão do servidor não suporta pedidos de análise',
 			'musicTools.serverHistory' => 'Histórico de reprodução do servidor',
 			'musicTools.nfcWrite' => 'Gravar etiqueta NFC',

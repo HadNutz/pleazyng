@@ -164,7 +164,6 @@ class Translations$auth$pt_PT extends Translations$auth$pt {
 	@override String get authenticationTimeout => 'A autenticação expirou. Tente novamente.';
 	@override String get scanQRToSignIn => 'Digitalize este código QR para iniciar sessão';
 	@override String get waitingForAuth => 'A aguardar autenticação...\nInicie sessão no navegador.';
-	@override String get useBrowser => 'Usar navegador';
 	@override String get or => 'ou';
 	@override String connectToMediaBrowser({required Object product}) => 'Ligar ao ${product}';
 	@override String get quickConnectInstructions => 'Abra o Quick Connect no Jellyfin e introduza este código.';
@@ -3802,7 +3801,6 @@ extension on TranslationsPtPt {
 			'auth.authenticationTimeout' => 'A autenticação expirou. Tente novamente.',
 			'auth.scanQRToSignIn' => 'Digitalize este código QR para iniciar sessão',
 			'auth.waitingForAuth' => 'A aguardar autenticação...\nInicie sessão no navegador.',
-			'auth.useBrowser' => 'Usar navegador',
 			'auth.or' => 'ou',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'Ligar ao ${product}',
 			'auth.quickConnectInstructions' => 'Abra o Quick Connect no Jellyfin e introduza este código.',
@@ -4262,9 +4260,9 @@ extension on TranslationsPtPt {
 			'themeEditor.previewCardTitle' => ({required Object number}) => 'Episódio ${number}',
 			'themeEditor.previewCardSubtitle' => ({required Object minutes}) => '${minutes} min restantes',
 			'themeEditor.previewSwitch' => 'Reprodução automática',
+			'themeEditor.previewMutedText' => 'O texto secundário fica assim',
 			_ => null,
 		} ?? switch (path) {
-			'themeEditor.previewMutedText' => 'O texto secundário fica assim',
 			'search.people' => 'Pessoas',
 			'search.hint' => 'Pesquisar filmes, séries, músicas...',
 			'search.tryDifferentTerm' => 'Tente um termo de pesquisa diferente',
@@ -4776,9 +4774,9 @@ extension on TranslationsPtPt {
 			'accountPreferences.subtitleModes.always' => 'Sempre ativado',
 			'accountPreferences.subtitleModes.alwaysDescription' => 'Ativar uma faixa de legendas no idioma preferido sempre que houver uma.',
 			'accountPreferences.subtitleModes.onlyForced' => 'Apenas legendas forçadas',
+			'accountPreferences.subtitleModes.onlyForcedDescription' => 'Carregar apenas as faixas marcadas como forçadas.',
 			_ => null,
 		} ?? switch (path) {
-			'accountPreferences.subtitleModes.onlyForcedDescription' => 'Carregar apenas as faixas marcadas como forçadas.',
 			'accountPreferences.subtitleModes.smart' => 'Mostrar com áudio estrangeiro',
 			'accountPreferences.subtitleModes.smartDescription' => 'Ativar legendas apenas quando o áudio estiver noutro idioma.',
 			'accountPreferences.subtitleAccessibility' => 'Legendas SDH',
@@ -5290,9 +5288,9 @@ extension on TranslationsPtPt {
 			'watchTogether.joiningRoom' => 'A entrar na sala...',
 			'watchTogether.connecting' => 'A ligar...',
 			'watchTogether.relayPublic' => 'As salas usam os servidores de retransmissão públicos do Open Watch Party.',
+			'watchTogether.relayCustom' => ({required Object url}) => 'As salas usam o seu servidor de retransmissão em ${url}.',
 			_ => null,
 		} ?? switch (path) {
-			'watchTogether.relayCustom' => ({required Object url}) => 'As salas usam o seu servidor de retransmissão em ${url}.',
 			'watchTogether.recentRooms' => 'Salas recentes',
 			'watchTogether.roomActions' => 'Ações da sala',
 			'watchTogether.renameRoom' => 'Renomear sala',
@@ -5804,9 +5802,9 @@ extension on TranslationsPtPt {
 			'seerr.notificationFailed' => 'Não foi possível atualizar o alerta de disponibilidade',
 			'seerr.title' => 'Seerr',
 			'seerr.connectTitle' => 'Ligar ao Seerr',
+			'seerr.serverUrl' => 'URL do servidor',
 			_ => null,
 		} ?? switch (path) {
-			'seerr.serverUrl' => 'URL do servidor',
 			'seerr.serverUrlHelper' => 'O endereço da sua instância do Seerr',
 			'seerr.checkServer' => 'Continuar',
 			'seerr.signInWithJellyfin' => 'Iniciar sessão com o Jellyfin',

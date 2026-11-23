@@ -102,7 +102,6 @@
     "authenticationTimeout": "Pengesahan telah tiba.Sila cuba lagi.",
     "scanQRToSignIn": "Mengimbas kod QR ini untuk mendaftar",
     "waitingForAuth": "Menunggu untuk pengesahan ... Mendaftar masuk daripada pelayar anda.",
-    "useBrowser": "Penggunaan Browser",
     "or": "atau",
     "connectToMediaBrowser": "Hubungi ${product}",
     "quickConnect": "Sambung Pantas",

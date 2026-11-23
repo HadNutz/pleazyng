@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Remove the unused browser sign-in label from the translation catalogs.
+
 - Open the music mini-player’s Play on device picker inside the active profile.
 
 - Save desktop motion smoothing choices when the current renderer cannot switch live, clarify MPV and Neural options, and reduce desktop MPV blending.

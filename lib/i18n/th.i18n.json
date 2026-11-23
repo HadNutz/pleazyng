@@ -102,7 +102,6 @@
     "authenticationTimeout": "การรับรองเป็นเวลาแล้ว โปรดลองอีกครั้ง",
     "scanQRToSignIn": "สแกนรหัส QR นี้เพื่อลงทะเบียน",
     "waitingForAuth": "รอการรับรอง... ลงทะเบียนจากเบราว์เซอร์ของคุณ",
-    "useBrowser": "ใช้เบราว์เซอร์",
     "or": "หรือ",
     "connectToMediaBrowser": "ติดต่อ ${product}",
     "quickConnect": "Quick Connect",

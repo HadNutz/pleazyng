@@ -58,7 +58,6 @@
     "authenticationTimeout": "A autenticação expirou. Tente novamente.",
     "scanQRToSignIn": "Digitalize este código QR para iniciar sessão",
     "waitingForAuth": "A aguardar autenticação...\nInicie sessão no navegador.",
-    "useBrowser": "Usar navegador",
     "or": "ou",
     "connectToMediaBrowser": "Ligar ao ${product}",
     "quickConnectInstructions": "Abra o Quick Connect no Jellyfin e introduza este código.",

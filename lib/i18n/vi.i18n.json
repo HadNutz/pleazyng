@@ -102,7 +102,6 @@
     "authenticationTimeout": "Chứng nhận đã hết hạn, xin vui lòng thử lại.",
     "scanQRToSignIn": "Scan mã QR này để đăng ký",
     "waitingForAuth": "Đang chờ xác thực... Đăng nhập từ trình duyệt của bạn.",
-    "useBrowser": "Sử dụng browser",
     "or": "hoặc",
     "connectToMediaBrowser": "Kết nối với ${product}",
     "quickConnect": "Kết Nối Nhanh",

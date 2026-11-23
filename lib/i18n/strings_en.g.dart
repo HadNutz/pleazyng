@@ -389,9 +389,6 @@ class Translations$auth$en {
 	/// en: 'Waiting for authentication... Sign in from your browser.'
 	String get waitingForAuth => 'Waiting for authentication...\nSign in from your browser.';
 
-	/// en: 'Use browser'
-	String get useBrowser => 'Use browser';
-
 	/// en: 'or'
 	String get or => 'or';
 
@@ -18433,7 +18430,6 @@ extension on Translations {
 			'auth.authenticationTimeout' => 'Authentication timed out. Please try again.',
 			'auth.scanQRToSignIn' => 'Scan this QR code to sign in',
 			'auth.waitingForAuth' => 'Waiting for authentication...\nSign in from your browser.',
-			'auth.useBrowser' => 'Use browser',
 			'auth.or' => 'or',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'Connect to ${product}',
 			'auth.quickConnect' => 'Quick Connect',
@@ -18855,9 +18851,9 @@ extension on Translations {
 			'settings.askDownloadQualityEachTime' => 'Choose quality for each download',
 			'settings.askDownloadQualityEachTimeDescription' => 'Show the quality picker before queueing each video download',
 			'settings.cellularDownloadBlocked' => 'Downloads are blocked on cellular. Use Wi-Fi or change the setting.',
+			'settings.maxVolume' => 'Maximum Volume',
 			_ => null,
 		} ?? switch (path) {
-			'settings.maxVolume' => 'Maximum Volume',
 			'settings.maxVolumeDescription' => 'Allow volume boost above 100% for quiet media',
 			'settings.maxVolumePercent' => ({required Object percent}) => '${percent}%',
 			'settings.discordRichPresence' => 'Discord Rich Presence',
@@ -19369,9 +19365,9 @@ extension on Translations {
 			'rateSheet.noConnectedServices' => 'Connect a service in Settings to rate there.',
 			'accessibility.mediaCardMovie' => ({required Object title}) => '${title}, movie',
 			'accessibility.mediaCardShow' => ({required Object title}) => '${title}, TV show',
+			'accessibility.mediaCardEpisode' => ({required Object title, required Object episodeInfo}) => '${title}, ${episodeInfo}',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.mediaCardEpisode' => ({required Object title, required Object episodeInfo}) => '${title}, ${episodeInfo}',
 			'accessibility.mediaCardSeason' => ({required Object title, required Object seasonInfo}) => '${title}, ${seasonInfo}',
 			'accessibility.mediaCardWatched' => 'watched',
 			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
@@ -19883,9 +19879,9 @@ extension on Translations {
 			'iptv.searchVod' => 'Search movies and series',
 			'iptv.category' => 'Category',
 			'iptv.allCategories' => 'All categories',
+			'iptv.noVodItems' => 'No titles in this category.',
 			_ => null,
 		} ?? switch (path) {
-			'iptv.noVodItems' => 'No titles in this category.',
 			'iptv.vodUnavailable' => 'This source could not load its catalogue. Check the provider credentials and retry.',
 			'iptv.vodPlaybackFailed' => 'Could not start this title. Check the provider connection and try again.',
 			'iptv.play' => 'Play',
@@ -20397,9 +20393,9 @@ extension on Translations {
 			'explore.mdblistShelves.loadFailed' => 'Could not load shelves. Check your connection and retry.',
 			'explore.mdblistShelves.saveFailed' => 'Could not save shelves. Please retry.',
 			'explore.mdblistShelves.accountChanged' => 'The account or profile changed. Reopen these settings.',
+			'explore.mdblistShelves.settingsUnreadable' => 'Saved shelves could not be read. Select your lists again to replace these settings.',
 			_ => null,
 		} ?? switch (path) {
-			'explore.mdblistShelves.settingsUnreadable' => 'Saved shelves could not be read. Select your lists again to replace these settings.',
 			'explore.title' => 'Explore',
 			'explore.selectSource' => 'Select source',
 			'explore.rows.watchlist' => 'Watchlist',
@@ -20911,9 +20907,9 @@ extension on Translations {
 			'downloads.syncingFile' => ({required Object file, required Object status}) => '${file} (syncing ${status})',
 			'downloads.downloadedFileClickToComplete' => ({required Object file}) => 'Downloaded ${file} - Click to complete',
 			'downloads.partialDownloadClickToComplete' => 'Partially downloaded - Click to complete',
+			'downloads.deleting' => 'Deleting...',
 			_ => null,
 		} ?? switch (path) {
-			'downloads.deleting' => 'Deleting...',
 			'downloads.deletingWithProgress' => ({required Object title, required Object current, required Object total}) => 'Deleting ${title}... (${current} of ${total})',
 			'downloads.queuedTooltip' => 'Queued',
 			'downloads.queuedFilesTooltip' => ({required Object files}) => 'Queued ${files}',
@@ -21425,9 +21421,9 @@ extension on Translations {
 			'metadataEdit.shownWithForeignAudio' => 'Shown with foreign audio',
 			'metadataEdit.alwaysEnabled' => 'Always enabled',
 			'metadataEdit.tags' => 'Tags',
+			'metadataEdit.addTag' => 'Add tag',
 			_ => null,
 		} ?? switch (path) {
-			'metadataEdit.addTag' => 'Add tag',
 			'metadataEdit.genre' => 'Genre',
 			'metadataEdit.director' => 'Director',
 			'metadataEdit.writer' => 'Writer',
@@ -21939,9 +21935,9 @@ extension on Translations {
 			'homeLayout.editHomeRow' => 'Edit Home row',
 			'homeLayout.resetHeroButton' => 'Reset hero layout to stock Pleazyng',
 			'homeLayout.reorderingUnlocked' => 'Reordering unlocked',
+			'homeLayout.reorderingLocked' => 'Reordering locked',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.reorderingLocked' => 'Reordering locked',
 			'homeLayout.rowsCanBeDragged' => 'Rows can be dragged — tap the lock to prevent that',
 			'homeLayout.tapLockToDrag' => 'Tap the lock to drag rows',
 			'homeLayout.customRowLabel' => ({required Object title}) => 'Custom: ${title}',
@@ -22453,9 +22449,9 @@ extension on Translations {
 			'sourceSetup.nfsGroupIdHelp' => 'Default: 1000. Use the group ID the NAS export allows.',
 			'sourceSetup.nfsEncryption' => 'Require encrypted NFS (RPC-with-TLS)',
 			'sourceSetup.nfsEncryptionHelp' => 'Require TLS 1.3 for NFS and the mount service. Connections fail closed if the NAS does not support it.',
+			'sourceSetup.nfsTrustCertificate' => 'Custom NFS CA or server certificate (PEM, optional)',
 			_ => null,
 		} ?? switch (path) {
-			'sourceSetup.nfsTrustCertificate' => 'Custom NFS CA or server certificate (PEM, optional)',
 			'sourceSetup.nfsTrustHelp' => 'Leave blank for certificates trusted by this device. Add a private CA or self-signed server certificate when needed; its names must match the NFS URL host.',
 			'sourceSetup.nfsTrustInvalid' => 'Use a CA or server certificate in PEM format. Do not include a private key.',
 			'sourceSetup.addTrustCertificate' => 'Add custom trust certificate',
@@ -22967,9 +22963,9 @@ extension on Translations {
 			'podcasts.shows' => 'Subscriptions',
 			'podcasts.episodes' => 'Latest episodes',
 			'podcasts.searchHint' => 'Search shows or paste an Apple Podcasts or Podcast Index link',
+			'podcasts.searchHelp' => 'Choose a directory to search. Add private RSS links with Add feed.',
 			_ => null,
 		} ?? switch (path) {
-			'podcasts.searchHelp' => 'Choose a directory to search. Add private RSS links with Add feed.',
 			'podcasts.addFeed' => 'Add feed',
 			'podcasts.addFeedHelp' => 'Paste a publisher RSS/Atom URL, including a private Patreon or other member feed. Use source setup for HTTP or password-protected feeds.',
 			'podcasts.subscribe' => 'Subscribe',
@@ -23481,9 +23477,9 @@ extension on Translations {
 			'subtitleCapture.downloadingDetectorProgress' => ({required Object percent}) => 'Downloading the speech detector (${percent}%)…',
 			'subtitleCapture.transcribing' => 'Transcribing audio locally…',
 			'subtitleCapture.transcribingProgress' => ({required Object percent}) => 'Transcribing audio locally (${percent}%)…',
+			'subtitleCapture.translating' => 'Translating speech to English locally…',
 			_ => null,
 		} ?? switch (path) {
-			'subtitleCapture.translating' => 'Translating speech to English locally…',
 			'subtitleCapture.translatingProgress' => ({required Object percent}) => 'Translating speech to English locally (${percent}%)…',
 			'subtitleCapture.processingAudio' => 'Processing audio locally…',
 			'subtitleCapture.processingAudioProgress' => ({required Object percent}) => 'Processing audio locally (${percent}%)…',

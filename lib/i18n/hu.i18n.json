@@ -102,7 +102,6 @@
     "authenticationTimeout": "A hitelesítés időtúllépés miatt megszakadt. Próbáld újra.",
     "scanQRToSignIn": "Olvasd be ezt a QR-kódot a bejelentkezéshez",
     "waitingForAuth": "Várakozás a hitelesítésre...\nJelentkezz be a böngésződben.",
-    "useBrowser": "Böngésző használata",
     "or": "vagy",
     "connectToMediaBrowser": "Csatlakozás a(z) ${product} szolgáltatáshoz",
     "quickConnect": "Quick Connect",

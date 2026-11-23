@@ -247,7 +247,6 @@ class _Translations$auth$nl extends Translations$auth$en {
 	@override String get authenticationTimeout => 'Authenticatie verlopen. Probeer opnieuw.';
 	@override String get scanQRToSignIn => 'Scan deze QR-code om in te loggen';
 	@override String get waitingForAuth => 'Wachten op authenticatie...\nMeld je aan via je browser.';
-	@override String get useBrowser => 'Gebruik browser';
 	@override String get or => 'of';
 	@override String connectToMediaBrowser({required Object product}) => 'Verbinding maken met ${product}';
 	@override String get quickConnect => 'Quick Connect';
@@ -5773,7 +5772,6 @@ extension on TranslationsNl {
 			'auth.authenticationTimeout' => 'Authenticatie verlopen. Probeer opnieuw.',
 			'auth.scanQRToSignIn' => 'Scan deze QR-code om in te loggen',
 			'auth.waitingForAuth' => 'Wachten op authenticatie...\nMeld je aan via je browser.',
-			'auth.useBrowser' => 'Gebruik browser',
 			'auth.or' => 'of',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'Verbinding maken met ${product}',
 			'auth.quickConnect' => 'Quick Connect',
@@ -6195,9 +6193,9 @@ extension on TranslationsNl {
 			'settings.manageLibrariesDescription' => 'Bibliotheken herordenen en verbergen',
 			'settings.companionRemoteServer' => 'Companion Remote-server',
 			'settings.companionRemoteServerDescription' => 'Sta mobiele apparaten op je netwerk toe om deze app te bedienen',
+			'settings.companionRemoteServerStartFailed' => 'Kan de Companion Remote-server niet starten',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Kan de Companion Remote-server niet starten',
 			'settings.companionRemoteServerStopFailed' => 'Kan de Companion Remote-server niet stoppen',
 			'settings.autoPip' => 'Automatische beeld-in-beeld',
 			'settings.autoPipDescription' => 'Schakel over naar beeld-in-beeld als je tijdens het afspelen de app verlaat',
@@ -6709,9 +6707,9 @@ extension on TranslationsNl {
 			'accessibility.interaction' => 'Motie en interactie',
 			'accessibility.reduceMotion' => 'Verminderde beweging',
 			'accessibility.reduceMotionHint' => 'Animaties van de focusindicator, paginaovergangen en decoratieve effecten stilzetten.',
+			'accessibility.largeTargets' => 'Grotere touch doelen',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'Grotere touch doelen',
 			'accessibility.largeTargetsHint' => 'Geef gedeelde controles meer ruimte voor touch en assistieve navigatie.',
 			'accessibility.navigationHint' => 'Gebruik Tab en Shift+Tab om tussen bedieningselementen te bewegen, Enter of de spatiebalk om ze te activeren en Escape of Terug om te sluiten. Als een boek geopend is, zijn zoom en leesvoorkeuren beschikbaar.',
 			'accessibility.textSizeDescription' => 'Scale interface tekst in Pleazyng naast de systeem-text-size instelling van uw apparaat.',
@@ -7223,9 +7221,9 @@ extension on TranslationsNl {
 			'discover.findNext.controlsHelp' => 'Toetsenbord of afstandsbediening: selecteer een knop en druk op Enter of Selecteren. Ongedaan maken herstelt je laatste keuze.',
 			'discover.findNext.artworkLoading' => 'Afbeelding laden…',
 			'discover.findNext.artworkUnavailable' => 'Afbeelding niet beschikbaar',
+			'discover.findNext.savedFeedback' => 'Toegevoegd aan opgeslagen keuzes',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'Toegevoegd aan opgeslagen keuzes',
 			'discover.findNext.skippedFeedback' => 'Voorlopig overgeslagen',
 			'discover.findNext.releaseToConfirm' => 'Laat los om te bevestigen',
 			'discover.findNext.remoteHint' => 'Omslag geselecteerd: ← / → kiezen · Selecteren: details · ↑ / ↓ focus verplaatsen',
@@ -7737,9 +7735,9 @@ extension on TranslationsNl {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Collectie verwijderen mislukt: ${error}',
 			'collections.selectCollection' => 'Collectie selecteren',
 			'collections.collectionName' => 'Collectienaam',
+			'collections.enterCollectionName' => 'Voer een collectienaam in',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'Voer een collectienaam in',
 			'collections.addedToCollection' => 'Toegevoegd aan collectie',
 			'collections.errorAddingToCollection' => 'Fout bij toevoegen aan collectie',
 			'collections.created' => 'Collectie gemaakt',
@@ -8251,9 +8249,9 @@ extension on TranslationsNl {
 			'performanceOverlay.app' => 'App',
 			'performanceOverlay.decoder' => 'Decoder',
 			'performanceOverlay.rawDecoder' => 'Raw-decoder',
+			'performanceOverlay.tunneling' => 'Tunneling',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'Tunneling',
 			'performanceOverlay.passthrough' => 'Doorvoer',
 			'performanceOverlay.aspect' => 'Verhouding',
 			'performanceOverlay.rotation' => 'Rotatie',
@@ -8765,9 +8763,9 @@ extension on TranslationsNl {
 			'homeLayout.managePlexRows' => 'Beheer Plex rijen in Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Open om de Home-selecteerde rijen te organiseren',
 			'homeLayout.organizeHomeRows' => 'Home Ronden organiseren',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rijen: bewegen, Hero, Auto-slide, verwijderen',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rijen: bewegen, Hero, Auto-slide, verwijderen',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organiseren ${library} rijen',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} rijen: beweging, bibliotheek, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render als een heldkaart',
@@ -9279,9 +9277,9 @@ extension on TranslationsNl {
 			'audiobook.undoSeek' => 'De laatste zoekt',
 			'audiobook.customSpeed' => 'Custom playback snelheid',
 			'audiobook.speedHelp' => 'Kies een snelheid van 0,25× tot 4×.',
+			'audiobook.apply' => 'Aanvragen',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'Aanvragen',
 			'audiobook.customSleep' => 'Custom slaaptijd',
 			'audiobook.sleepMinutes' => 'Minuten (1 tot 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stop na ${count} hoofdstukken',
@@ -9793,9 +9791,9 @@ extension on TranslationsNl {
 			'musicExperience.bluetoothDriving' => 'Bluetooth-uitgangen voor autorijden',
 			'musicExperience.bluetoothDrivingHint' => 'Kies verbonden Bluetooth-uitgangen die de rijweergave automatisch openen.',
 			'musicTools.loudnessMissing' => 'Geen luidheidsgegevens ontvangen',
+			'musicTools.loudnessRequested' => 'Analyseverzoek verzonden',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'Analyseverzoek verzonden',
 			'musicTools.loudnessUnsupported' => 'Deze serverversie ondersteunt geen analyseverzoeken',
 			'musicTools.serverHistory' => 'Afspeelgeschiedenis van de server',
 			'musicTools.nfcWrite' => 'NFC-tag schrijven',

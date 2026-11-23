@@ -102,7 +102,6 @@
     "authenticationTimeout": "验证超时。请重试。",
     "scanQRToSignIn": "扫描二维码登录",
     "waitingForAuth": "正在等待身份验证…\n请在浏览器中登录。",
-    "useBrowser": "使用浏览器",
     "or": "或",
     "connectToMediaBrowser": "连接到 ${product}",
     "quickConnect": "Quick Connect",

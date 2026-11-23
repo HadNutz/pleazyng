@@ -102,7 +102,6 @@
     "authenticationTimeout": "驗證逾時。請重試。",
     "scanQRToSignIn": "掃描此 QR 碼以登入",
     "waitingForAuth": "正在等待驗證…\n請在瀏覽器中登入。",
-    "useBrowser": "使用瀏覽器",
     "or": "或",
     "connectToMediaBrowser": "連線至 ${product}",
     "quickConnect": "快速連線（Quick Connect）",

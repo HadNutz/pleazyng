@@ -102,7 +102,6 @@
     "authenticationTimeout": "Godkendelsen tog for lang tid. Prøv igen.",
     "scanQRToSignIn": "Scan denne QR-kode for at logge ind",
     "waitingForAuth": "Venter på godkendelse...\nLog ind fra din browser.",
-    "useBrowser": "Brug browseren",
     "or": "eller",
     "connectToMediaBrowser": "Opret forbindelse til ${product}",
     "quickConnect": "Quick Connect",

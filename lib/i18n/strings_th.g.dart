@@ -247,7 +247,6 @@ class _Translations$auth$th extends Translations$auth$en {
 	@override String get authenticationTimeout => 'การรับรองเป็นเวลาแล้ว โปรดลองอีกครั้ง';
 	@override String get scanQRToSignIn => 'สแกนรหัส QR นี้เพื่อลงทะเบียน';
 	@override String get waitingForAuth => 'รอการรับรอง... ลงทะเบียนจากเบราว์เซอร์ของคุณ';
-	@override String get useBrowser => 'ใช้เบราว์เซอร์';
 	@override String get or => 'หรือ';
 	@override String connectToMediaBrowser({required Object product}) => 'ติดต่อ ${product}';
 	@override String get quickConnect => 'Quick Connect';
@@ -5748,7 +5747,6 @@ extension on TranslationsTh {
 			'auth.authenticationTimeout' => 'การรับรองเป็นเวลาแล้ว โปรดลองอีกครั้ง',
 			'auth.scanQRToSignIn' => 'สแกนรหัส QR นี้เพื่อลงทะเบียน',
 			'auth.waitingForAuth' => 'รอการรับรอง... ลงทะเบียนจากเบราว์เซอร์ของคุณ',
-			'auth.useBrowser' => 'ใช้เบราว์เซอร์',
 			'auth.or' => 'หรือ',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'ติดต่อ ${product}',
 			'auth.quickConnect' => 'Quick Connect',
@@ -6170,9 +6168,9 @@ extension on TranslationsTh {
 			'settings.manageLibrariesDescription' => 'การจัดเก็บและซ่อนห้องสมุด',
 			'settings.companionRemoteServer' => 'เซิร์ฟเวอร์ระยะไกล',
 			'settings.companionRemoteServerDescription' => 'ให้อุปกรณ์มือถือบนเครือข่ายของคุณควบคุมแอปนี้',
+			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'ไม่สามารถเริ่มต้นเซิร์ฟเวอร์คู่ค้าได้',
 			'settings.companionRemoteServerStopFailed' => 'ไม่สามารถหยุดเซิร์ฟเวอร์พันธมิตร',
 			'settings.autoPip' => 'ภาพถ่ายในภาพ',
 			'settings.autoPipDescription' => 'เข้าสู่ภาพในภาพโดยอัตโนมัติเมื่อคุณออกจากแอปในระหว่างการเล่น',
@@ -6684,9 +6682,9 @@ extension on TranslationsTh {
 			'accessibility.interaction' => 'การเคลื่อนไหวและการโต้ตอบ',
 			'accessibility.reduceMotion' => 'ลดการเคลื่อนไหว',
 			'accessibility.reduceMotionHint' => 'หยุดการเคลื่อนไหวของตัวบอกโฟกัส การเปลี่ยนหน้า และเอฟเฟกต์ตกแต่ง',
+			'accessibility.largeTargets' => 'เป้าหมายสัมผัสขนาดใหญ่',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'เป้าหมายสัมผัสขนาดใหญ่',
 			'accessibility.largeTargetsHint' => 'ให้การควบคุมร่วมกันพื้นที่มากขึ้นสําหรับสัมผัสและนิวเวชั่นช่วย',
 			'accessibility.navigationHint' => 'ใช้ Tab และ Shift+Tab เพื่อย้ายระหว่างควบคุม Enter หรือ Space เพื่อเปิดใช้งาน และ Escape หรือ Back เพื่อปิด โปรแกรมอ่าน zoom และเลือกอ่านพร้อมใช้งานในขณะที่หนังสือเปิด',
 			'accessibility.textSizeDescription' => 'หมายเลขอินเตอร์เฟซขนาดใน Pleazyng นอกจากการตั้งค่าขนาดข้อความระบบของอุปกรณ์ของคุณ',
@@ -7198,9 +7196,9 @@ extension on TranslationsTh {
 			'discover.findNext.controlsHelp' => 'คีย์บอร์ดหรือรีโมต: เลื่อนโฟกัสไปที่ปุ่ม แล้วกด Enter หรือเลือก การเลิกทำจะคืนค่าตัวเลือกล่าสุด',
 			'discover.findNext.artworkLoading' => 'กำลังโหลดภาพ…',
 			'discover.findNext.artworkUnavailable' => 'ไม่มีภาพ',
+			'discover.findNext.savedFeedback' => 'เพิ่มในรายการที่บันทึกแล้ว',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'เพิ่มในรายการที่บันทึกแล้ว',
 			'discover.findNext.skippedFeedback' => 'ข้ามไปก่อนแล้ว',
 			'discover.findNext.releaseToConfirm' => 'ปล่อยเพื่อยืนยัน',
 			'discover.findNext.remoteHint' => 'เมื่อโฟกัสภาพปก: ← / → เลือก · ปุ่มเลือก: รายละเอียด · ↑ / ↓ ย้ายโฟกัส',
@@ -7712,9 +7710,9 @@ extension on TranslationsTh {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'ไม่ได้ลบการเก็บรวบรวมช็อตเด็ด: ${error}',
 			'collections.selectCollection' => 'เลือกชุด',
 			'collections.collectionName' => 'ชื่อการเก็บเกี่ยว',
+			'collections.enterCollectionName' => 'ระบุชื่อการเก็บรวบรวม',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'ระบุชื่อการเก็บรวบรวม',
 			'collections.addedToCollection' => 'เพิ่มเข้าสู่การเก็บเกี่ยว',
 			'collections.errorAddingToCollection' => 'ไม่สามารถเพิ่มเข้าสู่การเก็บเกี่ยว',
 			'collections.created' => 'การเก็บรวบรวม',
@@ -8226,9 +8224,9 @@ extension on TranslationsTh {
 			'performanceOverlay.app' => 'แอป',
 			'performanceOverlay.decoder' => 'การตกแต่ง',
 			'performanceOverlay.rawDecoder' => 'วัตถุประสงค์',
+			'performanceOverlay.tunneling' => 'ทนเลอร์',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'ทนเลอร์',
 			'performanceOverlay.passthrough' => 'โพสต์',
 			'performanceOverlay.aspect' => 'ความเห็น',
 			'performanceOverlay.rotation' => 'การหมุน',
@@ -8740,9 +8738,9 @@ extension on TranslationsTh {
 			'homeLayout.managePlexRows' => 'การจัดการ Plex เถวใน Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'เปิดเพื่อจัดเตรียมเส้นที่เลือกในบ้าน',
 			'homeLayout.organizeHomeRows' => 'การจัดเรียงสายบ้าน',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} เถว: การเคลื่อนไหว, สัตว์ประหลาด, การลบอัตโนมัติ, ลบ',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} เถว: การเคลื่อนไหว, สัตว์ประหลาด, การลบอัตโนมัติ, ลบ',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'จัดการ ${library} เถว',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} เกรด: การเคลื่อนไหว, ห้องสมุด, บ้าน, พระมหากษัตริย์, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render ในฐานะที่เป็นการ์ดฮีโร่',
@@ -9254,9 +9252,9 @@ extension on TranslationsTh {
 			'audiobook.undoSeek' => 'ล่าสุด ค้นหา',
 			'audiobook.customSpeed' => 'ความเร็วการเล่นแบบกําหนดเอง',
 			'audiobook.speedHelp' => 'เลือกความเร็วจาก 0.25× ถึง 4×',
+			'audiobook.apply' => 'ใบสมัคร',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'ใบสมัคร',
 			'audiobook.customSleep' => 'ช่วงเวลาการนอนหลับ',
 			'audiobook.sleepMinutes' => 'นาที (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'หยุดหลังจาก ${count} ประเภท',
@@ -9768,9 +9766,9 @@ extension on TranslationsTh {
 			'musicExperience.bluetoothDriving' => 'เอาต์พุต Bluetooth สำหรับการขับรถ',
 			'musicExperience.bluetoothDrivingHint' => 'เลือกเอาต์พุต Bluetooth ที่เชื่อมต่อเพื่อเปิดมุมมองการขับรถโดยอัตโนมัติ',
 			'musicTools.loudnessMissing' => 'ไม่ได้รับข้อมูลความดัง',
+			'musicTools.loudnessRequested' => 'ส่งคำขอวิเคราะห์แล้ว',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'ส่งคำขอวิเคราะห์แล้ว',
 			'musicTools.loudnessUnsupported' => 'เซิร์ฟเวอร์เวอร์ชันนี้ไม่รองรับคำขอวิเคราะห์',
 			'musicTools.serverHistory' => 'ประวัติการเล่นบนเซิร์ฟเวอร์',
 			'musicTools.nfcWrite' => 'เขียนแท็ก NFC',

@@ -102,7 +102,6 @@
     "authenticationTimeout": "Přihláška je hotová, zkuste prosím znovu.",
     "scanQRToSignIn": "Skenujte tento QR kód pro přihlášení",
     "waitingForAuth": "Čekání na autentizaci... Přihlaste se z vašeho prohlížeče.",
-    "useBrowser": "Použití prohlížeče",
     "or": "nebo",
     "connectToMediaBrowser": "Připojte se k číslu ${product}",
     "quickConnect": "Rychlé připojení",

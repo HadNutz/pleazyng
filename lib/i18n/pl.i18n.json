@@ -102,7 +102,6 @@
     "authenticationTimeout": "Upłynął czas uwierzytelniania. Spróbuj ponownie.",
     "scanQRToSignIn": "Zeskanuj ten kod QR, aby się zalogować",
     "waitingForAuth": "Oczekiwanie na uwierzytelnienie...\nZaloguj się w przeglądarce.",
-    "useBrowser": "Użyj przeglądarki",
     "or": "lub",
     "connectToMediaBrowser": "Połącz z ${product}",
     "quickConnect": "Quick Connect",

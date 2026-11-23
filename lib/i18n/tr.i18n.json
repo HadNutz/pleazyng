@@ -102,7 +102,6 @@
     "authenticationTimeout": "Doğrulama zaman aşımına uğradı. Lütfen tekrar deneyin.",
     "scanQRToSignIn": "Giriş yapmak için bu QR kodunu tarayın",
     "waitingForAuth": "Doğrulama bekleniyor...\nTarayıcınızdan giriş yapın.",
-    "useBrowser": "Tarayıcı kullan",
     "or": "veya",
     "connectToMediaBrowser": "${product} ile Bağlan",
     "quickConnect": "Quick Connect",

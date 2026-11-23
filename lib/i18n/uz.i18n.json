@@ -102,7 +102,6 @@
     "authenticationTimeout": "Tasdiqlash vaqti tugadi. Iltimos, qaytadan urinib koʻring.",
     "scanQRToSignIn": "Kirish uchun ushbu QR kodni skanerlang",
     "waitingForAuth": "Tasdiqlanish kutilmoqda...\nBrauzeringizdan kiring.",
-    "useBrowser": "Brauzerdan foydalanish",
     "or": "yoki",
     "connectToMediaBrowser": "${product}ga ulanish",
     "quickConnect": "Tezkor ulanish",

@@ -102,7 +102,6 @@
     "authenticationTimeout": "認証がタイムアウトしました。もう一度お試しください。",
     "scanQRToSignIn": "このQRコードをスキャンしてサインイン",
     "waitingForAuth": "認証を待っています…\nブラウザでサインインしてください。",
-    "useBrowser": "ブラウザを使用",
     "or": "または",
     "connectToMediaBrowser": "${product}に接続",
     "quickConnect": "Quick Connect",

@@ -89,7 +89,6 @@
   "auth.authenticationTimeout": "30b1265e3a908bfc",
   "auth.scanQRToSignIn": "e2fa8e4582171189",
   "auth.waitingForAuth": "75b4130a866d5395",
-  "auth.useBrowser": "cb49b9aa4d25402e",
   "auth.or": "6f21340b75e3d46c",
   "auth.connectToMediaBrowser": "6003a020bfffe2d6",
   "auth.quickConnect": "241ea164c714eb3b",

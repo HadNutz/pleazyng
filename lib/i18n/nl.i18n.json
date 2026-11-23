@@ -102,7 +102,6 @@
     "authenticationTimeout": "Authenticatie verlopen. Probeer opnieuw.",
     "scanQRToSignIn": "Scan deze QR-code om in te loggen",
     "waitingForAuth": "Wachten op authenticatie...\nMeld je aan via je browser.",
-    "useBrowser": "Gebruik browser",
     "or": "of",
     "connectToMediaBrowser": "Verbinding maken met ${product}",
     "quickConnect": "Quick Connect",

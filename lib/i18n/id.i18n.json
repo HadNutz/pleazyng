@@ -102,7 +102,6 @@
     "authenticationTimeout": "Pengesahan sudah selesai, silakan coba lagi.",
     "scanQRToSignIn": "Scan kode QR ini untuk mendaftar",
     "waitingForAuth": "Menunggu untuk autentikasi ... Mendaftar dari browser Anda.",
-    "useBrowser": "Menggunakan browser",
     "or": "atau",
     "connectToMediaBrowser": "Menghubungkan ke ${product}",
     "quickConnect": "Koneksi Cepat",

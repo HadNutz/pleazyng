@@ -247,7 +247,6 @@ class _Translations$auth$cs extends Translations$auth$en {
 	@override String get authenticationTimeout => 'Přihláška je hotová, zkuste prosím znovu.';
 	@override String get scanQRToSignIn => 'Skenujte tento QR kód pro přihlášení';
 	@override String get waitingForAuth => 'Čekání na autentizaci... Přihlaste se z vašeho prohlížeče.';
-	@override String get useBrowser => 'Použití prohlížeče';
 	@override String get or => 'nebo';
 	@override String connectToMediaBrowser({required Object product}) => 'Připojte se k číslu ${product}';
 	@override String get quickConnect => 'Rychlé připojení';
@@ -5817,7 +5816,6 @@ extension on TranslationsCs {
 			'auth.authenticationTimeout' => 'Přihláška je hotová, zkuste prosím znovu.',
 			'auth.scanQRToSignIn' => 'Skenujte tento QR kód pro přihlášení',
 			'auth.waitingForAuth' => 'Čekání na autentizaci... Přihlaste se z vašeho prohlížeče.',
-			'auth.useBrowser' => 'Použití prohlížeče',
 			'auth.or' => 'nebo',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'Připojte se k číslu ${product}',
 			'auth.quickConnect' => 'Rychlé připojení',
@@ -6239,9 +6237,9 @@ extension on TranslationsCs {
 			'settings.manageLibrariesDescription' => 'Přehrávat a skrývat knihovny',
 			'settings.companionRemoteServer' => 'Společnost Remote Server',
 			'settings.companionRemoteServerDescription' => 'Umožňujte mobilním zařízením v síti ovládat tuto aplikaci',
+			'settings.companionRemoteServerStartFailed' => 'Nemohla spustit server',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Nemohla spustit server',
 			'settings.companionRemoteServerStopFailed' => 'Nemohla jsem zastavit server',
 			'settings.autoPip' => 'Auto Picture v obraze',
 			'settings.autoPipDescription' => 'Automaticky zadejte obrázek v obrazu, když opustíte aplikaci během přehrávání',
@@ -6753,9 +6751,9 @@ extension on TranslationsCs {
 			'accessibility.interaction' => 'Pohyb a interakce',
 			'accessibility.reduceMotion' => 'Snížení pohybu',
 			'accessibility.reduceMotionHint' => 'Zastaví pohyb indikátoru zaměření, přechody stránek a dekorativní efekty.',
+			'accessibility.largeTargets' => 'větší cíle dotyku',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'větší cíle dotyku',
 			'accessibility.largeTargetsHint' => 'Dáváme sdíleným ovládacím prvkům více prostoru pro dotyk a asistenční navigaci.',
 			'accessibility.navigationHint' => 'Mezi ovládacími prvky se přesouvejte klávesami Tab a Shift+Tab, aktivujte je klávesou Enter nebo mezerníkem a zavírejte klávesou Escape nebo tlačítkem Zpět. Při otevřené knize je dostupné přiblížení a nastavení čtení.',
 			'accessibility.textSizeDescription' => 'Rozsah textového rozhraní v Pleazyng kromě nastavení velikosti textu systému vašeho zařízení.',
@@ -7267,9 +7265,9 @@ extension on TranslationsCs {
 			'discover.findNext.controlsHelp' => 'Klávesnice nebo ovladač: vyberte tlačítko a stiskněte Enter nebo Vybrat. Zpět obnoví poslední volbu.',
 			'discover.findNext.artworkLoading' => 'Načítání obrázku…',
 			'discover.findNext.artworkUnavailable' => 'Obrázek není k dispozici',
+			'discover.findNext.savedFeedback' => 'Přidáno mezi uložené tipy',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'Přidáno mezi uložené tipy',
 			'discover.findNext.skippedFeedback' => 'Zatím přeskočeno',
 			'discover.findNext.releaseToConfirm' => 'Uvolněním potvrďte',
 			'discover.findNext.remoteHint' => 'Vybraný obal: ← / → volba · Vybrat: podrobnosti · ↑ / ↓ přesun výběru',
@@ -7781,9 +7779,9 @@ extension on TranslationsCs {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Neschopné odstranit sbírku: ${error}',
 			'collections.selectCollection' => 'Vyberte kolekci',
 			'collections.collectionName' => 'Název kolekce',
+			'collections.enterCollectionName' => 'Vložte název kolekce',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'Vložte název kolekce',
 			'collections.addedToCollection' => 'Přidáno do sbírky',
 			'collections.errorAddingToCollection' => 'Nedokázal přidat do sbírky',
 			'collections.created' => 'Sbírka vytvořená',
@@ -8295,9 +8293,9 @@ extension on TranslationsCs {
 			'performanceOverlay.app' => 'Aplikace',
 			'performanceOverlay.decoder' => 'dekódování',
 			'performanceOverlay.rawDecoder' => 'Růžový decoder',
+			'performanceOverlay.tunneling' => 'tunelů',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'tunelů',
 			'performanceOverlay.passthrough' => 'Pastrátová',
 			'performanceOverlay.aspect' => 'Pohled',
 			'performanceOverlay.rotation' => 'Rotace',
@@ -8809,9 +8807,9 @@ extension on TranslationsCs {
 			'homeLayout.managePlexRows' => 'Řízení Plex řádků v Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Otevřeno pro organizaci domácího výběru řádků',
 			'homeLayout.organizeHomeRows' => 'Domácí řádky',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} řádky: pohyb, Hero, Auto-slide, odstranění',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} řádky: pohyb, Hero, Auto-slide, odstranění',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Složení ${library} řádků',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Pokračovat v sledování + ${n} řádky: pohyb, knihovna, Domů, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Vstup jako hrdinská karta',
@@ -9323,9 +9321,9 @@ extension on TranslationsCs {
 			'audiobook.undoSeek' => 'Poslední hledání',
 			'audiobook.customSpeed' => 'Přizpůsobená hrací rychlost',
 			'audiobook.speedHelp' => 'Vybírejte rychlost od 0,25× do 4×.',
+			'audiobook.apply' => 'aplikovat',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'aplikovat',
 			'audiobook.customSleep' => 'Přizpůsobený čas spánku',
 			'audiobook.sleepMinutes' => 'minuty (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Zastavte se po ${count} kapitolách',
@@ -9837,9 +9835,9 @@ extension on TranslationsCs {
 			'musicExperience.bluetoothDriving' => 'Bluetooth výstupy pro řízení',
 			'musicExperience.bluetoothDrivingHint' => 'Vyberte připojené Bluetooth výstupy, které automaticky otevřou zobrazení pro řízení.',
 			'musicTools.loudnessMissing' => 'Server nevrátil údaje o hlasitosti',
+			'musicTools.loudnessRequested' => 'Požadavek na analýzu byl odeslán',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'Požadavek na analýzu byl odeslán',
 			'musicTools.loudnessUnsupported' => 'Tato verze serveru nepodporuje požadavky na analýzu',
 			'musicTools.serverHistory' => 'Historie přehrávání na serveru',
 			'musicTools.nfcWrite' => 'Zapsat NFC štítek',

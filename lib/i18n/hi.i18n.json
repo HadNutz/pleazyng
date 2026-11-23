@@ -102,7 +102,6 @@
     "authenticationTimeout": "प्रमाणीकरण समय से समाप्त हो गया है. कृपया फिर से कोशिश करें.",
     "scanQRToSignIn": "इस QR कोड को स्कैन करने के लिए",
     "waitingForAuth": "प्रमाणीकरण के लिए इंतजार ... अपने ब्राउज़र से साइन इन करें।",
-    "useBrowser": "ब्राउज़र का उपयोग",
     "or": "या",
     "connectToMediaBrowser": "कनेक्ट करें ${product}",
     "quickConnect": "Quick Connect",

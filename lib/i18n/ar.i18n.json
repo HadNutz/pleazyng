@@ -102,7 +102,6 @@
     "authenticationTimeout": "تأكيد موعد، يرجى المحاولة مرة أخرى.",
     "scanQRToSignIn": "قم بفحص هذا الرمز QR لتسجيل الدخول",
     "waitingForAuth": "الانتظار للحصول على مصداقية... تسجيل الدخول من المتصفح الخاص بك.",
-    "useBrowser": "استخدام البريد الإلكتروني",
     "or": "أو",
     "connectToMediaBrowser": "الاتصال بـ ${product}",
     "quickConnect": "توصيل سريع",

@@ -102,7 +102,6 @@
     "authenticationTimeout": "Se agotó el tiempo de autenticación. Inténtalo de nuevo.",
     "scanQRToSignIn": "Escanea este código QR para iniciar sesión",
     "waitingForAuth": "Esperando autenticación...\nInicia sesión desde tu navegador.",
-    "useBrowser": "Usar navegador",
     "or": "o",
     "connectToMediaBrowser": "Conectar a ${product}",
     "quickConnect": "Quick Connect",

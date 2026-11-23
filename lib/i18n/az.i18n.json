@@ -102,7 +102,6 @@
     "authenticationTimeout": "Təsdiqləmə vaxtı bitdi. Lütfən təzədən cəhd edin.",
     "scanQRToSignIn": "Daxil olmaq üçün bu QR kodu skan edin",
     "waitingForAuth": "Təsdiqləmə gözlənilir...\nSəyahətçinizdən (brauzer) daxil olun.",
-    "useBrowser": "Səyahətçini istifadə et",
     "or": "və ya",
     "connectToMediaBrowser": "${product}-a qoşul",
     "quickConnect": "Sürətli Qoşulma",

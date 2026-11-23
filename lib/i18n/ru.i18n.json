@@ -102,7 +102,6 @@
     "authenticationTimeout": "Время аутентификации истекло. Попробуйте снова.",
     "scanQRToSignIn": "Отсканируйте QR-код для входа",
     "waitingForAuth": "Ожидание аутентификации...\nВыполните вход в браузере.",
-    "useBrowser": "Использовать браузер",
     "or": "или",
     "connectToMediaBrowser": "Подключиться к ${product}",
     "quickConnect": "Quick Connect",

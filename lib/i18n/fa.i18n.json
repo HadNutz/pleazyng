@@ -102,7 +102,6 @@
     "authenticationTimeout": "تاریخ ثبت نام به پایان رسیده است لطفا دوباره امتحان کنید",
     "scanQRToSignIn": "این کد QR را برای ثبت نام در",
     "waitingForAuth": "منتظر صدور گواهینامه ... از مرورگر خود وارد شوید.",
-    "useBrowser": "استفاده از مرورگر",
     "or": "یا",
     "connectToMediaBrowser": "تماس با ${product}",
     "quickConnect": "اتصال سریع",

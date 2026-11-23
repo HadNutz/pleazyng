@@ -247,7 +247,6 @@ class _Translations$auth$fa extends Translations$auth$en {
 	@override String get authenticationTimeout => 'تاریخ ثبت نام به پایان رسیده است لطفا دوباره امتحان کنید';
 	@override String get scanQRToSignIn => 'این کد QR را برای ثبت نام در';
 	@override String get waitingForAuth => 'منتظر صدور گواهینامه ... از مرورگر خود وارد شوید.';
-	@override String get useBrowser => 'استفاده از مرورگر';
 	@override String get or => 'یا';
 	@override String connectToMediaBrowser({required Object product}) => 'تماس با ${product}';
 	@override String get quickConnect => 'اتصال سریع';
@@ -5773,7 +5772,6 @@ extension on TranslationsFa {
 			'auth.authenticationTimeout' => 'تاریخ ثبت نام به پایان رسیده است لطفا دوباره امتحان کنید',
 			'auth.scanQRToSignIn' => 'این کد QR را برای ثبت نام در',
 			'auth.waitingForAuth' => 'منتظر صدور گواهینامه ... از مرورگر خود وارد شوید.',
-			'auth.useBrowser' => 'استفاده از مرورگر',
 			'auth.or' => 'یا',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'تماس با ${product}',
 			'auth.quickConnect' => 'اتصال سریع',
@@ -6195,9 +6193,9 @@ extension on TranslationsFa {
 			'settings.manageLibrariesDescription' => 'کتابخانه ها را ذخیره و پنهان کنید',
 			'settings.companionRemoteServer' => 'سرورهای از راه دور',
 			'settings.companionRemoteServerDescription' => 'اجازه دهید دستگاه های تلفن همراه در شبکه شما این برنامه را کنترل کنند',
+			'settings.companionRemoteServerStartFailed' => 'نمی توانم سرور همراه را راه اندازی کنم.',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'نمی توانم سرور همراه را راه اندازی کنم.',
 			'settings.companionRemoteServerStopFailed' => 'نمی توانم سرور همراه را متوقف کنم.',
 			'settings.autoPip' => 'عکس های خودکار در تصویر',
 			'settings.autoPipDescription' => 'به طور خودکار تصویر-در-تصویر را وارد کنید هنگامی که برنامه را در طول پخش ترک می کنید',
@@ -6709,9 +6707,9 @@ extension on TranslationsFa {
 			'accessibility.interaction' => 'حرکت و تعامل',
 			'accessibility.reduceMotion' => 'کاهش حرکت',
 			'accessibility.reduceMotionHint' => 'حرکت نشانگر تمرکز، گذارهای صفحه و جلوه‌های تزئینی را متوقف کنید.',
+			'accessibility.largeTargets' => 'هدف های لمسی بزرگتر',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'هدف های لمسی بزرگتر',
 			'accessibility.largeTargetsHint' => 'کنترل های به اشتراک گذاشته شده را برای لمس و ناوبری کمک کننده فضای بیشتری فراهم می کند.',
 			'accessibility.navigationHint' => 'برای جابه‌جایی بین کنترل‌ها از Tab و Shift+Tab، برای فعال‌سازی از Enter یا Space و برای بستن از Escape یا دکمهٔ بازگشت استفاده کنید. وقتی کتاب باز است، بزرگ‌نمایی و تنظیمات خواندن در دسترس‌اند.',
 			'accessibility.textSizeDescription' => 'متن رابط مقیاس در Pleazyng علاوه بر تنظیمات اندازه متن سیستم دستگاه شما.',
@@ -7223,9 +7221,9 @@ extension on TranslationsFa {
 			'discover.findNext.controlsHelp' => 'صفحه‌کلید یا کنترل: روی یک دکمه بروید و Enter یا دکمه انتخاب را بزنید. واگرد آخرین انتخاب شما را برمی‌گرداند.',
 			'discover.findNext.artworkLoading' => 'در حال بارگیری تصویر…',
 			'discover.findNext.artworkUnavailable' => 'تصویر در دسترس نیست',
+			'discover.findNext.savedFeedback' => 'به انتخاب‌های ذخیره‌شده افزوده شد',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'به انتخاب‌های ذخیره‌شده افزوده شد',
 			'discover.findNext.skippedFeedback' => 'فعلاً رد شد',
 			'discover.findNext.releaseToConfirm' => 'برای تأیید رها کنید',
 			'discover.findNext.remoteHint' => 'با تمرکز روی جلد: ← / → انتخاب · دکمه انتخاب: جزئیات · ↑ / ↓ جابه‌جایی تمرکز',
@@ -7737,9 +7735,9 @@ extension on TranslationsFa {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'عدم حذف مجموعه: ${error}',
 			'collections.selectCollection' => 'انتخاب مجموعه',
 			'collections.collectionName' => 'نام جمع آوری',
+			'collections.enterCollectionName' => 'نام مجموعه را وارد کنید',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'نام مجموعه را وارد کنید',
 			'collections.addedToCollection' => 'اضافه شده به مجموعه',
 			'collections.errorAddingToCollection' => 'عدم اضافه شدن به جمع آوری',
 			'collections.created' => 'جمع آوری ساخته شده',
@@ -8251,9 +8249,9 @@ extension on TranslationsFa {
 			'performanceOverlay.app' => 'برنامه',
 			'performanceOverlay.decoder' => 'دکوراسیون',
 			'performanceOverlay.rawDecoder' => 'دکوراسیون خام',
+			'performanceOverlay.tunneling' => 'تونل',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'تونل',
 			'performanceOverlay.passthrough' => 'پازل',
 			'performanceOverlay.aspect' => 'دیدگاه',
 			'performanceOverlay.rotation' => 'چرخش',
@@ -8765,9 +8763,9 @@ extension on TranslationsFa {
 			'homeLayout.managePlexRows' => 'مدیریت Plex ردیف در Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'باز برای سازماندهی خطوط انتخاب شده در خانه',
 			'homeLayout.organizeHomeRows' => 'سازماندهی خطوط خانگی',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ردیف: حرکت، قهرمان، اتوماتیک، حذف',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ردیف: حرکت، قهرمان، اتوماتیک، حذف',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'سازماندهی ${library} خطوط',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'ادامه تماشای + ${n} خطوط: حرکت, کتابخانه, خانه, قهرمان, اسلاید خودکار',
 			'homeLayout.renderAsHero' => 'به عنوان یک کارت قهرمان',
@@ -9279,9 +9277,9 @@ extension on TranslationsFa {
 			'audiobook.undoSeek' => 'آخرین جستجو',
 			'audiobook.customSpeed' => 'سرعت بازی Custom Playback',
 			'audiobook.speedHelp' => 'سرعت را از 0.25× تا 4× انتخاب کنید.',
+			'audiobook.apply' => 'اعمال',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'اعمال',
 			'audiobook.customSleep' => 'زمان خواب شخصی',
 			'audiobook.sleepMinutes' => '۱ تا ۱۴۴۰ دقیقه',
 			'audiobook.sleepChapters' => ({required Object count}) => 'دانلود بازی ${count}',
@@ -9793,9 +9791,9 @@ extension on TranslationsFa {
 			'musicExperience.bluetoothDriving' => 'خروجی‌های بلوتوث برای رانندگی',
 			'musicExperience.bluetoothDrivingHint' => 'خروجی‌های بلوتوث متصل را انتخاب کنید که نمای رانندگی را خودکار باز می‌کنند.',
 			'musicTools.loudnessMissing' => 'داده‌ای درباره بلندی صدا دریافت نشد',
+			'musicTools.loudnessRequested' => 'درخواست تحلیل ارسال شد',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'درخواست تحلیل ارسال شد',
 			'musicTools.loudnessUnsupported' => 'این نسخهٔ سرور از درخواست تحلیل پشتیبانی نمی‌کند',
 			'musicTools.serverHistory' => 'سابقهٔ پخش سرور',
 			'musicTools.nfcWrite' => 'نوشتن برچسب NFC',

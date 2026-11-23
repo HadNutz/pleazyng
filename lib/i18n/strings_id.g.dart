@@ -247,7 +247,6 @@ class _Translations$auth$id extends Translations$auth$en {
 	@override String get authenticationTimeout => 'Pengesahan sudah selesai, silakan coba lagi.';
 	@override String get scanQRToSignIn => 'Scan kode QR ini untuk mendaftar';
 	@override String get waitingForAuth => 'Menunggu untuk autentikasi ... Mendaftar dari browser Anda.';
-	@override String get useBrowser => 'Menggunakan browser';
 	@override String get or => 'atau';
 	@override String connectToMediaBrowser({required Object product}) => 'Menghubungkan ke ${product}';
 	@override String get quickConnect => 'Koneksi Cepat';
@@ -5748,7 +5747,6 @@ extension on TranslationsId {
 			'auth.authenticationTimeout' => 'Pengesahan sudah selesai, silakan coba lagi.',
 			'auth.scanQRToSignIn' => 'Scan kode QR ini untuk mendaftar',
 			'auth.waitingForAuth' => 'Menunggu untuk autentikasi ... Mendaftar dari browser Anda.',
-			'auth.useBrowser' => 'Menggunakan browser',
 			'auth.or' => 'atau',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'Menghubungkan ke ${product}',
 			'auth.quickConnect' => 'Koneksi Cepat',
@@ -6170,9 +6168,9 @@ extension on TranslationsId {
 			'settings.manageLibrariesDescription' => 'Membuka dan menyembunyikan perpustakaan',
 			'settings.companionRemoteServer' => 'Layanan Remote Server',
 			'settings.companionRemoteServerDescription' => 'Memungkinkan perangkat mobile di jaringan Anda untuk mengontrol aplikasi ini',
+			'settings.companionRemoteServerStartFailed' => 'Tidak bisa memulai server',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Tidak bisa memulai server',
 			'settings.companionRemoteServerStopFailed' => 'Tidak bisa menghentikan server',
 			'settings.autoPip' => 'Foto-foto dalam gambar',
 			'settings.autoPipDescription' => 'Secara otomatis masuk gambar-in-gambar ketika Anda meninggalkan aplikasi selama pemutaran',
@@ -6684,9 +6682,9 @@ extension on TranslationsId {
 			'accessibility.interaction' => 'Pergerakan dan Interaksi',
 			'accessibility.reduceMotion' => 'Mengurangi gerakan',
 			'accessibility.reduceMotionHint' => 'Hentikan animasi indikator fokus, transisi halaman, dan efek dekoratif.',
+			'accessibility.largeTargets' => 'Target Touch yang lebih besar',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'Target Touch yang lebih besar',
 			'accessibility.largeTargetsHint' => 'Memberi kontrol yang dikongsi lebih banyak ruang untuk sentuhan dan navigasi asisten.',
 			'accessibility.navigationHint' => 'Gunakan Tab dan Shift+Tab untuk berpindah antar kontrol, Enter atau Space untuk mengaktifkan, dan Escape atau tombol Kembali untuk menutup. Zoom dan preferensi membaca tersedia saat buku terbuka.',
 			'accessibility.textSizeDescription' => 'Skala antara muka teks dalam Pleazyng ditambah dengan pengaturan ukuran teks sistem perangkat Anda.',
@@ -7198,9 +7196,9 @@ extension on TranslationsId {
 			'discover.findNext.controlsHelp' => 'Keyboard atau remote: fokuskan tombol, lalu tekan Enter atau Pilih. Urungkan mengembalikan pilihan terakhir Anda.',
 			'discover.findNext.artworkLoading' => 'Memuat gambar…',
 			'discover.findNext.artworkUnavailable' => 'Gambar tidak tersedia',
+			'discover.findNext.savedFeedback' => 'Ditambahkan ke pilihan tersimpan',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'Ditambahkan ke pilihan tersimpan',
 			'discover.findNext.skippedFeedback' => 'Dilewati untuk saat ini',
 			'discover.findNext.releaseToConfirm' => 'Lepaskan untuk mengonfirmasi',
 			'discover.findNext.remoteHint' => 'Saat sampul terfokus: ← / → memilih · Pilih: detail · ↑ / ↓ pindah fokus',
@@ -7712,9 +7710,9 @@ extension on TranslationsId {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Tidak berhasil menghapus koleksi: ${error}',
 			'collections.selectCollection' => 'Seleksi Seleksi',
 			'collections.collectionName' => 'Nama Koleksi',
+			'collections.enterCollectionName' => 'Masukkan nama koleksi',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'Masukkan nama koleksi',
 			'collections.addedToCollection' => 'Ditambahkan ke Koleksi',
 			'collections.errorAddingToCollection' => 'gagal menambahkan ke koleksi',
 			'collections.created' => 'Koleksi yang diciptakan',
@@ -8226,9 +8224,9 @@ extension on TranslationsId {
 			'performanceOverlay.app' => 'Aplikasi',
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Kekuatan Decoder',
+			'performanceOverlay.tunneling' => 'tunel',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'tunel',
 			'performanceOverlay.passthrough' => 'Pasangan',
 			'performanceOverlay.aspect' => 'Aspek',
 			'performanceOverlay.rotation' => 'Rotasi',
@@ -8740,9 +8738,9 @@ extension on TranslationsId {
 			'homeLayout.managePlexRows' => 'Mengelola Plex baris di Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Terbuka untuk mengatur rangkaian yang dipilih di rumah',
 			'homeLayout.organizeHomeRows' => 'Mengatur rangkaian rumah',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} baris: bergerak, Hero, Auto-slide, menghapus',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} baris: bergerak, Hero, Auto-slide, menghapus',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Mengatur ${library} baris',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Selanjutnya Menonton + ${n} baris: bergerak, Perpustakaan, Rumah, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render sebagai kartu pahlawan',
@@ -9254,9 +9252,9 @@ extension on TranslationsId {
 			'audiobook.undoSeek' => 'yang terakhir dicari',
 			'audiobook.customSpeed' => 'Kecepatan playback yang disesuaikan',
 			'audiobook.speedHelp' => 'Pilih kecepatan dari 0.25× hingga 4×.',
+			'audiobook.apply' => 'Mengaplikasikan',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'Mengaplikasikan',
 			'audiobook.customSleep' => 'Waktu Tidur Custom',
 			'audiobook.sleepMinutes' => '1 menit (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Berhenti setelah ${count} bab',
@@ -9768,9 +9766,9 @@ extension on TranslationsId {
 			'musicExperience.bluetoothDriving' => 'Output Bluetooth untuk berkendara',
 			'musicExperience.bluetoothDrivingHint' => 'Pilih output Bluetooth terhubung yang otomatis membuka tampilan berkendara.',
 			'musicTools.loudnessMissing' => 'Tidak ada data kenyaringan yang dikembalikan',
+			'musicTools.loudnessRequested' => 'Permintaan analisis dikirim',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'Permintaan analisis dikirim',
 			'musicTools.loudnessUnsupported' => 'Versi server ini tidak mendukung permintaan analisis',
 			'musicTools.serverHistory' => 'Riwayat pemutaran server',
 			'musicTools.nfcWrite' => 'Tulis tag NFC',

@@ -247,7 +247,6 @@ class _Translations$auth$ja extends Translations$auth$en {
 	@override String get authenticationTimeout => '認証がタイムアウトしました。もう一度お試しください。';
 	@override String get scanQRToSignIn => 'このQRコードをスキャンしてサインイン';
 	@override String get waitingForAuth => '認証を待っています…\nブラウザでサインインしてください。';
-	@override String get useBrowser => 'ブラウザを使用';
 	@override String get or => 'または';
 	@override String connectToMediaBrowser({required Object product}) => '${product}に接続';
 	@override String get quickConnect => 'Quick Connect';
@@ -5768,7 +5767,6 @@ extension on TranslationsJa {
 			'auth.authenticationTimeout' => '認証がタイムアウトしました。もう一度お試しください。',
 			'auth.scanQRToSignIn' => 'このQRコードをスキャンしてサインイン',
 			'auth.waitingForAuth' => '認証を待っています…\nブラウザでサインインしてください。',
-			'auth.useBrowser' => 'ブラウザを使用',
 			'auth.or' => 'または',
 			'auth.connectToMediaBrowser' => ({required Object product}) => '${product}に接続',
 			'auth.quickConnect' => 'Quick Connect',
@@ -6190,9 +6188,9 @@ extension on TranslationsJa {
 			'settings.manageLibrariesDescription' => 'ライブラリを並べ替えたり非表示にしたりできます',
 			'settings.companionRemoteServer' => 'コンパニオンリモートサーバー',
 			'settings.companionRemoteServerDescription' => 'ネットワーク上のモバイルデバイスからこのアプリを操作できるようにする',
+			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'コンパニオンリモートサーバーを開始できませんでした',
 			'settings.companionRemoteServerStopFailed' => 'コンパニオンリモートサーバーを停止できませんでした',
 			'settings.autoPip' => '自動ピクチャーインピクチャー',
 			'settings.autoPipDescription' => '再生中にアプリを離れると、自動的にピクチャーインピクチャーに切り替えます',
@@ -6704,9 +6702,9 @@ extension on TranslationsJa {
 			'accessibility.interaction' => '動きと相互作用',
 			'accessibility.reduceMotion' => '動きを減らす',
 			'accessibility.reduceMotionHint' => 'フォーカス表示、ページ切り替え、装飾効果の動きを止めます。',
+			'accessibility.largeTargets' => 'タッチターゲットの拡大',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'タッチターゲットの拡大',
 			'accessibility.largeTargetsHint' => '共通の操作ボタンの領域を広げ、タッチ操作や支援技術による操作をしやすくします。',
 			'accessibility.navigationHint' => 'TabとShift+Tabで操作項目を移動し、EnterまたはSpaceで実行、Escapeまたは戻るボタンで閉じます。本を開いている間は、拡大率や読書設定を変更できます。',
 			'accessibility.textSizeDescription' => 'Pleazyng のスケールインターフェイスのテキストは、デバイスのシステムのテキスタイル設定に加えて。',
@@ -7218,9 +7216,9 @@ extension on TranslationsJa {
 			'discover.findNext.controlsHelp' => 'キーボードやリモコンでは、ボタンにフォーカスして Enter または決定を押します。元に戻すと直前の選択を取り消せます。',
 			'discover.findNext.artworkLoading' => '画像を読み込み中…',
 			'discover.findNext.artworkUnavailable' => '画像を表示できません',
+			'discover.findNext.savedFeedback' => '保存済み候補に追加しました',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => '保存済み候補に追加しました',
 			'discover.findNext.skippedFeedback' => 'いったんスキップしました',
 			'discover.findNext.releaseToConfirm' => '離して確定',
 			'discover.findNext.remoteHint' => '表紙にフォーカス：← / → で選択・決定で詳細・↑ / ↓ でフォーカス移動',
@@ -7732,9 +7730,9 @@ extension on TranslationsJa {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'コレクションの削除に失敗しました: ${error}',
 			'collections.selectCollection' => 'コレクションを選択',
 			'collections.collectionName' => 'コレクション名',
+			'collections.enterCollectionName' => 'コレクション名を入力',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'コレクション名を入力',
 			'collections.addedToCollection' => 'コレクションに追加しました',
 			'collections.errorAddingToCollection' => 'コレクションへの追加に失敗しました',
 			'collections.created' => 'コレクションを作成しました',
@@ -8246,9 +8244,9 @@ extension on TranslationsJa {
 			'performanceOverlay.app' => 'アプリ',
 			'performanceOverlay.decoder' => 'デコーダー',
 			'performanceOverlay.rawDecoder' => 'Raw デコーダー',
+			'performanceOverlay.tunneling' => 'トンネリング',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'トンネリング',
 			'performanceOverlay.passthrough' => 'パススルー',
 			'performanceOverlay.aspect' => 'アスペクト',
 			'performanceOverlay.rotation' => '回転',
@@ -8760,9 +8758,9 @@ extension on TranslationsJa {
 			'homeLayout.managePlexRows' => 'Plex 行を管理する Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'ホーム 選択のラインを整理するためにオープン',
 			'homeLayout.organizeHomeRows' => 'ホーム ラウンドの整理',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ライン: 移動、 ヒーロー、 自動スライド、 削除',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ライン: 移動、 ヒーロー、 自動スライド、 削除',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '組織 ${library} ライン',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '続きを見る + ${n} 行: 移動, 図書館, ホーム, ヒーロー, 自動スライド',
 			'homeLayout.renderAsHero' => 'ヒーローカードとしての出張',
@@ -9274,9 +9272,9 @@ extension on TranslationsJa {
 			'audiobook.undoSeek' => '最後の探求',
 			'audiobook.customSpeed' => 'Custom Playback スピード',
 			'audiobook.speedHelp' => '0.25×から4×までのスピードを選択します。',
+			'audiobook.apply' => '応募',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => '応募',
 			'audiobook.customSleep' => 'カスタム睡眠時間',
 			'audiobook.sleepMinutes' => '時間(1～1440分)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} 章の後停止',
@@ -9788,9 +9786,9 @@ extension on TranslationsJa {
 			'musicExperience.bluetoothDriving' => '運転画面用のBluetooth出力',
 			'musicExperience.bluetoothDrivingHint' => '運転画面を自動で開く、接続中のBluetooth出力を選択します。',
 			'musicTools.loudnessMissing' => 'ラウドネスデータが返されませんでした',
+			'musicTools.loudnessRequested' => '解析リクエストを送信しました',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => '解析リクエストを送信しました',
 			'musicTools.loudnessUnsupported' => 'このサーバーバージョンは解析リクエストに対応していません',
 			'musicTools.serverHistory' => 'サーバーの再生履歴',
 			'musicTools.nfcWrite' => 'NFCタグに書き込む',

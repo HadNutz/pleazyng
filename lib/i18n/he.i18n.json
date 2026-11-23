@@ -102,7 +102,6 @@
     "authenticationTimeout": "התגובה נמשכת, בבקשה נסה שוב.",
     "scanQRToSignIn": "סורק את קוד ה-QR הזה כדי להירשם",
     "waitingForAuth": "מחכה לאותיות... היכנס מהדפדפן שלך.",
-    "useBrowser": "שימוש ב-Browser",
     "or": "או",
     "connectToMediaBrowser": "חיבור ל- ${product}",
     "quickConnect": "חיבור-מהיר",

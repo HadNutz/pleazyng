@@ -102,7 +102,6 @@
     "authenticationTimeout": "সনাক্তকরণ সময়সীমা শেষ, আবারও চেষ্টা করুন।",
     "scanQRToSignIn": "এই QR কোডটি স্ক্যান করুন",
     "waitingForAuth": "সনাক্তকরণের জন্য অপেক্ষায়... আপনার ব্রাউজার থেকে সাইন আপ করুন।",
-    "useBrowser": "ব্রাউজার ব্যবহার",
     "or": "অথবা",
     "connectToMediaBrowser": "সংযোগ ${product}",
     "quickConnect": "Quick Connect",

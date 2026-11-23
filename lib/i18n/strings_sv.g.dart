@@ -247,7 +247,6 @@ class _Translations$auth$sv extends Translations$auth$en {
 	@override String get authenticationTimeout => 'Autentiseringen tog för lång tid. Försök igen.';
 	@override String get scanQRToSignIn => 'Skanna QR-koden för att logga in';
 	@override String get waitingForAuth => 'Väntar på autentisering...\nLogga in från din webbläsare.';
-	@override String get useBrowser => 'Använd webbläsare';
 	@override String get or => 'eller';
 	@override String connectToMediaBrowser({required Object product}) => 'Anslut till ${product}';
 	@override String get quickConnect => 'Quick Connect';
@@ -5773,7 +5772,6 @@ extension on TranslationsSv {
 			'auth.authenticationTimeout' => 'Autentiseringen tog för lång tid. Försök igen.',
 			'auth.scanQRToSignIn' => 'Skanna QR-koden för att logga in',
 			'auth.waitingForAuth' => 'Väntar på autentisering...\nLogga in från din webbläsare.',
-			'auth.useBrowser' => 'Använd webbläsare',
 			'auth.or' => 'eller',
 			'auth.connectToMediaBrowser' => ({required Object product}) => 'Anslut till ${product}',
 			'auth.quickConnect' => 'Quick Connect',
@@ -6195,9 +6193,9 @@ extension on TranslationsSv {
 			'settings.manageLibrariesDescription' => 'Ordna om och dölj bibliotek',
 			'settings.companionRemoteServer' => 'Server för fjärrkontroll',
 			'settings.companionRemoteServerDescription' => 'Tillåt att mobila enheter i nätverket styr appen',
+			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			_ => null,
 		} ?? switch (path) {
-			'settings.companionRemoteServerStartFailed' => 'Kunde inte starta servern för fjärrkontroll',
 			'settings.companionRemoteServerStopFailed' => 'Kunde inte stoppa servern för fjärrkontroll',
 			'settings.autoPip' => 'Automatisk bild-i-bild',
 			'settings.autoPipDescription' => 'Aktivera bild-i-bild om du lämnar appen under uppspelning',
@@ -6709,9 +6707,9 @@ extension on TranslationsSv {
 			'accessibility.interaction' => 'rörelse och interaktion',
 			'accessibility.reduceMotion' => 'Sänk rörelse',
 			'accessibility.reduceMotionHint' => 'Stoppa rörelser i fokusmarkeringar, sidövergångar och dekorativa effekter.',
+			'accessibility.largeTargets' => 'Större touchmål',
 			_ => null,
 		} ?? switch (path) {
-			'accessibility.largeTargets' => 'Större touchmål',
 			'accessibility.largeTargetsHint' => 'Ge delade kontroller mer utrymme för beröring och assistent navigering.',
 			'accessibility.navigationHint' => 'Använd Tab och Shift+Tab för att flytta mellan kontroller, Enter eller mellanslag för att aktivera och Escape eller Tillbaka för att stänga. Zoom och läsinställningar är tillgängliga när en bok är öppen.',
 			'accessibility.textSizeDescription' => 'Skala gränssnittet text i Pleazyng utöver enhetens systemtextstorlek inställning.',
@@ -7223,9 +7221,9 @@ extension on TranslationsSv {
 			'discover.findNext.controlsHelp' => 'Tangentbord eller fjärrkontroll: välj en knapp och tryck på Enter eller Välj. Ångra återställer ditt senaste val.',
 			'discover.findNext.artworkLoading' => 'Läser in bild…',
 			'discover.findNext.artworkUnavailable' => 'Bild saknas',
+			'discover.findNext.savedFeedback' => 'Tillagd bland sparade val',
 			_ => null,
 		} ?? switch (path) {
-			'discover.findNext.savedFeedback' => 'Tillagd bland sparade val',
 			'discover.findNext.skippedFeedback' => 'Överhoppad för tillfället',
 			'discover.findNext.releaseToConfirm' => 'Släpp för att bekräfta',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → välj · Välj: detaljer · ↑ / ↓ flytta fokus',
@@ -7737,9 +7735,9 @@ extension on TranslationsSv {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Det gick inte att ta bort samlingen: ${error}',
 			'collections.selectCollection' => 'Välj samling',
 			'collections.collectionName' => 'Samlingsnamn',
+			'collections.enterCollectionName' => 'Ange samlingsnamn',
 			_ => null,
 		} ?? switch (path) {
-			'collections.enterCollectionName' => 'Ange samlingsnamn',
 			'collections.addedToCollection' => 'Objektet har lagts till i samlingen',
 			'collections.errorAddingToCollection' => 'Det gick inte att lägga till objektet i samlingen',
 			'collections.created' => 'Samlingen har skapats',
@@ -8251,9 +8249,9 @@ extension on TranslationsSv {
 			'performanceOverlay.app' => 'App',
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
+			'performanceOverlay.tunneling' => 'Tunnling',
 			_ => null,
 		} ?? switch (path) {
-			'performanceOverlay.tunneling' => 'Tunnling',
 			'performanceOverlay.passthrough' => 'Genomströmning',
 			'performanceOverlay.aspect' => 'Bildformat',
 			'performanceOverlay.rotation' => 'Rotation',
@@ -8765,9 +8763,9 @@ extension on TranslationsSv {
 			'homeLayout.managePlexRows' => 'Hantera Plex rader i Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Öppna för att organisera de hemvalda raderna',
 			'homeLayout.organizeHomeRows' => 'Organisera hemrutor',
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: flytta, Hero, Auto-slide, ta bort',
 			_ => null,
 		} ?? switch (path) {
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: flytta, Hero, Auto-slide, ta bort',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisera ${library} rader',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsätt Se + ${n} rader: rörelse, bibliotek, hem, hjälte, Auto-slide',
 			'homeLayout.renderAsHero' => 'Renderar som hjälte kort',
@@ -9279,9 +9277,9 @@ extension on TranslationsSv {
 			'audiobook.undoSeek' => 'Senaste sökningen',
 			'audiobook.customSpeed' => 'Custom playback hastighet',
 			'audiobook.speedHelp' => 'Välj en hastighet från 0,25× till 4×.',
+			'audiobook.apply' => 'Applicera',
 			_ => null,
 		} ?? switch (path) {
-			'audiobook.apply' => 'Applicera',
 			'audiobook.customSleep' => 'Anpassad sömntimmar',
 			'audiobook.sleepMinutes' => 'Minuter (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Sluta efter ${count} kapitel',
@@ -9793,9 +9791,9 @@ extension on TranslationsSv {
 			'musicExperience.bluetoothDriving' => 'Bluetooth-utgångar för körning',
 			'musicExperience.bluetoothDrivingHint' => 'Välj anslutna Bluetooth-utgångar som automatiskt öppnar körvyn.',
 			'musicTools.loudnessMissing' => 'Inga ljudstyrkedata returnerades',
+			'musicTools.loudnessRequested' => 'Analysbegäran skickad',
 			_ => null,
 		} ?? switch (path) {
-			'musicTools.loudnessRequested' => 'Analysbegäran skickad',
 			'musicTools.loudnessUnsupported' => 'Den här serverversionen stöder inte analysbegäranden',
 			'musicTools.serverHistory' => 'Serverns uppspelningshistorik',
 			'musicTools.nfcWrite' => 'Skriv NFC-tagg',
