@@ -241,6 +241,9 @@ class PlayerSystem extends PlayerBase
           return Stack(
             clipBehavior: Clip.hardEdge,
             children: [
+              // The texture covers only the picture. Fill the rest of the
+              // viewport while leaving the native webOS plane unobstructed.
+              if (!plane) const Positioned.fill(child: ColoredBox(color: Color(0xff000000))),
               if (plane)
                 Positioned.fromRect(
                   rect: frame.destination,

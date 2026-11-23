@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/models/video_backend.dart';
 import 'package:plezy/models/motion_processing_mode.dart';
@@ -116,6 +117,35 @@ void main() {
       expect(calls.first.arguments['id'], calls.last.arguments['id']);
     } finally {
       await player.dispose();
+      messenger.setMockMethodCallHandler(channel, null);
+    }
+  });
+
+  testWidgets('TV mpv texture covers the previous route outside a narrow picture', (tester) async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      return switch (call.method) {
+        'create' => 24,
+        'state' => {'ready': true, 'frame': true, 'width': 640, 'height': 480},
+        'tracks' => [],
+        _ => null,
+      };
+    });
+    final player = PlayerSystem('tvmpv');
+    try {
+      await tester.runAsync(() => player.open(Media('file:///movie.mp4')));
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(child: SizedBox(width: 640, height: 360, child: player.videoSurface())),
+        ),
+      );
+      final background = find.byWidgetPredicate(
+        (widget) => widget is ColoredBox && widget.color == const Color(0xff000000),
+      );
+      expect(tester.getSize(background), const Size(640, 360));
+      expect(tester.getSize(find.byType(Texture)), const Size(480, 360));
+    } finally {
+      await tester.runAsync(player.dispose);
       messenger.setMockMethodCallHandler(channel, null);
     }
   });
