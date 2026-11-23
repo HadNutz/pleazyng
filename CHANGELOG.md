@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update the vendored wakelock package’s Linux D-Bus development lock to 0.8.1.
+
 - Regenerate the wakelock platform bindings with Pigeon 30.0.4.
 
 - Update Ruby setup to 1.342.0 for Store and Play qualification workflows.
