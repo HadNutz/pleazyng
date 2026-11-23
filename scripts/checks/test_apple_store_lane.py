@@ -4,10 +4,14 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts"))
+from verify_focused_apple_store_run import verify_run
+
 RUBY = shutil.which('ruby')
 HARNESS = r'''
 require 'json'
@@ -104,6 +108,57 @@ class AppleStoreLaneTest(unittest.TestCase):
         self.assertIs(upload['run_precheck_before_submit'], False)
         self.assertIs(upload['skip_app_version_update'], True)
         self.assertEqual(receipt['asc_linkage'], 'transported_this_run')
+
+
+class FocusedAppleStoreRunTest(unittest.TestCase):
+    def setUp(self):
+        self.repository = "snapetech-org/pleazyng"
+        self.run_path = f"repos/{self.repository}/actions/runs/82"
+        self.sha = "a" * 40
+        self.run = {
+            "id": 82, "repository": {"id": 1433487464}, "head_repository": {"id": 1433487464},
+            "head_branch": "main", "path": ".github/workflows/build.yml",
+            "event": "workflow_dispatch", "status": "completed", "conclusion": "success",
+            "run_attempt": 2, "head_sha": self.sha,
+            "display_title": "action:release:pool:public:mode:ios-store:tag:v3.0.50",
+        }
+        self.signing_job = {
+            "name": "build-ios", "conclusion": "success", "steps": [
+                {"name": "Attest signed iOS App Store IPA", "conclusion": "success"},
+                {"name": "Upload IPA", "conclusion": "success"},
+            ],
+        }
+        self.artifact = {"name": "ios-ipa", "expired": False}
+        self.responses = {
+            self.run_path: self.run,
+            f"{self.run_path}/attempts/2/jobs?per_page=100": {"jobs": [
+                {"name": "Validate release request", "conclusion": "success", "steps": [
+                    {"name": "Validate immutable release tag against trusted main", "conclusion": "success"},
+                ]},
+                self.signing_job,
+            ]},
+            f"{self.run_path}/artifacts?per_page=100": {"artifacts": [self.artifact]},
+        }
+
+    def source(self, platform="ios"):
+        return verify_run("82", self.repository, "v3.0.50", platform, self.responses.__getitem__)
+
+    def test_verified_platform_run_returns_workflow_sha_and_attempt(self):
+        self.assertEqual(self.source(), (2, self.sha))
+
+    def test_rejects_a_run_for_the_other_platform(self):
+        with self.assertRaisesRegex(ValueError, "this platform and release"):
+            self.source("tvos")
+
+    def test_rejects_a_run_without_a_successful_attestation_step(self):
+        self.signing_job["steps"][0]["conclusion"] = "skipped"
+        with self.assertRaisesRegex(ValueError, "Attest signed iOS"):
+            self.source()
+
+    def test_rejects_an_expired_build_artifact(self):
+        self.artifact["expired"] = True
+        with self.assertRaisesRegex(ValueError, "unexpired platform artifact"):
+            self.source()
 
 
 if __name__ == '__main__':

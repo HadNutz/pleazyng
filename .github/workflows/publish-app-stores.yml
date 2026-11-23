@@ -30,6 +30,10 @@ on:
           - amazon-appstore
           - app-store-ios
           - app-store-tvos
+      apple_source_run:
+        description: Exact successful focused iOS or tvOS signing run to deliver
+        required: false
+        type: string
       play_track:
         description: Google Play track (used only for google-play)
         required: true
@@ -71,9 +75,14 @@ jobs:
   validate-release:
     name: Validate published release
     runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
     outputs:
       release_tag: ${{ steps.validate.outputs.release_tag }}
       apple_recovery: ${{ steps.validate.outputs.apple_recovery }}
+      apple_source_attempt: ${{ steps.validate.outputs.apple_source_attempt }}
+      apple_source_sha: ${{ steps.validate.outputs.apple_source_sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -93,6 +102,7 @@ jobs:
           RELEASE_TAG: ${{ inputs.release_tag }}
           CHANNEL: ${{ inputs.channel }}
           PLAY_TRACK: ${{ inputs.play_track }}
+          APPLE_SOURCE_RUN: ${{ inputs.apple_source_run }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
@@ -132,6 +142,17 @@ jobs:
             app-store-tvos) required_asset=pleazyng-tvos-appstore.ipa ;;
             *) echo "Unknown store channel: $CHANNEL" >&2; exit 1 ;;
           esac
+          if [[ -n "$APPLE_SOURCE_RUN" ]]; then
+            if [[ "$is_draft" != false || ! "$APPLE_SOURCE_RUN" =~ ^[1-9][0-9]*$ ||
+                  ( "$CHANNEL" != app-store-ios && "$CHANNEL" != app-store-tvos ) ]]; then
+              echo "A focused Apple signing run requires an Apple channel and a published release." >&2
+              exit 1
+            fi
+            python3 scripts/verify_focused_apple_store_run.py "$APPLE_SOURCE_RUN" \
+              --repo "$GITHUB_REPOSITORY" --tag "$RELEASE_TAG" --platform "${CHANNEL#app-store-}"
+            echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           if ! jq -e --arg asset "$required_asset" '.assets | any(.name == $asset)' <<< "$release_json" >/dev/null; then
             echo "Release $RELEASE_TAG has no $required_asset; rebuild it with the channel's signing credentials configured." >&2
             exit 1
@@ -379,6 +400,10 @@ jobs:
     if: ${{ inputs.channel == 'app-store-ios' || inputs.channel == 'app-store-tvos' }}
     timeout-minutes: 120
     runs-on: macos-15
+    permissions:
+      actions: read
+      contents: read
+      attestations: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -398,6 +423,7 @@ jobs:
           fi
 
       - name: Download and verify signed IPA
+        if: ${{ inputs.apple_source_run == '' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: ${{ needs.validate-release.outputs.release_tag }}
@@ -428,6 +454,37 @@ jobs:
           while IFS= read -r asset; do
             python3 "$GITHUB_WORKSPACE/scripts/verify_release_attestation.py" "$asset" --repo "$GITHUB_REPOSITORY"
           done < apple-attestation-inputs.txt
+          python3 "$GITHUB_WORKSPACE/scripts/verify_apple_store_ipa.py" "$IPA_ASSET" \
+            --platform "$APPLE_STORE_PLATFORM" --expected-version "${RELEASE_TAG#v}"
+
+      - name: Download signed IPA from the verified build run
+        if: ${{ inputs.apple_source_run != '' }}
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ${{ inputs.channel == 'app-store-ios' && 'ios-ipa' || 'tvos-ipa' }}
+          path: ${{ runner.temp }}/store-assets
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.apple_source_run }}
+
+      - name: Verify focused signed IPA and build attestation
+        if: ${{ inputs.apple_source_run != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.validate-release.outputs.release_tag }}
+          IPA_ASSET: ${{ steps.apple-asset.outputs.asset }}
+          APPLE_STORE_PLATFORM: ${{ steps.apple-asset.outputs.platform }}
+          APPLE_SOURCE_RUN: ${{ inputs.apple_source_run }}
+          APPLE_SOURCE_ATTEMPT: ${{ needs.validate-release.outputs.apple_source_attempt }}
+          APPLE_SOURCE_SHA: ${{ needs.validate-release.outputs.apple_source_sha }}
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/store-assets"
+          invocation="https://github.com/$GITHUB_REPOSITORY/actions/runs/$APPLE_SOURCE_RUN/attempts/$APPLE_SOURCE_ATTEMPT"
+          gh attestation verify "$IPA_ASSET" --repo "$GITHUB_REPOSITORY" \
+            --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/build.yml" \
+            --source-ref refs/heads/main --source-digest "$APPLE_SOURCE_SHA" --format json |
+            jq -e --arg invocation "$invocation" \
+              'any(.[]; .verificationResult.signature.certificate.runInvocationURI == $invocation)' >/dev/null
           python3 "$GITHUB_WORKSPACE/scripts/verify_apple_store_ipa.py" "$IPA_ASSET" \
             --platform "$APPLE_STORE_PLATFORM" --expected-version "${RELEASE_TAG#v}"
 
