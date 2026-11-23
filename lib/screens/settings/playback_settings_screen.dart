@@ -595,6 +595,11 @@ class _PlaybackSettingsScreenState extends State<PlaybackSettingsScreen> {
         title: t.settings.showFinishTime,
         subtitle: t.settings.showFinishTimeDescription,
       ),
+      SettingSwitchTile(
+        pref: SettingsService.showStopButton,
+        icon: Symbols.stop_rounded,
+        title: t.settings.showStopButton,
+      ),
       SettingSelectionTile<SpecialsOrdering>(
         pref: SettingsService.specialsOrdering,
         icon: Symbols.low_priority_rounded,

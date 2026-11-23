@@ -1412,7 +1412,7 @@ void main() {
     });
   });
 
-  group('finish time setting', () {
+  group('player control visibility settings', () {
     for (final mobile in [false, true]) {
       for (final initiallyEnabled in [true, false]) {
         testWidgets(
@@ -1420,12 +1420,14 @@ void main() {
           (tester) async {
             LocaleSettings.setLocaleSync(AppLocale.en);
             await initializeDateFormatting('en');
-            tester.view.physicalSize = mobile ? const Size(2532, 1170) : const Size(1280, 720);
+            tester.view.physicalSize = mobile ? const Size(1080, 2160) : const Size(1280, 720);
             tester.view.devicePixelRatio = mobile ? 3 : 1;
             addTearDown(tester.view.reset);
             PlatformDetector.debugSetIsDesktopOSOverride(!mobile);
             addTearDown(() => PlatformDetector.debugSetIsDesktopOSOverride(null));
-            resetSharedPreferencesForTest(initialAsync: initiallyEnabled ? const {} : {'show_finish_time': false});
+            resetSharedPreferencesForTest(
+              initialAsync: initiallyEnabled ? const {} : {'show_finish_time': false, 'show_stop_button': false},
+            );
             SettingsService.resetForTesting();
             final settings = await SettingsService.getInstance();
             final player = FakeSyncPlayer(playing: true, position: const Duration(minutes: 1));
@@ -1434,6 +1436,7 @@ void main() {
             final watchTogether = WatchTogetherProvider();
             final chrome = PlayerChromeController();
             final toast = PlayerToastController();
+            var stops = 0;
             final database = AppDatabase.forTesting(NativeDatabase.memory());
             addTearDown(player.dispose);
             addTearDown(volume.dispose);
@@ -1463,6 +1466,7 @@ void main() {
                       toastController: toast,
                       chromeController: chrome,
                       canNavigateMediaItems: false,
+                      onStop: () => stops++,
                     ),
                   ),
                 ),
@@ -1476,12 +1480,27 @@ void main() {
               if (!mobile) expect(find.textContaining('Ends at '), enabled ? findsOneWidget : findsNothing);
             }
 
+            final stopButton = find.bySemanticsLabel(t.music.stopPlayback);
             expectFinishTime(initiallyEnabled);
+            expect(stopButton, initiallyEnabled ? findsOneWidget : findsNothing);
             final volumeRect = mobile ? null : tester.getRect(find.byType(VolumeControl));
             for (final enabled in [!initiallyEnabled, initiallyEnabled]) {
               await settings.write(SettingsService.showFinishTime, enabled);
+              await settings.write(SettingsService.showStopButton, enabled);
               await tester.pump();
               expectFinishTime(enabled);
+              expect(stopButton, enabled ? findsOneWidget : findsNothing);
+              if (enabled && mobile) {
+                await tester.tap(stopButton);
+                await tester.pump();
+              } else if (enabled) {
+                tester.state<DesktopVideoControlsState>(find.byType(DesktopVideoControls)).requestPlayPauseFocus();
+                await tester.pump();
+                await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+                await tester.pump();
+                await tester.sendKeyEvent(LogicalKeyboardKey.select);
+                await tester.pump();
+              }
               if (volumeRect != null) {
                 expect(
                   tester.getRect(find.byType(VolumeControl)),
@@ -1491,6 +1510,7 @@ void main() {
               }
             }
 
+            expect(stops, 1);
             chrome.cancelAutoHide();
             await tester.pumpWidget(const SizedBox.shrink());
           },

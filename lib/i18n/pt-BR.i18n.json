@@ -149,6 +149,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Continuar assistindo",
     "showTopShelfContentDescription": "Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.",
     "topShelfUpdateFailed": "Não foi possível atualizar o Top Shelf. Tente novamente.",
+    "showStopButton": "Mostrar o botão Parar no player",
     "showFinishTime": "Mostrar horário de término",
     "showFinishTimeDescription": "Mostra quando o vídeo vai terminar ao lado do tempo restante."
   },

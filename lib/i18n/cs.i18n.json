@@ -801,6 +801,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Pokračovat ve sledování",
     "showTopShelfContentDescription": "Po vypnutí se u všech profilů zobrazí pouze obrázek Pleazyng.",
     "topShelfUpdateFailed": "Top Shelf se nepodařilo aktualizovat. Zkuste to znovu.",
+    "showStopButton": "Zobrazit tlačítko Zastavit v přehrávači",
     "showFinishTime": "Zobrazit čas konce",
     "showFinishTimeDescription": "Vedle zbývající doby zobrazí čas konce videa."
   },

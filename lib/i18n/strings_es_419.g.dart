@@ -239,6 +239,7 @@ class _Translations$settings$es_419 extends Translations$settings$es {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar viendo';
 	@override String get showTopShelfContentDescription => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.';
 	@override String get topShelfUpdateFailed => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.';
+	@override String get showStopButton => 'Mostrar el botón Detener en el reproductor';
 	@override String get showFinishTime => 'Mostrar hora de finalización';
 	@override String get showFinishTimeDescription => 'Muestra cuándo terminará el vídeo junto al tiempo restante.';
 }
@@ -1498,6 +1499,7 @@ extension on TranslationsEs419 {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar viendo',
 			'settings.showTopShelfContentDescription' => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.',
 			'settings.topShelfUpdateFailed' => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.',
+			'settings.showStopButton' => 'Mostrar el botón Detener en el reproductor',
 			'settings.showFinishTime' => 'Mostrar hora de finalización',
 			'settings.showFinishTimeDescription' => 'Muestra cuándo terminará el vídeo junto al tiempo restante.',
 			'themeEditor.custom' => 'Personalizado',
@@ -1913,9 +1915,9 @@ extension on TranslationsEs419 {
 			'romm.achievements' => 'RetroAchievements',
 			'romm.achievementsHelp' => 'Achievement information comes from RomM. The browser player does not earn new achievements.',
 			'romm.screenshots' => 'Screenshots',
-			'romm.manual' => 'Manual',
 			_ => null,
 		} ?? switch (path) {
+			'romm.manual' => 'Manual',
 			'romm.importSave' => 'Import save',
 			'romm.exportSave' => 'Export',
 			'romm.importState' => 'Import state',

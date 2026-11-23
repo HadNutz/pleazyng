@@ -901,6 +901,7 @@ class _Translations$settings$bg extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Продължи гледането';
 	@override String get showTopShelfContentDescription => 'При изключване за всички профили се показва само изображението на Pleazyng.';
 	@override String get topShelfUpdateFailed => 'Top Shelf не можа да се обнови. Опитайте отново.';
+	@override String get showStopButton => 'Показване на бутона за спиране в плейъра';
 	@override String get showFinishTime => 'Показване на часа на завършване';
 	@override String get showFinishTimeDescription => 'Показва кога завършва видеото до оставащото време.';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsBg {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Продължи гледането',
 			'settings.showTopShelfContentDescription' => 'При изключване за всички профили се показва само изображението на Pleazyng.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf не можа да се обнови. Опитайте отново.',
+			'settings.showStopButton' => 'Показване на бутона за спиране в плейъра',
 			'settings.showFinishTime' => 'Показване на часа на завършване',
 			'settings.showFinishTimeDescription' => 'Показва кога завършва видеото до оставащото време.',
 			'themeEditor.builtIn' => 'Вградени',
@@ -6707,9 +6709,9 @@ extension on TranslationsBg {
 			'accessibility.interaction' => 'Мотивите и взаимодействието',
 			'accessibility.reduceMotion' => 'Намаляване на движението',
 			'accessibility.reduceMotionHint' => 'Спиране на анимациите на индикатора за фокус, преходите между страниците и декоративните ефекти.',
-			'accessibility.largeTargets' => 'По-големи цели за докосване',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'По-големи цели за докосване',
 			'accessibility.largeTargetsHint' => 'Дават споделени контрола повече място за докосване и асистирана навигация.',
 			'accessibility.navigationHint' => 'Използвайте Tab и Shift+Tab за преминаване между контролите, Enter или интервал за активиране и Escape или бутона Назад за затваряне. Когато е отворена книга, са достъпни мащабиране и настройки за четене.',
 			'accessibility.textSizeDescription' => 'Скалиране на интерфейса текст в Pleazyng в допълнение към настройката за текстови размери на устройството.',
@@ -7221,9 +7223,9 @@ extension on TranslationsBg {
 			'discover.findNext.controlsHelp' => 'Клавиатура или дистанционно: изберете бутон и натиснете Enter или Избор. Отмяна възстановява последния ви избор.',
 			'discover.findNext.artworkLoading' => 'Зареждане на изображение…',
 			'discover.findNext.artworkUnavailable' => 'Изображението не е налично',
-			'discover.findNext.savedFeedback' => 'Добавено към запазените предложения',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Добавено към запазените предложения',
 			'discover.findNext.skippedFeedback' => 'Пропуснато засега',
 			'discover.findNext.releaseToConfirm' => 'Пуснете, за да потвърдите',
 			'discover.findNext.remoteHint' => 'Когато корицата е на фокус: ← / → избор · Избор: подробности · ↑ / ↓ премества фокуса',
@@ -7735,9 +7737,9 @@ extension on TranslationsBg {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Неуспешно изтриване на колекция: ${error}',
 			'collections.selectCollection' => 'Избери колекция',
 			'collections.collectionName' => 'Име на колекция',
-			'collections.enterCollectionName' => 'Въведете име на колекция',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Въведете име на колекция',
 			'collections.addedToCollection' => 'Добавено към колекция',
 			'collections.errorAddingToCollection' => 'Неуспешно добавяне към колекция',
 			'collections.created' => 'Колекцията е създадена',
@@ -8249,9 +8251,9 @@ extension on TranslationsBg {
 			'performanceOverlay.app' => 'Приложение',
 			'performanceOverlay.decoder' => 'Декодер',
 			'performanceOverlay.rawDecoder' => 'Суров декодер',
-			'performanceOverlay.tunneling' => 'Тунелиране',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'Тунелиране',
 			'performanceOverlay.passthrough' => 'Директно предаване',
 			'performanceOverlay.aspect' => 'Съотношение',
 			'performanceOverlay.rotation' => 'Завъртане',
@@ -8763,9 +8765,9 @@ extension on TranslationsBg {
 			'homeLayout.managePlexRows' => 'Управление Plex редове в Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Отворено да организирате домашните редове',
 			'homeLayout.organizeHomeRows' => 'Организиране на домашни редове',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} редове: движение, герой, Авто-слайд, премахване',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} редове: движение, герой, Авто-слайд, премахване',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Организирайте ${library} редове',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} реда: движение, Библиотека, Дома, Герой, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Да се изкачи като герой',
@@ -9277,9 +9279,9 @@ extension on TranslationsBg {
 			'audiobook.undoSeek' => 'Последната търсачка',
 			'audiobook.customSpeed' => 'Специална скорост на възпроизвеждане',
 			'audiobook.speedHelp' => 'Изберете скорост от 0.25× до 4×.',
-			'audiobook.apply' => 'Прилагане',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Прилагане',
 			'audiobook.customSleep' => 'Часовник за сън',
 			'audiobook.sleepMinutes' => 'Минути (1 до 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Прекъсване след ${count} глави',
@@ -9791,9 +9793,9 @@ extension on TranslationsBg {
 			'musicExperience.bluetoothDriving' => 'Bluetooth изходи за шофиране',
 			'musicExperience.bluetoothDrivingHint' => 'Изберете свързани Bluetooth изходи, които автоматично отварят изгледа за шофиране.',
 			'musicTools.loudnessMissing' => 'Няма получени данни за силата на звука',
-			'musicTools.loudnessRequested' => 'Заявката за анализ е изпратена',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Заявката за анализ е изпратена',
 			'musicTools.loudnessUnsupported' => 'Тази версия на сървъра не поддържа заявки за анализ',
 			'musicTools.serverHistory' => 'История на възпроизвеждане от сървъра',
 			'musicTools.nfcWrite' => 'Запис на NFC етикет',

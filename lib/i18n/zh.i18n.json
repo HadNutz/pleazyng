@@ -795,6 +795,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · 继续观看",
     "showTopShelfContentDescription": "关闭后，所有个人资料都只会显示 Pleazyng 图片。",
     "topShelfUpdateFailed": "无法更新 Top Shelf。请重试。",
+    "showStopButton": "在播放器中显示停止按钮",
     "showFinishTime": "显示结束时间",
     "showFinishTimeDescription": "在剩余时长旁显示视频预计结束的时间。"
   },

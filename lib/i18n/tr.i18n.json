@@ -797,6 +797,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · İzlemeye Devam Et",
     "showTopShelfContentDescription": "Kapatıldığında tüm profillerde yalnızca Pleazyng görseli gösterilir.",
     "topShelfUpdateFailed": "Top Shelf güncellenemedi. Tekrar deneyin.",
+    "showStopButton": "Oynatıcıda Durdur düğmesini göster",
     "showFinishTime": "Bitiş saatini göster",
     "showFinishTimeDescription": "Kalan sürenin yanında videonun ne zaman biteceğini gösterir."
   },

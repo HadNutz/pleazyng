@@ -909,6 +909,7 @@ class _Translations$settings$ar extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · متابعة المشاهدة';
 	@override String get showTopShelfContentDescription => 'عند إيقاف هذا الخيار، تظهر صورة Pleazyng فقط لجميع الملفات الشخصية.';
 	@override String get topShelfUpdateFailed => 'تعذّر تحديث Top Shelf. حاول مرة أخرى.';
+	@override String get showStopButton => 'إظهار زر الإيقاف في المشغّل';
 	@override String get showFinishTime => 'عرض وقت الانتهاء';
 	@override String get showFinishTimeDescription => 'عرض وقت انتهاء الفيديو بجوار الوقت المتبقي.';
 }
@@ -6513,6 +6514,7 @@ extension on TranslationsAr {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · متابعة المشاهدة',
 			'settings.showTopShelfContentDescription' => 'عند إيقاف هذا الخيار، تظهر صورة Pleazyng فقط لجميع الملفات الشخصية.',
 			'settings.topShelfUpdateFailed' => 'تعذّر تحديث Top Shelf. حاول مرة أخرى.',
+			'settings.showStopButton' => 'إظهار زر الإيقاف في المشغّل',
 			'settings.showFinishTime' => 'عرض وقت الانتهاء',
 			'settings.showFinishTimeDescription' => 'عرض وقت انتهاء الفيديو بجوار الوقت المتبقي.',
 			'themeEditor.builtIn' => 'بناء في',
@@ -6807,9 +6809,9 @@ extension on TranslationsAr {
 			'accessibility.interaction' => 'الحركة والتفاعل',
 			'accessibility.reduceMotion' => 'تقليل الحركة',
 			'accessibility.reduceMotionHint' => 'إيقاف حركة التركيز وانتقالات الصفحات والمؤثرات الزخرفية.',
-			'accessibility.largeTargets' => 'مساحات لمس أكبر',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'مساحات لمس أكبر',
 			'accessibility.largeTargetsHint' => 'توفير مساحة أوسع لعناصر التحكم المشتركة للمس والتنقل باستخدام التقنيات المساعدة.',
 			'accessibility.navigationHint' => 'استخدم Tab وShift+Tab للتنقل بين عناصر التحكم، وEnter أو مفتاح المسافة لتفعيلها، وEscape أو زر الرجوع للإغلاق. تتوفر خيارات التكبير وتفضيلات القراءة أثناء فتح الكتاب.',
 			'accessibility.textSizeDescription' => 'مقياس واجهة النص في Pleazyng بالإضافة إلى إعداد حجم النص النظام على جهازك.',
@@ -7321,9 +7323,9 @@ extension on TranslationsAr {
 			'discover.findNext.controlsHelp' => 'بلوحة المفاتيح أو جهاز التحكم: انتقل إلى زر ثم اضغط Enter أو زر التحديد. التراجع يعيد اختيارك الأخير.',
 			'discover.findNext.artworkLoading' => 'جارٍ تحميل الصورة…',
 			'discover.findNext.artworkUnavailable' => 'الصورة غير متاحة',
-			'discover.findNext.savedFeedback' => 'أُضيف إلى الاختيارات المحفوظة',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'أُضيف إلى الاختيارات المحفوظة',
 			'discover.findNext.skippedFeedback' => 'تم التخطي حاليًا',
 			'discover.findNext.releaseToConfirm' => 'أفلت للتأكيد',
 			'discover.findNext.remoteHint' => 'عندما يكون التركيز على الغلاف: ← / → للاختيار · زر التحديد للتفاصيل · ↑ / ↓ لنقل التركيز',
@@ -7835,9 +7837,9 @@ extension on TranslationsAr {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'لم يتم إزالة المجموعة: ${error}',
 			'collections.selectCollection' => 'اختيار مجموعة',
 			'collections.collectionName' => 'اسم جمع',
-			'collections.enterCollectionName' => 'إدخال اسم مجموعة',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'إدخال اسم مجموعة',
 			'collections.addedToCollection' => 'إضافة إلى مجموعة',
 			'collections.errorAddingToCollection' => 'فشل في إضافة إلى المجموعة',
 			'collections.created' => 'مجموعة تم إنشاءها',
@@ -8349,9 +8351,9 @@ extension on TranslationsAr {
 			'performanceOverlay.app' => 'التطبيق',
 			'performanceOverlay.decoder' => 'ديكودر',
 			'performanceOverlay.rawDecoder' => 'أدوات التخفيف',
-			'performanceOverlay.tunneling' => 'النفقات',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'النفقات',
 			'performanceOverlay.passthrough' => 'كسارة',
 			'performanceOverlay.aspect' => 'وجهة نظر',
 			'performanceOverlay.rotation' => 'الدوران',
@@ -8863,9 +8865,9 @@ extension on TranslationsAr {
 			'homeLayout.managePlexRows' => 'إدارة صفوف Plex في Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'تنظيم الصفوف المختارة للصفحة الرئيسية',
 			'homeLayout.organizeHomeRows' => 'تنظيم صفوف الصفحة الرئيسية',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} صفوف: نقل، بطاقة بارزة، تنقّل تلقائي، إزالة',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} صفوف: نقل، بطاقة بارزة، تنقّل تلقائي، إزالة',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'تنظيم صفوف ${library}',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'متابعة المشاهدة و${n} صفوف: نقل، مكتبة، رئيسية، بطاقة بارزة، تنقّل تلقائي',
 			'homeLayout.renderAsHero' => 'عرض كبطاقة بارزة',
@@ -9377,9 +9379,9 @@ extension on TranslationsAr {
 			'audiobook.undoSeek' => 'آخر البحث',
 			'audiobook.customSpeed' => 'سرعة اللعب المخصصة',
 			'audiobook.speedHelp' => 'اختر سرعة تتراوح بين 0.25 × إلى 4 ×.',
-			'audiobook.apply' => 'تطبيق',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'تطبيق',
 			'audiobook.customSleep' => 'ساعات النوم المخصصة',
 			'audiobook.sleepMinutes' => 'الدقائق (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'توقف بعد ${count} الفصول',
@@ -9891,9 +9893,9 @@ extension on TranslationsAr {
 			'musicExperience.bluetoothDriving' => 'مخارج بلوتوث لعرض القيادة',
 			'musicExperience.bluetoothDrivingHint' => 'اختر مخارج بلوتوث المتصلة التي تفتح عرض القيادة تلقائيًا.',
 			'musicTools.loudnessMissing' => 'لم يُرجع الخادم بيانات مستوى الصوت',
-			'musicTools.loudnessRequested' => 'تم إرسال طلب التحليل',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'تم إرسال طلب التحليل',
 			'musicTools.loudnessUnsupported' => 'إصدار الخادم لا يدعم طلب التحليل',
 			'musicTools.serverHistory' => 'سجل التشغيل على الخادم',
 			'musicTools.nfcWrite' => 'كتابة علامة NFC',

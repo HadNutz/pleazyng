@@ -240,6 +240,7 @@ class _Translations$settings$fr_CA extends Translations$settings$fr {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuer à visionner';
 	@override String get showTopShelfContentDescription => 'Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.';
 	@override String get topShelfUpdateFailed => 'Impossible de mettre à jour Top Shelf. Réessayez.';
+	@override String get showStopButton => 'Afficher le bouton Arrêter dans le lecteur';
 	@override String get showFinishTime => 'Afficher l’heure de fin';
 	@override String get showFinishTimeDescription => 'Affiche l’heure de fin de la vidéo à côté du temps restant.';
 }
@@ -1467,6 +1468,7 @@ extension on TranslationsFrCa {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuer à visionner',
 			'settings.showTopShelfContentDescription' => 'Désactivez cette option pour afficher uniquement l’image de Pleazyng pour tous les profils.',
 			'settings.topShelfUpdateFailed' => 'Impossible de mettre à jour Top Shelf. Réessayez.',
+			'settings.showStopButton' => 'Afficher le bouton Arrêter dans le lecteur',
 			'settings.showFinishTime' => 'Afficher l’heure de fin',
 			'settings.showFinishTimeDescription' => 'Affiche l’heure de fin de la vidéo à côté du temps restant.',
 			'themeEditor.custom' => 'Personnalisation',
@@ -1884,9 +1886,9 @@ extension on TranslationsFrCa {
 			'romm.savedLocally' => 'Progress kept on this device; upload is pending.',
 			'romm.pause' => 'Pause',
 			'romm.kContinue' => 'Continue',
-			'romm.saveState' => 'Save state',
 			_ => null,
 		} ?? switch (path) {
+			'romm.saveState' => 'Save state',
 			'romm.loadState' => 'Load state',
 			'romm.saveAndExit' => 'Save and exit',
 			'romm.exitWithoutSaving' => 'Exit without saving',

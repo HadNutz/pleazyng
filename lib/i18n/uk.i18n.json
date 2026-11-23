@@ -801,6 +801,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Продовжити перегляд",
     "showTopShelfContentDescription": "Якщо вимкнути цей параметр, усі профілі бачитимуть лише зображення Pleazyng.",
     "topShelfUpdateFailed": "Не вдалося оновити Top Shelf. Спробуйте ще раз.",
+    "showStopButton": "Показувати кнопку зупинки в програвачі",
     "showFinishTime": "Показувати час завершення",
     "showFinishTimeDescription": "Поруч із залишком часу показує, коли завершиться відео."
   },

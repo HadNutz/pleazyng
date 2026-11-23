@@ -33,6 +33,26 @@ void main() {
     LocaleSettings.setLocaleSync(AppLocale.en);
   });
 
+  testWidgets('the player Stop button defaults on and the setting persists when switched off', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1000, 1400);
+    addTearDown(tester.view.reset);
+    final settings = SettingsService.instance;
+    expect(settings.read(SettingsService.showStopButton), isTrue);
+    await _pumpPlaybackSettings(tester);
+    await tester.pumpAndSettle();
+    final toggle = find.text(t.settings.showStopButton);
+    await tester.scrollUntilVisible(toggle, 400, scrollable: find.byType(Scrollable).first);
+    await tester.ensureVisible(toggle);
+    await tester.pumpAndSettle();
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(settings.read(SettingsService.showStopButton), isFalse);
+    await tester.pumpWidget(const SizedBox.shrink());
+    SettingsService.resetForTesting();
+    expect((await SettingsService.getInstance()).read(SettingsService.showStopButton), isFalse);
+  });
+
   testWidgets('neural experiments are an off-by-default persisted Settings choice', (tester) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(1000, 1400);

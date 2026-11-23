@@ -410,6 +410,7 @@ extension _VideoPlayerBuildMethods on VideoPlayerScreenState {
                                     onRateRequested: _setPlaybackRate,
                                     onPlayPauseRequested: _handleControlsTransport,
                                     onBack: _handleBackButton,
+                                    onStop: () => unawaited(_exitPlayerRoute(navigateHome: false, stop: true)),
                                     onReachedEnd: ({skipAutoPlayCountdown = false}) =>
                                         _onVideoCompleted(true, skipAutoPlayCountdown: skipAutoPlayCountdown),
                                     canControl: authority.canControlPlayback && !_videoOutputFrozen,

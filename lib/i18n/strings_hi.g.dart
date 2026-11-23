@@ -901,6 +901,7 @@ class _Translations$settings$hi extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · देखना जारी रखें';
 	@override String get showTopShelfContentDescription => 'बंद करने पर सभी प्रोफ़ाइल के लिए केवल Pleazyng की तस्वीर दिखाई देगी।';
 	@override String get topShelfUpdateFailed => 'Top Shelf अपडेट नहीं हो सका। फिर से कोशिश करें।';
+	@override String get showStopButton => 'प्लेयर में रोकने का बटन दिखाएँ';
 	@override String get showFinishTime => 'समाप्ति का समय दिखाएँ';
 	@override String get showFinishTimeDescription => 'बचे हुए समय के पास दिखाएँ कि वीडियो कब समाप्त होगा।';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsHi {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · देखना जारी रखें',
 			'settings.showTopShelfContentDescription' => 'बंद करने पर सभी प्रोफ़ाइल के लिए केवल Pleazyng की तस्वीर दिखाई देगी।',
 			'settings.topShelfUpdateFailed' => 'Top Shelf अपडेट नहीं हो सका। फिर से कोशिश करें।',
+			'settings.showStopButton' => 'प्लेयर में रोकने का बटन दिखाएँ',
 			'settings.showFinishTime' => 'समाप्ति का समय दिखाएँ',
 			'settings.showFinishTimeDescription' => 'बचे हुए समय के पास दिखाएँ कि वीडियो कब समाप्त होगा।',
 			'themeEditor.builtIn' => 'इमारत में',
@@ -6707,9 +6709,9 @@ extension on TranslationsHi {
 			'accessibility.interaction' => 'आंदोलन और बातचीत',
 			'accessibility.reduceMotion' => 'आंदोलन को कम करें',
 			'accessibility.reduceMotionHint' => 'फ़ोकस संकेतक, पृष्ठ परिवर्तन और सजावटी प्रभावों की गति बंद रखें।',
-			'accessibility.largeTargets' => 'अधिक लक्षित लक्ष्य',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'अधिक लक्षित लक्ष्य',
 			'accessibility.largeTargetsHint' => 'साझा नियंत्रण को स्पर्श और सहायक नेविगेशन के लिए अधिक स्थान दें।',
 			'accessibility.navigationHint' => 'नियंत्रणों के बीच जाने के लिए Tab और Shift+Tab, सक्रिय करने के लिए Enter या Space और बंद करने के लिए Escape या वापस जाने वाले बटन का उपयोग करें। किताब खुली होने पर ज़ूम और पढ़ने की प्राथमिकताएँ उपलब्ध रहती हैं।',
 			'accessibility.textSizeDescription' => 'अपने डिवाइस की सिस्टम टेक्स्ट आकार सेटिंग के अलावा Pleazyng इंटरफ़ेस का टेक्स्ट आकार बदलें।',
@@ -7221,9 +7223,9 @@ extension on TranslationsHi {
 			'discover.findNext.controlsHelp' => 'कीबोर्ड या रिमोट: किसी बटन पर जाएँ, फिर Enter या चयन बटन दबाएँ। पहले जैसा करें आपकी पिछली पसंद वापस लाता है।',
 			'discover.findNext.artworkLoading' => 'चित्र लोड हो रहा है…',
 			'discover.findNext.artworkUnavailable' => 'चित्र उपलब्ध नहीं है',
-			'discover.findNext.savedFeedback' => 'सहेजे गए विकल्पों में जोड़ा गया',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'सहेजे गए विकल्पों में जोड़ा गया',
 			'discover.findNext.skippedFeedback' => 'अभी छोड़ दिया गया',
 			'discover.findNext.releaseToConfirm' => 'पुष्टि के लिए छोड़ें',
 			'discover.findNext.remoteHint' => 'कवर पर फ़ोकस: ← / → चुनें · चयन बटन: जानकारी · ↑ / ↓ फ़ोकस बदलें',
@@ -7735,9 +7737,9 @@ extension on TranslationsHi {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'संग्रह को हटाने में विफलता: ${error}',
 			'collections.selectCollection' => 'चयनित संग्रह',
 			'collections.collectionName' => 'संग्रह का नाम',
-			'collections.enterCollectionName' => 'संग्रह का नाम दर्ज करें',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'संग्रह का नाम दर्ज करें',
 			'collections.addedToCollection' => 'संग्रह में जोड़ा',
 			'collections.errorAddingToCollection' => 'संग्रह में जोड़ने में विफल',
 			'collections.created' => 'संग्रह बनाया',
@@ -8249,9 +8251,9 @@ extension on TranslationsHi {
 			'performanceOverlay.app' => 'एप्लिकेशन',
 			'performanceOverlay.decoder' => 'डिकोडर',
 			'performanceOverlay.rawDecoder' => 'रेड डिकोडर',
-			'performanceOverlay.tunneling' => 'टनल',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'टनल',
 			'performanceOverlay.passthrough' => 'पश्चाताप',
 			'performanceOverlay.aspect' => 'दृष्टि',
 			'performanceOverlay.rotation' => 'रोटेशन',
@@ -8763,9 +8765,9 @@ extension on TranslationsHi {
 			'homeLayout.managePlexRows' => 'Pleazyng में Plex पंक्तियों का प्रबंधन करें',
 			'homeLayout.managePlexRowsDescription' => 'Home-Selected लाइनों को व्यवस्थित करने के लिए खुला',
 			'homeLayout.organizeHomeRows' => 'Home रैखों का आयोजन',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} पंक्तियां: आंदोलन, नायक, स्वचालित स्लाइड, हटाने',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} पंक्तियां: आंदोलन, नायक, स्वचालित स्लाइड, हटाने',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} पंक्तियों का आयोजन करें',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'जारी रखें + ${n} पंक्तियां: चलना, लाइब्रेरी, होम, नायक, ऑटो-स्लाइड',
 			'homeLayout.renderAsHero' => 'एक नायक कार्ड के रूप में रेंडर',
@@ -9277,9 +9279,9 @@ extension on TranslationsHi {
 			'audiobook.undoSeek' => 'आखिरी खोज',
 			'audiobook.customSpeed' => 'प्लेबैक की गति',
 			'audiobook.speedHelp' => '0.25× से 4× तक की गति का चयन करें।',
-			'audiobook.apply' => 'आवेदन करें',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'आवेदन करें',
 			'audiobook.customSleep' => 'कस्टम नींद टाइमर',
 			'audiobook.sleepMinutes' => 'मिनट (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} अध्याय के बाद रुकें',
@@ -9791,9 +9793,9 @@ extension on TranslationsHi {
 			'musicExperience.bluetoothDriving' => 'ड्राइविंग के लिए Bluetooth आउटपुट',
 			'musicExperience.bluetoothDrivingHint' => 'वे कनेक्ट किए गए Bluetooth आउटपुट चुनें जो ड्राइविंग दृश्य अपने आप खोलते हैं।',
 			'musicTools.loudnessMissing' => 'ध्वनि की तीव्रता का डेटा नहीं मिला',
-			'musicTools.loudnessRequested' => 'विश्लेषण का अनुरोध भेजा गया',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'विश्लेषण का अनुरोध भेजा गया',
 			'musicTools.loudnessUnsupported' => 'सर्वर का यह संस्करण विश्लेषण अनुरोधों का समर्थन नहीं करता',
 			'musicTools.serverHistory' => 'सर्वर का प्लेबैक इतिहास',
 			'musicTools.nfcWrite' => 'NFC टैग लिखें',

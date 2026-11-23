@@ -901,6 +901,7 @@ class _Translations$settings$nb extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Fortsett å se';
 	@override String get showTopShelfContentDescription => 'Slå av for å vise bare Pleazyng-bildet for alle profiler.';
 	@override String get topShelfUpdateFailed => 'Kunne ikke oppdatere Top Shelf. Prøv igjen.';
+	@override String get showStopButton => 'Vis stoppknappen i avspilleren';
 	@override String get showFinishTime => 'Vis sluttidspunkt';
 	@override String get showFinishTimeDescription => 'Vis når videoen slutter, ved siden av gjenværende tid.';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsNb {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Fortsett å se',
 			'settings.showTopShelfContentDescription' => 'Slå av for å vise bare Pleazyng-bildet for alle profiler.',
 			'settings.topShelfUpdateFailed' => 'Kunne ikke oppdatere Top Shelf. Prøv igjen.',
+			'settings.showStopButton' => 'Vis stoppknappen i avspilleren',
 			'settings.showFinishTime' => 'Vis sluttidspunkt',
 			'settings.showFinishTimeDescription' => 'Vis når videoen slutter, ved siden av gjenværende tid.',
 			'themeEditor.builtIn' => 'Innebygde',
@@ -6707,9 +6709,9 @@ extension on TranslationsNb {
 			'accessibility.interaction' => 'Motion og interaksjon',
 			'accessibility.reduceMotion' => 'Redusere bevegelse',
 			'accessibility.reduceMotionHint' => 'Stopp bevegelser i fokusmarkeringer, sideoverganger og dekorative effekter.',
-			'accessibility.largeTargets' => 'Større touch mål',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'Større touch mål',
 			'accessibility.largeTargetsHint' => 'Gi delte kontroller mer plass for berøring og assistent navigasjon.',
 			'accessibility.navigationHint' => 'Bruk Tab og Shift+Tab for å flytte mellom kontroller, Enter eller mellomrom for å aktivere og Escape eller Tilbake for å lukke. Zoom og leseinnstillinger er tilgjengelige når en bok er åpen.',
 			'accessibility.textSizeDescription' => 'Skala grensesnitt tekst i Pleazyng i tillegg til enhetens system tekst-størrelse innstilling.',
@@ -7221,9 +7223,9 @@ extension on TranslationsNb {
 			'discover.findNext.controlsHelp' => 'Tastatur eller fjernkontroll: velg en knapp, og trykk Enter eller Velg. Angre gjenoppretter det siste valget ditt.',
 			'discover.findNext.artworkLoading' => 'Laster bilde…',
 			'discover.findNext.artworkUnavailable' => 'Bilde utilgjengelig',
-			'discover.findNext.savedFeedback' => 'Lagt til i lagrede valg',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Lagt til i lagrede valg',
 			'discover.findNext.skippedFeedback' => 'Hoppet over foreløpig',
 			'discover.findNext.releaseToConfirm' => 'Slipp for å bekrefte',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → velg · Velg: detaljer · ↑ / ↓ flytt fokus',
@@ -7735,9 +7737,9 @@ extension on TranslationsNb {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Kunne ikke slette samling: ${error}',
 			'collections.selectCollection' => 'Velg samling',
 			'collections.collectionName' => 'Samlingsnavn',
-			'collections.enterCollectionName' => 'Skriv inn samlingsnavn',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Skriv inn samlingsnavn',
 			'collections.addedToCollection' => 'Lagt til i samling',
 			'collections.errorAddingToCollection' => 'Kunne ikke legge til i samling',
 			'collections.created' => 'Samling opprettet',
@@ -8249,9 +8251,9 @@ extension on TranslationsNb {
 			'performanceOverlay.app' => 'App',
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
-			'performanceOverlay.tunneling' => 'Tunneling',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'Tunneling',
 			'performanceOverlay.passthrough' => 'Direkte utgang',
 			'performanceOverlay.aspect' => 'Format',
 			'performanceOverlay.rotation' => 'Rotasjon',
@@ -8763,9 +8765,9 @@ extension on TranslationsNb {
 			'homeLayout.managePlexRows' => 'Administrer Plex rader i Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Åpne for å organisere de hjemmelavede radene',
 			'homeLayout.organizeHomeRows' => 'Organisere hjemmelavede rader',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: bevegelse, Hero, Auto-slide, fjerne',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rader: bevegelse, Hero, Auto-slide, fjerne',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organisere ${library} rader',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsett å se + ${n} rader: bevegelse, Biblioteket, Hjem, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render som en helt kort',
@@ -9277,9 +9279,9 @@ extension on TranslationsNb {
 			'audiobook.undoSeek' => 'Endelig søkt',
 			'audiobook.customSpeed' => 'Custom playback hastighet',
 			'audiobook.speedHelp' => 'Velg en hastighet fra 0.25× til 4×.',
-			'audiobook.apply' => 'Anvendt',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Anvendt',
 			'audiobook.customSleep' => 'Personlig søvn timer',
 			'audiobook.sleepMinutes' => 'Minutter (1 til 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stopp etter ${count} kapittel',
@@ -9791,9 +9793,9 @@ extension on TranslationsNb {
 			'musicExperience.bluetoothDriving' => 'Bluetooth-utganger for kjøring',
 			'musicExperience.bluetoothDrivingHint' => 'Velg tilkoblede Bluetooth-utganger som automatisk åpner kjørevisningen.',
 			'musicTools.loudnessMissing' => 'Ingen lydstyrkedata ble returnert',
-			'musicTools.loudnessRequested' => 'Analyseforespørsel sendt',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Analyseforespørsel sendt',
 			'musicTools.loudnessUnsupported' => 'Denne serverversjonen støtter ikke analyseforespørsler',
 			'musicTools.serverHistory' => 'Avspillingshistorikk på serveren',
 			'musicTools.nfcWrite' => 'Skriv NFC-brikke',

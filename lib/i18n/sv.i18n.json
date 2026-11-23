@@ -797,6 +797,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Fortsätt titta",
     "showTopShelfContentDescription": "Stäng av för att endast visa Pleazyng-bilden för alla profiler.",
     "topShelfUpdateFailed": "Det gick inte att uppdatera Top Shelf. Försök igen.",
+    "showStopButton": "Visa stoppknappen i spelaren",
     "showFinishTime": "Visa sluttid",
     "showFinishTimeDescription": "Visa när videon slutar bredvid återstående tid."
   },

@@ -901,6 +901,7 @@ class _Translations$settings$hu extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Folytatás';
 	@override String get showTopShelfContentDescription => 'Kikapcsolva minden profilnál csak a Pleazyng képe jelenik meg.';
 	@override String get topShelfUpdateFailed => 'A Top Shelf frissítése sikertelen. Próbáld újra.';
+	@override String get showStopButton => 'A Leállítás gomb megjelenítése a lejátszóban';
 	@override String get showFinishTime => 'Befejezési idő megjelenítése';
 	@override String get showFinishTimeDescription => 'A hátralévő idő mellett megjelenik, mikor ér véget a videó.';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsHu {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Folytatás',
 			'settings.showTopShelfContentDescription' => 'Kikapcsolva minden profilnál csak a Pleazyng képe jelenik meg.',
 			'settings.topShelfUpdateFailed' => 'A Top Shelf frissítése sikertelen. Próbáld újra.',
+			'settings.showStopButton' => 'A Leállítás gomb megjelenítése a lejátszóban',
 			'settings.showFinishTime' => 'Befejezési idő megjelenítése',
 			'settings.showFinishTimeDescription' => 'A hátralévő idő mellett megjelenik, mikor ér véget a videó.',
 			'themeEditor.builtIn' => 'Beépített',
@@ -6707,9 +6709,9 @@ extension on TranslationsHu {
 			'accessibility.interaction' => 'Mozgás és interakció',
 			'accessibility.reduceMotion' => 'Mozgás csökkentése',
 			'accessibility.reduceMotionHint' => 'Állítsd le a fókuszjelző mozgását, az oldalátmeneteket és a díszítő animációkat.',
-			'accessibility.largeTargets' => 'Nagyabb érintkezési célok',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'Nagyabb érintkezési célok',
 			'accessibility.largeTargetsHint' => 'A megosztott vezérlők több helyet biztosítanak a hozzáféréshez és a segéd navigációhoz.',
 			'accessibility.navigationHint' => 'A Tab és a Shift+Tab billentyűkkel léphetsz a vezérlők között, az Enter vagy a szóköz aktiválja őket, az Escape vagy a Vissza pedig bezár. Megnyitott könyvnél a nagyítás és az olvasási beállítások is elérhetők.',
 			'accessibility.textSizeDescription' => 'Skála felület szöveg Pleazyng-ben a készülék rendszer szöveges méretének beállítása mellett.',
@@ -7221,9 +7223,9 @@ extension on TranslationsHu {
 			'discover.findNext.controlsHelp' => 'Billentyűzet vagy távirányító: válassz egy gombot, majd nyomd meg az Enter vagy a Kiválasztás gombot. A Visszavonás visszaállítja az utolsó választásodat.',
 			'discover.findNext.artworkLoading' => 'Kép betöltése…',
 			'discover.findNext.artworkUnavailable' => 'A kép nem érhető el',
-			'discover.findNext.savedFeedback' => 'Hozzáadva a mentett ajánlatokhoz',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Hozzáadva a mentett ajánlatokhoz',
 			'discover.findNext.skippedFeedback' => 'Most kihagyva',
 			'discover.findNext.releaseToConfirm' => 'Engedd el a megerősítéshez',
 			'discover.findNext.remoteHint' => 'Borító kijelölve: ← / → választás · Kiválasztás: részletek · ↑ / ↓ fókusz mozgatása',
@@ -7735,9 +7737,9 @@ extension on TranslationsHu {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Nem sikerült a gyűjtemény törlése: ${error}',
 			'collections.selectCollection' => 'Gyűjtemény kiválasztása',
 			'collections.collectionName' => 'Gyűjtemény neve',
-			'collections.enterCollectionName' => 'Add meg a gyűjtemény nevét',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Add meg a gyűjtemény nevét',
 			'collections.addedToCollection' => 'Hozzáadva a gyűjteményhez',
 			'collections.errorAddingToCollection' => 'Nem sikerült a gyűjteményhez adni',
 			'collections.created' => 'Gyűjtemény létrehozva',
@@ -8249,9 +8251,9 @@ extension on TranslationsHu {
 			'performanceOverlay.app' => 'Alkalmazás',
 			'performanceOverlay.decoder' => 'Dekóder',
 			'performanceOverlay.rawDecoder' => 'Nyers dekóder',
-			'performanceOverlay.tunneling' => 'Alagutazás',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'Alagutazás',
 			'performanceOverlay.passthrough' => 'Passthrough',
 			'performanceOverlay.aspect' => 'Méretarány',
 			'performanceOverlay.rotation' => 'Forgatás',
@@ -8763,9 +8765,9 @@ extension on TranslationsHu {
 			'homeLayout.managePlexRows' => 'Plex sorok kezelése Pleazyng sorban',
 			'homeLayout.managePlexRowsDescription' => 'Nyitva a házilag kiválasztott sorok megszervezéséhez',
 			'homeLayout.organizeHomeRows' => 'Szervezze a házirendeket',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} sorok: mozog, Hős, Auto-slide, eltávolítása',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} sorok: mozog, Hős, Auto-slide, eltávolítása',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Szervezés ${library} sorok',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Folytatás Nézd + ${n} sorok: mozog, Könyvtár, Ház, Hős, Autó-szalag',
 			'homeLayout.renderAsHero' => 'Hősként válogatott kártyát',
@@ -9277,9 +9279,9 @@ extension on TranslationsHu {
 			'audiobook.undoSeek' => 'Utolsó keresés',
 			'audiobook.customSpeed' => 'Custom playback sebesség',
 			'audiobook.speedHelp' => 'Válasszon egy sebességet 0,25× és 4× között.',
-			'audiobook.apply' => 'alkalmazás',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'alkalmazás',
 			'audiobook.customSleep' => 'Alvási időszámítás',
 			'audiobook.sleepMinutes' => 'percek (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} fejezetek után',
@@ -9791,9 +9793,9 @@ extension on TranslationsHu {
 			'musicExperience.bluetoothDriving' => 'Bluetooth-kimenetek vezetéshez',
 			'musicExperience.bluetoothDrivingHint' => 'Válassza ki azokat a csatlakoztatott Bluetooth-kimeneteket, amelyek automatikusan megnyitják a vezetési nézetet.',
 			'musicTools.loudnessMissing' => 'Nem érkeztek hangerőadatok',
-			'musicTools.loudnessRequested' => 'Az elemzési kérés elküldve',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Az elemzési kérés elküldve',
 			'musicTools.loudnessUnsupported' => 'Ez a kiszolgálóverzió nem támogatja az elemzési kéréseket',
 			'musicTools.serverHistory' => 'Szerver lejátszási előzményei',
 			'musicTools.nfcWrite' => 'NFC-címke írása',

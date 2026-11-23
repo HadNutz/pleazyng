@@ -48,6 +48,7 @@ class MobileVideoControls extends StatefulWidget {
   final VoidCallback? onCancelAutoHide;
   final VoidCallback? onStartAutoHide;
   final VoidCallback? onBack;
+  final VoidCallback? onStop;
   final VoidCallback? onNext;
   final VoidCallback? onPrevious;
 
@@ -109,6 +110,7 @@ class MobileVideoControls extends StatefulWidget {
     this.onCancelAutoHide,
     this.onStartAutoHide,
     this.onBack,
+    this.onStop,
     this.onNext,
     this.onPrevious,
     this.canControl = true,
@@ -354,16 +356,22 @@ class _MobileVideoControlsState extends State<MobileVideoControls> with SingleTi
   }
 
   Widget _buildPlaybackControls(BuildContext _) {
-    // Hide all playback controls in host-only mode for non-host
-    if (!widget.canControl) {
+    if (!widget.canControl && widget.onStop == null) {
       return const SizedBox.shrink();
     }
 
     return FirstFrameGuard(
       hasFirstFrame: widget.hasFirstFrame,
-      builder: (context) => _buildPlaybackControlsContent(context),
+      builder: (context) => widget.canControl ? _buildPlaybackControlsContent(context) : _buildStopButton(),
     );
   }
+
+  Widget _buildStopButton() => CircularControlButton(
+    semanticLabel: t.music.stopPlayback,
+    icon: Symbols.stop_rounded,
+    iconSize: 32,
+    onPressed: widget.onStop,
+  );
 
   Widget _buildPlaybackControlsContent(BuildContext _) {
     return PlayPauseStreamBuilder(
@@ -394,6 +402,7 @@ class _MobileVideoControlsState extends State<MobileVideoControls> with SingleTi
                 }
               },
             ),
+            if (widget.onStop != null) ...[const SizedBox(width: 8), _buildStopButton()],
             if (!widget.isLive) ...[
               const SizedBox(width: 24),
               CircularControlButton(

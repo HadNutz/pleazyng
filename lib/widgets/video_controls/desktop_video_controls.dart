@@ -68,6 +68,7 @@ class DesktopVideoControls extends StatefulWidget {
 
   final TrackControlsState trackControlsState;
   final VoidCallback? onBack;
+  final VoidCallback? onStop;
 
   /// Notifier for whether first video frame has rendered (shows loading state when false).
   final ValueNotifier<bool>? hasFirstFrame;
@@ -142,6 +143,7 @@ class DesktopVideoControls extends StatefulWidget {
     this.onHideControls,
     this.trackControlsState = const TrackControlsState(),
     this.onBack,
+    this.onStop,
     this.hasFirstFrame,
     this.thumbnailDataBuilder,
     this.liveChannelName,
@@ -177,6 +179,7 @@ class DesktopVideoControlsState extends State<DesktopVideoControls> {
   late final FocusNode _prevChapterFocusNode;
   late final FocusNode _skipBackFocusNode;
   late final FocusNode _playPauseFocusNode;
+  late final FocusNode _stopFocusNode;
   late final FocusNode _skipForwardFocusNode;
   late final FocusNode _nextChapterFocusNode;
   late final FocusNode _nextItemFocusNode;
@@ -215,6 +218,7 @@ class DesktopVideoControlsState extends State<DesktopVideoControls> {
     _prevChapterFocusNode = FocusNode(debugLabel: 'PrevChapter');
     _skipBackFocusNode = FocusNode(debugLabel: 'SkipBack');
     _playPauseFocusNode = FocusNode(debugLabel: 'PlayPause');
+    _stopFocusNode = FocusNode(debugLabel: 'Stop');
     _skipForwardFocusNode = FocusNode(debugLabel: 'SkipForward');
     _nextChapterFocusNode = FocusNode(debugLabel: 'NextChapter');
     _nextItemFocusNode = FocusNode(debugLabel: 'NextItem');
@@ -230,6 +234,7 @@ class DesktopVideoControlsState extends State<DesktopVideoControls> {
       _prevChapterFocusNode,
       _skipBackFocusNode,
       _playPauseFocusNode,
+      _stopFocusNode,
       _skipForwardFocusNode,
       _nextChapterFocusNode,
       _nextItemFocusNode,
@@ -287,6 +292,7 @@ class DesktopVideoControlsState extends State<DesktopVideoControls> {
     _prevChapterFocusNode.dispose();
     _skipBackFocusNode.dispose();
     _playPauseFocusNode.dispose();
+    _stopFocusNode.dispose();
     _skipForwardFocusNode.dispose();
     _nextChapterFocusNode.dispose();
     _nextItemFocusNode.dispose();
@@ -837,13 +843,22 @@ class DesktopVideoControlsState extends State<DesktopVideoControls> {
                     },
                   ),
                 ),
+                if (widget.onStop != null)
+                  _buildFocusableButton(
+                    focusNode: _stopFocusNode,
+                    index: 4,
+                    icon: Symbols.stop_rounded,
+                    onPressed: widget.onStop,
+                    semanticLabel: t.music.stopPlayback,
+                    tooltip: t.music.stopPlayback,
+                  ),
                 if (!_isLive || widget.onLiveSeekBy != null) ...[
                   // Skip forward
                   Opacity(
                     opacity: _canControl ? 1.0 : 0.5,
                     child: _buildFocusableButton(
                       focusNode: _skipForwardFocusNode,
-                      index: 4,
+                      index: 5,
                       icon: widget.getForwardIcon(widget.seekTimeSmall),
                       onPressed: _canControl ? widget.onSeekForward : null,
                       semanticLabel: t.videoControls.seekForwardButton(seconds: widget.seekTimeSmall),
@@ -860,7 +875,7 @@ class DesktopVideoControlsState extends State<DesktopVideoControls> {
                         opacity: _canControl ? 1.0 : 0.5,
                         child: _buildFocusableButton(
                           focusNode: _nextChapterFocusNode,
-                          index: 5,
+                          index: 6,
                           icon: Symbols.fast_forward_rounded,
                           color: widget.chapters.isNotEmpty && _canControl ? Colors.white : Colors.white54,
                           onPressed: _canControl && widget.chapters.isNotEmpty ? widget.onSeekToNextChapter : null,
@@ -875,7 +890,7 @@ class DesktopVideoControlsState extends State<DesktopVideoControls> {
                     opacity: _canControl ? 1.0 : 0.5,
                     child: _buildFocusableButton(
                       focusNode: _nextItemFocusNode,
-                      index: 6,
+                      index: 7,
                       icon: Symbols.skip_next_rounded,
                       color: widget.onNext != null && _canControl ? Colors.white : Colors.white54,
                       onPressed: _canControl ? widget.onNext : null,
@@ -899,7 +914,7 @@ class DesktopVideoControlsState extends State<DesktopVideoControls> {
                             alignment: AlignmentDirectional.centerStart,
                             child: _buildFocusableButton(
                               focusNode: _goToLiveFocusNode,
-                              index: 7,
+                              index: 8,
                               icon: Symbols.fiber_manual_record_rounded,
                               iconSize: 12,
                               label: t.liveTv.goToLive,

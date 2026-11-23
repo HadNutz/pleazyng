@@ -795,6 +795,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Lanjutkan menonton",
     "showTopShelfContentDescription": "Nonaktifkan untuk hanya menampilkan gambar Pleazyng bagi semua profil.",
     "topShelfUpdateFailed": "Top Shelf tidak dapat diperbarui. Coba lagi.",
+    "showStopButton": "Tampilkan tombol Hentikan di pemutar",
     "showFinishTime": "Tampilkan waktu selesai",
     "showFinishTimeDescription": "Tampilkan waktu berakhirnya video di samping waktu tersisa."
   },

@@ -805,6 +805,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · متابعة المشاهدة",
     "showTopShelfContentDescription": "عند إيقاف هذا الخيار، تظهر صورة Pleazyng فقط لجميع الملفات الشخصية.",
     "topShelfUpdateFailed": "تعذّر تحديث Top Shelf. حاول مرة أخرى.",
+    "showStopButton": "إظهار زر الإيقاف في المشغّل",
     "showFinishTime": "عرض وقت الانتهاء",
     "showFinishTimeDescription": "عرض وقت انتهاء الفيديو بجوار الوقت المتبقي."
   },

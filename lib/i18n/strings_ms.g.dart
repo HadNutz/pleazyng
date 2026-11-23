@@ -899,6 +899,7 @@ class _Translations$settings$ms extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Menyambung tontonan';
 	@override String get showTopShelfContentDescription => 'Matikan untuk memaparkan gambar Pleazyng sahaja bagi semua profil.';
 	@override String get topShelfUpdateFailed => 'Top Shelf tidak dapat dikemas kini. Cuba lagi.';
+	@override String get showStopButton => 'Tunjukkan butang Henti dalam pemain';
 	@override String get showFinishTime => 'Tunjukkan waktu tamat';
 	@override String get showFinishTimeDescription => 'Paparkan waktu video akan tamat di sebelah baki masa.';
 }
@@ -6388,6 +6389,7 @@ extension on TranslationsMs {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Menyambung tontonan',
 			'settings.showTopShelfContentDescription' => 'Matikan untuk memaparkan gambar Pleazyng sahaja bagi semua profil.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf tidak dapat dikemas kini. Cuba lagi.',
+			'settings.showStopButton' => 'Tunjukkan butang Henti dalam pemain',
 			'settings.showFinishTime' => 'Tunjukkan waktu tamat',
 			'settings.showFinishTimeDescription' => 'Paparkan waktu video akan tamat di sebelah baki masa.',
 			'themeEditor.builtIn' => 'dibina dalam',
@@ -6682,9 +6684,9 @@ extension on TranslationsMs {
 			'accessibility.interaction' => 'Pergerakan dan interaksi',
 			'accessibility.reduceMotion' => 'Mengurangkan gerakan',
 			'accessibility.reduceMotionHint' => 'Hentikan animasi penunjuk fokus, peralihan halaman dan kesan hiasan.',
-			'accessibility.largeTargets' => 'Target sentuhan yang lebih besar',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'Target sentuhan yang lebih besar',
 			'accessibility.largeTargetsHint' => 'Memberi kawalan berkongsi lebih banyak ruang untuk sentuhan dan navigasi bantuan.',
 			'accessibility.navigationHint' => 'Gunakan Tab dan Shift+Tab untuk bergerak antara kawalan, Enter atau Space untuk mengaktifkan, dan Escape atau butang Kembali untuk menutup. Zum dan keutamaan bacaan tersedia semasa buku dibuka.',
 			'accessibility.textSizeDescription' => 'Skala antara muka teks dalam Pleazyng di samping tetapan saiz teks sistem peranti anda.',
@@ -7196,9 +7198,9 @@ extension on TranslationsMs {
 			'discover.findNext.controlsHelp' => 'Papan kekunci atau alat kawalan jauh: fokus pada butang, kemudian tekan Enter atau Pilih. Buat asal memulihkan pilihan terakhir anda.',
 			'discover.findNext.artworkLoading' => 'Memuatkan imej…',
 			'discover.findNext.artworkUnavailable' => 'Imej tidak tersedia',
-			'discover.findNext.savedFeedback' => 'Ditambah ke pilihan tersimpan',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Ditambah ke pilihan tersimpan',
 			'discover.findNext.skippedFeedback' => 'Dilangkau buat masa ini',
 			'discover.findNext.releaseToConfirm' => 'Lepaskan untuk mengesahkan',
 			'discover.findNext.remoteHint' => 'Kulit dalam fokus: ← / → pilih · Pilih: butiran · ↑ / ↓ alih fokus',
@@ -7710,9 +7712,9 @@ extension on TranslationsMs {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Kegagalan untuk memadamkan koleksi: ${error}',
 			'collections.selectCollection' => 'Pilih Koleksi',
 			'collections.collectionName' => 'Nama Koleksi',
-			'collections.enterCollectionName' => 'Masukkan nama koleksi',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Masukkan nama koleksi',
 			'collections.addedToCollection' => 'Ditambah kepada koleksi',
 			'collections.errorAddingToCollection' => 'gagal untuk menambah kepada koleksi',
 			'collections.created' => 'Koleksi yang dibuat',
@@ -8224,9 +8226,9 @@ extension on TranslationsMs {
 			'performanceOverlay.app' => 'Apl',
 			'performanceOverlay.decoder' => 'Pengecut',
 			'performanceOverlay.rawDecoder' => 'Rujukan Decoder',
-			'performanceOverlay.tunneling' => 'tunel',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'tunel',
 			'performanceOverlay.passthrough' => 'Pasukan',
 			'performanceOverlay.aspect' => 'Aspek',
 			'performanceOverlay.rotation' => 'Rotasi',
@@ -8738,9 +8740,9 @@ extension on TranslationsMs {
 			'homeLayout.managePlexRows' => 'Menguruskan Plex baris dalam Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Terbuka untuk menganjurkan baris-baris yang dipilih di rumah',
 			'homeLayout.organizeHomeRows' => 'Mengatur rangkaian rumah',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} baris: bergerak, Hero, Auto-slide, menghapuskan',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} baris: bergerak, Hero, Auto-slide, menghapuskan',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Mengatur ${library} baris',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Teruskan Menonton + ${n} baris: bergerak, Perpustakaan, Rumah, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render sebagai kad pahlawan',
@@ -9252,9 +9254,9 @@ extension on TranslationsMs {
 			'audiobook.undoSeek' => 'Permintaan Terakhir',
 			'audiobook.customSpeed' => 'Kelajuan Playback yang disesuaikan',
 			'audiobook.speedHelp' => 'Pilih kelajuan daripada 0.25× kepada 4×.',
-			'audiobook.apply' => 'Permohonan',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Permohonan',
 			'audiobook.customSleep' => 'Tarikh Tidur Khas',
 			'audiobook.sleepMinutes' => 'Jadual : 1 - 1440',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Berhenti selepas ${count} bab',
@@ -9766,9 +9768,9 @@ extension on TranslationsMs {
 			'musicExperience.bluetoothDriving' => 'Output Bluetooth untuk pemanduan',
 			'musicExperience.bluetoothDrivingHint' => 'Pilih output Bluetooth tersambung yang membuka paparan pemanduan secara automatik.',
 			'musicTools.loudnessMissing' => 'Tiada data kelantangan diterima',
-			'musicTools.loudnessRequested' => 'Permintaan analisis dihantar',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Permintaan analisis dihantar',
 			'musicTools.loudnessUnsupported' => 'Versi pelayan ini tidak menyokong permintaan analisis',
 			'musicTools.serverHistory' => 'Sejarah main balik pelayan',
 			'musicTools.nfcWrite' => 'Tulis tag NFC',

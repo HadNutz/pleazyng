@@ -804,6 +804,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Continue Watching",
     "showTopShelfContentDescription": "Turn off to show only Pleazyng artwork for all profiles.",
     "topShelfUpdateFailed": "Could not update Apple TV Top Shelf. Try again.",
+    "showStopButton": "Show Stop button in player",
     "showFinishTime": "Show finish time",
     "showFinishTimeDescription": "Show when the current video will end next to the remaining time."
   },

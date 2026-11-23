@@ -901,6 +901,7 @@ class _Translations$settings$da extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Fortsæt med at se';
 	@override String get showTopShelfContentDescription => 'Slå fra for kun at vise Pleazyngs billede for alle profiler.';
 	@override String get topShelfUpdateFailed => 'Top Shelf kunne ikke opdateres. Prøv igen.';
+	@override String get showStopButton => 'Vis stopknappen i afspilleren';
 	@override String get showFinishTime => 'Vis sluttidspunkt';
 	@override String get showFinishTimeDescription => 'Vis hvornår videoen slutter, ved siden af den resterende tid.';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsDa {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Fortsæt med at se',
 			'settings.showTopShelfContentDescription' => 'Slå fra for kun at vise Pleazyngs billede for alle profiler.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf kunne ikke opdateres. Prøv igen.',
+			'settings.showStopButton' => 'Vis stopknappen i afspilleren',
 			'settings.showFinishTime' => 'Vis sluttidspunkt',
 			'settings.showFinishTimeDescription' => 'Vis hvornår videoen slutter, ved siden af den resterende tid.',
 			'themeEditor.builtIn' => 'Indbygget',
@@ -6707,9 +6709,9 @@ extension on TranslationsDa {
 			'accessibility.interaction' => 'Motion og interaktion',
 			'accessibility.reduceMotion' => 'Reduktion af bevægelsen',
 			'accessibility.reduceMotionHint' => 'Stop bevægelse i fokusmarkeringer, sideovergange og dekorative effekter.',
-			'accessibility.largeTargets' => 'Større touch mål',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'Større touch mål',
 			'accessibility.largeTargetsHint' => 'Giv delte kontroller mere plads til touch og assistive navigation.',
 			'accessibility.navigationHint' => 'Brug Tab og Shift+Tab til at flytte mellem kontrolelementer, Enter eller mellemrum til at aktivere og Escape eller Tilbage til at lukke. Zoom og læseindstillinger er tilgængelige, når en bog er åben.',
 			'accessibility.textSizeDescription' => 'Skalagrænsefladet tekst i Pleazyng ud over enhedens systemtekst-størrelsesindstilling.',
@@ -7221,9 +7223,9 @@ extension on TranslationsDa {
 			'discover.findNext.controlsHelp' => 'Tastatur eller fjernbetjening: vælg en knap, og tryk Enter eller Vælg. Fortryd gendanner dit sidste valg.',
 			'discover.findNext.artworkLoading' => 'Indlæser billede…',
 			'discover.findNext.artworkUnavailable' => 'Billede ikke tilgængeligt',
-			'discover.findNext.savedFeedback' => 'Føjet til gemte valg',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Føjet til gemte valg',
 			'discover.findNext.skippedFeedback' => 'Sprunget over for nu',
 			'discover.findNext.releaseToConfirm' => 'Slip for at bekræfte',
 			'discover.findNext.remoteHint' => 'Omslag i fokus: ← / → vælg · Vælg: detaljer · ↑ / ↓ flyt fokus',
@@ -7735,9 +7737,9 @@ extension on TranslationsDa {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Kunne ikke slette samling: ${error}',
 			'collections.selectCollection' => 'Vælg samling',
 			'collections.collectionName' => 'Samlingsnavn',
-			'collections.enterCollectionName' => 'Indtast samlingsnavn',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Indtast samlingsnavn',
 			'collections.addedToCollection' => 'Tilføjet til samling',
 			'collections.errorAddingToCollection' => 'Kunne ikke tilføje til samling',
 			'collections.created' => 'Samling oprettet',
@@ -8249,9 +8251,9 @@ extension on TranslationsDa {
 			'performanceOverlay.app' => 'App',
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Rå dekoder',
-			'performanceOverlay.tunneling' => 'Tunneling',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'Tunneling',
 			'performanceOverlay.passthrough' => 'Passthrough',
 			'performanceOverlay.aspect' => 'Billedformat',
 			'performanceOverlay.rotation' => 'Rotation',
@@ -8763,9 +8765,9 @@ extension on TranslationsDa {
 			'homeLayout.managePlexRows' => 'Ledelse Plex rækker i Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Åbent til at organisere de hjemmelavede rækker',
 			'homeLayout.organizeHomeRows' => 'Organiser hjemmebane',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rækker: bevæge sig, Hero, Auto-slide, fjerne',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} rækker: bevæge sig, Hero, Auto-slide, fjerne',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Udvikle ${library} rækker',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Fortsæt at se + ${n} rækker: bevæge sig, Biblioteket, Hjem, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render som en helt kort',
@@ -9277,9 +9279,9 @@ extension on TranslationsDa {
 			'audiobook.undoSeek' => 'Sidste søgning',
 			'audiobook.customSpeed' => 'Custom playback hastighed',
 			'audiobook.speedHelp' => 'Vælg en hastighed fra 0.25× til 4×.',
-			'audiobook.apply' => 'Anvendelse',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Anvendelse',
 			'audiobook.customSleep' => 'Personlig søvn timer',
 			'audiobook.sleepMinutes' => 'Minuter (1 til 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Stop efter ${count} kapitel',
@@ -9791,9 +9793,9 @@ extension on TranslationsDa {
 			'musicExperience.bluetoothDriving' => 'Bluetooth-udgange til kørsel',
 			'musicExperience.bluetoothDrivingHint' => 'Vælg tilsluttede Bluetooth-udgange, der automatisk åbner kørevisningen.',
 			'musicTools.loudnessMissing' => 'Ingen data om lydstyrke modtaget',
-			'musicTools.loudnessRequested' => 'Anmodning om analyse sendt',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Anmodning om analyse sendt',
 			'musicTools.loudnessUnsupported' => 'Denne serverversion understøtter ikke analyseanmodninger',
 			'musicTools.serverHistory' => 'Afspilningshistorik på serveren',
 			'musicTools.nfcWrite' => 'Skriv NFC-mærke',

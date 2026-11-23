@@ -2393,6 +2393,9 @@ class Translations$settings$en {
 	/// en: 'Could not update Apple TV Top Shelf. Try again.'
 	String get topShelfUpdateFailed => 'Could not update Apple TV Top Shelf. Try again.';
 
+	/// en: 'Show Stop button in player'
+	String get showStopButton => 'Show Stop button in player';
+
 	/// en: 'Show finish time'
 	String get showFinishTime => 'Show finish time';
 
@@ -19111,6 +19114,7 @@ extension on Translations {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continue Watching',
 			'settings.showTopShelfContentDescription' => 'Turn off to show only Pleazyng artwork for all profiles.',
 			'settings.topShelfUpdateFailed' => 'Could not update Apple TV Top Shelf. Try again.',
+			'settings.showStopButton' => 'Show Stop button in player',
 			'settings.showFinishTime' => 'Show finish time',
 			'settings.showFinishTimeDescription' => 'Show when the current video will end next to the remaining time.',
 			'themeEditor.builtIn' => 'Built-in',
@@ -19362,9 +19366,9 @@ extension on Translations {
 			'accessibility.mediaCardMovie' => ({required Object title}) => '${title}, movie',
 			'accessibility.mediaCardShow' => ({required Object title}) => '${title}, TV show',
 			'accessibility.mediaCardEpisode' => ({required Object title, required Object episodeInfo}) => '${title}, ${episodeInfo}',
-			'accessibility.mediaCardSeason' => ({required Object title, required Object seasonInfo}) => '${title}, ${seasonInfo}',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.mediaCardSeason' => ({required Object title, required Object seasonInfo}) => '${title}, ${seasonInfo}',
 			'accessibility.mediaCardWatched' => 'watched',
 			'accessibility.mediaCardPartiallyWatched' => ({required Object percent}) => '${percent} percent watched',
 			'accessibility.mediaCardUnwatched' => 'unwatched',
@@ -19876,9 +19880,9 @@ extension on Translations {
 			'iptv.category' => 'Category',
 			'iptv.allCategories' => 'All categories',
 			'iptv.noVodItems' => 'No titles in this category.',
-			'iptv.vodUnavailable' => 'This source could not load its catalogue. Check the provider credentials and retry.',
 			_ => null,
 		} ?? switch (path) {
+			'iptv.vodUnavailable' => 'This source could not load its catalogue. Check the provider credentials and retry.',
 			'iptv.vodPlaybackFailed' => 'Could not start this title. Check the provider connection and try again.',
 			'iptv.play' => 'Play',
 			'iptv.noEpisodes' => 'No episodes are available for this series.',
@@ -20390,9 +20394,9 @@ extension on Translations {
 			'explore.mdblistShelves.saveFailed' => 'Could not save shelves. Please retry.',
 			'explore.mdblistShelves.accountChanged' => 'The account or profile changed. Reopen these settings.',
 			'explore.mdblistShelves.settingsUnreadable' => 'Saved shelves could not be read. Select your lists again to replace these settings.',
-			'explore.title' => 'Explore',
 			_ => null,
 		} ?? switch (path) {
+			'explore.title' => 'Explore',
 			'explore.selectSource' => 'Select source',
 			'explore.rows.watchlist' => 'Watchlist',
 			'explore.rows.recommendedMovies' => 'Recommended Movies',
@@ -20904,9 +20908,9 @@ extension on Translations {
 			'downloads.downloadedFileClickToComplete' => ({required Object file}) => 'Downloaded ${file} - Click to complete',
 			'downloads.partialDownloadClickToComplete' => 'Partially downloaded - Click to complete',
 			'downloads.deleting' => 'Deleting...',
-			'downloads.deletingWithProgress' => ({required Object title, required Object current, required Object total}) => 'Deleting ${title}... (${current} of ${total})',
 			_ => null,
 		} ?? switch (path) {
+			'downloads.deletingWithProgress' => ({required Object title, required Object current, required Object total}) => 'Deleting ${title}... (${current} of ${total})',
 			'downloads.queuedTooltip' => 'Queued',
 			'downloads.queuedFilesTooltip' => ({required Object files}) => 'Queued ${files}',
 			'downloads.downloadingTooltip' => 'Downloading...',
@@ -21418,9 +21422,9 @@ extension on Translations {
 			'metadataEdit.alwaysEnabled' => 'Always enabled',
 			'metadataEdit.tags' => 'Tags',
 			'metadataEdit.addTag' => 'Add tag',
-			'metadataEdit.genre' => 'Genre',
 			_ => null,
 		} ?? switch (path) {
+			'metadataEdit.genre' => 'Genre',
 			'metadataEdit.director' => 'Director',
 			'metadataEdit.writer' => 'Writer',
 			'metadataEdit.producer' => 'Producer',
@@ -21932,9 +21936,9 @@ extension on Translations {
 			'homeLayout.resetHeroButton' => 'Reset hero layout to stock Pleazyng',
 			'homeLayout.reorderingUnlocked' => 'Reordering unlocked',
 			'homeLayout.reorderingLocked' => 'Reordering locked',
-			'homeLayout.rowsCanBeDragged' => 'Rows can be dragged — tap the lock to prevent that',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.rowsCanBeDragged' => 'Rows can be dragged — tap the lock to prevent that',
 			'homeLayout.tapLockToDrag' => 'Tap the lock to drag rows',
 			'homeLayout.customRowLabel' => ({required Object title}) => 'Custom: ${title}',
 			'homeLayout.libraryHubLabel' => ({required Object library, required Object hub}) => '${library}: ${hub}',
@@ -22446,9 +22450,9 @@ extension on Translations {
 			'sourceSetup.nfsEncryption' => 'Require encrypted NFS (RPC-with-TLS)',
 			'sourceSetup.nfsEncryptionHelp' => 'Require TLS 1.3 for NFS and the mount service. Connections fail closed if the NAS does not support it.',
 			'sourceSetup.nfsTrustCertificate' => 'Custom NFS CA or server certificate (PEM, optional)',
-			'sourceSetup.nfsTrustHelp' => 'Leave blank for certificates trusted by this device. Add a private CA or self-signed server certificate when needed; its names must match the NFS URL host.',
 			_ => null,
 		} ?? switch (path) {
+			'sourceSetup.nfsTrustHelp' => 'Leave blank for certificates trusted by this device. Add a private CA or self-signed server certificate when needed; its names must match the NFS URL host.',
 			'sourceSetup.nfsTrustInvalid' => 'Use a CA or server certificate in PEM format. Do not include a private key.',
 			'sourceSetup.addTrustCertificate' => 'Add custom trust certificate',
 			'sourceSetup.replaceTrustCertificate' => 'Replace saved custom certificate',
@@ -22960,9 +22964,9 @@ extension on Translations {
 			'podcasts.episodes' => 'Latest episodes',
 			'podcasts.searchHint' => 'Search shows or paste an Apple Podcasts or Podcast Index link',
 			'podcasts.searchHelp' => 'Choose a directory to search. Add private RSS links with Add feed.',
-			'podcasts.addFeed' => 'Add feed',
 			_ => null,
 		} ?? switch (path) {
+			'podcasts.addFeed' => 'Add feed',
 			'podcasts.addFeedHelp' => 'Paste a publisher RSS/Atom URL, including a private Patreon or other member feed. Use source setup for HTTP or password-protected feeds.',
 			'podcasts.subscribe' => 'Subscribe',
 			'podcasts.subscribed' => 'Subscribed',
@@ -23474,9 +23478,9 @@ extension on Translations {
 			'subtitleCapture.transcribing' => 'Transcribing audio locally…',
 			'subtitleCapture.transcribingProgress' => ({required Object percent}) => 'Transcribing audio locally (${percent}%)…',
 			'subtitleCapture.translating' => 'Translating speech to English locally…',
-			'subtitleCapture.translatingProgress' => ({required Object percent}) => 'Translating speech to English locally (${percent}%)…',
 			_ => null,
 		} ?? switch (path) {
+			'subtitleCapture.translatingProgress' => ({required Object percent}) => 'Translating speech to English locally (${percent}%)…',
 			'subtitleCapture.processingAudio' => 'Processing audio locally…',
 			'subtitleCapture.processingAudioProgress' => ({required Object percent}) => 'Processing audio locally (${percent}%)…',
 			'subtitleCapture.cpuFallback' => 'GPU speech processing failed. Retrying on CPU…',

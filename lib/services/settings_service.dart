@@ -1018,6 +1018,7 @@ class SettingsService extends BaseSharedPreferencesService {
   static const showChapterMarkersOnTimeline = BoolPref('show_chapter_markers_on_timeline', defaultValue: true);
   static const clickVideoTogglesPlayback = BoolPref('click_video_toggles_playback', defaultValue: true);
   static const showFinishTime = BoolPref('show_finish_time', defaultValue: true);
+  static const showStopButton = BoolPref('show_stop_button', defaultValue: true);
   static const skipIntroMode = _SkipMarkerModePref('skip_intro_mode', legacyKey: _legacyAutoSkipIntroKey);
   static const skipCreditsMode = _SkipMarkerModePref('skip_credits_mode', legacyKey: _legacyAutoSkipCreditsKey);
   static const skipAdsMode = EnumPref<SkipMarkerMode>(
@@ -2289,6 +2290,7 @@ class SettingsService extends BaseSharedPreferencesService {
     autoDownloadPreferredSubtitle,
     followServerTrackSelections,
     showFinishTime,
+    showStopButton,
     downloadOnWifiOnly,
     backgroundDownloadWarningAcknowledged,
     downloadIncludeSpecials,

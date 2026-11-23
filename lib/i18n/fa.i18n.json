@@ -797,6 +797,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · ادامه تماشا",
     "showTopShelfContentDescription": "با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.",
     "topShelfUpdateFailed": "به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.",
+    "showStopButton": "نمایش دکمهٔ توقف در پخش‌کننده",
     "showFinishTime": "نمایش زمان پایان",
     "showFinishTimeDescription": "زمان پایان ویدیو را کنار زمان باقی‌مانده نشان می‌دهد."
   },

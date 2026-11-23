@@ -797,6 +797,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Продължи гледането",
     "showTopShelfContentDescription": "При изключване за всички профили се показва само изображението на Pleazyng.",
     "topShelfUpdateFailed": "Top Shelf не можа да се обнови. Опитайте отново.",
+    "showStopButton": "Показване на бутона за спиране в плейъра",
     "showFinishTime": "Показване на часа на завършване",
     "showFinishTimeDescription": "Показва кога завършва видеото до оставащото време."
   },

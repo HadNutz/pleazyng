@@ -797,6 +797,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Verder kijken",
     "showTopShelfContentDescription": "Schakel dit uit om voor alle profielen alleen de Pleazyng-afbeelding te tonen.",
     "topShelfUpdateFailed": "Top Shelf kon niet worden bijgewerkt. Probeer het opnieuw.",
+    "showStopButton": "Stopknop in de speler tonen",
     "showFinishTime": "Eindtijd tonen",
     "showFinishTimeDescription": "Toon naast de resterende tijd hoe laat de video eindigt."
   },

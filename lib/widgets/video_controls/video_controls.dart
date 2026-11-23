@@ -668,6 +668,9 @@ class PlexVideoControls extends StatefulWidget {
   /// Called when back button is pressed (for Watch Together session leave confirmation)
   final VoidCallback? onBack;
 
+  /// Stops playback and leaves the player.
+  final VoidCallback? onStop;
+
   /// Called when the video has effectively reached the end (e.g. credits extend
   /// to EOF and can't be seeked past). Parent should route this into its normal
   /// completion flow so the auto-play-next setting is honored.
@@ -805,6 +808,7 @@ class PlexVideoControls extends StatefulWidget {
     this.onPlayPauseRequested,
     this.onSeekCompleted,
     this.onBack,
+    this.onStop,
     this.onReachedEnd,
     this.canControl = true,
     required this.canNavigateMediaItems,
@@ -907,6 +911,7 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
   bool get _clickVideoTogglesPlayback => _settings.read(SettingsService.clickVideoTogglesPlayback);
   bool get _showChapterMarkersOnTimeline => _settings.read(SettingsService.showChapterMarkersOnTimeline);
   bool get _showFinishTime => _settings.read(SettingsService.showFinishTime);
+  VoidCallback? get _onStop => _settings.read(SettingsService.showStopButton) ? _abandoningBurst(widget.onStop) : null;
   int _trafficLightVisibilityGeneration = 0;
 
   // GlobalKey to access DesktopVideoControls state for focus management
@@ -1104,6 +1109,7 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
       SettingsService.clickVideoTogglesPlayback,
       SettingsService.showChapterMarkersOnTimeline,
       SettingsService.showFinishTime,
+      SettingsService.showStopButton,
     ]);
     // A marker kind switched Off while inside one of its markers must drop the
     // prompt now, not on the next position tick (paused playback never ticks).
@@ -1531,6 +1537,7 @@ class _PlexVideoControlsState extends State<PlexVideoControls>
                                                       onCancelAutoHide: widget.chromeController.cancelAutoHide,
                                                       onStartAutoHide: _startHideTimer,
                                                       onBack: widget.onBack,
+                                                      onStop: _onStop,
                                                       onNext: _abandoningBurst(widget.onNext),
                                                       onPrevious: _abandoningBurst(widget.onPrevious),
                                                       canControl: widget.canControl,

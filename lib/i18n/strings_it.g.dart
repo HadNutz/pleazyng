@@ -903,6 +903,7 @@ class _Translations$settings$it extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continua a guardare';
 	@override String get showTopShelfContentDescription => 'Disattiva per mostrare solo l’immagine di Pleazyng per tutti i profili.';
 	@override String get topShelfUpdateFailed => 'Impossibile aggiornare Top Shelf. Riprova.';
+	@override String get showStopButton => 'Mostra il pulsante Stop nel lettore';
 	@override String get showFinishTime => 'Mostra l’ora di fine';
 	@override String get showFinishTimeDescription => 'Mostra quando finirà il video accanto al tempo rimanente.';
 }
@@ -6420,6 +6421,7 @@ extension on TranslationsIt {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continua a guardare',
 			'settings.showTopShelfContentDescription' => 'Disattiva per mostrare solo l’immagine di Pleazyng per tutti i profili.',
 			'settings.topShelfUpdateFailed' => 'Impossibile aggiornare Top Shelf. Riprova.',
+			'settings.showStopButton' => 'Mostra il pulsante Stop nel lettore',
 			'settings.showFinishTime' => 'Mostra l’ora di fine',
 			'settings.showFinishTimeDescription' => 'Mostra quando finirà il video accanto al tempo rimanente.',
 			'themeEditor.builtIn' => 'Integrati',
@@ -6714,9 +6716,9 @@ extension on TranslationsIt {
 			'accessibility.interaction' => 'Movimento e interazione',
 			'accessibility.reduceMotion' => 'Ridurre il movimento',
 			'accessibility.reduceMotionHint' => 'Fermare le animazioni dell’indicatore di focus, le transizioni delle pagine e gli effetti decorativi.',
-			'accessibility.largeTargets' => 'obiettivi touch più grandi',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'obiettivi touch più grandi',
 			'accessibility.largeTargetsHint' => 'Gioca i controlli condivisi più spazio per la navigazione a touch e assistive.',
 			'accessibility.navigationHint' => 'Usa Tab e Shift+Tab per spostarti tra i controlli, Enter o la barra spaziatrice per attivarli ed Escape o Indietro per chiudere. Quando un libro è aperto, puoi regolare lo zoom e le preferenze di lettura.',
 			'accessibility.textSizeDescription' => 'Scala il testo dell\'interfaccia in Pleazyng oltre alla configurazione di dimensioni del testo del sistema del dispositivo.',
@@ -7228,9 +7230,9 @@ extension on TranslationsIt {
 			'discover.findNext.controlsHelp' => 'Tastiera o telecomando: seleziona un pulsante, poi premi Invio o Seleziona. Annulla ripristina la tua ultima scelta.',
 			'discover.findNext.artworkLoading' => 'Caricamento immagine…',
 			'discover.findNext.artworkUnavailable' => 'Immagine non disponibile',
-			'discover.findNext.savedFeedback' => 'Aggiunto alle scelte salvate',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Aggiunto alle scelte salvate',
 			'discover.findNext.skippedFeedback' => 'Saltato per ora',
 			'discover.findNext.releaseToConfirm' => 'Rilascia per confermare',
 			'discover.findNext.remoteHint' => 'Copertina selezionata: ← / → scegli · Seleziona: dettagli · ↑ / ↓ sposta il focus',
@@ -7742,9 +7744,9 @@ extension on TranslationsIt {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Impossibile eliminare la raccolta: ${error}',
 			'collections.selectCollection' => 'Seleziona raccolta',
 			'collections.collectionName' => 'Nome raccolta',
-			'collections.enterCollectionName' => 'Inserisci nome raccolta',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Inserisci nome raccolta',
 			'collections.addedToCollection' => 'Elemento aggiunto alla raccolta',
 			'collections.errorAddingToCollection' => 'Impossibile aggiungere l\'elemento alla raccolta',
 			'collections.created' => 'Raccolta creata',
@@ -8256,9 +8258,9 @@ extension on TranslationsIt {
 			'performanceOverlay.app' => 'App',
 			'performanceOverlay.decoder' => 'Decoder',
 			'performanceOverlay.rawDecoder' => 'Decoder raw',
-			'performanceOverlay.tunneling' => 'Tunneling',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'Tunneling',
 			'performanceOverlay.passthrough' => 'Passthrough',
 			'performanceOverlay.aspect' => 'Proporzioni',
 			'performanceOverlay.rotation' => 'Rotazione',
@@ -8770,9 +8772,9 @@ extension on TranslationsIt {
 			'homeLayout.managePlexRows' => 'Gestione Plex righe in Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Aperto per organizzare le righe selezionate in casa',
 			'homeLayout.organizeHomeRows' => 'Organizzare le linee di casa',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} righe: movimento, eroe, auto-slide, rimozione',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} righe: movimento, eroe, auto-slide, rimozione',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Organizzare ${library} righe',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continua a guardare + ${n} righe: movimento, Biblioteca, Home, Eroe, Auto-slide',
 			'homeLayout.renderAsHero' => 'Render come carta di eroe',
@@ -9284,9 +9286,9 @@ extension on TranslationsIt {
 			'audiobook.undoSeek' => 'Annulla l’ultimo salto di riproduzione',
 			'audiobook.customSpeed' => 'Velocità di riproduzione personalizzata',
 			'audiobook.speedHelp' => 'Scegli una velocità da 0,25× a 4×.',
-			'audiobook.apply' => 'Applica',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Applica',
 			'audiobook.customSleep' => 'Timer di arresto personalizzato',
 			'audiobook.sleepMinutes' => 'Minuti (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Capitoli prima dell’arresto: ${count}',
@@ -9798,9 +9800,9 @@ extension on TranslationsIt {
 			'musicExperience.bluetoothDriving' => 'Uscite Bluetooth per la guida',
 			'musicExperience.bluetoothDrivingHint' => 'Scegli le uscite Bluetooth connesse che aprono automaticamente la vista di guida.',
 			'musicTools.loudnessMissing' => 'Nessun dato sulla sonorità restituito',
-			'musicTools.loudnessRequested' => 'Richiesta di analisi inviata',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Richiesta di analisi inviata',
 			'musicTools.loudnessUnsupported' => 'Questa versione del server non supporta le richieste di analisi',
 			'musicTools.serverHistory' => 'Cronologia di riproduzione del server',
 			'musicTools.nfcWrite' => 'Scrivi tag NFC',

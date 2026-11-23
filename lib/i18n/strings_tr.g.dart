@@ -901,6 +901,7 @@ class _Translations$settings$tr extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · İzlemeye Devam Et';
 	@override String get showTopShelfContentDescription => 'Kapatıldığında tüm profillerde yalnızca Pleazyng görseli gösterilir.';
 	@override String get topShelfUpdateFailed => 'Top Shelf güncellenemedi. Tekrar deneyin.';
+	@override String get showStopButton => 'Oynatıcıda Durdur düğmesini göster';
 	@override String get showFinishTime => 'Bitiş saatini göster';
 	@override String get showFinishTimeDescription => 'Kalan sürenin yanında videonun ne zaman biteceğini gösterir.';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsTr {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · İzlemeye Devam Et',
 			'settings.showTopShelfContentDescription' => 'Kapatıldığında tüm profillerde yalnızca Pleazyng görseli gösterilir.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf güncellenemedi. Tekrar deneyin.',
+			'settings.showStopButton' => 'Oynatıcıda Durdur düğmesini göster',
 			'settings.showFinishTime' => 'Bitiş saatini göster',
 			'settings.showFinishTimeDescription' => 'Kalan sürenin yanında videonun ne zaman biteceğini gösterir.',
 			'themeEditor.builtIn' => 'Yerleşik',
@@ -6707,9 +6709,9 @@ extension on TranslationsTr {
 			'accessibility.interaction' => 'Hareket ve etkileşim',
 			'accessibility.reduceMotion' => 'hareketleri azaltmak',
 			'accessibility.reduceMotionHint' => 'Odak göstergesi hareketini, sayfa geçişlerini ve dekoratif efektleri durdurun.',
-			'accessibility.largeTargets' => 'Daha büyük dokunmatik hedefler',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'Daha büyük dokunmatik hedefler',
 			'accessibility.largeTargetsHint' => 'Paylaşılan kontroller dokunmatik ve yardımcı navigasyon için daha fazla yer verir.',
 			'accessibility.navigationHint' => 'Kontroller arasında geçiş yapmak için Tab ve Shift+Tab, etkinleştirmek için Enter veya boşluk tuşu, kapatmak için Escape veya Geri düğmesini kullanın. Kitap açıkken yakınlaştırma ve okuma tercihleri kullanılabilir.',
 			'accessibility.textSizeDescription' => 'Pleazyng\'de ölçekli arayüz metni, cihazınızın sistem metin boyutu ayarına ek olarak.',
@@ -7221,9 +7223,9 @@ extension on TranslationsTr {
 			'discover.findNext.controlsHelp' => 'Klavye veya kumanda: bir düğmeye odaklanın, ardından Enter veya Seç tuşuna basın. Geri al son seçiminizi geri getirir.',
 			'discover.findNext.artworkLoading' => 'Görsel yükleniyor…',
 			'discover.findNext.artworkUnavailable' => 'Görsel kullanılamıyor',
-			'discover.findNext.savedFeedback' => 'Kayıtlı seçimlere eklendi',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Kayıtlı seçimlere eklendi',
 			'discover.findNext.skippedFeedback' => 'Şimdilik atlandı',
 			'discover.findNext.releaseToConfirm' => 'Onaylamak için bırakın',
 			'discover.findNext.remoteHint' => 'Kapak odakta: ← / → seç · Seç tuşu: ayrıntılar · ↑ / ↓ odağı taşı',
@@ -7735,9 +7737,9 @@ extension on TranslationsTr {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Koleksiyon silinemedi: ${error}',
 			'collections.selectCollection' => 'Koleksiyon Seç',
 			'collections.collectionName' => 'Koleksiyon Adı',
-			'collections.enterCollectionName' => 'Koleksiyon adını girin',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Koleksiyon adını girin',
 			'collections.addedToCollection' => 'Koleksiyona eklendi',
 			'collections.errorAddingToCollection' => 'Koleksiyona eklenemedi',
 			'collections.created' => 'Koleksiyon oluşturuldu',
@@ -8249,9 +8251,9 @@ extension on TranslationsTr {
 			'performanceOverlay.app' => 'Uygulama',
 			'performanceOverlay.decoder' => 'Çözücü',
 			'performanceOverlay.rawDecoder' => 'Ham Çözücü',
-			'performanceOverlay.tunneling' => 'Tünelleme',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'Tünelleme',
 			'performanceOverlay.passthrough' => 'Doğrudan geçiş',
 			'performanceOverlay.aspect' => 'Oran',
 			'performanceOverlay.rotation' => 'Döndürme',
@@ -8763,9 +8765,9 @@ extension on TranslationsTr {
 			'homeLayout.managePlexRows' => 'Plex satırları Pleazyng\'de yönetin',
 			'homeLayout.managePlexRowsDescription' => 'Ev seçimi için açık düzenleme',
 			'homeLayout.organizeHomeRows' => 'Home Routes düzenlemek',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} satırları: hareket, kahraman, otomatik kaydırma, kaldırma',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} satırları: hareket, kahraman, otomatik kaydırma, kaldırma',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} satırları düzenleyin',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Devamını oku + ${n} satırları: hareket, Kütüphane, Ev, Kahraman, Otomatik slide',
 			'homeLayout.renderAsHero' => 'Bir kahraman kartı olarak',
@@ -9277,9 +9279,9 @@ extension on TranslationsTr {
 			'audiobook.undoSeek' => 'Son arama',
 			'audiobook.customSpeed' => 'Custom Playback Hızları',
 			'audiobook.speedHelp' => '0.25× ile 4× arasında bir hız seçin.',
-			'audiobook.apply' => 'Uygulama',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Uygulama',
 			'audiobook.customSleep' => 'Özel uyku saatleri',
 			'audiobook.sleepMinutes' => 'Dakikalar (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} bölümlerinden sonra durun',
@@ -9791,9 +9793,9 @@ extension on TranslationsTr {
 			'musicExperience.bluetoothDriving' => 'Sürüş için Bluetooth çıkışları',
 			'musicExperience.bluetoothDrivingHint' => 'Sürüş görünümünü otomatik açan bağlı Bluetooth çıkışlarını seçin.',
 			'musicTools.loudnessMissing' => 'Ses yüksekliği verisi alınmadı',
-			'musicTools.loudnessRequested' => 'Analiz isteği gönderildi',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Analiz isteği gönderildi',
 			'musicTools.loudnessUnsupported' => 'Bu sunucu sürümü analiz isteklerini desteklemiyor',
 			'musicTools.serverHistory' => 'Sunucudaki oynatma geçmişi',
 			'musicTools.nfcWrite' => 'NFC etiketi yaz',

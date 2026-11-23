@@ -795,6 +795,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Tiếp tục xem",
     "showTopShelfContentDescription": "Tắt để chỉ hiển thị hình ảnh Pleazyng cho tất cả hồ sơ.",
     "topShelfUpdateFailed": "Không thể cập nhật Top Shelf. Hãy thử lại.",
+    "showStopButton": "Hiện nút Dừng trong trình phát",
     "showFinishTime": "Hiện giờ kết thúc",
     "showFinishTimeDescription": "Hiển thị giờ video kết thúc bên cạnh thời lượng còn lại."
   },

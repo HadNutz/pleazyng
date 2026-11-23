@@ -901,6 +901,7 @@ class _Translations$settings$bn extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · দেখা অব্যাহত রাখুন';
 	@override String get showTopShelfContentDescription => 'বন্ধ করলে সব প্রোফাইলে শুধু Pleazyng-এর ছবি দেখানো হবে।';
 	@override String get topShelfUpdateFailed => 'Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।';
+	@override String get showStopButton => 'প্লেয়ারে বন্ধ করার বোতাম দেখান';
 	@override String get showFinishTime => 'শেষ হওয়ার সময় দেখান';
 	@override String get showFinishTimeDescription => 'বাকি সময়ের পাশে ভিডিওটি কখন শেষ হবে তা দেখান।';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsBn {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · দেখা অব্যাহত রাখুন',
 			'settings.showTopShelfContentDescription' => 'বন্ধ করলে সব প্রোফাইলে শুধু Pleazyng-এর ছবি দেখানো হবে।',
 			'settings.topShelfUpdateFailed' => 'Top Shelf আপডেট করা যায়নি। আবার চেষ্টা করুন।',
+			'settings.showStopButton' => 'প্লেয়ারে বন্ধ করার বোতাম দেখান',
 			'settings.showFinishTime' => 'শেষ হওয়ার সময় দেখান',
 			'settings.showFinishTimeDescription' => 'বাকি সময়ের পাশে ভিডিওটি কখন শেষ হবে তা দেখান।',
 			'themeEditor.builtIn' => 'ভিত্তিতে',
@@ -6707,9 +6709,9 @@ extension on TranslationsBn {
 			'accessibility.interaction' => 'ইন্টারফেস ও ইন্টারফেশন',
 			'accessibility.reduceMotion' => 'মোটর কমাতে',
 			'accessibility.reduceMotionHint' => 'ফোকাসের নির্দেশক, পৃষ্ঠা পরিবর্তন ও সাজসজ্জার প্রভাবগুলির নড়াচড়া বন্ধ রাখুন।',
-			'accessibility.largeTargets' => 'বড় ট্যাক্স টার্গেট',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'বড় ট্যাক্স টার্গেট',
 			'accessibility.largeTargetsHint' => 'স্পর্শ ও সহায়ক প্রযুক্তির মাধ্যমে চলাচল সহজ করতে সাধারণ নিয়ন্ত্রণগুলির জায়গা বড় করুন।',
 			'accessibility.navigationHint' => 'নিয়ন্ত্রণগুলির মধ্যে যেতে Tab ও Shift+Tab, সক্রিয় করতে Enter বা Space এবং বন্ধ করতে Escape বা ফিরে যাওয়ার বোতাম ব্যবহার করুন। বই খোলা থাকলে জুম ও পড়ার পছন্দগুলি বদলানো যায়।',
 			'accessibility.textSizeDescription' => 'আপনার ডিভাইসের সিস্টেম টেক্সটের আকারের সেটিংয়ের পাশাপাশি Pleazyng ইন্টারফেসের লেখার আকারও পরিবর্তন করুন।',
@@ -7221,9 +7223,9 @@ extension on TranslationsBn {
 			'discover.findNext.controlsHelp' => 'কীবোর্ড বা রিমোট: একটি বোতামে যান, তারপর Enter বা নির্বাচন বোতাম চাপুন। পূর্বাবস্থায় ফেরালে শেষ পছন্দটি ফিরে আসে।',
 			'discover.findNext.artworkLoading' => 'ছবি লোড হচ্ছে…',
 			'discover.findNext.artworkUnavailable' => 'ছবি উপলব্ধ নয়',
-			'discover.findNext.savedFeedback' => 'সংরক্ষিত পছন্দে যোগ করা হয়েছে',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'সংরক্ষিত পছন্দে যোগ করা হয়েছে',
 			'discover.findNext.skippedFeedback' => 'আপাতত এড়িয়ে যাওয়া হয়েছে',
 			'discover.findNext.releaseToConfirm' => 'নিশ্চিত করতে ছেড়ে দিন',
 			'discover.findNext.remoteHint' => 'প্রচ্ছদে ফোকাস: ← / → বেছে নিন · নির্বাচন বোতাম: বিস্তারিত · ↑ / ↓ ফোকাস বদলান',
@@ -7735,9 +7737,9 @@ extension on TranslationsBn {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'সংগ্রহের অপসারণ করা হয় না: ${error}',
 			'collections.selectCollection' => 'ক্যালেকশন নির্বাচন',
 			'collections.collectionName' => 'সংগ্রহ নাম',
-			'collections.enterCollectionName' => 'সংগ্রহ নাম লিখুন',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'সংগ্রহ নাম লিখুন',
 			'collections.addedToCollection' => 'সংগ্রহে যোগ করা',
 			'collections.errorAddingToCollection' => 'সংগ্রহে যোগ করতে পারিনি',
 			'collections.created' => 'সংগ্রহ তৈরি',
@@ -8249,9 +8251,9 @@ extension on TranslationsBn {
 			'performanceOverlay.app' => 'অ্যাপ',
 			'performanceOverlay.decoder' => 'ডকোডার',
 			'performanceOverlay.rawDecoder' => 'ডেকডার',
-			'performanceOverlay.tunneling' => 'টুইটার',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'টুইটার',
 			'performanceOverlay.passthrough' => 'পাস্টরো',
 			'performanceOverlay.aspect' => 'দৃষ্টি',
 			'performanceOverlay.rotation' => 'রোটেশন',
@@ -8763,9 +8765,9 @@ extension on TranslationsBn {
 			'homeLayout.managePlexRows' => 'পরিচালনা Plex লাইন Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Home-Selected রানগুলি সংগঠন করার জন্য খোলা',
 			'homeLayout.organizeHomeRows' => 'Home রানার সংগঠন',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} লাইন: গাড়ি, হেরো, অটো-স্লাইড, মুছে ফেলুন',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} লাইন: গাড়ি, হেরো, অটো-স্লাইড, মুছে ফেলুন',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'সংগঠন ${library} লাইন',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Continue Watching + ${n} লাইন: গাড়ি, লাইব্রেরি, বাড়ি, হেরো, অটো-স্লাইড',
 			'homeLayout.renderAsHero' => 'কার্ডের হেয়ার হিসাবে রেন্ডার',
@@ -9277,9 +9279,9 @@ extension on TranslationsBn {
 			'audiobook.undoSeek' => 'শেষ অনুসন্ধান',
 			'audiobook.customSpeed' => 'কাস্টম Playback গতি',
 			'audiobook.speedHelp' => '0.25× থেকে 4× পর্যন্ত গতি নির্বাচন করুন।',
-			'audiobook.apply' => 'প্রয়োগ করুন',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'প্রয়োগ করুন',
 			'audiobook.customSleep' => 'কাস্টম Sleep Timer',
 			'audiobook.sleepMinutes' => 'মিনিট (1–1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} বিভাগের পর বন্ধ',
@@ -9791,9 +9793,9 @@ extension on TranslationsBn {
 			'musicExperience.bluetoothDriving' => 'ড্রাইভিংয়ের জন্য Bluetooth আউটপুট',
 			'musicExperience.bluetoothDrivingHint' => 'ড্রাইভিং ভিউ স্বয়ংক্রিয়ভাবে খোলার জন্য সংযুক্ত Bluetooth আউটপুট বেছে নিন।',
 			'musicTools.loudnessMissing' => 'শব্দের মাত্রার তথ্য ফেরত আসেনি',
-			'musicTools.loudnessRequested' => 'বিশ্লেষণের অনুরোধ পাঠানো হয়েছে',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'বিশ্লেষণের অনুরোধ পাঠানো হয়েছে',
 			'musicTools.loudnessUnsupported' => 'সার্ভারের এই সংস্করণ বিশ্লেষণের অনুরোধ সমর্থন করে না',
 			'musicTools.serverHistory' => 'সার্ভারের প্লেব্যাক ইতিহাস',
 			'musicTools.nfcWrite' => 'NFC ট্যাগে লিখুন',

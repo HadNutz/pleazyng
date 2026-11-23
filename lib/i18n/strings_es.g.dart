@@ -907,6 +907,7 @@ class Translations$settings$es extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Seguir viendo';
 	@override String get showTopShelfContentDescription => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.';
 	@override String get topShelfUpdateFailed => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.';
+	@override String get showStopButton => 'Mostrar el botón Detener en el reproductor';
 	@override String get showFinishTime => 'Mostrar hora de finalización';
 	@override String get showFinishTimeDescription => 'Muestra cuándo terminará el vídeo junto al tiempo restante.';
 }
@@ -6540,6 +6541,7 @@ extension on TranslationsEs {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Seguir viendo',
 			'settings.showTopShelfContentDescription' => 'Desactívalo para mostrar solo la imagen de Pleazyng en todos los perfiles.',
 			'settings.topShelfUpdateFailed' => 'No se pudo actualizar Top Shelf. Vuelve a intentarlo.',
+			'settings.showStopButton' => 'Mostrar el botón Detener en el reproductor',
 			'settings.showFinishTime' => 'Mostrar hora de finalización',
 			'settings.showFinishTimeDescription' => 'Muestra cuándo terminará el vídeo junto al tiempo restante.',
 			'themeEditor.builtIn' => 'Integrados',
@@ -6831,9 +6833,9 @@ extension on TranslationsEs {
 			'accessibility.boldText' => 'Interface de texto',
 			'accessibility.highContrast' => 'El alto contraste',
 			'accessibility.highContrastHint' => 'Texto más fuerte, etiquetas y indicadores de foco en superficies de luz o oscuridad.',
-			'accessibility.interaction' => 'Movimiento y interacción',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.interaction' => 'Movimiento y interacción',
 			'accessibility.reduceMotion' => 'Reducir movimiento',
 			'accessibility.reduceMotionHint' => 'Detener el movimiento del indicador de foco, las transiciones de página y los efectos decorativos.',
 			'accessibility.largeTargets' => 'Objetivos de mayor toque',
@@ -7345,9 +7347,9 @@ extension on TranslationsEs {
 			'discover.findNext.liveNow' => 'En emisión',
 			'discover.findNext.watchLive' => 'Ver en directo',
 			'discover.findNext.filterAnything' => 'Cualquier tipo',
-			'discover.findNext.filterWatch' => 'Ver',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.filterWatch' => 'Ver',
 			'discover.findNext.filterListen' => 'Escuchar',
 			'discover.findNext.filterRead' => 'Leer',
 			'discover.findNext.twentyMinutes' => '20 min',
@@ -7859,9 +7861,9 @@ extension on TranslationsEs {
 			'liveTv.recordSettings.anyChannel' => 'Grabar en cualquier canal',
 			'liveTv.recordSettings.anyTime' => 'Grabar a cualquier hora',
 			'liveTv.recordSettings.skipInLibrary' => 'Omitir episodios que ya están en la biblioteca',
-			'liveTv.recordSettings.keepUpTo' => 'Episodios que conservar',
 			_ => null,
 		} ?? switch (path) {
+			'liveTv.recordSettings.keepUpTo' => 'Episodios que conservar',
 			'liveTv.recordSettings.keepUpToHint' => '0 conserva todos los episodios',
 			'liveTv.startingInMinutes' => ({required Object minutes}) => 'Empieza en ${minutes} min',
 			'liveTv.dayAtTime' => ({required Object day, required Object time}) => '${day} a las ${time}',
@@ -8373,9 +8375,9 @@ extension on TranslationsEs {
 			'videoSettings.audioEqualizer' => 'Ecualizador de audio',
 			'videoSettings.audioEqualizerDescription' => 'El equalizador de 10 bandas para MPVLos filtros de audio utilizan audio decodido y desactivan passthrough.',
 			'videoSettings.audioEqualizerFlat' => 'Plano',
-			'videoSettings.audioEqualizerActive' => 'Personalizado',
 			_ => null,
 		} ?? switch (path) {
+			'videoSettings.audioEqualizerActive' => 'Personalizado',
 			'videoSettings.audioEqualizerSaveFailed' => 'No podría salvar la configuración de audio equalizer.',
 			'videoSettings.audioEffectsDescription' => 'Los efectos utilizan audio descifrado, por lo que los ajustes se vuelven. el ambiente de la habitación y la ampliación estereó depende del MPV Construir y rastrear.',
 			'videoSettings.audioStereoWidth' => 'Stereo extendido',
@@ -8887,9 +8889,9 @@ extension on TranslationsEs {
 			'appAccess.activateReviewAccess' => 'Activar',
 			'detail.endsAt' => ({required Object time}) => 'Termina a las ${time}',
 			'watchLink.serverUnavailable' => 'No podía llegar a un servidor Plex para este enlace.',
-			'watchLink.notFound' => 'No podría encontrar este espectáculo o película en sus servidores Plex.',
 			_ => null,
 		} ?? switch (path) {
+			'watchLink.notFound' => 'No podría encontrar este espectáculo o película en sus servidores Plex.',
 			'watchLink.ambiguous' => 'Este enlace se ajusta a los elementos en más de un servidor.Añadir un servidor al enlace.',
 			'watchLink.plexOnly' => 'Los enlaces de seguimiento actualmente solo soportan los servidores Plex.',
 			'watchLink.unsupportedItem' => 'Las ligazones de visualización sólo pueden abrir un espectáculo o una película.',
@@ -9401,9 +9403,9 @@ extension on TranslationsEs {
 			'audiobook.syncHelp' => 'Mantenga las posiciones de lectura, las posiciones de escucha, el estado de finalización, las notas y las notas a través de sus dispositivos. Seleccione una cuenta de almacenamiento anexada y utilice el mismo código de sincronización en cada dispositivo.',
 			'audiobook.addSyncSource' => 'Añadir Google Drive, OneDrive, Dropbox, WebDAV o S3 en los archivos y libros primero.',
 			'audiobook.syncDestination' => 'Conta de almacenamiento de sincronización',
-			'audiobook.syncFolder' => 'Sincronización de la pasta o prefixo',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.syncFolder' => 'Sincronización de la pasta o prefixo',
 			'audiobook.syncFolderHelp' => 'Elige una carpeta WebDAV existente y separada o un prefijo S3 exclusivo para los archivos de estado de la aplicación. Los archivos multimedia nunca se suben, sustituyen, renombran ni eliminan.',
 			'audiobook.syncCode' => 'Código de sincronización privada',
 			'audiobook.syncCodeHelp' => 'Crea un código en tu primer dispositivo, luego introduzca ese código en tus otros dispositivos. Mantiene una copia privada: es la clave para tu estado cifrado. Utilice un código diferente para cada persona.',
@@ -9915,9 +9917,9 @@ extension on TranslationsEs {
 			'bonusExtras.playbackUnavailable' => 'La reproducción no está disponible aquí. Prueba la aplicación del proveedor, escanea el código o copia el enlace.',
 			'bonusExtras.providerNotice' => 'La reproducción se abre en el reproductor del proveedor y puede incluir sus recomendaciones.',
 			'bonusExtras.external' => 'En línea',
-			'bonusExtras.library' => 'En tu biblioteca',
 			_ => null,
 		} ?? switch (path) {
+			'bonusExtras.library' => 'En tu biblioteca',
 			'bonusExtras.personal' => 'Enlace personal',
 			'bonusExtras.unknownLanguage' => 'Idioma no especificado',
 			'bonusExtras.spoilers' => 'Mostrar extras que pueden contener spoilers',

@@ -597,6 +597,7 @@ class Translations$settings$pt_PT extends Translations$settings$pt {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar a ver';
 	@override String get showTopShelfContentDescription => 'Desative para apresentar apenas a imagem do Pleazyng em todos os perfis.';
 	@override String get topShelfUpdateFailed => 'Não foi possível atualizar o Top Shelf. Tente novamente.';
+	@override String get showStopButton => 'Mostrar o botão Parar no leitor';
 	@override String get showFinishTime => 'Mostrar hora de fim';
 	@override String get showFinishTimeDescription => 'Apresenta a hora a que o vídeo termina junto ao tempo restante.';
 }
@@ -4223,6 +4224,7 @@ extension on TranslationsPtPt {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar a ver',
 			'settings.showTopShelfContentDescription' => 'Desative para apresentar apenas a imagem do Pleazyng em todos os perfis.',
 			'settings.topShelfUpdateFailed' => 'Não foi possível atualizar o Top Shelf. Tente novamente.',
+			'settings.showStopButton' => 'Mostrar o botão Parar no leitor',
 			'settings.showFinishTime' => 'Mostrar hora de fim',
 			'settings.showFinishTimeDescription' => 'Apresenta a hora a que o vídeo termina junto ao tempo restante.',
 			'themeEditor.custom' => 'Personalizado',
@@ -4260,9 +4262,9 @@ extension on TranslationsPtPt {
 			'themeEditor.previewCardTitle' => ({required Object number}) => 'Episódio ${number}',
 			'themeEditor.previewCardSubtitle' => ({required Object minutes}) => '${minutes} min restantes',
 			'themeEditor.previewSwitch' => 'Reprodução automática',
-			'themeEditor.previewMutedText' => 'O texto secundário fica assim',
 			_ => null,
 		} ?? switch (path) {
+			'themeEditor.previewMutedText' => 'O texto secundário fica assim',
 			'search.people' => 'Pessoas',
 			'search.hint' => 'Pesquisar filmes, séries, músicas...',
 			'search.tryDifferentTerm' => 'Tente um termo de pesquisa diferente',
@@ -4774,9 +4776,9 @@ extension on TranslationsPtPt {
 			'accountPreferences.subtitleModes.always' => 'Sempre ativado',
 			'accountPreferences.subtitleModes.alwaysDescription' => 'Ativar uma faixa de legendas no idioma preferido sempre que houver uma.',
 			'accountPreferences.subtitleModes.onlyForced' => 'Apenas legendas forçadas',
-			'accountPreferences.subtitleModes.onlyForcedDescription' => 'Carregar apenas as faixas marcadas como forçadas.',
 			_ => null,
 		} ?? switch (path) {
+			'accountPreferences.subtitleModes.onlyForcedDescription' => 'Carregar apenas as faixas marcadas como forçadas.',
 			'accountPreferences.subtitleModes.smart' => 'Mostrar com áudio estrangeiro',
 			'accountPreferences.subtitleModes.smartDescription' => 'Ativar legendas apenas quando o áudio estiver noutro idioma.',
 			'accountPreferences.subtitleAccessibility' => 'Legendas SDH',
@@ -5288,9 +5290,9 @@ extension on TranslationsPtPt {
 			'watchTogether.joiningRoom' => 'A entrar na sala...',
 			'watchTogether.connecting' => 'A ligar...',
 			'watchTogether.relayPublic' => 'As salas usam os servidores de retransmissão públicos do Open Watch Party.',
-			'watchTogether.relayCustom' => ({required Object url}) => 'As salas usam o seu servidor de retransmissão em ${url}.',
 			_ => null,
 		} ?? switch (path) {
+			'watchTogether.relayCustom' => ({required Object url}) => 'As salas usam o seu servidor de retransmissão em ${url}.',
 			'watchTogether.recentRooms' => 'Salas recentes',
 			'watchTogether.roomActions' => 'Ações da sala',
 			'watchTogether.renameRoom' => 'Renomear sala',
@@ -5802,9 +5804,9 @@ extension on TranslationsPtPt {
 			'seerr.notificationFailed' => 'Não foi possível atualizar o alerta de disponibilidade',
 			'seerr.title' => 'Seerr',
 			'seerr.connectTitle' => 'Ligar ao Seerr',
-			'seerr.serverUrl' => 'URL do servidor',
 			_ => null,
 		} ?? switch (path) {
+			'seerr.serverUrl' => 'URL do servidor',
 			'seerr.serverUrlHelper' => 'O endereço da sua instância do Seerr',
 			'seerr.checkServer' => 'Continuar',
 			'seerr.signInWithJellyfin' => 'Iniciar sessão com o Jellyfin',

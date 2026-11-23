@@ -797,6 +797,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · Folytatás",
     "showTopShelfContentDescription": "Kikapcsolva minden profilnál csak a Pleazyng képe jelenik meg.",
     "topShelfUpdateFailed": "A Top Shelf frissítése sikertelen. Próbáld újra.",
+    "showStopButton": "A Leállítás gomb megjelenítése a lejátszóban",
     "showFinishTime": "Befejezési idő megjelenítése",
     "showFinishTimeDescription": "A hátralévő idő mellett megjelenik, mikor ér véget a videó."
   },

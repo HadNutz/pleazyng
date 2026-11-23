@@ -901,6 +901,7 @@ class _Translations$settings$fa extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · ادامه تماشا';
 	@override String get showTopShelfContentDescription => 'با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.';
 	@override String get topShelfUpdateFailed => 'به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.';
+	@override String get showStopButton => 'نمایش دکمهٔ توقف در پخش‌کننده';
 	@override String get showFinishTime => 'نمایش زمان پایان';
 	@override String get showFinishTimeDescription => 'زمان پایان ویدیو را کنار زمان باقی‌مانده نشان می‌دهد.';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsFa {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · ادامه تماشا',
 			'settings.showTopShelfContentDescription' => 'با خاموش کردن این گزینه، برای همهٔ نمایه‌ها فقط تصویر Pleazyng نمایش داده می‌شود.',
 			'settings.topShelfUpdateFailed' => 'به‌روزرسانی Top Shelf انجام نشد. دوباره تلاش کنید.',
+			'settings.showStopButton' => 'نمایش دکمهٔ توقف در پخش‌کننده',
 			'settings.showFinishTime' => 'نمایش زمان پایان',
 			'settings.showFinishTimeDescription' => 'زمان پایان ویدیو را کنار زمان باقی‌مانده نشان می‌دهد.',
 			'themeEditor.builtIn' => 'ساخته شده',
@@ -6707,9 +6709,9 @@ extension on TranslationsFa {
 			'accessibility.interaction' => 'حرکت و تعامل',
 			'accessibility.reduceMotion' => 'کاهش حرکت',
 			'accessibility.reduceMotionHint' => 'حرکت نشانگر تمرکز، گذارهای صفحه و جلوه‌های تزئینی را متوقف کنید.',
-			'accessibility.largeTargets' => 'هدف های لمسی بزرگتر',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'هدف های لمسی بزرگتر',
 			'accessibility.largeTargetsHint' => 'کنترل های به اشتراک گذاشته شده را برای لمس و ناوبری کمک کننده فضای بیشتری فراهم می کند.',
 			'accessibility.navigationHint' => 'برای جابه‌جایی بین کنترل‌ها از Tab و Shift+Tab، برای فعال‌سازی از Enter یا Space و برای بستن از Escape یا دکمهٔ بازگشت استفاده کنید. وقتی کتاب باز است، بزرگ‌نمایی و تنظیمات خواندن در دسترس‌اند.',
 			'accessibility.textSizeDescription' => 'متن رابط مقیاس در Pleazyng علاوه بر تنظیمات اندازه متن سیستم دستگاه شما.',
@@ -7221,9 +7223,9 @@ extension on TranslationsFa {
 			'discover.findNext.controlsHelp' => 'صفحه‌کلید یا کنترل: روی یک دکمه بروید و Enter یا دکمه انتخاب را بزنید. واگرد آخرین انتخاب شما را برمی‌گرداند.',
 			'discover.findNext.artworkLoading' => 'در حال بارگیری تصویر…',
 			'discover.findNext.artworkUnavailable' => 'تصویر در دسترس نیست',
-			'discover.findNext.savedFeedback' => 'به انتخاب‌های ذخیره‌شده افزوده شد',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'به انتخاب‌های ذخیره‌شده افزوده شد',
 			'discover.findNext.skippedFeedback' => 'فعلاً رد شد',
 			'discover.findNext.releaseToConfirm' => 'برای تأیید رها کنید',
 			'discover.findNext.remoteHint' => 'با تمرکز روی جلد: ← / → انتخاب · دکمه انتخاب: جزئیات · ↑ / ↓ جابه‌جایی تمرکز',
@@ -7735,9 +7737,9 @@ extension on TranslationsFa {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'عدم حذف مجموعه: ${error}',
 			'collections.selectCollection' => 'انتخاب مجموعه',
 			'collections.collectionName' => 'نام جمع آوری',
-			'collections.enterCollectionName' => 'نام مجموعه را وارد کنید',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'نام مجموعه را وارد کنید',
 			'collections.addedToCollection' => 'اضافه شده به مجموعه',
 			'collections.errorAddingToCollection' => 'عدم اضافه شدن به جمع آوری',
 			'collections.created' => 'جمع آوری ساخته شده',
@@ -8249,9 +8251,9 @@ extension on TranslationsFa {
 			'performanceOverlay.app' => 'برنامه',
 			'performanceOverlay.decoder' => 'دکوراسیون',
 			'performanceOverlay.rawDecoder' => 'دکوراسیون خام',
-			'performanceOverlay.tunneling' => 'تونل',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'تونل',
 			'performanceOverlay.passthrough' => 'پازل',
 			'performanceOverlay.aspect' => 'دیدگاه',
 			'performanceOverlay.rotation' => 'چرخش',
@@ -8763,9 +8765,9 @@ extension on TranslationsFa {
 			'homeLayout.managePlexRows' => 'مدیریت Plex ردیف در Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'باز برای سازماندهی خطوط انتخاب شده در خانه',
 			'homeLayout.organizeHomeRows' => 'سازماندهی خطوط خانگی',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ردیف: حرکت، قهرمان، اتوماتیک، حذف',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ردیف: حرکت، قهرمان، اتوماتیک، حذف',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'سازماندهی ${library} خطوط',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'ادامه تماشای + ${n} خطوط: حرکت, کتابخانه, خانه, قهرمان, اسلاید خودکار',
 			'homeLayout.renderAsHero' => 'به عنوان یک کارت قهرمان',
@@ -9277,9 +9279,9 @@ extension on TranslationsFa {
 			'audiobook.undoSeek' => 'آخرین جستجو',
 			'audiobook.customSpeed' => 'سرعت بازی Custom Playback',
 			'audiobook.speedHelp' => 'سرعت را از 0.25× تا 4× انتخاب کنید.',
-			'audiobook.apply' => 'اعمال',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'اعمال',
 			'audiobook.customSleep' => 'زمان خواب شخصی',
 			'audiobook.sleepMinutes' => '۱ تا ۱۴۴۰ دقیقه',
 			'audiobook.sleepChapters' => ({required Object count}) => 'دانلود بازی ${count}',
@@ -9791,9 +9793,9 @@ extension on TranslationsFa {
 			'musicExperience.bluetoothDriving' => 'خروجی‌های بلوتوث برای رانندگی',
 			'musicExperience.bluetoothDrivingHint' => 'خروجی‌های بلوتوث متصل را انتخاب کنید که نمای رانندگی را خودکار باز می‌کنند.',
 			'musicTools.loudnessMissing' => 'داده‌ای درباره بلندی صدا دریافت نشد',
-			'musicTools.loudnessRequested' => 'درخواست تحلیل ارسال شد',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'درخواست تحلیل ارسال شد',
 			'musicTools.loudnessUnsupported' => 'این نسخهٔ سرور از درخواست تحلیل پشتیبانی نمی‌کند',
 			'musicTools.serverHistory' => 'سابقهٔ پخش سرور',
 			'musicTools.nfcWrite' => 'نوشتن برچسب NFC',

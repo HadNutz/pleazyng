@@ -899,6 +899,7 @@ class _Translations$settings$ko extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · 계속 시청';
 	@override String get showTopShelfContentDescription => '끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.';
 	@override String get topShelfUpdateFailed => 'Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요.';
+	@override String get showStopButton => '플레이어에 정지 버튼 표시';
 	@override String get showFinishTime => '종료 시각 표시';
 	@override String get showFinishTimeDescription => '남은 시간 옆에 동영상이 끝나는 시각을 표시합니다.';
 }
@@ -6408,6 +6409,7 @@ extension on TranslationsKo {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 계속 시청',
 			'settings.showTopShelfContentDescription' => '끄면 모든 프로필에 Pleazyng 이미지만 표시됩니다.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf를 업데이트할 수 없습니다. 다시 시도하세요.',
+			'settings.showStopButton' => '플레이어에 정지 버튼 표시',
 			'settings.showFinishTime' => '종료 시각 표시',
 			'settings.showFinishTimeDescription' => '남은 시간 옆에 동영상이 끝나는 시각을 표시합니다.',
 			'themeEditor.builtIn' => '기본 제공',
@@ -6702,9 +6704,9 @@ extension on TranslationsKo {
 			'accessibility.interaction' => '운동과 상호 작용',
 			'accessibility.reduceMotion' => '움직임을 줄이기',
 			'accessibility.reduceMotionHint' => '포커스 표시, 페이지 전환 및 장식 효과의 움직임을 멈춥니다.',
-			'accessibility.largeTargets' => '더 큰 터치 목표',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => '더 큰 터치 목표',
 			'accessibility.largeTargetsHint' => '공통 컨트롤의 영역을 넓혀 터치와 보조 기술을 통한 탐색을 쉽게 합니다.',
 			'accessibility.navigationHint' => 'Tab과 Shift+Tab으로 컨트롤 사이를 이동하고, Enter 또는 Space로 실행하고, Escape 또는 뒤로 버튼으로 닫으세요. 책을 열면 확대/축소와 읽기 설정을 사용할 수 있습니다.',
 			'accessibility.textSizeDescription' => 'Pleazyng에서 스케일 인터페이스 텍스트는 장치의 시스템 텍스트 크기 설정 외에도.',
@@ -7216,9 +7218,9 @@ extension on TranslationsKo {
 			'discover.findNext.controlsHelp' => '키보드나 리모컨: 버튼에 초점을 맞추고 Enter 또는 선택을 누르세요. 실행 취소는 마지막 선택을 되돌립니다.',
 			'discover.findNext.artworkLoading' => '이미지 불러오는 중…',
 			'discover.findNext.artworkUnavailable' => '이미지를 표시할 수 없음',
-			'discover.findNext.savedFeedback' => '저장된 추천에 추가됨',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => '저장된 추천에 추가됨',
 			'discover.findNext.skippedFeedback' => '지금은 건너뜀',
 			'discover.findNext.releaseToConfirm' => '놓아서 확인',
 			'discover.findNext.remoteHint' => '표지에 초점: ← / → 선택 · 선택 버튼: 상세 정보 · ↑ / ↓ 초점 이동',
@@ -7730,9 +7732,9 @@ extension on TranslationsKo {
 			'collections.deleteFailedWithError' => ({required Object error}) => '컬렉션 삭제 실패: ${error}',
 			'collections.selectCollection' => '컬렉션 선택',
 			'collections.collectionName' => '컬렉션 이름',
-			'collections.enterCollectionName' => '컬렉션 이름 입력',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => '컬렉션 이름 입력',
 			'collections.addedToCollection' => '컬렉션에 추가됨',
 			'collections.errorAddingToCollection' => '컬렉션에 추가 실패',
 			'collections.created' => '컬렉션 생성됨',
@@ -8244,9 +8246,9 @@ extension on TranslationsKo {
 			'performanceOverlay.app' => '앱',
 			'performanceOverlay.decoder' => '디코더',
 			'performanceOverlay.rawDecoder' => '원본 디코더',
-			'performanceOverlay.tunneling' => '터널링',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => '터널링',
 			'performanceOverlay.passthrough' => '패스스루',
 			'performanceOverlay.aspect' => '화면비',
 			'performanceOverlay.rotation' => '회전',
@@ -8758,9 +8760,9 @@ extension on TranslationsKo {
 			'homeLayout.managePlexRows' => '관리 Plex 라인 Pleazyng',
 			'homeLayout.managePlexRowsDescription' => '홈 선택된 라인을 조직하기 위해 열려 있습니다.',
 			'homeLayout.organizeHomeRows' => '홈 라인 조직',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 라인: 이동, 영웅, 자동 슬라이드, 제거',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 라인: 이동, 영웅, 자동 슬라이드, 제거',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} 라인을 조직',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '계속 보기 + ${n} 라인: 이동, 도서관, 홈, 영웅, 자동 슬라이드',
 			'homeLayout.renderAsHero' => '영웅 카드로 렌더',
@@ -9272,9 +9274,9 @@ extension on TranslationsKo {
 			'audiobook.undoSeek' => '마지막 찾기',
 			'audiobook.customSpeed' => 'Custom Playback 속도',
 			'audiobook.speedHelp' => '0.25×에서 4×까지의 속도를 선택합니다.',
-			'audiobook.apply' => '응용',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => '응용',
 			'audiobook.customSleep' => '사용자 지정 수면 시간',
 			'audiobook.sleepMinutes' => '1 분 (1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} 장 후 중지',
@@ -9786,9 +9788,9 @@ extension on TranslationsKo {
 			'musicExperience.bluetoothDriving' => '운전 화면용 Bluetooth 출력',
 			'musicExperience.bluetoothDrivingHint' => '운전 화면을 자동으로 열 연결된 Bluetooth 출력을 선택하세요.',
 			'musicTools.loudnessMissing' => '음량 데이터가 반환되지 않았습니다',
-			'musicTools.loudnessRequested' => '분석 요청을 보냈습니다',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => '분석 요청을 보냈습니다',
 			'musicTools.loudnessUnsupported' => '이 서버 버전은 분석 요청을 지원하지 않습니다',
 			'musicTools.serverHistory' => '서버 재생 기록',
 			'musicTools.nfcWrite' => 'NFC 태그 쓰기',

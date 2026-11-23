@@ -903,6 +903,7 @@ class _Translations$settings$he extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · המשך צפייה';
 	@override String get showTopShelfContentDescription => 'כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.';
 	@override String get topShelfUpdateFailed => 'עדכון Top Shelf נכשל. אפשר לנסות שוב.';
+	@override String get showStopButton => 'הצגת כפתור העצירה בנגן';
 	@override String get showFinishTime => 'הצגת שעת הסיום';
 	@override String get showFinishTimeDescription => 'שעת סיום הסרטון תוצג ליד הזמן שנותר.';
 }
@@ -6421,6 +6422,7 @@ extension on TranslationsHe {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · המשך צפייה',
 			'settings.showTopShelfContentDescription' => 'כשהאפשרות כבויה, בכל הפרופילים תוצג רק התמונה של Pleazyng.',
 			'settings.topShelfUpdateFailed' => 'עדכון Top Shelf נכשל. אפשר לנסות שוב.',
+			'settings.showStopButton' => 'הצגת כפתור העצירה בנגן',
 			'settings.showFinishTime' => 'הצגת שעת הסיום',
 			'settings.showFinishTimeDescription' => 'שעת סיום הסרטון תוצג ליד הזמן שנותר.',
 			'themeEditor.builtIn' => 'בנוי',
@@ -6715,9 +6717,9 @@ extension on TranslationsHe {
 			'accessibility.interaction' => 'תנועה ואינטראקציה',
 			'accessibility.reduceMotion' => 'הפחתת התנועה',
 			'accessibility.reduceMotionHint' => 'להפסיק את התנועה של סימון המיקוד, מעברי העמודים והאפקטים הדקורטיביים.',
-			'accessibility.largeTargets' => 'מטרות מגע גדולות',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'מטרות מגע גדולות',
 			'accessibility.largeTargetsHint' => 'להגדיל את השטח של הפקדים המשותפים כדי להקל על מגע ועל ניווט בעזרת טכנולוגיות מסייעות.',
 			'accessibility.navigationHint' => 'אפשר להשתמש ב-Tab וב-Shift+Tab כדי לעבור בין הפקדים, ב-Enter או ב-Space כדי להפעיל, וב-Escape או בכפתור החזרה כדי לסגור. כשספר פתוח, אפשר לשנות את הזום ואת העדפות הקריאה.',
 			'accessibility.textSizeDescription' => 'טקסט אינטראקציה בקנה מידה ב- Pleazyng מלבד הגדרת גודל הטקסט של המערכת במכשיר שלך.',
@@ -7229,9 +7231,9 @@ extension on TranslationsHe {
 			'discover.findNext.controlsHelp' => 'מקלדת או שלט: עברו לכפתור ולחצו על Enter או על בחירה. ביטול מחזיר את הבחירה האחרונה.',
 			'discover.findNext.artworkLoading' => 'טוען תמונה…',
 			'discover.findNext.artworkUnavailable' => 'התמונה אינה זמינה',
-			'discover.findNext.savedFeedback' => 'נוסף לבחירות השמורות',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'נוסף לבחירות השמורות',
 			'discover.findNext.skippedFeedback' => 'דולג לעת עתה',
 			'discover.findNext.releaseToConfirm' => 'שחררו לאישור',
 			'discover.findNext.remoteHint' => 'כשהעטיפה במיקוד: ← / → בחירה · לחצן בחירה: פרטים · ↑ / ↓ העברת מיקוד',
@@ -7743,9 +7745,9 @@ extension on TranslationsHe {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'לא הצליח למחוק את האוסף: ${error}',
 			'collections.selectCollection' => 'בחר אוסף',
 			'collections.collectionName' => 'שם האוסף',
-			'collections.enterCollectionName' => 'כניסת שם האוסף',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'כניסת שם האוסף',
 			'collections.addedToCollection' => 'הוספת לקהילה',
 			'collections.errorAddingToCollection' => 'לא הצלחתי להוסיף לאוסף',
 			'collections.created' => 'אוסף שנוצר',
@@ -8257,9 +8259,9 @@ extension on TranslationsHe {
 			'performanceOverlay.app' => 'אפליקציה',
 			'performanceOverlay.decoder' => 'דקורטיבי',
 			'performanceOverlay.rawDecoder' => 'דקורטיבי Raw',
-			'performanceOverlay.tunneling' => 'טונל',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'טונל',
 			'performanceOverlay.passthrough' => 'פסטהרו',
 			'performanceOverlay.aspect' => 'מבט',
 			'performanceOverlay.rotation' => 'סיבוב',
@@ -8771,9 +8773,9 @@ extension on TranslationsHe {
 			'homeLayout.managePlexRows' => 'ניהול Plex שורות ב Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'פתוח לארגן את השורות שנבחרו בבית',
 			'homeLayout.organizeHomeRows' => 'ארגון שורות בית',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} שורות: זז, גיבור, אוטומטית, להסיר',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} שורות: זז, גיבור, אוטומטית, להסיר',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'ארגון ${library} שורות',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'המשך צפייה + ${n} שורות: תנועה, ספרייה, בית, גיבור, אוטומטית',
 			'homeLayout.renderAsHero' => 'רנדה ככרטיס גיבור',
@@ -9285,9 +9287,9 @@ extension on TranslationsHe {
 			'audiobook.undoSeek' => 'לאחרונה מחפשים',
 			'audiobook.customSpeed' => 'מהירות Playback Custom',
 			'audiobook.speedHelp' => 'בחר מהירות של 0.25× עד 4×.',
-			'audiobook.apply' => 'יישום',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'יישום',
 			'audiobook.customSleep' => 'שעות שינה מותאמות אישית',
 			'audiobook.sleepMinutes' => 'דקות (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'עקבו אחרי ${count}',
@@ -9799,9 +9801,9 @@ extension on TranslationsHe {
 			'musicExperience.bluetoothDriving' => 'יציאות Bluetooth לנהיגה',
 			'musicExperience.bluetoothDrivingHint' => 'בחרו יציאות Bluetooth מחוברות שיפתחו אוטומטית את תצוגת הנהיגה.',
 			'musicTools.loudnessMissing' => 'לא התקבלו נתוני עוצמת קול',
-			'musicTools.loudnessRequested' => 'בקשת ניתוח נשלחה',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'בקשת ניתוח נשלחה',
 			'musicTools.loudnessUnsupported' => 'גרסת השרת הזו אינה תומכת בבקשות ניתוח',
 			'musicTools.serverHistory' => 'היסטוריית ניגון בשרת',
 			'musicTools.nfcWrite' => 'כתיבה לתג NFC',

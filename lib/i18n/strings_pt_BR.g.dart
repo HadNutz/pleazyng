@@ -278,6 +278,7 @@ class Translations$settings$pt_BR extends Translations$settings$pt {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Continuar assistindo';
 	@override String get showTopShelfContentDescription => 'Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.';
 	@override String get topShelfUpdateFailed => 'Não foi possível atualizar o Top Shelf. Tente novamente.';
+	@override String get showStopButton => 'Mostrar o botão Parar no player';
 	@override String get showFinishTime => 'Mostrar horário de término';
 	@override String get showFinishTimeDescription => 'Mostra quando o vídeo vai terminar ao lado do tempo restante.';
 }
@@ -1561,6 +1562,7 @@ extension on TranslationsPtBr {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Continuar assistindo',
 			'settings.showTopShelfContentDescription' => 'Desative para mostrar apenas a imagem do Pleazyng em todos os perfis.',
 			'settings.topShelfUpdateFailed' => 'Não foi possível atualizar o Top Shelf. Tente novamente.',
+			'settings.showStopButton' => 'Mostrar o botão Parar no player',
 			'settings.showFinishTime' => 'Mostrar horário de término',
 			'settings.showFinishTimeDescription' => 'Mostra quando o vídeo vai terminar ao lado do tempo restante.',
 			'themeEditor.custom' => 'Personalizado',
@@ -1956,9 +1958,9 @@ extension on TranslationsPtBr {
 			'romm.playWith' => 'Play with',
 			'romm.download' => 'Keep offline',
 			'romm.offline' => 'Available offline',
-			'romm.downloadProgress' => 'Downloading…',
 			_ => null,
 		} ?? switch (path) {
+			'romm.downloadProgress' => 'Downloading…',
 			'romm.cancelDownload' => 'Cancel download',
 			'romm.removeOffline' => 'Remove offline copy',
 			'romm.storage' => 'Offline storage',

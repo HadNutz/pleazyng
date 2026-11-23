@@ -905,6 +905,7 @@ class _Translations$settings$uk extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Продовжити перегляд';
 	@override String get showTopShelfContentDescription => 'Якщо вимкнути цей параметр, усі профілі бачитимуть лише зображення Pleazyng.';
 	@override String get topShelfUpdateFailed => 'Не вдалося оновити Top Shelf. Спробуйте ще раз.';
+	@override String get showStopButton => 'Показувати кнопку зупинки в програвачі';
 	@override String get showFinishTime => 'Показувати час завершення';
 	@override String get showFinishTimeDescription => 'Поруч із залишком часу показує, коли завершиться відео.';
 }
@@ -6457,6 +6458,7 @@ extension on TranslationsUk {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Продовжити перегляд',
 			'settings.showTopShelfContentDescription' => 'Якщо вимкнути цей параметр, усі профілі бачитимуть лише зображення Pleazyng.',
 			'settings.topShelfUpdateFailed' => 'Не вдалося оновити Top Shelf. Спробуйте ще раз.',
+			'settings.showStopButton' => 'Показувати кнопку зупинки в програвачі',
 			'settings.showFinishTime' => 'Показувати час завершення',
 			'settings.showFinishTimeDescription' => 'Поруч із залишком часу показує, коли завершиться відео.',
 			'themeEditor.builtIn' => 'Будівництво',
@@ -6751,9 +6753,9 @@ extension on TranslationsUk {
 			'accessibility.interaction' => 'Мотивація і взаємодія',
 			'accessibility.reduceMotion' => 'Зменшення руху',
 			'accessibility.reduceMotionHint' => 'Зупиняє анімацію індикатора фокусу, переходи сторінок і декоративні ефекти.',
-			'accessibility.largeTargets' => 'Більшість цілей',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'Більшість цілей',
 			'accessibility.largeTargetsHint' => 'Дайте спільним контролям більше місця для дотику і асистентської навігації.',
 			'accessibility.navigationHint' => 'Використовуйте Tab і Shift+Tab для переходу між елементами керування, Enter або пробіл для активації, а Escape або кнопку «Назад» для закриття. Коли книгу відкрито, доступні масштабування й налаштування читання.',
 			'accessibility.textSizeDescription' => 'Розмір інтерфейсу тексту в Pleazyng, а також налаштування розміру тексту системи вашого пристрою.',
@@ -7265,9 +7267,9 @@ extension on TranslationsUk {
 			'discover.findNext.controlsHelp' => 'Клавіатура або пульт: виберіть кнопку й натисніть Enter або кнопку вибору. Скасування відновлює останній вибір.',
 			'discover.findNext.artworkLoading' => 'Завантаження обкладинки…',
 			'discover.findNext.artworkUnavailable' => 'Обкладинка недоступна',
-			'discover.findNext.savedFeedback' => 'Додано до збережених добірок',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Додано до збережених добірок',
 			'discover.findNext.skippedFeedback' => 'Наразі пропущено',
 			'discover.findNext.releaseToConfirm' => 'Відпустіть для підтвердження',
 			'discover.findNext.remoteHint' => 'Фокус на обкладинці: ← / → вибір · Кнопка вибору: подробиці · ↑ / ↓ переміщення фокусу',
@@ -7779,9 +7781,9 @@ extension on TranslationsUk {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Не вдалося видалити збірку: ${error}',
 			'collections.selectCollection' => 'Вибір колекції',
 			'collections.collectionName' => 'Колекційне ім\'я',
-			'collections.enterCollectionName' => 'Введіть колекційне ім\'я',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Введіть колекційне ім\'я',
 			'collections.addedToCollection' => 'Додано до колекції',
 			'collections.errorAddingToCollection' => 'Не вдалося додати до колекції',
 			'collections.created' => 'Колекція створена',
@@ -8293,9 +8295,9 @@ extension on TranslationsUk {
 			'performanceOverlay.app' => 'Додаток',
 			'performanceOverlay.decoder' => 'Декорація',
 			'performanceOverlay.rawDecoder' => 'РОЙ ДЕКОДЕР',
-			'performanceOverlay.tunneling' => 'тунелі',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'тунелі',
 			'performanceOverlay.passthrough' => 'Пастирський',
 			'performanceOverlay.aspect' => 'Погляд',
 			'performanceOverlay.rotation' => 'Обертання',
@@ -8807,9 +8809,9 @@ extension on TranslationsUk {
 			'homeLayout.managePlexRows' => 'Управління Plex рядки в Pleazyng',
 			'homeLayout.managePlexRowsDescription' => 'Відкрито для організації домашньо вибраних рядків',
 			'homeLayout.organizeHomeRows' => 'Організуйте домашній ряд',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} рядки: переміщення, Герої, Авто-Слайд, видалення',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} рядки: переміщення, Герої, Авто-Слайд, видалення',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => 'Організуйте ${library} рядки',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => 'Продовжуйте дивитися + ${n} рядки: переміщення, Бібліотека, Домашній, Герої, Авто-Слайд',
 			'homeLayout.renderAsHero' => 'Повернення як героїчна картка',
@@ -9321,9 +9323,9 @@ extension on TranslationsUk {
 			'audiobook.undoSeek' => 'Останній пошук',
 			'audiobook.customSpeed' => 'Швидкість відтворення',
 			'audiobook.speedHelp' => 'Виберіть швидкість від 0,25× до 4×.',
-			'audiobook.apply' => 'Заявка',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Заявка',
 			'audiobook.customSleep' => 'Кваліфікований час сну',
 			'audiobook.sleepMinutes' => '1 хвилини (1 – 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => 'Залишився після розділів ${count}',
@@ -9835,9 +9837,9 @@ extension on TranslationsUk {
 			'musicExperience.bluetoothDriving' => 'Виходи Bluetooth для водіння',
 			'musicExperience.bluetoothDrivingHint' => 'Виберіть підключені виходи Bluetooth, які автоматично відкривають режим водіння.',
 			'musicTools.loudnessMissing' => 'Дані про гучність не отримано',
-			'musicTools.loudnessRequested' => 'Запит на аналіз надіслано',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Запит на аналіз надіслано',
 			'musicTools.loudnessUnsupported' => 'Ця версія сервера не підтримує запити на аналіз',
 			'musicTools.serverHistory' => 'Історія відтворення на сервері',
 			'musicTools.nfcWrite' => 'Записати NFC-мітку',

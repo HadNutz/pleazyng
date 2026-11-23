@@ -899,6 +899,7 @@ class Translations$settings$zh extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · 继续观看';
 	@override String get showTopShelfContentDescription => '关闭后，所有个人资料都只会显示 Pleazyng 图片。';
 	@override String get topShelfUpdateFailed => '无法更新 Top Shelf。请重试。';
+	@override String get showStopButton => '在播放器中显示停止按钮';
 	@override String get showFinishTime => '显示结束时间';
 	@override String get showFinishTimeDescription => '在剩余时长旁显示视频预计结束的时间。';
 }
@@ -6408,6 +6409,7 @@ extension on TranslationsZh {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · 继续观看',
 			'settings.showTopShelfContentDescription' => '关闭后，所有个人资料都只会显示 Pleazyng 图片。',
 			'settings.topShelfUpdateFailed' => '无法更新 Top Shelf。请重试。',
+			'settings.showStopButton' => '在播放器中显示停止按钮',
 			'settings.showFinishTime' => '显示结束时间',
 			'settings.showFinishTimeDescription' => '在剩余时长旁显示视频预计结束的时间。',
 			'themeEditor.builtIn' => '内置',
@@ -6702,9 +6704,9 @@ extension on TranslationsZh {
 			'accessibility.interaction' => '动作与互动',
 			'accessibility.reduceMotion' => '减少动作',
 			'accessibility.reduceMotionHint' => '停止焦点指示器、页面切换和装饰效果的动画。',
-			'accessibility.largeTargets' => '触摸目标',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => '触摸目标',
 			'accessibility.largeTargetsHint' => '共享控制器提供更多触摸和辅助导航空间。',
 			'accessibility.navigationHint' => '使用 Tab 和 Shift+Tab 在控件之间移动，按 Enter 或空格键激活，按 Escape 或返回按钮关闭。打开书籍后，可调整缩放比例和阅读偏好。',
 			'accessibility.textSizeDescription' => '在 Pleazyng 中扩展接口文本,以及您的设备的系统文本大小设置。',
@@ -7216,9 +7218,9 @@ extension on TranslationsZh {
 			'discover.findNext.controlsHelp' => '键盘或遥控器：将焦点移到按钮，然后按 Enter 或选择键。撤销可恢复上一次选择。',
 			'discover.findNext.artworkLoading' => '正在加载图片…',
 			'discover.findNext.artworkUnavailable' => '图片不可用',
-			'discover.findNext.savedFeedback' => '已加入保存的推荐',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => '已加入保存的推荐',
 			'discover.findNext.skippedFeedback' => '已暂时跳过',
 			'discover.findNext.releaseToConfirm' => '松开以确认',
 			'discover.findNext.remoteHint' => '封面获得焦点时：← / → 选择 · 选择键查看详情 · ↑ / ↓ 移动焦点',
@@ -7730,9 +7732,9 @@ extension on TranslationsZh {
 			'collections.deleteFailedWithError' => ({required Object error}) => '删除合集失败：${error}',
 			'collections.selectCollection' => '选择合集',
 			'collections.collectionName' => '合集名称',
-			'collections.enterCollectionName' => '输入合集名称',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => '输入合集名称',
 			'collections.addedToCollection' => '已添加到合集',
 			'collections.errorAddingToCollection' => '添加到合集失败',
 			'collections.created' => '已创建合集',
@@ -8244,9 +8246,9 @@ extension on TranslationsZh {
 			'performanceOverlay.app' => '应用',
 			'performanceOverlay.decoder' => '解码器',
 			'performanceOverlay.rawDecoder' => '原始解码器',
-			'performanceOverlay.tunneling' => '隧道',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => '隧道',
 			'performanceOverlay.passthrough' => '直通',
 			'performanceOverlay.aspect' => '宽高比',
 			'performanceOverlay.rotation' => '旋转',
@@ -8758,9 +8760,9 @@ extension on TranslationsZh {
 			'homeLayout.managePlexRows' => '管理 Plex 行在 Pleazyng',
 			'homeLayout.managePlexRowsDescription' => '开放组织主选行列',
 			'homeLayout.organizeHomeRows' => '安排家居行',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移动, 英雄, 自动滑动, 移除',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} 行: 移动, 英雄, 自动滑动, 移除',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '组织 ${library} 行',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '继续观看 + ${n} 行: 移动, 图书馆, 家, 英雄, 自动滑板',
 			'homeLayout.renderAsHero' => '显示为焦点横幅',
@@ -9272,9 +9274,9 @@ extension on TranslationsZh {
 			'audiobook.undoSeek' => '最后寻找',
 			'audiobook.customSpeed' => '定制播放速度',
 			'audiobook.speedHelp' => '选择速度从 0.25× 到 4×。',
-			'audiobook.apply' => '應用',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => '應用',
 			'audiobook.customSleep' => '定制睡眠时间',
 			'audiobook.sleepMinutes' => '时间(1 - 1440)',
 			'audiobook.sleepChapters' => ({required Object count}) => '播放完${count}章后停止',
@@ -9786,9 +9788,9 @@ extension on TranslationsZh {
 			'musicExperience.bluetoothDriving' => '驾驶视图蓝牙输出',
 			'musicExperience.bluetoothDrivingHint' => '选择会自动打开驾驶视图的已连接蓝牙输出。',
 			'musicTools.loudnessMissing' => '未返回响度数据',
-			'musicTools.loudnessRequested' => '已发送分析请求',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => '已发送分析请求',
 			'musicTools.loudnessUnsupported' => '此服务器版本不支持分析请求',
 			'musicTools.serverHistory' => '服务器播放历史',
 			'musicTools.nfcWrite' => '写入 NFC 标签',

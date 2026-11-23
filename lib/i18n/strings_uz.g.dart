@@ -901,6 +901,7 @@ class _Translations$settings$uz extends Translations$settings$en {
 	@override String get showTopShelfContent => 'Apple TV Top Shelf · Tomoshani davom ettirish';
 	@override String get showTopShelfContentDescription => 'Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.';
 	@override String get topShelfUpdateFailed => 'Top Shelf yangilanmadi. Qayta urinib koʻring.';
+	@override String get showStopButton => 'Pleyerda Toʻxtatish tugmasini koʻrsatish';
 	@override String get showFinishTime => 'Tugash vaqtini koʻrsatish';
 	@override String get showFinishTimeDescription => 'Qolgan vaqt yonida video qachon tugashini koʻrsatadi.';
 }
@@ -6413,6 +6414,7 @@ extension on TranslationsUz {
 			'settings.showTopShelfContent' => 'Apple TV Top Shelf · Tomoshani davom ettirish',
 			'settings.showTopShelfContentDescription' => 'Oʻchirilganda barcha profillarda faqat Pleazyng rasmi koʻrsatiladi.',
 			'settings.topShelfUpdateFailed' => 'Top Shelf yangilanmadi. Qayta urinib koʻring.',
+			'settings.showStopButton' => 'Pleyerda Toʻxtatish tugmasini koʻrsatish',
 			'settings.showFinishTime' => 'Tugash vaqtini koʻrsatish',
 			'settings.showFinishTimeDescription' => 'Qolgan vaqt yonida video qachon tugashini koʻrsatadi.',
 			'themeEditor.builtIn' => 'Oʻrnatilgan',
@@ -6707,9 +6709,9 @@ extension on TranslationsUz {
 			'accessibility.interaction' => 'Movsiya və interakcion',
 			'accessibility.reduceMotion' => 'Movsiya ko‘zadi',
 			'accessibility.reduceMotionHint' => 'Fokus ko‘rsatkichi harakatini, sahifa almashish animatsiyasini va bezak effektlarini to‘xtating.',
-			'accessibility.largeTargets' => 'Tadiqni sasni',
 			_ => null,
 		} ?? switch (path) {
+			'accessibility.largeTargets' => 'Tadiqni sasni',
 			'accessibility.largeTargetsHint' => 'U\'zizga qo‘zlar, touch-i-asistivi navigation üçün daha fazla yer qo‘z.',
 			'accessibility.navigationHint' => 'Boshqaruv elementlari orasida yurish uchun Tab va Shift+Tab, ishga tushirish uchun Enter yoki Bo‘sh joy, yopish uchun Escape yoki Orqaga tugmasidan foydalaning. Kitob ochiq bo‘lsa, masshtab va o‘qish sozlamalarini o‘zgartirish mumkin.',
 			'accessibility.textSizeDescription' => 'Tekstil-Skala interfacing-i Pleazyng-da sistem-size-situasyonun yanı sıra cihazın texta-sized-settings.',
@@ -7221,9 +7223,9 @@ extension on TranslationsUz {
 			'discover.findNext.controlsHelp' => 'Klaviatura yoki pult: tugmani tanlang, so‘ng Enter yoki tanlash tugmasini bosing. Bekor qilish oxirgi tanlovingizni qaytaradi.',
 			'discover.findNext.artworkLoading' => 'Rasm yuklanmoqda…',
 			'discover.findNext.artworkUnavailable' => 'Rasm mavjud emas',
-			'discover.findNext.savedFeedback' => 'Saqlangan tanlovlarga qo‘shildi',
 			_ => null,
 		} ?? switch (path) {
+			'discover.findNext.savedFeedback' => 'Saqlangan tanlovlarga qo‘shildi',
 			'discover.findNext.skippedFeedback' => 'Hozircha o‘tkazib yuborildi',
 			'discover.findNext.releaseToConfirm' => 'Tasdiqlash uchun qo‘yib yuboring',
 			'discover.findNext.remoteHint' => 'Muqova fokusda bo‘lganda: ← / → tanlash · Tanlash tugmasi: tafsilotlar · ↑ / ↓ fokusni ko‘chirish',
@@ -7735,9 +7737,9 @@ extension on TranslationsUz {
 			'collections.deleteFailedWithError' => ({required Object error}) => 'Toʻplamni oʻchirish xatoligi: ${error}',
 			'collections.selectCollection' => 'Toʻplamni tanlash',
 			'collections.collectionName' => 'Toʻplam nomi',
-			'collections.enterCollectionName' => 'Toʻplam nomini kiriting',
 			_ => null,
 		} ?? switch (path) {
+			'collections.enterCollectionName' => 'Toʻplam nomini kiriting',
 			'collections.addedToCollection' => 'Toʻplamga qoʻshildi',
 			'collections.errorAddingToCollection' => 'Toʻplamga qoʻshib boʻlmadi',
 			'collections.created' => 'Toʻplam yaratildi',
@@ -8249,9 +8251,9 @@ extension on TranslationsUz {
 			'performanceOverlay.app' => 'Ilova',
 			'performanceOverlay.decoder' => 'Dekoder',
 			'performanceOverlay.rawDecoder' => 'Ishlov berilmagan dekoder',
-			'performanceOverlay.tunneling' => 'Tunnellash',
 			_ => null,
 		} ?? switch (path) {
+			'performanceOverlay.tunneling' => 'Tunnellash',
 			'performanceOverlay.passthrough' => 'Toʻgʻridan-toʻgʻri oʻtkazish',
 			'performanceOverlay.aspect' => 'Nisbat',
 			'performanceOverlay.rotation' => 'Aylanish',
@@ -8763,9 +8765,9 @@ extension on TranslationsUz {
 			'homeLayout.managePlexRows' => 'Plex ruzlar Pleazyng\'da qotlarlar.',
 			'homeLayout.managePlexRowsDescription' => 'U\'ziziziziz qiziziziyizizizimizizizizimiziziz',
 			'homeLayout.organizeHomeRows' => 'Home Riyadhlar',
-			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ruzlar: Moving, Hero, Auto-slide, xifida',
 			_ => null,
 		} ?? switch (path) {
+			'homeLayout.organizeHomeRowsDescription' => ({required Object n}) => '${n} ruzlar: Moving, Hero, Auto-slide, xifida',
 			'homeLayout.organizeLibraryRows' => ({required Object library}) => '${library} qaytlarlar',
 			'homeLayout.organizeLibraryRowsDescription' => ({required Object n}) => '+ ${n} riylar: Moving, Library, Home, Hero, Auto-slide',
 			'homeLayout.renderAsHero' => 'Bir kartatda bir kahraman.',
@@ -9277,9 +9279,9 @@ extension on TranslationsUz {
 			'audiobook.undoSeek' => 'Songa ko‘zadi.',
 			'audiobook.customSpeed' => 'Custom playback ritmi.',
 			'audiobook.speedHelp' => 'Siz 0.25 x 4 x o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z o‘z',
-			'audiobook.apply' => 'Diggadi',
 			_ => null,
 		} ?? switch (path) {
+			'audiobook.apply' => 'Diggadi',
 			'audiobook.customSleep' => 'Custom uyumalar',
 			'audiobook.sleepMinutes' => '1 – 440 min)',
 			'audiobook.sleepChapters' => ({required Object count}) => '${count} kapitallardan sonra durga',
@@ -9791,9 +9793,9 @@ extension on TranslationsUz {
 			'musicExperience.bluetoothDriving' => 'Haydash uchun Bluetooth chiqishlari',
 			'musicExperience.bluetoothDrivingHint' => 'Haydash ko‘rinishini avtomatik ochadigan ulangan Bluetooth chiqishlarini tanlang.',
 			'musicTools.loudnessMissing' => 'Ovoz balandligi ma’lumotlari qaytarilmadi',
-			'musicTools.loudnessRequested' => 'Tahlil so‘rovi yuborildi',
 			_ => null,
 		} ?? switch (path) {
+			'musicTools.loudnessRequested' => 'Tahlil so‘rovi yuborildi',
 			'musicTools.loudnessUnsupported' => 'Serverning bu versiyasi tahlil so‘rovlarini qo‘llamaydi',
 			'musicTools.serverHistory' => 'Serverdagi ijro tarixi',
 			'musicTools.nfcWrite' => 'NFC tegiga yozish',

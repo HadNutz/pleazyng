@@ -795,6 +795,7 @@
     "showTopShelfContent": "Apple TV Top Shelf · ดูต่อ",
     "showTopShelfContentDescription": "ปิดเพื่อแสดงเฉพาะภาพของ Pleazyng สำหรับทุกโปรไฟล์",
     "topShelfUpdateFailed": "อัปเดต Top Shelf ไม่สำเร็จ โปรดลองอีกครั้ง",
+    "showStopButton": "แสดงปุ่มหยุดในโปรแกรมเล่น",
     "showFinishTime": "แสดงเวลาสิ้นสุด",
     "showFinishTimeDescription": "แสดงเวลาที่วิดีโอจะจบถัดจากเวลาที่เหลือ"
   },
