@@ -1193,6 +1193,14 @@ def capture(args: argparse.Namespace) -> None:
             timeout=1800,
         )
         if test_result.returncode != 0:
+            if platform == "tvos" and simulator is not None:
+                diagnostic_command(
+                    output, "tvos-storekit-ui-runtime",
+                    ["xcrun", "simctl", "spawn", simulator["udid"], "log", "show",
+                     "--last", "5m", "--style", "compact",
+                     "--predicate", 'process == "Runner" OR subsystem CONTAINS[c] "StoreKit"'],
+                    timeout=60,
+                )
             raise RuntimeError(f"Native {platform} StoreKitTest UI flow failed ({test_result.returncode}); see {test_log.name}")
         if not result_bundle.is_dir():
             raise RuntimeError("Xcode reported UI test success but did not create an xcresult bundle")
