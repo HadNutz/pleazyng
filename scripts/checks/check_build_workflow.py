@@ -1702,7 +1702,7 @@ require(
     and '"$GITHUB_WORKSPACE/pleazyng-tvos-unsigned.ipa"' in tvos_dependency_gate
     and '"$GITHUB_WORKSPACE/pleazyng-tvos-appstore.ipa"' in tvos_dependency_gate
     and "--require-signed" in tvos_dependency_gate
-    and "TVOS_PRODUCT_SOURCE_SHA: ${{ inputs.recovery_product_sha || github.sha }}" in tvos_dependency_gate
+    and "TVOS_PRODUCT_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.mode == 'tvos-store' && needs.validate-trusted-ref.outputs.release_commit || inputs.recovery_product_sha || github.sha }}" in tvos_dependency_gate
     and '"$TVOS_PRODUCT_SOURCE_SHA"' in tvos_dependency_gate
     and '"$COMPILE_SOURCE_SHA"' in tvos_dependency_gate
     and "--packaging-source-sha" in tvos_dependency_gate
