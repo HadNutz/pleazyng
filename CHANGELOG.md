@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update the optional karaoke audio analysis environment to librosa 1.0.1.
+
 - Update the Google Tensor LiteRT AOT compiler nightly to its November 17 build.
 
 - Update the GitHub Actions Go setup used by CI to 7.1.0.
