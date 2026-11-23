@@ -38,6 +38,7 @@ on:
           - webos-validation
           - macos-validation
           - android-validation
+          - ios-store
         default: release
       build_version:
         description: Semantic version for artifact names; releases reuse a tag on main only when later commits contain allowlisted release infrastructure changes
@@ -457,6 +458,7 @@ jobs:
           INCLUDE_WEBOS_BUILD_INPUT: ${{ inputs.include_webos_build }}
           INCLUDE_WEBOS_RELEASE_INPUT: ${{ inputs.include_webos_release }}
           INCLUDE_APPLE_STORE_BUILD_INPUT: ${{ inputs.include_apple_store_build }}
+          IOS_STORE_CONFLICTING_INPUTS: ${{ inputs.candidate_ref != '' || inputs.reuse_platform_run_id != '' || inputs.recovery_source_sha != '' || inputs.recovery_product_sha != '' }}
           PREPARE_HOMEBREW_CASK_INPUT: ${{ inputs.prepare_homebrew_cask }}
           PRIVATE_APPLE_SIGNING_UNAVAILABLE_INPUT: ${{ inputs.private_apple_signing_unavailable }}
           SUBTITLE_GPU_BACKEND_INPUT: ${{ inputs.subtitle_gpu_backend }}
@@ -530,7 +532,7 @@ jobs:
             echo "GPU subtitle backends are available only in full build mode." >&2
             exit 1
           fi
-          if [[ "$MODE" != "release" && "$MODE" != "webos-validation" && "$MODE" != "macos-validation" && "$MODE" != "android-validation" ]]; then
+          if [[ "$MODE" != "release" && "$MODE" != "webos-validation" && "$MODE" != "macos-validation" && "$MODE" != "android-validation" && "$MODE" != "ios-store" ]]; then
             echo "Unsupported platform mode: $MODE" >&2
             exit 1
           fi
@@ -544,6 +546,10 @@ jobs:
           fi
           if [[ "$MODE" == "macos-validation" && "$ACTION" != "build" ]]; then
             echo "macOS-only validation requires the build action." >&2
+            exit 1
+          fi
+          if [[ "$MODE" == "ios-store" ]] && { [[ "$ACTION" != "release" || "$REF_NAME" != "main" || "$INCLUDE_APPLE_STORE_BUILD_INPUT" != "true" ]] || [[ "$IOS_STORE_CONFLICTING_INPUTS" == true ]]; }; then
+            echo "iOS Store mode requires main, an existing release tag, and signed Apple packaging." >&2
             exit 1
           fi
           if [[ "$ACTION" == "release" ]]; then
@@ -605,8 +611,8 @@ jobs:
           if [[ "$PRIVATE_APPLE_SIGNING_UNAVAILABLE" == "true" || ( "$INCLUDE_APPLE_STORE_BUILD" != "true" && "$PREPARE_HOMEBREW_CASK" != "true" ) ]]; then
             TVOS_RUNNER_POOL_INPUT=hosted
           fi
-          if [[ "$MODE" != "release" && "$INCLUDE_APPLE_STORE_BUILD" == "true" ]]; then
-            echo "Signed App Store IPAs are available only in full release mode." >&2
+          if [[ "$MODE" != "release" && "$MODE" != "ios-store" && "$INCLUDE_APPLE_STORE_BUILD" == "true" ]]; then
+            echo "Signed App Store IPAs require release or iOS Store mode." >&2
             exit 1
           fi
           if [[ "$MODE" == "webos-validation" ]]; then
@@ -698,6 +704,7 @@ jobs:
           PACKAGING_SHA: ${{ inputs.recovery_source_sha }}
           PRODUCT_SHA: ${{ inputs.recovery_product_sha }}
           REPAIR_APPROVED: ${{ steps.frozen-repair.outputs.approved }}
+          MODE: ${{ steps.request.outputs.mode }}
         run: |
           set -euo pipefail
           if [[ "$GITHUB_REF" != "refs/heads/main" && "$GITHUB_REF" != "refs/tags/$RELEASE_TAG" ]]; then
@@ -724,6 +731,9 @@ jobs:
               echo "Approved packaging recovery is not bound to the immutable product tag." >&2
               exit 1
             fi
+          elif [[ "$MODE" == "ios-store" ]]; then
+            [[ "$(git cat-file -t "refs/tags/$RELEASE_TAG")" == tag ]]
+            [[ "$(git show "$release_commit:pubspec.yaml" | python3 scripts/pubspec_version.py /dev/stdin | cut -d+ -f1)" == "${RELEASE_TAG#v}" ]]
           else
           while IFS= read -r changed_file; do
             [[ -z "$changed_file" ]] && continue
@@ -762,7 +772,7 @@ jobs:
             echo "runner_pool must normalize to public." >&2
             exit 1
           fi
-          if [[ "$MODE" != "release" && "$MODE" != "webos-validation" && "$MODE" != "macos-validation" && "$MODE" != "android-validation" ]]; then
+          if [[ "$MODE" != "release" && "$MODE" != "webos-validation" && "$MODE" != "macos-validation" && "$MODE" != "android-validation" && "$MODE" != "ios-store" ]]; then
             echo "Unsupported platform mode: $MODE" >&2
             exit 1
           fi
@@ -1626,7 +1636,7 @@ jobs:
           exit 1
 
   build-ios:
-    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && !(inputs.reuse_platform_run_id != '' && startsWith(inputs.reuse_repaired_run_id, 'ios-developer:')) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && needs.validate-trusted-ref.outputs.mode == 'release' }}
+    if: ${{ always() && !cancelled() && needs.validate-trusted-ref.result == 'success' && (inputs.reuse_platform_run_id == '' || inputs.rebuild_ios) && !(inputs.reuse_platform_run_id != '' && startsWith(inputs.reuse_repaired_run_id, 'ios-developer:')) && inputs.runner_pool != '' && (inputs.action == 'build' || inputs.action == 'release') && needs.validate-trusted-ref.outputs.runner_pool == 'public' && (needs.validate-trusted-ref.outputs.action == 'build' || needs.validate-trusted-ref.outputs.action == 'release') && (needs.validate-trusted-ref.outputs.mode == 'release' || (needs.validate-trusted-ref.outputs.mode == 'ios-store' && needs.preflight-ios-store-signing.outputs.ios_store_signing_ready == 'true')) }}
     needs: [validate-trusted-ref, preflight-ios-store-signing]
     timeout-minutes: 240
     outputs:
@@ -1639,10 +1649,14 @@ jobs:
     env:
       PUB_CACHE: ${{ github.workspace }}/.cache/plezy-pub-cache
       LANG: en_US.UTF-8
+      COMPILE_SOURCE_SHA: ${{ needs.validate-trusted-ref.outputs.mode == 'ios-store' && needs.validate-trusted-ref.outputs.release_commit || inputs.recovery_source_sha || github.sha }}
+      RELEASE_DART_DEFINES: >-
+        --dart-define=GIT_COMMIT=${{ needs.validate-trusted-ref.outputs.mode == 'ios-store' && needs.validate-trusted-ref.outputs.release_commit || inputs.recovery_product_sha || github.sha }}
+        --dart-define=PLEAZYNG_DISCORD_APPLICATION_ID=${{ vars.PLEAZYNG_DISCORD_APPLICATION_ID }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ inputs.recovery_source_sha || github.sha }}
+          ref: ${{ env.COMPILE_SOURCE_SHA }}
           persist-credentials: false
 
       - name: Load pinned Flutter SDK
