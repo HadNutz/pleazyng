@@ -1,5 +1,19 @@
 # Automatic Google Play release delivery
 
+## Production delivery
+
+For production delivery through the release controller, configure
+`GOOGLE_PLAY_AUTOMATIC_RELEASES=false`, `GOOGLE_PLAY_TRACK=production`,
+and `GOOGLE_PLAY_RELEASE_STATUS=completed`. This disables scheduled testing
+delivery and uses the production track when the release controller publishes
+configured channels. The standalone store workflow can also target production
+from an existing published stable release. Confirm review and rollout in Play
+Console after upload.
+
+## Scheduled testing delivery
+
+The following describes the scheduled testing mode when explicitly enabled.
+
 Every complete, published stable release with Android version code 189 or higher
 is eligible for automatic delivery. Google Play rejected v3.0.33+188 because
 its phone bundle declared both Android Auto projection metadata and the Android

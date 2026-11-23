@@ -2790,10 +2790,12 @@ def microsoft_store_status(settings: dict[str, str], assets: set[str | None]) ->
 def play_publication_settings(settings: dict[str, str]) -> tuple[str, str]:
     track = settings.get("GOOGLE_PLAY_TRACK", "internal")
     status = settings.get("GOOGLE_PLAY_RELEASE_STATUS", "draft")
-    if track not in {"internal", "alpha", "beta"}:
-        raise ReleaseError("Automatic Google Play publication must use an internal or closed testing track.")
+    if track not in {"internal", "alpha", "beta", "production"}:
+        raise ReleaseError("Google Play publication requires a recognized track.")
+    if track == "production" and settings.get("GOOGLE_PLAY_AUTOMATIC_RELEASES") != "false":
+        raise ReleaseError("Production delivery requires the scheduled testing controller to be disabled.")
     if status not in {"draft", "completed"}:
-        raise ReleaseError("Automatic Google Play status must be draft or completed.")
+        raise ReleaseError("Google Play status must be draft or completed.")
     return track, status
 
 

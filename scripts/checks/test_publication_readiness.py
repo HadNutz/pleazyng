@@ -108,6 +108,17 @@ class PublicationReadinessTests(unittest.TestCase):
             self.assertIn(asset, entry['reason'])
             self.assertIn('unsigned developer package', entry['reason'])
 
+    def test_explicit_production_delivery_skips_the_testing_controller(self):
+        calls, _ = self.run_channels({
+            'GOOGLE_PLAY_BOOTSTRAP_COMPLETE': 'true',
+            'GOOGLE_PLAY_AUTOMATIC_RELEASES': 'false',
+            'GOOGLE_PLAY_TRACK': 'production',
+            'GOOGLE_PLAY_RELEASE_STATUS': 'completed',
+        })
+        play = next(fields for _, _, fields in calls if fields.get('channel') == 'google-play')
+        self.assertEqual(play['play_track'], 'production')
+        self.assertEqual(play['play_release_status'], 'completed')
+
     def test_production_and_unrecognized_settings_are_rejected(self):
         for settings in [{'GOOGLE_PLAY_TRACK': 'production'}, {'GOOGLE_PLAY_RELEASE_STATUS': 'inProgress'}]:
             with self.assertRaises(release.ReleaseError):
