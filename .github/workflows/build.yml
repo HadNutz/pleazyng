@@ -249,8 +249,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Prepare worker profile and check actual Store entitlements
-        id: ios-store-preflight
+      - name: Prepare worker provisioning profile
+        id: ios-worker-profile
         continue-on-error: true
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -269,9 +269,20 @@ jobs:
             python3 scripts/build_apple_store_archive.py --prepare-ios-worker-profile \
               --public-report "$RUNNER_TEMP/ios-signing-preflight-report.json"
           fi
-          python3 scripts/preflight_ios_store_profile.py
+      - name: Check actual iOS Store entitlements
+        id: ios-store-preflight
+        if: steps.ios-worker-profile.outcome == 'success'
+        continue-on-error: true
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64: ${{ env.IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64 || secrets.IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64 }}
+          PLEAZYNG_REQUIRED_CAR_CAPABILITIES: ${{ vars.PLEAZYNG_REQUIRED_CAR_CAPABILITIES || 'audio,siri' }}
+        run: python3 scripts/preflight_ios_store_profile.py
       - name: Explain blocked iOS Store lane
-        if: steps.ios-store-preflight.outcome == 'failure'
+        if: steps.ios-store-preflight.outcome != 'success'
         run: |
           echo "::warning title=iOS Store delivery blocked::The iOS Store signing preflight failed. The unsigned iOS developer IPA will still be built and included in the core release."
           {
@@ -287,6 +298,10 @@ jobs:
           path: ${{ runner.temp }}/ios-signing-preflight-report.json
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Require signing preflight for focused iOS Store builds
+        if: always() && !cancelled() && inputs.mode == 'ios-store'
+        run: test "${{ steps.ios-store-preflight.outcome }}" = success
 
   release-ci:
     name: Release CI
@@ -1789,6 +1804,7 @@ jobs:
           APPLE_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.APPLE_DISTRIBUTION_CERTIFICATE_BASE64 }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64 }}
           APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}
@@ -1819,6 +1835,8 @@ jobs:
             done
             python3 "$GITHUB_WORKSPACE/scripts/build_apple_store_archive.py" --prepare-ios-worker-profile \
               --public-report "$PLEZYNG_APPLE_WORKSPACE/pleazyng-ios-profile-report.json"
+          else
+            printf 'IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64=%s\n' "$IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64" >> "$GITHUB_ENV"
           fi
           echo "configured=true" >> "$GITHUB_OUTPUT"
 
