@@ -1156,24 +1156,24 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
     archive_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
     derived_data.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
 
-    build_env = _build_environment()
-    source_sha = source["source_commit"]
-    _run_visible([
-        "flutter", "build", "macos", "--release", "--config-only", "--verbose",
-        "--dart-define=SUPPORTER_MODE=iap", "--dart-define=ENABLE_UPDATE_CHECK=false",
-        f"--dart-define=GIT_COMMIT={source_sha}",
-        f"--dart-define=PLEAZYNG_DISCORD_APPLICATION_ID={os.environ.get('PLEAZYNG_DISCORD_APPLICATION_ID', '')}",
-        "--split-debug-info=debug-info/macos-app-store-signed",
-    ], cwd=source_dir, env=build_env)
-    _run_visible(["pod", "install", "--deployment"], cwd=source_dir / "macos", env=build_env)
-
-    store_info_plist = prepare_store_info_plist(source_dir, source_sha)
-    derived_info_plist_path = source_dir / str(store_info_plist["derived_path"])
-
     project_path = source_dir / "macos/Runner.xcodeproj/project.pbxproj"
     original_project = project_path.read_bytes()
     installed_profiles: list[Path] = []
     try:
+        build_env = _build_environment()
+        source_sha = source["source_commit"]
+        _run_visible([
+            "flutter", "build", "macos", "--release", "--config-only", "--verbose",
+            "--dart-define=SUPPORTER_MODE=iap", "--dart-define=ENABLE_UPDATE_CHECK=false",
+            f"--dart-define=GIT_COMMIT={source_sha}",
+            f"--dart-define=PLEAZYNG_DISCORD_APPLICATION_ID={os.environ.get('PLEAZYNG_DISCORD_APPLICATION_ID', '')}",
+            "--split-debug-info=debug-info/macos-app-store-signed",
+        ], cwd=source_dir, env=build_env)
+        _run_visible(["pod", "install", "--deployment"], cwd=source_dir / "macos", env=build_env)
+
+        store_info_plist = prepare_store_info_plist(source_dir, source_sha)
+        derived_info_plist_path = source_dir / str(store_info_plist["derived_path"])
+
         installed_profiles = install_profile(profile_data, profile_uuid)
         project = plistlib.loads(_capture(["plutil", "-convert", "xml1", "-o", "-", str(project_path)]))
         configure_project(project, team=team, app_fingerprint=app_fingerprint,
