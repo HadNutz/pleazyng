@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Apply playback motion smoothing changes before closing the settings sheet and log renderer acceptance, deferral, and failure. Desktop MPV keeps the original cadence when the source already fits the display refresh rate.
+
 - Bundle both verified 1080p Neural models in the desktop build inputs so a model host outage cannot interrupt packaging.
 
 - Update GitHub release packaging to version 3.0.50 on all supported platforms.

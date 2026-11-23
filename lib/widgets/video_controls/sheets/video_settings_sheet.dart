@@ -2586,77 +2586,52 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
     return settings.read(SettingsService.neuralInterpolationPreset);
   }
 
-  void _setMotionProcessingMode(MotionProcessingMode mode) {
+  Future<void> _setMotionProcessingMode(MotionProcessingMode mode) async {
     final targetPlayer = widget.player;
-    final pref = SettingsService.motionProcessingMode;
-    if (Platform.isLinux || Platform.isWindows) {
-      unawaited(_setDesktopMotionProcessingMode(targetPlayer, mode));
-      return;
-    }
-    final rendererAvailable = MotionProcessingService.supportsPlayer(targetPlayer);
-    // Turning processing Off is a safe teardown even when the active Neural
-    // route is staged until the next file. Apply it immediately so a hidden
-    // filter or native provider cannot keep running after the user's request.
-    final canApplyNow =
-        rendererAvailable &&
-        (mode == MotionProcessingMode.off ||
-            MotionProcessingService.canChangeLive(targetPlayer, mode: mode, isLive: _state.isLive));
-    if (!canApplyNow) {
-      showAppSnackBar(context, t.settings.motionSmoothingUnavailableDescription);
-      return;
-    }
-    Future<void> apply(MotionProcessingMode value) =>
-        MotionProcessingService.apply(targetPlayer, value, neuralPreset: _activeMotionPreset(targetPlayer));
-    final writeToken = _prefWrites.begin(pref.key);
-    unawaited(() async {
-      try {
-        final committed = await _prefWrites.commitIfLatest(
-          pref.key,
-          writeToken,
-          () => _applyThenPersist(pref, mode, apply),
-        );
-        if (!committed || !mounted || targetPlayer != widget.player) return;
-        setState(() {
-          _motionProcessingMode = mode;
-        });
-        OverlaySheetController.of(context).close();
-      } catch (error, stackTrace) {
-        appLogger.w('Failed to update motion processing', error: error, stackTrace: stackTrace);
-        if (mounted) showErrorSnackBar(context, t.settings.motionSmoothingApplyFailed);
-      }
-    }());
-  }
-
-  Future<void> _setDesktopMotionProcessingMode(Player targetPlayer, MotionProcessingMode mode) async {
     final settings = SettingsService.instance;
     final pref = SettingsService.motionProcessingMode;
     final preset = _activeMotionPreset(targetPlayer);
-    final canApplyNow =
-        MotionProcessingService.supportsPlayer(targetPlayer) &&
-        (mode == MotionProcessingMode.off ||
-            MotionProcessingService.canChangeLive(targetPlayer, mode: mode, isLive: _state.isLive));
-
-    // A renderer refusal should not trap the saved choice on MPV. The
-    // currently open source can require a different path from the next one.
+    final isLive = _state.isLive;
     final writeToken = _prefWrites.begin(pref.key);
+    var deferred = false;
+    var applyFailed = false;
     try {
-      final committed = await _prefWrites.commitIfLatest(pref.key, writeToken, () => settings.write(pref, mode));
+      final committed = await _prefWrites.commitIfLatest(pref.key, writeToken, () async {
+        await settings.write(pref, mode);
+        // One serialized operation owns both the preference and the player.
+        // A newer selection must finish after any already-running transition.
+        if (!mounted ||
+            targetPlayer != widget.player ||
+            !MotionProcessingService.canChangeLive(targetPlayer, mode: mode, isLive: isLive)) {
+          deferred = true;
+          appLogger.i(
+            'Motion smoothing saved for a future source: requested=${mode.name}, '
+            'backend=${targetPlayer.playerType}, live=$isLive',
+          );
+          return;
+        }
+        try {
+          await MotionProcessingService.apply(targetPlayer, mode, neuralPreset: preset);
+        } catch (error, stackTrace) {
+          applyFailed = true;
+          appLogger.w(
+            'Motion smoothing could not apply: requested=${mode.name}, backend=${targetPlayer.playerType}',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }
+      });
       if (!committed || !mounted || targetPlayer != widget.player) return;
       setState(() => _motionProcessingMode = mode);
-      final savedForNextPlayback = t.settings.motionSmoothingSavedForNextPlayback;
+      final message = applyFailed
+          ? t.settings.motionSmoothingApplyFailed
+          : deferred
+          ? t.settings.motionSmoothingSavedForNextPlayback
+          : null;
       OverlaySheetController.of(context).close();
-      if (!canApplyNow) {
-        showGlobalErrorSnackBar(savedForNextPlayback);
-        return;
-      }
-      try {
-        await MotionProcessingService.apply(targetPlayer, mode, neuralPreset: preset);
-      } catch (error, stackTrace) {
-        appLogger.w('Failed to apply the saved desktop motion mode', error: error, stackTrace: stackTrace);
-        if (settings.read(pref) == mode) showGlobalErrorSnackBar(savedForNextPlayback);
-      }
+      if (message != null) showGlobalErrorSnackBar(message);
     } catch (error, stackTrace) {
-      appLogger.w('Failed to save desktop motion processing', error: error, stackTrace: stackTrace);
+      appLogger.w('Failed to save motion smoothing: requested=${mode.name}', error: error, stackTrace: stackTrace);
       if (mounted) showErrorSnackBar(context, t.settings.motionSmoothingApplyFailed);
     }
   }
@@ -2677,7 +2652,7 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
           trailing: mode == _motionProcessingMode
               ? AppIcon(Symbols.check_rounded, fill: 1, color: Theme.of(context).colorScheme.primary)
               : null,
-          onTap: () => _setMotionProcessingMode(mode),
+          onTap: () => unawaited(_setMotionProcessingMode(mode)),
         ),
       if (_motionProcessingMode == MotionProcessingMode.neural ||
           (widget.player.playerType == 'tvmpv' && _motionProcessingMode == MotionProcessingMode.mpv)) ...[

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/models/video_backend.dart';
 import 'package:plezy/models/motion_processing_mode.dart';
 import 'package:plezy/models/player_setting_scope.dart';
+import 'package:plezy/services/motion_processing_service.dart';
 import 'package:plezy/services/player_sync_offsets.dart';
 import 'package:plezy/services/scoped_player_prefs.dart';
 import '../test_helpers/media_items.dart';
@@ -140,8 +141,9 @@ void main() {
     try {
       player.prepareTvMotion(true);
       await player.open(Media('file:///eligible.mp4'));
-      await player.disableTvMotion();
+      await MotionProcessingService.apply(player, MotionProcessingMode.off);
       expect(disabled, isTrue);
+      expect(player.tvMotionRequested, isFalse);
       player.prepareTvMotion(true);
       await player.open(Media('file:///live.ts'), isLive: true);
       await player.open(Media('file:///next.mp4'));
