@@ -46,6 +46,10 @@ def prefetch(checkout, target, directory):
         temp = final.with_suffix('.part')
         parsed = urlsplit(url)
         urls = [url]
+        if parsed.hostname == 'ftp.gnu.org' and parsed.path.startswith('/pub/gnu/libiconv/'):
+            archive = Path(parsed.path).name
+            urls = [f'https://ftp.gnu.org.uk/gnu/libiconv/{archive}',
+                    f'https://mirrors.kernel.org/gnu/libiconv/{archive}', url]
         if parsed.hostname in MIRRORS:
             urls.append(MIRRORS[parsed.hostname] + Path(parsed.path).name)
         if parsed.hostname == 'raw.githubusercontent.com' and parsed.path.startswith('/torvalds/linux/'):
@@ -60,8 +64,9 @@ def prefetch(checkout, target, directory):
                 return
             urls.append('https://veronanetworks.mm.fcix.net/videolan-ftp/dav1d/1.5.1/dav1d-1.5.1.tar.xz')
         for candidate in urls:
-            cmd = ['curl', '--fail', '--location', '--silent', '--show-error', '--max-time', '180',
-                   '--retry', '2', '--output', str(temp), candidate]
+            cmd = ['curl', '--fail', '--location', '--silent', '--show-error',
+                   '--connect-timeout', '12', '--max-time', '180', '--retry', '2',
+                   '--output', str(temp), candidate]
             if subprocess.run(cmd).returncode:
                 continue
             if candidate.endswith('?format=TEXT'):

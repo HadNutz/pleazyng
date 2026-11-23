@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import hashlib
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -11,9 +13,36 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from scripts.tv_mpv.build import lint_webos_ndl, rewrite_webos_source_mirrors
+from scripts.tv_mpv.sources import prefetch
 
 
 class TvMpvSourceMirrorTests(unittest.TestCase):
+    def test_libiconv_mirrors_preserve_the_pinned_archive_checksum(self) -> None:
+        source = "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.19.1.tar.gz"
+        first = "https://ftp.gnu.org.uk/gnu/libiconv/libiconv-1.19.1.tar.gz"
+        second = "https://mirrors.kernel.org/gnu/libiconv/libiconv-1.19.1.tar.gz"
+        archive = b"pinned archive bytes"
+        digest = hashlib.sha256(archive).hexdigest()
+
+        def curl(command: list[str]) -> subprocess.CompletedProcess:
+            self.assertIn("--connect-timeout", command)
+            temporary = Path(command[command.index("--output") + 1])
+            temporary.write_bytes(archive if command[-1] == second else b"incorrect archive bytes")
+            return subprocess.CompletedProcess(command, 0)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            checkout = self._recipe(Path(temporary) / "recipe")
+            shared = checkout / "scripts/shared"
+            (shared / "_sources.sha256").write_text(f"{digest}  {source}\n", encoding="utf-8")
+            (shared / "_helpers.sh").write_text('  local url="$1" dest="$2"; shift 2\n', encoding="utf-8")
+            cache = Path(temporary) / "sources"
+
+            with patch("scripts.tv_mpv.sources.subprocess.run", side_effect=curl) as run:
+                prefetch(checkout, "tizen", cache)
+
+            self.assertEqual([call.args[0][-1] for call in run.call_args_list], [first, second])
+            self.assertEqual((cache / digest).read_bytes(), archive)
+
     def test_tv_patch_applies_mpv_changes_after_extracting_source_tree(self) -> None:
         patch_text = (ROOT / "scripts/tv_mpv/video.patch").read_text(encoding="utf-8")
         hunk = patch_text.split("@@ -481,3 +529,7 @@ cross_mpv_source() {", 1)[1].split("diff --git", 1)[0]
