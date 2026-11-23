@@ -90,6 +90,7 @@
     "logs": "Registros"
   },
   "settings": {
+    "motionSmoothingSavedForNextPlayback": "",
     "foldableDisplay": "Dobradiça da tela dobrável",
     "title": "Configurações",
     "language": "Idioma",

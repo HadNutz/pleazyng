@@ -53,6 +53,8 @@ void main() {
     player._properties.addAll({
       'current-vo': Platform.isLinux ? 'libmpv' : 'gpu-next',
       'interpolation': 'no',
+      'video-sync': 'audio',
+      'tscale': 'mitchell',
       'hwdec-extra-frames': 'auto',
     });
     final service = MotionClarityService.forPlayer(player);
@@ -84,8 +86,12 @@ void main() {
       expect(MotionProcessingService.canChangeLive(player, mode: MotionProcessingMode.mpv), isTrue);
       await MotionProcessingService.apply(player, MotionProcessingMode.mpv);
       expect(await player.getProperty('interpolation'), 'yes');
+      expect(await player.getProperty('tscale'), 'oversample');
+      player.rejectedProperty = 'tscale';
       await MotionProcessingService.apply(player, MotionProcessingMode.off);
       expect(await player.getProperty('interpolation'), 'no');
+      expect(await player.getProperty('video-sync'), 'audio');
+      player.rejectedProperty = null;
     }
     for (final selected in [MotionClarityPreset.balanced, MotionClarityPreset.oled, MotionClarityPreset.original]) {
       final result = await preset(selected);
@@ -154,6 +160,7 @@ class _RecordingPlayer with PlayerStreamControllersMixin implements Player {
   final Map<String, String> _properties;
   final commands = <List<String>>[];
   bool rejectGpuMixer = false;
+  String? rejectedProperty;
   @override
   final String playerType = 'mpv';
   @override
@@ -164,6 +171,7 @@ class _RecordingPlayer with PlayerStreamControllersMixin implements Player {
 
   @override
   Future<void> setProperty(String name, String value) async {
+    if (name == rejectedProperty) throw UnsupportedError(name);
     _properties[name] = value;
   }
 

@@ -978,6 +978,7 @@
     "settings.motionSmoothingNotActiveDescription",
     "settings.motionSmoothingOff",
     "settings.motionSmoothingOffDescription",
+    "settings.motionSmoothingSavedForNextPlayback",
     "settings.motionSmoothingUnavailableDescription",
     "settings.neuralInterpolation",
     "settings.neuralInterpolationPresetBalanced",

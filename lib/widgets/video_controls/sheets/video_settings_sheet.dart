@@ -2589,6 +2589,10 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
   void _setMotionProcessingMode(MotionProcessingMode mode) {
     final targetPlayer = widget.player;
     final pref = SettingsService.motionProcessingMode;
+    if (Platform.isLinux || Platform.isWindows) {
+      unawaited(_setDesktopMotionProcessingMode(targetPlayer, mode));
+      return;
+    }
     final rendererAvailable = MotionProcessingService.supportsPlayer(targetPlayer);
     // Turning processing Off is a safe teardown even when the active Neural
     // route is staged until the next file. Apply it immediately so a hidden
@@ -2621,6 +2625,40 @@ class _VideoSettingsSheetState extends State<VideoSettingsSheet> {
         if (mounted) showErrorSnackBar(context, t.settings.motionSmoothingApplyFailed);
       }
     }());
+  }
+
+  Future<void> _setDesktopMotionProcessingMode(Player targetPlayer, MotionProcessingMode mode) async {
+    final settings = SettingsService.instance;
+    final pref = SettingsService.motionProcessingMode;
+    final preset = _activeMotionPreset(targetPlayer);
+    final canApplyNow =
+        MotionProcessingService.supportsPlayer(targetPlayer) &&
+        (mode == MotionProcessingMode.off ||
+            MotionProcessingService.canChangeLive(targetPlayer, mode: mode, isLive: _state.isLive));
+
+    // A renderer refusal should not trap the saved choice on MPV. The
+    // currently open source can require a different path from the next one.
+    final writeToken = _prefWrites.begin(pref.key);
+    try {
+      final committed = await _prefWrites.commitIfLatest(pref.key, writeToken, () => settings.write(pref, mode));
+      if (!committed || !mounted || targetPlayer != widget.player) return;
+      setState(() => _motionProcessingMode = mode);
+      final savedForNextPlayback = t.settings.motionSmoothingSavedForNextPlayback;
+      OverlaySheetController.of(context).close();
+      if (!canApplyNow) {
+        showGlobalErrorSnackBar(savedForNextPlayback);
+        return;
+      }
+      try {
+        await MotionProcessingService.apply(targetPlayer, mode, neuralPreset: preset);
+      } catch (error, stackTrace) {
+        appLogger.w('Failed to apply the saved desktop motion mode', error: error, stackTrace: stackTrace);
+        if (settings.read(pref) == mode) showGlobalErrorSnackBar(savedForNextPlayback);
+      }
+    } catch (error, stackTrace) {
+      appLogger.w('Failed to save desktop motion processing', error: error, stackTrace: stackTrace);
+      if (mounted) showErrorSnackBar(context, t.settings.motionSmoothingApplyFailed);
+    }
   }
 
   Widget _buildMotionSmoothingView() => ListView(

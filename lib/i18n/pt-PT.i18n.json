@@ -155,6 +155,7 @@
     "mpvConfig": "mpv.conf"
   },
   "settings": {
+    "motionSmoothingSavedForNextPlayback": "",
     "foldableDisplay": "Dobradiça do ecrã dobrável",
     "title": "Definições",
     "language": "Idioma",

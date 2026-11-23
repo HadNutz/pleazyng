@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Save desktop motion smoothing choices when the current renderer cannot switch live, clarify MPV and Neural options, and reduce desktop MPV blending.
+
 - Keep Plex sign-in on TVs in the QR flow and show the same QR code when browser launch fails on other devices.
 
 - Add a Stop button beside the video playback controls by default. Hide it under Playback settings → Behavior.

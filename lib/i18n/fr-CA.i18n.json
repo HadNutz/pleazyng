@@ -67,6 +67,7 @@
     "logs": "Journaux"
   },
   "settings": {
+    "motionSmoothingSavedForNextPlayback": "",
     "foldableDisplay": "Charnière de l’écran pliable",
     "title": "Paramètres",
     "language": "Langue",

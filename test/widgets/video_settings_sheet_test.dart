@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +14,7 @@ import 'package:plezy/media/media_file_info.dart';
 import 'package:plezy/media/media_item.dart';
 import 'package:plezy/media/media_server_client.dart';
 import 'package:plezy/models/audio_channel_limit.dart';
+import 'package:plezy/models/motion_processing_mode.dart';
 import 'package:plezy/mpv/models.dart';
 import 'package:plezy/mpv/player/player.dart';
 import 'package:plezy/mpv/player/player_native.dart';
@@ -90,6 +92,27 @@ void main() {
       sleepTimer.cancelTimer();
     }
   });
+
+  testWidgets('desktop motion selection persists even when it cannot apply to the current source', (tester) async {
+    final settings = SettingsService.instance;
+    await settings.write(SettingsService.motionProcessingMode, MotionProcessingMode.mpv);
+    final player = _FakeSettingsPlayer(playerType: 'mpv');
+    addTearDown(player.dispose);
+    for (final (label, mode) in [
+      (t.settings.neuralInterpolation, MotionProcessingMode.neural),
+      (t.settings.motionSmoothingOff, MotionProcessingMode.off),
+    ]) {
+      await _pumpSheetViaOverlayRoute(tester, player);
+      final motion = find.text(t.settings.motionSmoothing);
+      await tester.scrollUntilVisible(motion, 180, scrollable: find.byType(Scrollable).last);
+      await tester.tap(motion);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(label).last);
+      await tester.pumpAndSettle();
+      expect(settings.read(SettingsService.motionProcessingMode), mode);
+      expect(find.byType(VideoSettingsSheet), findsNothing);
+    }
+  }, skip: !Platform.isLinux && !Platform.isWindows);
 
   testWidgets('offers requested playback speeds through 8x and persists the selection', (tester) async {
     final appliedRates = <double>[];

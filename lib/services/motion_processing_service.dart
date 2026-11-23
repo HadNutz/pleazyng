@@ -935,15 +935,25 @@ abstract final class MotionProcessingService {
     }
   }
 
+  static Future<String?> _readMpvMotionProperty(Player player, String name) {
+    final read = player.getProperty(name);
+    return _isDesktopPmePlatform ? read.timeout(const Duration(seconds: 3)) : read;
+  }
+
+  static Future<void> _writeMpvMotionProperty(Player player, String name, String value) {
+    final write = player.setProperty(name, value);
+    return _isDesktopPmePlatform ? write.timeout(const Duration(seconds: 3)) : write;
+  }
+
   static Future<void> _applyMpvInterpolation(Player player) async {
     var original = _originals[player];
     if (original == null) {
       original = _OriginalMotionProperties(
-        videoSync: await player.getProperty('video-sync'),
-        interpolation: await player.getProperty('interpolation'),
-        tscale: await player.getProperty('tscale'),
-        tscaleBlur: await player.getProperty('tscale-blur'),
-        tscaleClamp: await player.getProperty('tscale-clamp'),
+        videoSync: await _readMpvMotionProperty(player, 'video-sync'),
+        interpolation: await _readMpvMotionProperty(player, 'interpolation'),
+        tscale: await _readMpvMotionProperty(player, 'tscale'),
+        tscaleBlur: await _readMpvMotionProperty(player, 'tscale-blur'),
+        tscaleClamp: await _readMpvMotionProperty(player, 'tscale-clamp'),
       );
       _originals[player] = original;
     }
@@ -952,11 +962,17 @@ abstract final class MotionProcessingService {
       // `interpolation` is ignored unless the VO synchronizes to the
       // display. Keep these writes before the first file during startup so
       // MPV can size its frame references and decoder surface pool.
-      await player.setProperty('video-sync', 'display-resample');
-      await player.setProperty('tscale', 'mitchell');
-      await player.setProperty('tscale-blur', '1.0');
-      await player.setProperty('tscale-clamp', '1.0');
-      await player.setProperty('interpolation', 'yes');
+      await _writeMpvMotionProperty(
+        player,
+        'video-sync',
+        player.audioPassthroughActive ? 'display-vdrop' : 'display-resample',
+      );
+      // Oversample blends fewer neighbors and preserves more of the source
+      // image on desktop. The Motion Clarity controls still offer other kernels.
+      await _writeMpvMotionProperty(player, 'tscale', _isDesktopPmePlatform ? 'oversample' : 'mitchell');
+      await _writeMpvMotionProperty(player, 'tscale-blur', '1.0');
+      await _writeMpvMotionProperty(player, 'tscale-clamp', '1.0');
+      await _writeMpvMotionProperty(player, 'interpolation', 'yes');
     } catch (error, stackTrace) {
       _interpolationBufferReady[player] = false;
       appLogger.w('MotionProcessingService: Failed to apply MPV interpolation', error: error, stackTrace: stackTrace);
@@ -2268,11 +2284,26 @@ abstract final class MotionProcessingService {
   }
 
   static Future<void> _restoreOriginalProperties(Player player, _OriginalMotionProperties original) async {
-    await player.setProperty('interpolation', original.interpolation ?? 'no');
-    if (original.tscale != null) await player.setProperty('tscale', original.tscale!);
-    if (original.tscaleBlur != null) await player.setProperty('tscale-blur', original.tscaleBlur!);
-    if (original.tscaleClamp != null) await player.setProperty('tscale-clamp', original.tscaleClamp!);
-    await player.setProperty('video-sync', original.videoSync ?? 'audio');
+    // Return to the original cadence even if a renderer refuses an optional
+    // filter control. Try both playback-critical properties before tuning.
+    try {
+      await _writeMpvMotionProperty(player, 'interpolation', original.interpolation ?? 'no');
+    } finally {
+      await _writeMpvMotionProperty(player, 'video-sync', original.videoSync ?? 'audio');
+    }
+    for (final (name, value) in [
+      ('tscale', original.tscale),
+      ('tscale-blur', original.tscaleBlur),
+      ('tscale-clamp', original.tscaleClamp),
+    ]) {
+      if (value == null) continue;
+      try {
+        await _writeMpvMotionProperty(player, name, value);
+      } catch (error, stackTrace) {
+        appLogger.w('Could not restore MPV motion property $name', error: error, stackTrace: stackTrace);
+      }
+    }
+    _originals[player] = null;
   }
 }
 
