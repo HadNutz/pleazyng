@@ -445,7 +445,7 @@ func TestRemoveRoomLockedReleasesOwnedQuotaExactlyOnce(t *testing.T) {
 	}
 }
 
-func TestSnapshotAtomicWriteSurvivesRenameFailure(t *testing.T) {
+func TestSnapshotAtomicWriteSurvivesStagingFailure(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "rooms.json")
 	s := newTestServer(t, path)
@@ -466,10 +466,8 @@ func TestSnapshotAtomicWriteSurvivesRenameFailure(t *testing.T) {
 		t.Fatalf("read orig: %v", err)
 	}
 
-	// A directory at the temporary path makes the open fail before rename.
-	if err := os.Mkdir(path+".tmp", 0755); err != nil {
-		t.Fatalf("create blocking temporary directory: %v", err)
-	}
+	// A missing staging directory fails before the replacement can be renamed.
+	s.snap.dir = filepath.Join(dir, "missing")
 
 	delete(s.rooms, "ORIG")
 	s.rooms["NEW"] = &Room{
@@ -526,8 +524,57 @@ func TestSnapshotRenameFailureIsPreCommit(t *testing.T) {
 	if string(marker) != "preserved" {
 		t.Fatalf("rename failure changed destination marker: %q", marker)
 	}
-	if _, err := os.Stat(path + ".tmp"); !errors.Is(err, fs.ErrNotExist) {
-		t.Fatalf("temporary snapshot remains after failed rename: %v", err)
+	assertNoSnapshotTemps(t, root)
+}
+
+func assertNoSnapshotTemps(t *testing.T, dir string) {
+	t.Helper()
+	paths, err := filepath.Glob(filepath.Join(dir, ".rooms.json-*.tmp"))
+	if err != nil || len(paths) != 0 {
+		t.Fatalf("temporary snapshots after write: %v, %v", paths, err)
+	}
+}
+
+func TestSnapshotStartupRewritesLegacyFilePermissions(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "rooms.json")
+	s := newTestServer(t, path)
+	if err := s.snap.write(); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(path, 0644); err != nil {
+		t.Fatal(err)
+	}
+	rewrite, err := s.loadSnapshot(path)
+	if err != nil || !rewrite {
+		t.Fatalf("expected old permissions to trigger rewrite: rewrite=%v err=%v", rewrite, err)
+	}
+	if err := s.snap.write(); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Mode().Perm() != 0600 {
+		t.Fatalf("rewritten snapshot permissions: %v", info.Mode().Perm())
+	}
+}
+
+func TestLoadSnapshotRejectsOversizeFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "rooms.json")
+	s := newTestServer(t, path)
+	// This would be valid JSON with a single room if padded to any smaller size.
+	data, err := json.Marshal(stateSnapshot{Version: snapshotFormatVersion, Rooms: makeRoomSnapshots(1, false, time.Now())})
+	if err != nil {
+		t.Fatal(err)
+	}
+	data = append(data, bytes.Repeat([]byte(" "), snapshotMaxFileSize+1-len(data))...)
+	if err := os.WriteFile(path, data, 0600); err != nil {
+		t.Fatal(err)
+	}
+	rewrite, err := s.loadSnapshot(path)
+	if err != nil || rewrite || len(s.rooms) != 0 {
+		t.Fatalf("oversized snapshot: rewrite=%v restored=%d err=%v", rewrite, len(s.rooms), err)
 	}
 }
 
@@ -1168,9 +1215,7 @@ func TestSnapshotDirectorySyncFailureIsBestEffort(t *testing.T) {
 			if !bytes.Equal(replacement, data) {
 				t.Fatal("committed replacement bytes changed")
 			}
-			if _, err := os.Stat(path + ".tmp"); !errors.Is(err, fs.ErrNotExist) {
-				t.Fatalf("temporary snapshot remains after commit: %v", err)
-			}
+			assertNoSnapshotTemps(t, filepath.Dir(path))
 			reloaded := newTestServer(t, path)
 			if _, err := reloaded.loadSnapshot(path); err != nil {
 				t.Fatalf("reload committed replacement: %v", err)

@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Honor smaller music prefetch quotas on cache hits and resume same-track prefetch after clearing the cache.
+- Limit relay room snapshot reads to 4 MiB and save reconnect state with owner-only file permissions.
+- Make interrupted macOS notarization restores retryable and stream archive verification to bound memory use.
+
 - Bound metadata responses while downloading them, validate sign-in destinations, and update the relay WebSocket dependency for GO-2026-6278.
 - Fix macOS compilation recovery when another platform overrides shared build flags and verify the complete multiline Mac flags.
 

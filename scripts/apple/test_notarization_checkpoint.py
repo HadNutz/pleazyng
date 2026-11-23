@@ -42,6 +42,17 @@ class NotarizationCheckpointTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify(self.archive, self.receipt, self.submission)
 
+    def test_receipt_cannot_supply_a_missing_or_malformed_submission_id(self):
+        receipt = record(self.archive, self.response, self.receipt)
+        for invalid in (None, 'f' * 36):
+            with self.subTest(invalid=invalid):
+                self.receipt.write_text(json.dumps({**receipt, 'submission_id': invalid}))
+                with self.assertRaises(ValueError):
+                    verify(self.archive, self.receipt, invalid)
+                self.response.write_text(json.dumps({'id': invalid}))
+                with self.assertRaises(ValueError):
+                    record(self.archive, self.response, self.receipt)
+
     def test_product_source_mismatch_fails_closed(self):
         record(self.archive, self.response, self.receipt)
         with self.assertRaises(ValueError):

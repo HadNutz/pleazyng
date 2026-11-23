@@ -10,14 +10,26 @@ from pathlib import Path
 import re
 
 
+def valid_submission(value: object) -> bool:
+    return isinstance(value, str) and re.fullmatch(r'[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}', value) is not None
+
+
+def archive_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open('rb') as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def record(archive: Path, response: Path, receipt: Path) -> dict:
     if not archive.is_file() or archive.is_symlink():
         raise ValueError('Notarization input archive must be a regular file')
     payload = json.loads(response.read_text())
     submission = payload.get('id')
-    if not isinstance(submission, str) or re.fullmatch(r'[0-9a-fA-F-]{36}', submission) is None:
+    if not valid_submission(submission):
         raise ValueError('Apple did not return a valid notarization submission identifier')
-    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    digest = archive_sha256(archive)
     value = {'schema_version': 1, 'submission_id': submission, 'archive_sha256': digest,
              'source_sha': os.environ['GITHUB_SHA'], 'workflow_source_sha': os.environ['GITHUB_SHA'],
              'product_source_sha': os.environ.get('COMPILE_SOURCE_SHA', os.environ['GITHUB_SHA']),
@@ -32,8 +44,9 @@ def record(archive: Path, response: Path, receipt: Path) -> dict:
 def verify(archive: Path, receipt: Path, submission_id: str, *, expected_source: str | None = None,
            expected_product_source: str | None = None) -> dict:
     value = json.loads(receipt.read_text())
-    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
-    if (value.get('schema_version') != 1 or value.get('submission_id') != submission_id
+    digest = archive_sha256(archive)
+    if (not valid_submission(submission_id) or value.get('schema_version') != 1
+            or value.get('submission_id') != submission_id
             or value.get('archive_sha256') != digest
             or value.get('status') not in {'In Progress', 'Accepted'}
             or value.get('platform') != 'macos'

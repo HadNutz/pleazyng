@@ -2,6 +2,7 @@ import hashlib
 import io
 import json
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -86,6 +87,48 @@ class ResumeNotarizationTests(unittest.TestCase):
                 result = restore(Path(directory), run_id=42, current_attempt=current, include_current=True,
                                  source_sha=self.source, product_source_sha=self.product_source, api=api, run=run)
                 self.assertEqual((result['attempt'], result['submission_id']), (saved, self.submission))
+
+    def test_interrupted_extraction_can_be_retried_in_same_workspace(self):
+        def api(path):
+            return self.artifact if path.endswith('/501') else {'artifacts': [self.artifact]}
+
+        extractions = 0
+
+        def run(command, *, check, stdout=None):
+            nonlocal extractions
+            if stdout is not None:
+                stdout.write(self.download)
+                return
+            app = Path(command[-1]) / 'Pleazyng.app'
+            app.mkdir()
+            extractions += 1
+            if extractions == 1:
+                (app / 'partial').touch()
+                raise subprocess.CalledProcessError(1, command)
+            (app / 'complete').touch()
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            archive = output / 'notarization.zip'
+            receipt = output / 'notarization-checkpoint.json'
+            archive.write_bytes(b'previous archive')
+            receipt.write_bytes(b'previous receipt')
+            args = dict(run_id=42, current_attempt=2, source_sha=self.source,
+                        product_source_sha=self.product_source, api=api, run=run)
+            with self.assertRaises(subprocess.CalledProcessError):
+                restore(output, **args)
+            self.assertEqual(archive.read_bytes(), b'previous archive')
+            self.assertEqual(receipt.read_bytes(), b'previous receipt')
+            self.assertEqual(list(output.rglob('Pleazyng.app')), [])
+            result = restore(output, **args)
+            app = Path(result['app_path'])
+            self.assertTrue((app / 'complete').is_file())
+            self.assertFalse((app / 'partial').exists())
+            self.assertEqual(archive.read_bytes(), self.archive)
+            self.assertEqual(json.loads(receipt.read_bytes()), self.receipt)
+            with self.assertRaisesRegex(ValueError, 'overwrite'):
+                restore(output, **args)
+            self.assertEqual(extractions, 2)
 
     def test_no_checkpoint_on_first_attempt(self):
         with self.assertRaises(ValueError):

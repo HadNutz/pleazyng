@@ -3,15 +3,15 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
 
-from notarization_checkpoint import verify
+from notarization_checkpoint import archive_sha256, verify
 
 REPOSITORY = 'snapetech-org/pleazyng'
 
@@ -53,12 +53,16 @@ def restore(output: Path, *, run_id: int, current_attempt: int, source_sha: str,
             or (metadata.get('workflow_run') or {}).get('head_sha') != source_sha):
         raise ValueError('Notarization checkpoint artifact metadata changed')
     output.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='pleazyng-notary-') as temporary:
+    app_root = output / 'build/macos/Build/Products/Release'
+    app = app_root / 'Pleazyng.app'
+    if app.exists() or app.is_symlink():
+        raise ValueError('Refusing to overwrite an existing macOS application')
+    with tempfile.TemporaryDirectory(dir=output, prefix='pleazyng-notary-') as temporary:
         downloaded = Path(temporary) / 'artifact.zip'
         with downloaded.open('wb') as sink:
             run(['gh', 'api', f'repos/{REPOSITORY}/actions/artifacts/{artifact["id"]}/zip'],
                 check=True, stdout=sink)
-        if hashlib.sha256(downloaded.read_bytes()).hexdigest() != artifact['digest'][7:]:
+        if archive_sha256(downloaded) != artifact['digest'][7:]:
             raise ValueError('Notarization checkpoint download digest differs from GitHub')
         import zipfile
         with zipfile.ZipFile(downloaded) as package:
@@ -68,8 +72,16 @@ def restore(output: Path, *, run_id: int, current_attempt: int, source_sha: str,
                     or any(Path(item.filename).is_absolute() or '..' in Path(item.filename).parts
                            for item in files)):
                 raise ValueError('Notarization checkpoint artifact has unexpected contents')
-            archive_bytes = package.read(by_name['notarization.zip'])
-            receipt = json.loads(package.read(by_name['notarization-checkpoint.json']))
+            staged_receipt = Path(temporary) / 'notarization-checkpoint.json'
+            staged_archive = Path(temporary) / 'notarization.zip'
+            receipt_info = by_name[staged_receipt.name]
+            if receipt_info.file_size > 1024 * 1024:
+                raise ValueError('Notarization checkpoint receipt exceeds its size limit')
+            staged_receipt.write_bytes(package.read(receipt_info))
+            receipt = json.loads(staged_receipt.read_text())
+            with package.open(by_name[staged_archive.name]) as source, staged_archive.open('wb') as sink:
+                shutil.copyfileobj(source, sink, length=1024 * 1024)
+        downloaded.unlink()
         if (receipt.get('source_sha') != source_sha or receipt.get('workflow_source_sha') != source_sha
                 or receipt.get('product_source_sha') != product_source_sha
                 or receipt.get('run_id') != run_id
@@ -77,21 +89,18 @@ def restore(output: Path, *, run_id: int, current_attempt: int, source_sha: str,
                 or not 1 <= receipt['run_attempt'] <= attempt
                 or receipt.get('checkpoint_attempt', attempt if receipt.get('status') == 'Accepted' else receipt['run_attempt']) != attempt):
             raise ValueError('Notarization checkpoint receipt belongs to another source or attempt')
-        output_archive = output / 'notarization.zip'
-        output_receipt = output / 'notarization-checkpoint.json'
-        output_archive.write_bytes(archive_bytes)
-        output_receipt.write_text(json.dumps(receipt, indent=2) + '\n')
-        verify(output_archive, output_receipt, receipt.get('submission_id'), expected_source=source_sha,
+        verify(staged_archive, staged_receipt, receipt.get('submission_id'), expected_source=source_sha,
                expected_product_source=product_source_sha)
-    # ditto preserves the app bundle's internal symlinks and metadata.
-    app_root = output / 'build/macos/Build/Products/Release'
-    app_root.mkdir(parents=True, exist_ok=True)
-    app = app_root / 'Pleazyng.app'
-    if app.exists() or app.is_symlink():
-        raise ValueError('Refusing to overwrite an existing macOS application')
-    run(['ditto', '-x', '-k', str(output_archive), str(app_root)], check=True)
-    if app.is_symlink() or not app.is_dir():
-        raise ValueError('Notarization archive did not restore a real Pleazyng.app bundle')
+        # ditto preserves the bundle's symlinks and metadata. Publish the complete app last.
+        app_root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=app_root, prefix='.notary-') as extraction:
+            run(['ditto', '-x', '-k', str(staged_archive), extraction], check=True)
+            staged_app = Path(extraction) / app.name
+            if staged_app.is_symlink() or not staged_app.is_dir():
+                raise ValueError('Notarization archive did not restore a real Pleazyng.app bundle')
+            staged_archive.replace(output / staged_archive.name)
+            staged_receipt.replace(output / staged_receipt.name)
+            staged_app.rename(app)
     return {'attempt': attempt, 'submission_id': receipt['submission_id'],
             'archive_sha256': receipt['archive_sha256'], 'app_path': str(app)}
 

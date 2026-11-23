@@ -850,7 +850,7 @@ type snapshotter struct {
 
 func newSnapshotter(path string, build func() stateSnapshot) *snapshotter {
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dir, 0700); err != nil {
 		log.Printf("snapshot: mkdir %s: %v", dir, err)
 	}
 	sn := &snapshotter{
@@ -1109,27 +1109,24 @@ func syncSnapshotDirectory(dir string) error {
 }
 
 func (sn *snapshotter) persistAtomic(data []byte) error {
-	tmpPath := sn.path + ".tmp"
-	f, err := os.OpenFile(tmpPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	f, err := os.CreateTemp(sn.dir, "."+filepath.Base(sn.path)+"-*.tmp")
 	if err != nil {
 		return err
 	}
+	tmpPath := f.Name()
+	defer os.Remove(tmpPath)
 	if _, err := f.Write(data); err != nil {
 		f.Close()
-		os.Remove(tmpPath)
 		return err
 	}
 	if err := f.Sync(); err != nil {
 		f.Close()
-		os.Remove(tmpPath)
 		return err
 	}
 	if err := f.Close(); err != nil {
-		os.Remove(tmpPath)
 		return err
 	}
 	if err := os.Rename(tmpPath, sn.path); err != nil {
-		os.Remove(tmpPath)
 		return err
 	}
 	// Rename commits the file-synced replacement. Directory-sync failure is
@@ -1321,15 +1318,15 @@ func newServer(logDir, stateFile, posterDir string, clientIPs clientIPResolver) 
 	}
 	s.snap = newSnapshotter(stateFile, s.buildSnapshot)
 	s.snap.capture = s.captureSnapshot
-	rewriteReservations, err := s.loadSnapshot(stateFile)
+	rewriteSnapshot, err := s.loadSnapshot(stateFile)
 	if err != nil {
 		log.Printf("snapshot: load error: %v", err)
 	}
 	go s.snap.run()
-	if rewriteReservations {
+	if rewriteSnapshot {
 		ticket := s.snap.recordTerminalMutation(nil)
 		if outcome := s.snap.waitForDurableWithin(ticket, snapshotFlushTimeout); outcome.err != nil {
-			log.Printf("snapshot: v4 reservation rewrite failed: %v", outcome.err)
+			log.Printf("snapshot: rewrite failed: %v", outcome.err)
 		}
 	}
 	go s.cleanupLoop()
@@ -1420,14 +1417,26 @@ func (s *Server) captureSnapshot(captureSequence func() uint64) (stateSnapshot, 
 // loadSnapshot restores rooms. Missing or corrupt files allow startup; the
 // rewrite flag requests persistence of migration or pruning.
 func (s *Server) loadSnapshot(path string) (bool, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		if errors.Is(err, fs.ErrNotExist) {
-			log.Printf("snapshot: no file at %s, starting fresh", path)
-			return false, nil
-		}
-		log.Printf("snapshot: read error, starting fresh: %v", err)
+	info, err := os.Stat(path)
+	if errors.Is(err, fs.ErrNotExist) {
+		log.Printf("snapshot: no file at %s, starting fresh", path)
 		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	if !info.Mode().IsRegular() || info.Size() > snapshotMaxFileSize {
+		log.Printf("snapshot: expected a regular file of at most %d bytes, starting fresh", snapshotMaxFileSize)
+		return false, nil
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+	data, err := io.ReadAll(io.LimitReader(f, snapshotMaxFileSize+1))
+	if err != nil {
+		return false, err
 	}
 	if len(data) > snapshotMaxFileSize {
 		log.Printf("snapshot: file too large (%d bytes), starting fresh", len(data))
@@ -1443,7 +1452,7 @@ func (s *Server) loadSnapshot(path string) (bool, error) {
 		return false, nil
 	}
 	now := time.Now()
-	rewriteReservations := snap.Version != snapshotFormatVersion
+	rewriteSnapshot := snap.Version != snapshotFormatVersion || info.Mode().Perm()&0077 != 0
 	restored := make(map[string]*Room, min(len(snap.Rooms), maxRetainedRooms))
 	skipped := 0
 	for _, r := range snap.Rooms {
@@ -1499,14 +1508,14 @@ func (s *Server) loadSnapshot(path string) (bool, error) {
 				}
 				absentSince := now
 				if encoded.AbsentSinceUnixNano == 0 {
-					rewriteReservations = true
+					rewriteSnapshot = true
 				} else {
 					absentSince = time.Unix(0, encoded.AbsentSinceUnixNano)
 					if absentSince.After(now) {
 						absentSince = now
-						rewriteReservations = true
+						rewriteSnapshot = true
 					} else if !now.Before(absentSince.Add(peerReservationGrace)) {
-						rewriteReservations = true
+						rewriteSnapshot = true
 						continue
 					}
 				}
@@ -1557,7 +1566,7 @@ func (s *Server) loadSnapshot(path string) (bool, error) {
 	s.rooms = restored
 	s.mu.Unlock()
 	log.Printf("snapshot: loaded %d rooms, skipped %d invalid or expired rooms", len(restored), skipped)
-	return rewriteReservations, nil
+	return rewriteSnapshot, nil
 }
 
 // recordOccupiedRoomActivity queues a snapshot when any room has connected

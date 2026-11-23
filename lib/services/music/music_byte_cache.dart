@@ -33,7 +33,6 @@ class MusicByteCache {
   final Future<bool> Function() _unmetered;
   final Duration deadline;
   final SerialFutureQueue _writes = SerialFutureQueue();
-  final Map<String, Future<File?>> _pending = {};
   final Set<http.Client> _clients = {};
   int _epoch = 0;
   bool _closed = false;
@@ -41,26 +40,23 @@ class MusicByteCache {
   Future<Directory> _root() async => Directory('${(await _directory()).path}/music-prefetch/$_scope');
   String _key(String url, Map<String, String>? headers) {
     final fields = (headers ?? const <String, String>{}).entries.toList()..sort((a, b) => a.key.compareTo(b.key));
-    return sha256
-        .convert(
-          utf8.encode(
-            jsonEncode([
-              url,
-              fields.map((e) => [e.key, e.value]).toList(),
-            ]),
-          ),
-        )
-        .toString();
+    final credentials = fields.map((entry) => [entry.key, entry.value]).toList();
+    return sha256.convert(utf8.encode(jsonEncode([url, credentials]))).toString();
   }
 
   Future<File?> lookup(String url, Map<String, String>? headers, {required bool Function() current}) async {
     if (_closed || !current()) return null;
+    final epoch = _epoch;
+    bool valid() => !_closed && epoch == _epoch && current();
     final file = File('${(await _root()).path}/${_key(url, headers)}.audio');
-    if (!await file.exists() || _closed || !current()) return null;
-    final stat = await file.stat();
-    if (stat.type != FileSystemEntityType.file || stat.size == 0 || _closed || !current()) return null;
-    await file.setLastModified(DateTime.now());
-    return !_closed && current() ? file : null;
+    try {
+      final stat = await file.stat();
+      if (stat.type != FileSystemEntityType.file || stat.size == 0 || !valid()) return null;
+      await file.setLastModified(DateTime.now());
+      return valid() ? file : null;
+    } on FileSystemException {
+      return null;
+    }
   }
 
   Future<File?> prefetch(
@@ -75,33 +71,26 @@ class MusicByteCache {
     // Playlists and transcoding streams are not complete representations.
     if (uri == null || !const {'http', 'https'}.contains(uri.scheme) || uri.userInfo.isNotEmpty) return Future.value();
     final key = _key(url, headers);
-    final existing = _pending[key];
-    if (existing != null) return existing;
     final epoch = _epoch;
-    late final Future<File?> task;
-    task = _writes
-        .run(() async {
-          bool valid() => !_closed && epoch == _epoch && current();
-          if (!valid() || wifiOnly && !await _unmetered() || !valid()) return null;
-          try {
-            final cached = await lookup(url, headers, current: valid);
-            if (cached != null && await cached.length() <= budgetBytes) return cached;
-            final root = await _root();
-            if (!valid()) return null;
-            await root.create(recursive: true);
-            await _prune(root, budgetBytes);
-            return await _download(root, key, uri, headers, budgetBytes, valid);
-          } catch (_) {
-            // Disk full, unsupported storage and failed optional prefetch leave
-            // the original authorized playback source intact.
-            return null;
-          }
-        })
-        .whenComplete(() {
-          if (identical(_pending[key], task)) _pending.remove(key);
-        });
-    _pending[key] = task;
-    return task;
+    return _writes.run(() async {
+      bool valid() => !_closed && epoch == _epoch && current();
+      try {
+        if (!valid() || wifiOnly && !await _unmetered() || !valid()) return null;
+        final cached = await lookup(url, headers, current: valid);
+        final root = await _root();
+        if (!valid()) return null;
+        if (cached != null && await cached.length() <= budgetBytes) {
+          await _prune(root, budgetBytes, keep: cached);
+          return valid() ? cached : null;
+        }
+        await root.create(recursive: true);
+        await _prune(root, budgetBytes);
+        return await _download(root, key, uri, headers, budgetBytes, valid);
+      } catch (_) {
+        // Optional prefetch failures leave the original playback source intact.
+        return null;
+      }
+    });
   }
 
   Future<File?> _download(
@@ -112,6 +101,7 @@ class MusicByteCache {
     int budget,
     bool Function() valid,
   ) async {
+    if (!valid()) return null;
     final client = _client();
     _clients.add(client);
     final part = File('${root.path}/$key.part');
@@ -139,12 +129,13 @@ class MusicByteCache {
       }
       // Reserve the complete representation before writing. Unknown lengths
       // reserve the whole quota, keeping partial + completed files bounded.
-      await _prune(root, budget - (response.contentLength ?? budget));
+      final reserved = response.contentLength ?? budget;
+      await _prune(root, budget - reserved);
       output = await part.open(mode: FileMode.write);
       var received = 0;
       await for (final chunk in response.stream.timeout(deadline)) {
         received += chunk.length;
-        if (!valid() || abort.isCompleted || received > budget) return null;
+        if (!valid() || abort.isCompleted || received > reserved) return null;
         await output.writeFrom(chunk);
       }
       if (!valid() ||
@@ -156,7 +147,10 @@ class MusicByteCache {
       await output.close();
       output = null;
       if (!valid()) return null;
-      return await part.rename(destination.path);
+      final complete = await part.rename(destination.path);
+      if (valid()) return complete;
+      await complete.delete();
+      return null;
     } finally {
       timer.cancel();
       if (!abort.isCompleted) abort.complete();
@@ -167,7 +161,7 @@ class MusicByteCache {
     }
   }
 
-  Future<void> _prune(Directory root, int budget) async {
+  Future<void> _prune(Directory root, int budget, {File? keep}) async {
     final entries = <(File, FileStat)>[];
     var size = 0;
     await for (final entry in root.list(followLinks: false)) {
@@ -183,6 +177,7 @@ class MusicByteCache {
     entries.sort((a, b) => a.$2.modified.compareTo(b.$2.modified));
     for (final (file, stat) in entries) {
       if (size <= budget) break;
+      if (file.path == keep?.path) continue;
       await file.delete();
       size -= stat.size;
     }

@@ -71,6 +71,47 @@ void main() {
     expect(files.where((f) => f.path.endsWith('.part')), isEmpty);
   });
 
+  test('a cache hit applies a smaller quota and keeps the requested track', () async {
+    final first = await prefetch('a', budget: 16);
+    final second = await prefetch('b', budget: 16);
+    final hit = await prefetch('a', budget: 8);
+    expect(hit?.path, first!.path);
+    expect(await first.exists(), isTrue);
+    expect(await second!.exists(), isFalse);
+    expect(requests, 2);
+  });
+
+  test('same-track prefetch queued after clear uses the new generation', () async {
+    final started = Completer<void>();
+    final release = Completer<void>();
+    cache.dispose();
+    cache = MusicByteCache(
+      scope: 'reset',
+      directory: () async => root,
+      unmetered: () async => true,
+      client: () => MockClient((_) async {
+        requests++;
+        if (requests == 1) {
+          started.complete();
+          await release.future;
+        }
+        return http.Response('track $requests', 200, headers: {'content-type': 'audio/flac'});
+      }),
+    );
+    final old = prefetch('a');
+    await started.future;
+    final clearing = cache.clear();
+    final fresh = prefetch('a');
+    final duplicate = prefetch('a');
+    release.complete();
+    expect(await old, isNull);
+    await clearing;
+    final file = await fresh;
+    expect(await file!.readAsString(), 'track 2');
+    expect((await duplicate)?.path, file.path);
+    expect(requests, 2);
+  });
+
   test('Wi-Fi policy and disabled cache do not start network requests', () async {
     network = false;
     expect(await prefetch('a'), isNull);
@@ -104,6 +145,28 @@ void main() {
       );
       rejected.dispose();
     }
+    expect((await root.list(recursive: true).toList()).whereType<File>(), isEmpty);
+  });
+
+  test('stops consuming a response as soon as it exceeds its reserved space', () async {
+    var requestedAnotherChunk = false;
+    Stream<List<int>> body() async* {
+      yield [1, 2, 3];
+      requestedAnotherChunk = true;
+      yield [4];
+    }
+
+    cache.dispose();
+    cache = MusicByteCache(
+      scope: 'short-response',
+      directory: () async => root,
+      unmetered: () async => true,
+      client: () => MockClient.streaming(
+        (_, _) async => http.StreamedResponse(body(), 200, contentLength: 2, headers: {'content-type': 'audio/flac'}),
+      ),
+    );
+    expect(await prefetch('a'), isNull);
+    expect(requestedAnotherChunk, isFalse);
     expect((await root.list(recursive: true).toList()).whereType<File>(), isEmpty);
   });
 
