@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update the Google Tensor LiteRT AOT compiler nightly to its November 17 build.
+
 - Update the GitHub Actions Go setup used by CI to 7.1.0.
 
 - Raise the Android model exporter to NumPy 2.4.6 while retaining compatibility with its Python 3.11 Torch wheel.
