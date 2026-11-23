@@ -173,8 +173,11 @@ def validate_release_source(source_dir: Path, release_tag: str,
     checkout_sha = _capture(["git", "rev-parse", "HEAD"], cwd=source_dir).decode().strip()
     if checkout_sha != source_sha:
         raise ValueError("checked-out product source differs from the selected annotated release tag")
-    if _capture(["git", "status", "--porcelain", "--untracked-files=no"], cwd=source_dir).strip():
-        raise ValueError("checked-out product source has tracked modifications")
+    tracked_changes = _capture(
+        ["git", "status", "--porcelain", "--untracked-files=no"], cwd=source_dir
+    ).decode().strip()
+    if tracked_changes:
+        raise ValueError(f"checked-out product source has tracked modifications: {tracked_changes[:1024]}")
     if canonical_main_sha is not None:
         if not re.fullmatch(r"[0-9a-f]{40}", canonical_main_sha):
             raise ValueError("canonical main workflow commit is missing or invalid")
