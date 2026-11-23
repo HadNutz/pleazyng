@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Bundle both verified 1080p Neural models in the desktop build inputs so a model host outage cannot interrupt packaging.
+
 - Update GitHub release packaging to version 3.0.50 on all supported platforms.
 
 - Update the vendored wakelock package’s Linux D-Bus development lock to 0.8.1.

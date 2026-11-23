@@ -1,41 +1,18 @@
 # Stage the two larger ANVIL ONNX graphs only in Windows/Linux desktop bundles.
 # Flutter's desktop AssetBundle reads exact keys from data/flutter_assets even
 # when those files are not in pubspec.yaml, so mobile and TV bundles stay small.
-set(PLEAZYNG_ANVIL_MODEL_REVISION "fa97e30f6aabe897bd4f6f82d971ad607f5d61fa")
+set(PLEAZYNG_DESKTOP_NEURAL_MODEL_SOURCE_DIR
+  "${CMAKE_CURRENT_LIST_DIR}/../assets/motion_models/desktop")
 
 macro(_pleazyng_install_desktop_neural_model filename bytes sha256 install_data_dir)
   set(model_root "$ENV{PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT}")
-  if(NOT model_root STREQUAL "")
-    file(TO_CMAKE_PATH "${model_root}" model_root)
-    set(model_source "${model_root}/${filename}")
-    if(NOT EXISTS "${model_source}")
-      message(FATAL_ERROR
-        "Pinned ANVIL model is missing from PLEAZYNG_DESKTOP_NEURAL_MODEL_ROOT: ${filename}")
-    endif()
-  else()
-    set(model_cache_dir "${CMAKE_BINARY_DIR}/pleazyng-neural-models")
-    set(model_source "${model_cache_dir}/${filename}")
-    file(MAKE_DIRECTORY "${model_cache_dir}")
-    set(existing_sha256 "")
-    if(EXISTS "${model_source}")
-      file(SHA256 "${model_source}" existing_sha256)
-    endif()
-    if(NOT "${existing_sha256}" STREQUAL "${sha256}")
-      file(REMOVE "${model_source}")
-      file(DOWNLOAD
-        "https://huggingface.co/NihilDigit/anvil/resolve/${PLEAZYNG_ANVIL_MODEL_REVISION}/onnx/${filename}"
-        "${model_source}"
-        EXPECTED_HASH "SHA256=${sha256}"
-        STATUS model_download_status
-        SHOW_PROGRESS
-      )
-      list(GET model_download_status 0 model_download_code)
-      if(NOT model_download_code EQUAL 0)
-        list(GET model_download_status 1 model_download_message)
-        file(REMOVE "${model_source}")
-        message(FATAL_ERROR "Could not stage pinned ANVIL model ${filename}: ${model_download_message}")
-      endif()
-    endif()
+  if(model_root STREQUAL "")
+    set(model_root "${PLEAZYNG_DESKTOP_NEURAL_MODEL_SOURCE_DIR}")
+  endif()
+  file(TO_CMAKE_PATH "${model_root}" model_root)
+  set(model_source "${model_root}/${filename}")
+  if(NOT EXISTS "${model_source}")
+    message(FATAL_ERROR "Pinned ANVIL model is missing: ${model_source}")
   endif()
 
   file(SIZE "${model_source}" model_source_size)

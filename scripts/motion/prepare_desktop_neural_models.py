@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch and verify the pinned desktop ANVIL graphs before CMake packaging."""
+"""Stage and verify the pinned desktop ANVIL graphs before CMake packaging."""
 
 from __future__ import annotations
 
@@ -9,13 +9,12 @@ import json
 import os
 from pathlib import Path
 import shutil
-import subprocess
 import tempfile
-from urllib.parse import quote
 
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "assets/motion_models/manifest.json"
+MODEL_SOURCE = MANIFEST.parent / "desktop"
 DESKTOP_MODELS = ("anvil-s-1080p", "anvil-m-1080p")
 
 
@@ -27,19 +26,7 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def model_url(model: dict) -> str:
-    source = model.get("source")
-    revision = model.get("sourceRevision")
-    filename = model.get("file")
-    if (not isinstance(source, str) or not source.startswith("https://huggingface.co/")
-            or not isinstance(revision, str) or len(revision) != 40
-            or not all(character in "0123456789abcdef" for character in revision)
-            or not isinstance(filename, str) or Path(filename).name != filename):
-        raise ValueError("Desktop model manifest has an invalid immutable source")
-    return f"{source.rstrip('/')}/resolve/{revision}/onnx/{quote(filename)}"
-
-
-def fetch_model(model_id: str, model: dict, destination: Path, curl: str) -> Path:
+def stage_model(model_id: str, model: dict, destination: Path) -> Path:
     filename = model.get("file")
     expected_bytes = model.get("bytes")
     expected_sha256 = model.get("sha256")
@@ -62,15 +49,9 @@ def fetch_model(model_id: str, model: dict, destination: Path, curl: str) -> Pat
     os.close(descriptor)
     temporary = Path(temporary_name)
     try:
-        subprocess.run(
-            [curl, "--fail", "--location", "--silent", "--show-error", "--retry", "3",
-             "--connect-timeout", "20", "--max-time", "600", "--output", str(temporary),
-             model_url(model)],
-            check=True,
-            timeout=660,
-        )
+        shutil.copyfile(MODEL_SOURCE / filename, temporary)
         if temporary.stat().st_size != expected_bytes or sha256(temporary) != expected_sha256:
-            raise ValueError(f"Downloaded desktop model failed its pinned size or SHA-256: {filename}")
+            raise ValueError(f"Bundled desktop model failed its pinned size or SHA-256: {filename}")
         temporary.replace(target)
         print(f"Verified desktop model: {filename} ({expected_bytes} bytes, SHA-256 {expected_sha256})", flush=True)
         return target
@@ -90,16 +71,13 @@ def main() -> int:
     missing = [model_id for model_id in DESKTOP_MODELS if not isinstance(models.get(model_id), dict)]
     if missing:
         raise ValueError(f"Desktop model manifest entries are missing: {missing}")
-    curl = shutil.which("curl.exe") or shutil.which("curl")
-    if not curl:
-        raise ValueError("The build host has no curl executable")
     destination = args.destination.expanduser()
     if destination.is_symlink():
         raise ValueError(f"Refusing linked desktop model destination: {destination}")
     destination = destination.resolve()
     destination.mkdir(parents=True, exist_ok=True)
     for model_id in DESKTOP_MODELS:
-        fetch_model(model_id, models[model_id], destination, curl)
+        stage_model(model_id, models[model_id], destination)
     return 0
 
 
