@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
+part 'response_size_limit_client.dart';
+
 /// A deadline does not bound memory: reject both declared and streamed sizes.
 const defaultHttpResponseLimit = 16 * 1024 * 1024;
 
@@ -18,15 +20,8 @@ Future<http.Response> readBoundedHttpResponse(
   int maxBytes = defaultHttpResponseLimit,
   bool Function()? isCurrent,
 }) async {
-  if (maxBytes < 0) throw RangeError.value(maxBytes, 'maxBytes');
-  if ((response.contentLength ?? 0) > maxBytes) {
-    await response.stream.listen(null).cancel();
-    throw HttpResponseTooLarge(maxBytes);
-  }
   final body = BytesBuilder(copy: false);
-  await for (final chunk in response.stream) {
-    if (isCurrent != null && !isCurrent()) throw StateError('HTTP response owner changed');
-    if (chunk.length > maxBytes - body.length) throw HttpResponseTooLarge(maxBytes);
+  await for (final chunk in _boundedBody(response, maxBytes, HttpResponseTooLarge(maxBytes), isCurrent: isCurrent)) {
     body.add(chunk);
   }
   return http.Response.bytes(

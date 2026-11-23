@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Bound metadata responses while downloading them, validate sign-in destinations, and update the relay WebSocket dependency for GO-2026-6278.
+- Fix macOS compilation recovery when another platform overrides shared build flags and verify the complete multiline Mac flags.
+
 - Offer MPV smoothing only on MPV backends and label Neural smoothing by the available GPU and NPU hardware.
 
 - Apply playback motion smoothing changes before closing the settings sheet and log renderer acceptance, deferral, and failure. Honor explicit desktop MPV smoothing at even frame-to-refresh ratios.

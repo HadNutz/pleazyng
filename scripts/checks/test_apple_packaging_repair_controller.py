@@ -677,7 +677,11 @@ class WorkerSigningTests(unittest.TestCase):
         self.assertLess(ios.index('--prepare-ios-worker-profile'), ios.index('Stage locked iOS worker frameworks'))
         self.assertLess(ios.index('--prepare-ios-worker-profile'), ios.index('Build iOS (no codesign)'))
         self.assertNotIn('IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64:', signed)
-        self.assertNotIn('secrets.IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64', ios)
+        profile = 'IOS_ROMMWORKER_PROVISIONING_PROFILE_BASE64'
+        self.assertIn(f'{profile}: ${{{{ secrets.{profile} }}}}', configure)
+        validate = ios.split('      - name: Validate iOS App Store provisioning entitlements', 1)[1].split('      - name:', 1)[0]
+        self.assertIn(f'{profile}: ${{{{ env.{profile} }}}}', validate)
+        self.assertEqual(ios.count(f'secrets.{profile}'), 1)
 
 
 if __name__ == '__main__':

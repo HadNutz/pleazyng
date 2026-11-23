@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../utils/abortable_http_request.dart';
+import '../utils/service_uri.dart';
+
 import 'plezy_server.dart';
 
 class WatchmodeAvailabilitySource {
@@ -117,10 +120,15 @@ class WatchmodeAvailabilityClient {
       '$base/commerce/watchmode-availability',
     ).replace(queryParameters: {'tmdbType': type, 'tmdbId': tmdbId.toString(), 'region': country});
     try {
-      final response = await _http
-          .get(uri, headers: const {'Accept': 'application/json'})
-          .timeout(const Duration(seconds: 8));
-      if (response.statusCode != 200 || response.bodyBytes.length > 256 * 1024) return null;
+      final response = await sendAbortableHttpRequest(
+        _http,
+        'GET',
+        uri,
+        headers: const {'Accept': 'application/json'},
+        timeout: const Duration(seconds: 8),
+        maxResponseBytes: 256 * 1024,
+      );
+      if (response.statusCode != 200) return null;
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));
       if (decoded is! Map<String, dynamic> ||
           decoded['tmdbType'] != type ||
@@ -163,13 +171,5 @@ String? _safeHttpsUrl(Object? value) {
   if (value == null) return null;
   if (value is! String || value.length > 2048) throw const FormatException('Invalid Watchmode URL');
   final uri = Uri.tryParse(value);
-  if (uri == null ||
-      uri.scheme != 'https' ||
-      uri.host.isEmpty ||
-      uri.userInfo.isNotEmpty ||
-      uri.hasFragment ||
-      uri.hasPort) {
-    return null;
-  }
-  return uri.toString();
+  return isHttpsServiceUri(uri) ? uri.toString() : null;
 }

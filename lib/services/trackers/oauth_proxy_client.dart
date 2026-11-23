@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 import 'mal/mal_constants.dart';
 import '../../utils/abortable_http_request.dart';
+import '../../utils/service_uri.dart';
 import '../../games/steam_game_activity.dart';
 import '../../utils/app_logger.dart';
 import '../../utils/platform_http_client_stub.dart'
@@ -75,8 +76,7 @@ class OAuthProxyClient {
     }
     final authorize = Uri.tryParse(rawUrl);
     if (authorize == null ||
-        authorize.scheme != 'https' ||
-        authorize.host != 'myanimelist.net' ||
+        !isHttpsServiceUri(authorize, host: 'myanimelist.net') ||
         authorize.path != '/v1/oauth2/authorize' ||
         authorize.queryParameters['response_type'] != 'code' ||
         authorize.queryParameters['client_id'] != MalConstants.clientId ||

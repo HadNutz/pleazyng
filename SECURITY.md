@@ -1,21 +1,5 @@
-# Security Policy
+# Reporting a security issue
 
-## Supported Versions
+Send a private report through [GitHub Security Advisories](https://github.com/snapetech-org/pleazyng/security/advisories/new). Include the affected Pleazyng version or commit, platform, feature, and observed impact. Remove account credentials, Plex tokens, and private media URLs from any logs you attach.
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
-
-## Reporting a Vulnerability
-
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+The [release history](https://github.com/snapetech-org/pleazyng/releases) lists published versions. Reports about older builds are welcome. If you have already checked a newer build, include its version and result.

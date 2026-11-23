@@ -25,11 +25,28 @@ class CompilationRecoveryTests(unittest.TestCase):
     def test_manifest_contract_cannot_be_confused_with_legacy_literal_pin(self):
         workflow = (Path(__file__).resolve().parents[1] / '.github/workflows/build.yml').read_text()
         current = recovery.build_contract(workflow)
-        legacy = recovery.build_contract(workflow + '\n  FLUTTER_VERSION: "3.47.1"\n')
+        legacy = recovery.build_contract(workflow.replace('\nenv:\n', '\nenv:\n  FLUTTER_VERSION: "3.47.1"\n', 1))
         self.assertNotEqual(current, legacy)
         without_loader = workflow.replace('run: python3 scripts/flutter/load_sdk_pin.py --github-env', 'run: echo skipped')
         with self.assertRaises(ValueError):
             recovery.build_contract(without_loader)
+
+    def test_mac_contract_binds_folded_flags_and_ignores_ios_override(self):
+        workflow = (Path(__file__).resolve().parents[1] / '.github/workflows/build.yml').read_text()
+        original = recovery.build_contract(workflow)
+        flag = '--dart-define=GIT_COMMIT='
+        self.assertNotEqual(original, recovery.build_contract(workflow.replace(flag, flag + 'changed-', 1)))
+        before, ios = workflow.split('\n  build-ios:\n', 1)
+        self.assertEqual(original, recovery.build_contract(before + '\n  build-ios:\n' +
+                         ios.replace(flag, flag + 'ios-only-', 1)))
+
+    def test_historical_checkpoint_hash_keeps_legacy_scalar_representation(self):
+        workflow = (Path(__file__).resolve().parents[1] / '.github/workflows/build.yml').read_text()
+        # Earlier builds had a single workflow-wide release flag declaration.
+        workflow = workflow.replace('      RELEASE_DART_DEFINES: >-', '      IOS_ONLY_DEFINES: >-')
+        old = recovery.build_contract(workflow, legacy_receipt=True)
+        self.assertEqual(old['RELEASE_DART_DEFINES'], '>-')
+        self.assertIn('--dart-define=', recovery.build_contract(workflow)['RELEASE_DART_DEFINES'])
 
     def compare(self, files, **values):
         return dict(status='ahead',merge_base_commit={'sha':'a'*40},files=files,**values)
@@ -65,7 +82,7 @@ class CompilationRecoveryTests(unittest.TestCase):
             workflow=(Path(__file__).resolve().parents[1]/'.github/workflows/build.yml').read_bytes()
             contract=hashlib.sha256(__import__('json').dumps(
                 recovery.build_contract(workflow.decode()),sort_keys=True).encode()).hexdigest()
-            receipt={'schema_version':1,'source_sha':source,'workflow_source_sha':source,
+            receipt={'schema_version':2,'source_sha':source,'workflow_source_sha':source,
                 'run_id':44,'run_attempt':2,'app_tree_sha256':app_tree,
                 'archive_sha256':hashlib.sha256(archive_bytes).hexdigest(),
                 'workflow_contract_sha256':contract,'signed':False,'notarized':False}

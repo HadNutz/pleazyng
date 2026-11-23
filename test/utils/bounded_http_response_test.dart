@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:plezy/utils/bounded_http_response.dart';
 
 void main() {
@@ -35,6 +36,28 @@ void main() {
       );
       expect(produced, 2);
     }
+  });
+
+  test('provider clients cancel oversized JSON streams before GET buffers them', () async {
+    var chunksRead = 0;
+    final client = ResponseSizeLimitClient(
+      MockClient.streaming(
+        (_, _) async => http.StreamedResponse(
+          Stream.fromIterable([
+            for (var i = 0; i < 5; i++) [1, 2],
+          ]).map((chunk) {
+            chunksRead++;
+            return chunk;
+          }),
+          200,
+        ),
+      ),
+      3,
+      const FormatException('provider response too large'),
+    );
+    addTearDown(client.close);
+    await expectLater(client.get(Uri.https('example.test')), throwsFormatException);
+    expect(chunksRead, 2);
   });
 
   test('preserves exact-limit bytes and metadata', () async {

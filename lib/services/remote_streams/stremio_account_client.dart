@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../../utils/service_uri.dart';
+
 class StremioAccountException implements Exception {
   const StremioAccountException(this.kind);
 
@@ -71,21 +73,16 @@ class StremioAccountClient {
     final code = row['code'];
     final link = row['link'];
     final qrData = row['qrcode'];
-    if (code is! String ||
-        code.isEmpty ||
-        code.length > 128 ||
-        link is! String ||
-        link.length > 2048 ||
-        qrData is! String ||
-        qrData.isEmpty ||
-        qrData.length > 2048) {
+    if (code is! String || code.isEmpty || code.length > 128 || link is! String || link.length > 2048) {
       throw const StremioAccountException(StremioAccountFailure.invalidResponse);
     }
     final linkUri = Uri.tryParse(link);
-    if (linkUri == null || linkUri.scheme != 'https' || linkUri.host != _linkHost || linkUri.userInfo.isNotEmpty) {
+    if (!isHttpsServiceUri(linkUri?.removeFragment(), host: _linkHost)) {
       throw const StremioAccountException(StremioAccountFailure.invalidLink);
     }
-    return StremioLinkAuthorization(code: code, link: linkUri.toString(), qrData: qrData);
+    final qr = qrData is String && qrData.length <= 2048 ? Uri.tryParse(qrData) : null;
+    final qrLink = isHttpsServiceUri(qr?.removeFragment(), host: _linkHost) ? qr.toString() : link;
+    return StremioLinkAuthorization(code: code, link: link, qrData: qrLink);
   }
 
   Future<StremioAccountAddonCollection> importAddonCollection(
@@ -174,7 +171,7 @@ class StremioAccountClient {
   }) async {
     var uri = initialUri;
     for (var redirect = 0; redirect <= 3; redirect++) {
-      if (uri.scheme != 'https' || uri.host != allowedHost || uri.userInfo.isNotEmpty || uri.hasFragment) {
+      if (!isHttpsServiceUri(uri, host: allowedHost)) {
         throw const StremioAccountException(StremioAccountFailure.invalidLink);
       }
       final request = http.Request(method, uri)
@@ -187,7 +184,7 @@ class StremioAccountClient {
       final streamed = await _client.send(request).timeout(_requestTimeout);
       if (streamed.statusCode >= 300 && streamed.statusCode < 400) {
         final location = streamed.headers['location'];
-        await streamed.stream.drain<void>().timeout(_requestTimeout);
+        await streamed.stream.listen(null).cancel();
         if (location == null || redirect == 3) {
           throw const StremioAccountException(StremioAccountFailure.unavailable);
         }

@@ -3,15 +3,15 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'debrid_http_clients.dart';
 import '../../models/trackers/device_code.dart';
 import 'real_debrid_client.dart';
 import 'remote_stream_models.dart';
 
-/// Bounded adapters for the other widely used hosted debrid services.
-/// Credentials stay in the account snapshot; they are never put in playback
-/// URLs or written to logs.
+/// Hosted debrid adapters keep credentials in the account snapshot and exclude
+/// them from playback URLs and logs.
 class AllDebridClient {
-  AllDebridClient({http.Client? client, required this.account}) : _http = client ?? http.Client();
+  AllDebridClient({http.Client? client, required this.account}) : _http = debridJsonClient(client);
 
   static const _base = 'https://api.alldebrid.com';
   final http.Client _http;
@@ -19,7 +19,7 @@ class AllDebridClient {
 
   static Future<AllDebridDeviceCode> startDeviceAuthorization({http.Client? client}) async {
     final owned = client == null;
-    final httpClient = client ?? http.Client();
+    final httpClient = debridJsonClient(client);
     try {
       final response = await httpClient.get(Uri.parse('$_base/v4.1/pin/get')).timeout(const Duration(seconds: 15));
       final row = _decodeEnvelope(response.bodyBytes, response.statusCode);
@@ -47,7 +47,7 @@ class AllDebridClient {
     http.Client? client,
   }) async {
     final owned = client == null;
-    final httpClient = client ?? http.Client();
+    final httpClient = debridJsonClient(client);
     try {
       final deadline = DateTime.now().add(Duration(seconds: code.expiresInSeconds));
       while (DateTime.now().isBefore(deadline)) {
@@ -265,14 +265,14 @@ class AllDebridDeviceCode {
 }
 
 class PremiumizeClient {
-  PremiumizeClient({http.Client? client, required this.account}) : _http = client ?? http.Client();
+  PremiumizeClient({http.Client? client, required this.account}) : _http = debridJsonClient(client);
   static const _base = 'https://www.premiumize.me/api';
   final http.Client _http;
   final RemoteStreamAccount account;
 
   static Future<RemoteStreamAccount> connectWithApiKey(String apiKey, {http.Client? client}) async {
     final owned = client == null;
-    final httpClient = client ?? http.Client();
+    final httpClient = debridJsonClient(client);
     try {
       final response = await httpClient
           .get(
@@ -423,14 +423,14 @@ class PremiumizeClient {
 }
 
 class TorBoxClient {
-  TorBoxClient({http.Client? client, required this.account}) : _http = client ?? http.Client();
+  TorBoxClient({http.Client? client, required this.account}) : _http = debridJsonClient(client);
   static const _base = 'https://api.torbox.app/v1/api';
   final http.Client _http;
   final RemoteStreamAccount account;
 
   static Future<DeviceCode> startDeviceAuthorization({http.Client? client}) async {
     final owned = client == null;
-    final transport = client ?? http.Client();
+    final transport = torBoxAuthJsonClient(client);
     try {
       final response = await transport
           .get(
@@ -492,7 +492,7 @@ class TorBoxClient {
     http.Client? client,
   }) async {
     final owned = client == null;
-    final transport = client ?? http.Client();
+    final transport = torBoxAuthJsonClient(client);
     try {
       final deadline = DateTime.now().add(Duration(seconds: code.expiresIn));
       while (DateTime.now().isBefore(deadline)) {
@@ -520,7 +520,7 @@ class TorBoxClient {
           if (token is! String || token.trim().isEmpty || token.length > 8192) {
             throw const RemoteProviderException(RemoteProviderFailure.invalidResponse);
           }
-          return await connectWithApiKey(token, client: transport);
+          return await connectWithApiKey(token, client: client);
         }
         final error = _torBoxAuthError(envelope);
         if (error == 'DEVICE_CODE_NOT_USED') {
@@ -548,7 +548,7 @@ class TorBoxClient {
 
   static Future<RemoteStreamAccount> connectWithApiKey(String apiKey, {http.Client? client}) async {
     final owned = client == null;
-    final httpClient = client ?? http.Client();
+    final httpClient = debridJsonClient(client);
     try {
       final response = await httpClient
           .get(

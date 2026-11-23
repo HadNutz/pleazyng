@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../../utils/bounded_http_response.dart';
 import '../book_identifiers.dart';
 import '../../sources/source_models.dart';
 
@@ -201,7 +202,11 @@ class HardcoverBookRecord {
 class HardcoverClient {
   HardcoverClient({required String token, http.Client? client})
     : _token = _cleanToken(token),
-      _client = client ?? http.Client();
+      _client = ResponseSizeLimitClient(
+        client ?? http.Client(),
+        8 * 1024 * 1024,
+        const SourceException(SourceFailure.invalidData),
+      );
 
   final String _token;
   final http.Client _client;
@@ -232,11 +237,9 @@ class HardcoverClient {
           .timeout(const Duration(seconds: 30));
       if (response.statusCode == 401) throw const SourceException(SourceFailure.authentication, status: 401);
       if (response.statusCode == 403) throw const SourceException(SourceFailure.permission, status: 403);
-      if (response.statusCode == 429) throw const SourceException(SourceFailure.unavailable, status: 429);
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw SourceException(SourceFailure.unavailable, status: response.statusCode);
       }
-      if (response.bodyBytes.length > 8 * 1024 * 1024) throw const SourceException(SourceFailure.invalidData);
       final root = sourceMap(jsonDecode(utf8.decode(response.bodyBytes)));
       if (sourceList(root['errors']).isNotEmpty) throw const SourceException(SourceFailure.invalidData);
       final data = sourceMap(root['data']);
@@ -249,6 +252,11 @@ class HardcoverClient {
     } on Object {
       throw const SourceException(SourceFailure.unavailable);
     }
+  }
+
+  void _checkMutation(Map<String, dynamic> result) {
+    final error = result['error'];
+    if (error is String && error.isNotEmpty) throw const SourceException(SourceFailure.conflict);
   }
 
   Future<HardcoverAccount> account() async {
@@ -352,9 +360,7 @@ mutation HardcoverUpdateStatus(\$id: Int!, \$statusId: Int!) {
 ''';
     final data = await _query(mutation, {'id': userBookId, 'statusId': statusId});
     final result = sourceMap(data['update_user_book']);
-    if (result['error'] is String && (result['error'] as String).isNotEmpty) {
-      throw const SourceException(SourceFailure.conflict);
-    }
+    _checkMutation(result);
     final updated = sourceMap(result['user_book']);
     if (sourceInt(updated['id']) != userBookId || sourceInt(updated['status_id']) != statusId) {
       throw const SourceException(SourceFailure.invalidData);
@@ -451,9 +457,7 @@ mutation HardcoverInsertUserBook(\$bookId: Int!, \$editionId: Int!, \$statusId: 
 ''';
     final data = await _query(mutation, {'bookId': bookId, 'editionId': editionId, 'statusId': statusId});
     final result = sourceMap(data['insert_user_book']);
-    if (result['error'] is String && (result['error'] as String).isNotEmpty) {
-      throw const SourceException(SourceFailure.conflict);
-    }
+    _checkMutation(result);
     final added = sourceMap(result['user_book']);
     final id = sourceInt(added['id']) ?? sourceInt(result['id']) ?? 0;
     if (id <= 0 ||
@@ -474,9 +478,7 @@ mutation HardcoverDeleteUserBook(\$id: Int!) {
 ''';
     final data = await _query(mutation, {'id': userBookId});
     final result = sourceMap(data['delete_user_book']);
-    if (result['error'] is String && (result['error'] as String).isNotEmpty) {
-      throw const SourceException(SourceFailure.conflict);
-    }
+    _checkMutation(result);
     final deletedId = sourceInt(result['id']);
     if (deletedId != null && deletedId != userBookId) {
       throw const SourceException(SourceFailure.invalidData);
@@ -496,9 +498,7 @@ mutation HardcoverUpdateReadingProgress(\$id: Int!, \$pages: Int) {
 ''';
     final data = await _query(mutation, {'id': readId, 'pages': pages});
     final result = sourceMap(data['update_user_book_read']);
-    if (result['error'] is String && (result['error'] as String).isNotEmpty) {
-      throw const SourceException(SourceFailure.conflict);
-    }
+    _checkMutation(result);
     final updated = sourceMap(result['user_book_read']);
     if (sourceInt(updated['id']) != readId ||
         (pages != null && sourceInt(updated['progress_pages']) != pages) ||

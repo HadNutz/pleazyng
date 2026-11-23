@@ -13,7 +13,7 @@ import tarfile
 import tempfile
 import plistlib
 
-from recover_macos_app import api, build_contract, tree_digest
+from recover_macos_app import api, build_contract, stream_sha256, tree_digest
 
 
 def cache_root():
@@ -78,11 +78,12 @@ def checkpoint(app, archive, receipt_path):
     archive.parent.mkdir(parents=True, exist_ok=True)
     with tarfile.open(archive, 'w:gz') as output:
         output.add(app, arcname='Pleazyng.app', recursive=True)
-    archive_hash = hashlib.sha256(archive.read_bytes()).hexdigest()
+    with archive.open('rb') as payload:
+        archive_hash = stream_sha256(payload)
     workflow = (Path(__file__).resolve().parents[1] / '.github/workflows/build.yml').read_text()
     contract = hashlib.sha256(json.dumps(build_contract(workflow), sort_keys=True).encode()).hexdigest()
     plist = plistlib.loads((app / 'Contents/Info.plist').read_bytes())
-    receipt = {'schema_version': 1, 'source_sha': source, 'workflow_source_sha': source,
+    receipt = {'schema_version': 2, 'source_sha': source, 'workflow_source_sha': source,
                'run_id': run, 'run_attempt': attempt, 'app_tree_sha256': fingerprint,
                'archive_sha256': archive_hash, 'workflow_contract_sha256': contract,
                'version': version, 'bundle_marketing_version': plist.get('CFBundleShortVersionString'),

@@ -44,9 +44,13 @@ class BuildWorkflowGuardTest(unittest.TestCase):
         self.assertIn('always()', preflight['if'])
         self.assertIn('inputs.include_apple_store_build', preflight['if'])
         self.assertIn('ios_store_signing_ready', preflight['outputs'])
-        self.assertTrue(preflight['steps'][1]['continue-on-error'])
-        self.assertIn('scripts/preflight_ios_store_profile.py', preflight['steps'][1]['run'])
-        self.assertIn('--prepare-ios-worker-profile', preflight['steps'][1]['run'])
+        steps = {step.get('id'): step for step in preflight['steps']}
+        prepare, verify = steps['ios-worker-profile'], steps['ios-store-preflight']
+        self.assertTrue(prepare['continue-on-error'])
+        self.assertTrue(verify['continue-on-error'])
+        self.assertIn('--prepare-ios-worker-profile', prepare['run'])
+        self.assertIn('scripts/preflight_ios_store_profile.py', verify['run'])
+        self.assertEqual(verify['if'], "steps.ios-worker-profile.outcome == 'success'")
         ios = jobs['build-ios']
         self.assertIn('preflight-ios-store-signing', ios['needs'])
         self.assertNotIn("needs.preflight-ios-store-signing.result == 'success'", ios['if'])
@@ -278,7 +282,7 @@ sys.exit(1 if len(calls) <= int(os.environ['FAIL_UNTIL']) else 0)
         original = self._workflow()
         start = original.index("  build-tvos:\n")
         end = original.index("  build-macos:\n", start)
-        incompatible = (original[:start] + original[start:end].replace("|| 'macos-26' }}", "|| 'macos-26-intel' }}")
+        incompatible = (original[:start] + original[start:end].replace("'xcode-27' || 'macos-26'", "'xcode-27' || 'macos-26-intel'")
                         + original[end:])
         skipped = original.replace("inputs.rebuild_tvos && needs.build-tvos.result == 'success'",
                                    "inputs.rebuild_tvos && needs.build-tvos.result == 'skipped'")

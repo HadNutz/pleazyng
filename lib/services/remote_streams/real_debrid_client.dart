@@ -3,22 +3,10 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'debrid_http_clients.dart';
+export 'debrid_http_clients.dart' show RealDebridException, RealDebridFailure;
+
 import 'remote_stream_models.dart';
-
-class RealDebridException implements Exception {
-  const RealDebridException(this.reason);
-  final RealDebridFailure reason;
-}
-
-enum RealDebridFailure {
-  authentication,
-  unavailable,
-  invalidResponse,
-  unsupported,
-  preparationFailed,
-  timeout,
-  cancelled,
-}
 
 class RealDebridDeviceCode {
   const RealDebridDeviceCode({
@@ -47,7 +35,7 @@ class ResolvedRemoteStream {
 /// user-bound client credentials are acquired separately per account.
 class RealDebridClient {
   RealDebridClient({http.Client? client, required this._account, this.onAccountRefreshed})
-    : _http = client ?? http.Client();
+    : _http = realDebridJsonClient(client);
 
   static const _publicClientId = 'X245A4XAIBGVM';
   static const _oauthBase = 'https://api.real-debrid.com/oauth/v2';
@@ -59,7 +47,7 @@ class RealDebridClient {
 
   static Future<RealDebridDeviceCode> startDeviceAuthorization({http.Client? client}) async {
     final owned = client == null;
-    final transport = client ?? http.Client();
+    final transport = realDebridJsonClient(client);
     try {
       final uri = Uri.parse(
         '$_oauthBase/device/code',
@@ -99,7 +87,7 @@ class RealDebridClient {
     http.Client? client,
   }) async {
     final owned = client == null;
-    final transport = client ?? http.Client();
+    final transport = realDebridJsonClient(client);
     try {
       final deadline = DateTime.now().add(Duration(seconds: code.expiresInSeconds));
       Map<String, dynamic>? credentials;

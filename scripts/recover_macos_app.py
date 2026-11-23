@@ -48,13 +48,41 @@ def product_equivalence(comparison, source):
         raise ValueError('Compiled application inputs changed: ' + ', '.join(sorted(blocked)))
 
 
-def build_contract(text):
+def _workflow_block(text, header):
+    """Read one canonical workflow mapping, retaining its indented contents."""
+    indent = len(header) - len(header.lstrip())
+    pattern = rf'^{re.escape(header)}[ \t]*\n((?:(?: {{{indent + 1},}}[^\n]*|[ \t]*)\n)*)'
+    blocks = re.findall(pattern, text + '\n', re.MULTILINE)
+    if len(blocks) != 1:
+        raise ValueError(f'Missing or ambiguous workflow block {header.strip()}')
+    return blocks[0]
+
+
+def build_contract(text, *, legacy_receipt=False):
+    if not legacy_receipt:
+        # Only workflow defaults and the Mac job can configure this build.
+        # Other platforms have independent compiler flags and SDK setup.
+        mac = _workflow_block(text, '  build-macos:')
+        text = _workflow_block(text, 'env:') + '\n' + mac
     keys = ('FLUTTER_VERSION', 'RELEASE_DART_DEFINES',
             'FLUTTER_XCODE_CODE_SIGNING_ALLOWED', 'FLUTTER_XCODE_CODE_SIGNING_REQUIRED',
             'FLUTTER_XCODE_CODE_SIGNING_IDENTITY')
     contract = {}
     for key in keys:
-        values = re.findall(r'^\s+' + key + r': (.+)$', text, re.MULTILINE)
+        pattern = rf'^(?P<indent> +){key}: (?P<value>[^\n]+)$'
+        matches = list(re.finditer(pattern, text, re.MULTILINE))
+        values = [match['value'] for match in matches]
+        if not legacy_receipt and len(matches) == 1 and values[0].startswith(('>', '|')):
+            match = matches[0]
+            indent = len(match['indent'])
+            lines = []
+            for line in text[match.end() + 1:].splitlines():
+                if line.strip() and len(line) - len(line.lstrip()) <= indent:
+                    break
+                lines.append(line)
+            if not any(line.strip() for line in lines):
+                raise ValueError(f'Empty compiler setting {key}')
+            values[0] += '\n' + '\n'.join(lines).rstrip()
         if (key == 'FLUTTER_VERSION' and not values
                 and 'run: python3 scripts/flutter/load_sdk_pin.py --github-env' in text):
             # The manifest and its loader are compilation inputs, deliberately
@@ -69,6 +97,15 @@ def build_contract(text):
         raise ValueError('Missing or ambiguous Mac compilation command')
     contract['command'] = commands[0]
     return contract
+
+
+def stream_sha256(source, *, copy_to=None):
+    digest = hashlib.sha256()
+    for chunk in iter(lambda: source.read(1024 * 1024), b''):
+        digest.update(chunk)
+        if copy_to is not None:
+            copy_to.write(chunk)
+    return digest.hexdigest()
 
 
 def tree_digest(app):
@@ -117,7 +154,9 @@ def restore_portable_checkpoint(run, job, source, attempt, scratch):
     with downloaded.open('wb') as output:
         subprocess.run(['gh', 'api', f'repos/{REPOSITORY}/actions/artifacts/{artifact["id"]}/zip'],
                        check=True, stdout=output)
-    if hashlib.sha256(downloaded.read_bytes()).hexdigest() != artifact['digest'][7:]:
+    with downloaded.open('rb') as payload:
+        outer_digest = stream_sha256(payload)
+    if outer_digest != artifact['digest'][7:]:
         raise ValueError('Portable macOS checkpoint archive digest does not match GitHub')
     with zipfile.ZipFile(downloaded) as package:
         files = [entry for entry in package.infolist() if not entry.is_dir()]
@@ -125,20 +164,25 @@ def restore_portable_checkpoint(run, job, source, attempt, scratch):
         if (len(files) != 2 or set(by_name) != {'compiled-macos-app.tar.gz', 'macos-compilation-checkpoint.json'}
                 or any(Path(entry.filename).is_absolute() or '..' in Path(entry.filename).parts for entry in files)):
             raise ValueError('Portable macOS checkpoint archive has unexpected files')
-        archive_bytes = package.read(by_name['compiled-macos-app.tar.gz'])
-        receipt = json.loads(package.read(by_name['macos-compilation-checkpoint.json']))
-    if hashlib.sha256(archive_bytes).hexdigest() != receipt.get('archive_sha256'):
+        receipt_file = by_name['macos-compilation-checkpoint.json']
+        if receipt_file.file_size > 1024 * 1024:
+            raise ValueError('Portable macOS compilation receipt is too large')
+        receipt = json.loads(package.read(receipt_file))
+        archive_path = scratch / 'compiled-macos-app.tar.gz'
+        with package.open(by_name['compiled-macos-app.tar.gz']) as payload, archive_path.open('wb') as output:
+            archive_digest = stream_sha256(payload, copy_to=output)
+    if archive_digest != receipt.get('archive_sha256'):
         raise ValueError('Portable macOS application archive digest differs from its receipt')
     original_workflow = base64.b64decode(api(
         f'contents/.github/workflows/build.yml?ref={source}')['content']).decode()
-    contract_hash = hashlib.sha256(json.dumps(build_contract(original_workflow), sort_keys=True).encode()).hexdigest()
-    if (receipt.get('schema_version') != 1 or receipt.get('source_sha') != source
+    schema = receipt.get('schema_version')
+    contract = build_contract(original_workflow, legacy_receipt=schema == 1)
+    contract_hash = hashlib.sha256(json.dumps(contract, sort_keys=True).encode()).hexdigest()
+    if (schema not in (1, 2) or receipt.get('source_sha') != source
             or receipt.get('workflow_source_sha') != source or receipt.get('run_id') != run['id']
             or receipt.get('run_attempt') != attempt or receipt.get('workflow_contract_sha256') != contract_hash
             or receipt.get('signed') is not False or receipt.get('notarized') is not False):
         raise ValueError('Portable macOS compilation receipt is incomplete or superseded')
-    archive_path = scratch / 'compiled-macos-app.tar.gz'
-    archive_path.write_bytes(archive_bytes)
     extracted = scratch / 'compiled'
     extracted.mkdir()
     with tarfile.open(archive_path, 'r:gz') as archive:
