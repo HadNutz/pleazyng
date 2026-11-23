@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Keep Plex sign-in on TVs in the QR flow and show the same QR code when browser launch fails on other devices.
+
 - Add a Stop button beside the video playback controls by default. Hide it under Playback settings → Behavior.
 
 - Automatically try Plex conversion once when Original playback fails to start with HTTP 500. Pleazyng adapted the fallback from [Plezy PR #2911](https://github.com/edde746/plezy/pull/2911), contributed upstream by [@yellowleadarr](https://github.com/yellowleadarr) with the uncapped request refined by [@edde746](https://github.com/edde746).

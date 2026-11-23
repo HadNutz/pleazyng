@@ -469,7 +469,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Widget _buildInitialButtons(BuildContext context, VoidCallback startBrowser, VoidCallback startQr, bool busy) {
     final isTV = PlatformDetector.isTV();
-    final isAppleTV = PlatformDetector.isAppleTV();
     final scale = _authUiScale(MediaQuery.sizeOf(context));
     final theme = Theme.of(context);
     final buttonHeight = (56 * scale).clamp(56.0, 88.0).toDouble();
@@ -535,17 +534,6 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
           ),
-          if (!isAppleTV) ...[
-            SizedBox(height: gap),
-            FocusableButton(
-              onPressed: busy ? null : startBrowserAfterRecovery,
-              child: OutlinedButton(
-                onPressed: busy ? null : startBrowserAfterRecovery,
-                style: actionStyle,
-                child: Text(t.auth.useBrowser),
-              ),
-            ),
-          ],
         ] else ...[
           FocusableButton(
             onPressed: busy ? null : startBrowserAfterRecovery,

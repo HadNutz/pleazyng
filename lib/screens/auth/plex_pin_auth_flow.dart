@@ -21,7 +21,7 @@ import '../../utils/platform_detector.dart';
 /// a QR code of its own while this flow sits on a "sign in from your browser"
 /// spinner until the PIN expires two minutes later. Owning the QR keeps the
 /// scan target, the retry action and the error copy inside the app.
-bool plexSignInRequiresInAppQr({required bool isAutomotive}) => isAutomotive;
+bool plexSignInRequiresInAppQr({required bool isAutomotive, required bool isTV}) => isAutomotive || isTV;
 
 /// Self-contained Plex PIN/QR auth flow.
 ///
@@ -90,7 +90,7 @@ class _PlexPinAuthFlowState extends State<PlexPinAuthFlow> {
   @override
   void initState() {
     super.initState();
-    _useQr = PlatformDetector.isTV() || plexSignInRequiresInAppQr(isAutomotive: PlatformDetector.isAutomotive());
+    _useQr = plexSignInRequiresInAppQr(isAutomotive: PlatformDetector.isAutomotive(), isTV: PlatformDetector.isTV());
     if (widget.initializeService) unawaited(_initService());
   }
 
@@ -118,10 +118,10 @@ class _PlexPinAuthFlowState extends State<PlexPinAuthFlow> {
   Future<void> _start({required bool useQr}) async {
     final svc = _authService;
     if (svc == null) return;
-    // A car has no browser to hand the PIN URL to, so the browser action
-    // resolves to the in-app QR there instead of a spinner that can only time
-    // out. Every other platform honours what the user pressed.
-    final resolvedUseQr = useQr || plexSignInRequiresInAppQr(isAutomotive: PlatformDetector.isAutomotive());
+    // TVs and cars use a companion browser by scanning the in-app QR.
+    var resolvedUseQr =
+        useQr ||
+        plexSignInRequiresInAppQr(isAutomotive: PlatformDetector.isAutomotive(), isTV: PlatformDetector.isTV());
     final attemptId = ++_attemptId;
     setState(() {
       _useQr = resolvedUseQr;
@@ -138,18 +138,20 @@ class _PlexPinAuthFlowState extends State<PlexPinAuthFlow> {
       final url = svc.getAuthUrl(pinCode);
 
       if (!_isCurrentAttempt(attemptId)) return;
-      if (resolvedUseQr) {
-        setState(() => _qrAuthUrl = url);
-      } else {
+      if (!resolvedUseQr) {
         final uri = Uri.parse(url);
-        try {
-          final mode = PlatformDetector.isTV() ? LaunchMode.inAppWebView : LaunchMode.inAppBrowserView;
-          await launchUrl(uri, mode: mode);
-        } catch (_) {
-          // Chrome Custom Tabs may not be available — fall back to default
-          // external browser.
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        final opened = await _tryOpenBrowser(uri, LaunchMode.inAppBrowserView);
+        if (!_isCurrentAttempt(attemptId)) return;
+        if (!opened) {
+          resolvedUseQr = !await _tryOpenBrowser(uri, LaunchMode.externalApplication);
+          if (!_isCurrentAttempt(attemptId)) return;
         }
+      }
+      if (resolvedUseQr) {
+        setState(() {
+          _useQr = true;
+          _qrAuthUrl = url;
+        });
       }
 
       final token = await svc.pollPinUntilClaimed(pinId, shouldCancel: () => attemptId != _attemptId);
@@ -191,6 +193,14 @@ class _PlexPinAuthFlowState extends State<PlexPinAuthFlow> {
         _qrAuthUrl = null;
         _errorMessage = _authErrorMessage(e);
       });
+    }
+  }
+
+  Future<bool> _tryOpenBrowser(Uri uri, LaunchMode mode) async {
+    try {
+      return await launchUrl(uri, mode: mode);
+    } catch (_) {
+      return false;
     }
   }
 

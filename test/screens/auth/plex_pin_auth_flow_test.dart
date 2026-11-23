@@ -42,18 +42,20 @@ const _urlLauncherChannel = MethodChannel('plugins.flutter.io/url_launcher');
 
 void main() {
   final launched = <String>[];
+  var browserOpens = true;
 
   setUpAll(() => LocaleSettings.setLocaleSync(AppLocale.en));
 
   setUp(() {
     launched.clear();
+    browserOpens = true;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(_urlLauncherChannel, (
       call,
     ) async {
       switch (call.method) {
         case 'launch':
           launched.add((call.arguments as Map)['url'] as String);
-          return true;
+          return browserOpens;
         case 'canLaunch':
           return true;
         default:
@@ -120,6 +122,30 @@ void main() {
     expect(launched.single, startsWith('https://app.plex.tv/auth'));
     expect(find.text(t.auth.waitingForAuth), findsOneWidget);
     expect(find.byType(QrImageView), findsNothing);
+  });
+
+  testWidgets('a TV sign-in stays in the QR flow', (tester) async {
+    TvDetectionService.debugSetAppleTVOverride(true);
+    await pumpFlow(tester);
+
+    await tester.tap(find.text(t.auth.signInWithPlex));
+    await tester.pump();
+
+    expect(find.byType(QrImageView), findsOneWidget);
+    expect(launched, isEmpty);
+  });
+
+  testWidgets('failed browser launches fall back to QR for the same PIN', (tester) async {
+    browserOpens = false;
+    await pumpFlow(tester);
+
+    await tester.tap(find.text(t.auth.signInWithPlex));
+    await tester.pump();
+
+    expect(launched, hasLength(2));
+    expect(launched.last, launched.first);
+    expect(find.byType(QrImageView), findsOneWidget);
+    expect(find.text(t.auth.waitingForAuth), findsNothing);
   });
 
   testWidgets('the QR button is unaffected off a car', (tester) async {
