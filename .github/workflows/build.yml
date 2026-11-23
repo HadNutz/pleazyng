@@ -520,7 +520,7 @@ jobs:
             echo "Unsupported subtitle_gpu_backend: $SUBTITLE_GPU_BACKEND" >&2
             exit 1
           fi
-          if [[ "$ACTION" == "release" && ( "$INCLUDE_WEBOS_BUILD" != "true" || "$INCLUDE_WEBOS_RELEASE" != "true" || "$INCLUDE_TIZEN_BUILD" != "true" || "$EXECUTION_PROFILE" != "hybrid" ) ]]; then
+          if [[ "$ACTION" == "release" && "$MODE" == "release" && ( "$INCLUDE_WEBOS_BUILD" != "true" || "$INCLUDE_WEBOS_RELEASE" != "true" || "$INCLUDE_TIZEN_BUILD" != "true" || "$EXECUTION_PROFILE" != "hybrid" ) ]]; then
             echo "Versioned releases require webOS, Tizen and Windows ARM64. Use the complete hybrid platform matrix." >&2
             exit 1
           fi
