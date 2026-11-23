@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plezy/i18n/strings.g.dart';
 import 'package:plezy/media/media_item.dart';
 import 'package:plezy/media/media_kind.dart';
+import 'package:plezy/navigation/profile_navigation_scope.dart';
 import 'package:plezy/providers/companion_remote_provider.dart';
 import 'package:plezy/services/music/music_device_controller.dart';
 import 'package:plezy/services/music/music_device_link.dart';
@@ -95,6 +96,50 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
     });
   }
+
+  testWidgets('the mini-player opens Play on inside its profile navigator', (tester) async {
+    final navigatorKey = GlobalKey<NavigatorState>();
+    final observer = RouteObserver<PageRoute<dynamic>>();
+    final companion = _Companion();
+    final music = _Music()..openTrack();
+    addTearDown(companion.dispose);
+    addTearDown(music.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<CompanionRemoteProvider>.value(value: companion),
+            ChangeNotifierProvider<MusicPlaybackService>.value(value: music),
+          ],
+          child: ProfileNavigationScope(
+            navigatorKey: navigatorKey,
+            routeObserver: observer,
+            mainScaffoldMessengerKey: GlobalKey<ScaffoldMessengerState>(),
+            child: Stack(
+              children: [
+                Navigator(
+                  key: navigatorKey,
+                  observers: [observer],
+                  onGenerateRoute: (_) => MaterialPageRoute<void>(builder: (_) => const Scaffold()),
+                ),
+                const Positioned(bottom: 0, right: 0, child: Material(child: MusicDeviceButton())),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byTooltip(t.musicDevices.playOn));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text(t.musicDevices.thisDevice), findsOneWidget);
+    expect(navigatorKey.currentState!.canPop(), isTrue);
+    navigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(find.byType(MusicDevicePicker), findsNothing);
+    expect(music.currentTrack, isNotNull);
+  });
 
   testWidgets('receiver setup can be opened independently of a music session', (tester) async {
     final companion = _Companion();

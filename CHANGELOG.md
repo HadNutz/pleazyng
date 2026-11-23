@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Open the music mini-player’s Play on device picker inside the active profile.
+
 - Save desktop motion smoothing choices when the current renderer cannot switch live, clarify MPV and Neural options, and reduce desktop MPV blending.
 
 - Keep Plex sign-in on TVs in the QR flow and show the same QR code when browser launch fails on other devices.

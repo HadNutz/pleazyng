@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../focus/focusable_button.dart';
 import '../../focus/focusable_text_field.dart';
 import '../../i18n/strings.g.dart';
+import '../../navigation/profile_navigation_scope.dart';
 import '../../providers/companion_remote_provider.dart';
 import '../../providers/multi_server_provider.dart';
 import '../../services/base_peer_service.dart';
@@ -25,7 +26,14 @@ import '../dialog_action_button.dart';
 import '../focusable_list_tile.dart';
 
 Future<void> showMusicDevicePicker(BuildContext context) async {
-  await showScopedDialog<void>(context: context, builder: (_) => const MusicDevicePicker());
+  // The mini-player sits alongside the profile navigator. A dialog pushed
+  // from its own context would land on the app navigator above the providers.
+  final profile = ProfileNavigationScope.maybeOf(context);
+  final navigator = profile?.navigatorKey.currentState;
+  if (profile != null && navigator == null) return;
+  final dialogContext = navigator != null && navigator != Navigator.of(context) ? navigator.overlay?.context : context;
+  if (dialogContext == null) return;
+  await showScopedDialog<void>(context: dialogContext, builder: (_) => const MusicDevicePicker());
 }
 
 Future<void> showPlaybackReceiverSettings(BuildContext context) async {
