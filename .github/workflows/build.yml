@@ -168,7 +168,7 @@ env:
 concurrency:
   # Keep one immutable candidate's retries together, but let a newer source
   # proceed while a superseded release is still finishing an expensive job.
-  group: ${{ inputs.action == 'apple-signing-preflight' && 'pleazyng-apple-signing-preflight' || (inputs.recovery_source_sha != '' && inputs.rebuild_tvos && !inputs.rebuild_ios && format('pleazyng-tvos-repair-{0}', inputs.build_version)) || inputs.action == 'release' && format('pleazyng-versioned-release-{0}', inputs.candidate_ref) || inputs.action == 'build' && 'pleazyng-candidate-build-v2' || 'pleazyng-core-release-v2' }}
+  group: ${{ inputs.action == 'apple-signing-preflight' && 'pleazyng-apple-signing-preflight' || (inputs.recovery_source_sha != '' && inputs.rebuild_tvos && !inputs.rebuild_ios && format('pleazyng-tvos-repair-{0}', inputs.build_version)) || (inputs.mode == 'ios-store' || inputs.mode == 'tvos-store') && format('pleazyng-{0}-{1}', inputs.mode, inputs.build_version) || inputs.action == 'release' && format('pleazyng-versioned-release-{0}', inputs.candidate_ref) || inputs.action == 'build' && 'pleazyng-candidate-build-v2' || 'pleazyng-core-release-v2' }}
   cancel-in-progress: false
   queue: max
 
@@ -236,7 +236,7 @@ jobs:
   preflight-ios-store-signing:
     name: Preflight iOS Store signing entitlements
     needs: capture-candidate
-    if: ${{ always() && !cancelled() && (inputs.action == 'release' || inputs.action == 'build') && inputs.include_apple_store_build && (inputs.candidate_ref == '' || needs.capture-candidate.result == 'success') }}
+    if: ${{ always() && !cancelled() && (inputs.action == 'release' || inputs.action == 'build') && inputs.mode != 'tvos-store' && inputs.include_apple_store_build && (inputs.candidate_ref == '' || needs.capture-candidate.result == 'success') }}
     runs-on: macos-26
     timeout-minutes: 15
     outputs:
