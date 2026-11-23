@@ -1329,7 +1329,7 @@
     "failedPlayback": "Failed to ${action}: ${error}",
     "switchingToCompatiblePlayer": "Switching to compatible player...",
     "serverLimitTitle": "Playback failed",
-    "serverLimitBody": "Server error (HTTP 500). A bandwidth/transcoding limit likely rejected this session. Ask the owner to adjust it.",
+    "serverLimitBody": "Server error (HTTP 500).",
     "serverLimitTranscode": "Try transcoding",
     "mediaUnreadableTitle": "File unavailable",
     "mediaUnreadableBody": "The server found this item but could not read its file (HTTP 404). The file was probably moved, deleted, or its storage is offline. Ask the server owner to check the file and rescan the library.",

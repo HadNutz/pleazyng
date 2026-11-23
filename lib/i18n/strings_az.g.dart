@@ -1445,7 +1445,7 @@ class _Translations$messages$az extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => '${action} uğursuz oldu: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Uyğun oynadıcıya keçilir...';
 	@override String get serverLimitTitle => 'Oynatma uğursuz oldu';
-	@override String get serverLimitBody => 'Server xətası (HTTP 500). Məhdudiyyət bu seansı rədd etdi.';
+	@override String get serverLimitBody => 'Server xətası (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Fayl əlçatan deyil';
 	@override String get mediaUnreadableBody => 'Server bu elementi tapdı, lakin onun faylını oxuya bilmədi (HTTP 404). Fayl yəqin ki, köçürülüb, silinib və ya onun saxlanma yeri oflayndır. Server sahibindən faylı yoxlamasını və kitabxananı yenidən skan etməsini xahiş edin.';
 	@override String get serverBusyTitle => 'Yayım əlçatan deyil';
@@ -6891,7 +6891,7 @@ extension on TranslationsAz {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => '${action} uğursuz oldu: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Uyğun oynadıcıya keçilir...',
 			'messages.serverLimitTitle' => 'Oynatma uğursuz oldu',
-			'messages.serverLimitBody' => 'Server xətası (HTTP 500). Məhdudiyyət bu seansı rədd etdi.',
+			'messages.serverLimitBody' => 'Server xətası (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Fayl əlçatan deyil',
 			'messages.mediaUnreadableBody' => 'Server bu elementi tapdı, lakin onun faylını oxuya bilmədi (HTTP 404). Fayl yəqin ki, köçürülüb, silinib və ya onun saxlanma yeri oflayndır. Server sahibindən faylı yoxlamasını və kitabxananı yenidən skan etməsini xahiş edin.',
 			'messages.serverBusyTitle' => 'Yayım əlçatan deyil',

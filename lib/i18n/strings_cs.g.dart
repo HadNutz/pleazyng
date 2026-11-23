@@ -1457,7 +1457,7 @@ class _Translations$messages$cs extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Neúspěšný na ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Přepínání na kompatibilní hráče.';
 	@override String get serverLimitTitle => 'Playback neuspěl';
-	@override String get serverLimitBody => 'Serverová chyba (HTTP 500). omezení šířky pásma/transkódování pravděpodobně odmítlo tuto sezení.';
+	@override String get serverLimitBody => 'Serverová chyba (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Soubory nedostupné';
 	@override String get mediaUnreadableBody => 'Server našel tento položka, ale nemohl si přečíst jeho soubor (HTTP 404). soubor byl pravděpodobně přemístěn, odstraněn, nebo jeho ukládání je offline.';
 	@override String get serverBusyTitle => 'Stream nedostupný';
@@ -6935,7 +6935,7 @@ extension on TranslationsCs {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Neúspěšný na ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Přepínání na kompatibilní hráče.',
 			'messages.serverLimitTitle' => 'Playback neuspěl',
-			'messages.serverLimitBody' => 'Serverová chyba (HTTP 500). omezení šířky pásma/transkódování pravděpodobně odmítlo tuto sezení.',
+			'messages.serverLimitBody' => 'Serverová chyba (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Soubory nedostupné',
 			'messages.mediaUnreadableBody' => 'Server našel tento položka, ale nemohl si přečíst jeho soubor (HTTP 404). soubor byl pravděpodobně přemístěn, odstraněn, nebo jeho ukládání je offline.',
 			'messages.serverBusyTitle' => 'Stream nedostupný',

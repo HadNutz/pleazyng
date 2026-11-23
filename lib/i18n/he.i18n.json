@@ -1324,7 +1324,7 @@
     "failedPlayback": "נכשל ל ${action}: ${error}",
     "switchingToCompatiblePlayer": "הפוך לשחקן תואם ...",
     "serverLimitTitle": "Playback נכשל",
-    "serverLimitBody": "שגיאה בשרת (HTTP 500).גבול רוחב הפס / העברת קוד כנראה דחה את הפגישה הזו.",
+    "serverLimitBody": "שגיאה בשרת (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "קובץ לא זמין",
     "mediaUnreadableBody": "השרת מצא את הפריט הזה אך לא יכול לקרוא את הקובץ שלו (HTTP 404).הקובץ כנראה הועבר, נמחק, או אחסוןו אינו מקוון.",

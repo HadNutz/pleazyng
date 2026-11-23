@@ -1451,7 +1451,7 @@ class Translations$messages$es extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Error al ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Cambiando a reproductor compatible...';
 	@override String get serverLimitTitle => 'Error de reproducción';
-	@override String get serverLimitBody => 'Error del servidor (HTTP 500). Un límite de ancho de banda/transcodificación probablemente rechazó esta sesión. Pide al propietario que lo ajuste.';
+	@override String get serverLimitBody => 'Error del servidor (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Archivo no disponible';
 	@override String get mediaUnreadableBody => 'El servidor encontró este elemento pero no pudo leer su archivo (HTTP 404). Es probable que el archivo se haya movido o eliminado, o que su almacenamiento esté sin conexión. Pide al propietario del servidor que revise el archivo y vuelva a escanear la biblioteca.';
 	@override String get serverBusyTitle => 'Reproducción no disponible';
@@ -7018,7 +7018,7 @@ extension on TranslationsEs {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Error al ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Cambiando a reproductor compatible...',
 			'messages.serverLimitTitle' => 'Error de reproducción',
-			'messages.serverLimitBody' => 'Error del servidor (HTTP 500). Un límite de ancho de banda/transcodificación probablemente rechazó esta sesión. Pide al propietario que lo ajuste.',
+			'messages.serverLimitBody' => 'Error del servidor (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Archivo no disponible',
 			'messages.mediaUnreadableBody' => 'El servidor encontró este elemento pero no pudo leer su archivo (HTTP 404). Es probable que el archivo se haya movido o eliminado, o que su almacenamiento esté sin conexión. Pide al propietario del servidor que revise el archivo y vuelva a escanear la biblioteca.',
 			'messages.serverBusyTitle' => 'Reproducción no disponible',

@@ -1473,7 +1473,7 @@ class _Translations$messages$ar extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'فشل في ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'التبديل إلى لاعب متوافق ...';
 	@override String get serverLimitTitle => 'لعبة Playback فاشلة';
-	@override String get serverLimitBody => 'خطأ الخادم (HTTP 500). قد يرفض هذا الجلسة حد نطاق النطاق / التشفير.';
+	@override String get serverLimitBody => 'خطأ الخادم (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'ملف غير متوفر';
 	@override String get mediaUnreadableBody => 'وجد الخادم هذا العنصر ولكن لم يكن قادرا على قراءة ملفها (HTTP 404). تم نقل الملف على الأرجح، وحذف، أو تخزين غير متصل.';
 	@override String get serverBusyTitle => 'البث غير متوفر';
@@ -6991,7 +6991,7 @@ extension on TranslationsAr {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'فشل في ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'التبديل إلى لاعب متوافق ...',
 			'messages.serverLimitTitle' => 'لعبة Playback فاشلة',
-			'messages.serverLimitBody' => 'خطأ الخادم (HTTP 500). قد يرفض هذا الجلسة حد نطاق النطاق / التشفير.',
+			'messages.serverLimitBody' => 'خطأ الخادم (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'ملف غير متوفر',
 			'messages.mediaUnreadableBody' => 'وجد الخادم هذا العنصر ولكن لم يكن قادرا على قراءة ملفها (HTTP 404). تم نقل الملف على الأرجح، وحذف، أو تخزين غير متصل.',
 			'messages.serverBusyTitle' => 'البث غير متوفر',

@@ -1334,7 +1334,7 @@
     "failedPlayback": "Neúspěšný na ${action}: ${error}",
     "switchingToCompatiblePlayer": "Přepínání na kompatibilní hráče.",
     "serverLimitTitle": "Playback neuspěl",
-    "serverLimitBody": "Serverová chyba (HTTP 500). omezení šířky pásma/transkódování pravděpodobně odmítlo tuto sezení.",
+    "serverLimitBody": "Serverová chyba (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "Soubory nedostupné",
     "mediaUnreadableBody": "Server našel tento položka, ale nemohl si přečíst jeho soubor (HTTP 404). soubor byl pravděpodobně přemístěn, odstraněn, nebo jeho ukládání je offline.",

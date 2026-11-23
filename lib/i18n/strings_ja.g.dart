@@ -1443,7 +1443,7 @@ class _Translations$messages$ja extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => '${action}に失敗しました: ${error}';
 	@override String get switchingToCompatiblePlayer => '互換性のあるプレーヤーに切り替え中…';
 	@override String get serverLimitTitle => '再生に失敗しました';
-	@override String get serverLimitBody => 'サーバーエラー（HTTP 500）。帯域幅/トランスコード制限により拒否された可能性があります。所有者に調整を依頼してください。';
+	@override String get serverLimitBody => 'サーバーエラー（HTTP 500）。';
 	@override String get mediaUnreadableTitle => 'ファイルを利用できません';
 	@override String get mediaUnreadableBody => 'サーバーはこのアイテムを見つけましたが、そのファイルを読み取れませんでした（HTTP 404）。ファイルが移動・削除されたか、ストレージがオフラインの可能性があります。サーバーの管理者にファイルの確認とライブラリの再スキャンを依頼してください。';
 	@override String get serverBusyTitle => 'ストリームを利用できません';
@@ -6886,7 +6886,7 @@ extension on TranslationsJa {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => '${action}に失敗しました: ${error}',
 			'messages.switchingToCompatiblePlayer' => '互換性のあるプレーヤーに切り替え中…',
 			'messages.serverLimitTitle' => '再生に失敗しました',
-			'messages.serverLimitBody' => 'サーバーエラー（HTTP 500）。帯域幅/トランスコード制限により拒否された可能性があります。所有者に調整を依頼してください。',
+			'messages.serverLimitBody' => 'サーバーエラー（HTTP 500）。',
 			'messages.mediaUnreadableTitle' => 'ファイルを利用できません',
 			'messages.mediaUnreadableBody' => 'サーバーはこのアイテムを見つけましたが、そのファイルを読み取れませんでした（HTTP 404）。ファイルが移動・削除されたか、ストレージがオフラインの可能性があります。サーバーの管理者にファイルの確認とライブラリの再スキャンを依頼してください。',
 			'messages.serverBusyTitle' => 'ストリームを利用できません',

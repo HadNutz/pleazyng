@@ -1445,7 +1445,7 @@ class _Translations$messages$uz extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => '${action} muvaffaqiyatsiz tugadi: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Mos keluvchi pleyerga oʻtilmoqda...';
 	@override String get serverLimitTitle => 'Ijro etishda xatolik';
-	@override String get serverLimitBody => 'Server xatoligi (HTTP 500). Cheklov ushbu seansni rad etdi.';
+	@override String get serverLimitBody => 'Server xatoligi (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Fayl mavjud emas';
 	@override String get mediaUnreadableBody => 'Server bu elementni topdi, lekin uning faylini oʻqiy olmadi (HTTP 404). Fayl koʻchirilgan, oʻchirilgan yoki uning saqlash joyi oflayn boʻlishi mumkin. Server egasidan faylni tekshirishni va kutubxonani qayta skanerlashni soʻrang.';
 	@override String get serverBusyTitle => 'Oqim mavjud emas';
@@ -6891,7 +6891,7 @@ extension on TranslationsUz {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => '${action} muvaffaqiyatsiz tugadi: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Mos keluvchi pleyerga oʻtilmoqda...',
 			'messages.serverLimitTitle' => 'Ijro etishda xatolik',
-			'messages.serverLimitBody' => 'Server xatoligi (HTTP 500). Cheklov ushbu seansni rad etdi.',
+			'messages.serverLimitBody' => 'Server xatoligi (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Fayl mavjud emas',
 			'messages.mediaUnreadableBody' => 'Server bu elementni topdi, lekin uning faylini oʻqiy olmadi (HTTP 404). Fayl koʻchirilgan, oʻchirilgan yoki uning saqlash joyi oflayn boʻlishi mumkin. Server egasidan faylni tekshirishni va kutubxonani qayta skanerlashni soʻrang.',
 			'messages.serverBusyTitle' => 'Oqim mavjud emas',

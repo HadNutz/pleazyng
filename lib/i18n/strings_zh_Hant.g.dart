@@ -1444,7 +1444,7 @@ class _Translations$messages$zh_Hant extends Translations$messages$zh {
 	@override String failedPlayback({required Object action, required Object error}) => '無法${action}：${error}';
 	@override String get switchingToCompatiblePlayer => '正在切換至相容的播放器…';
 	@override String get serverLimitTitle => '播放失敗';
-	@override String get serverLimitBody => '伺服器錯誤（HTTP 500）。伺服器的頻寬或轉碼限制可能拒絕此播放要求。請聯絡伺服器擁有者調整設定。';
+	@override String get serverLimitBody => '伺服器錯誤（HTTP 500）。';
 	@override String get mediaUnreadableTitle => '檔案無法使用';
 	@override String get mediaUnreadableBody => '伺服器找到了此項目，但無法讀取其檔案（HTTP 404）。檔案可能已移動、刪除，或其儲存空間離線。請聯絡伺服器擁有者檢查檔案並重新掃描媒體庫。';
 	@override String get serverBusyTitle => '串流無法使用';
@@ -6887,7 +6887,7 @@ extension on TranslationsZhHant {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => '無法${action}：${error}',
 			'messages.switchingToCompatiblePlayer' => '正在切換至相容的播放器…',
 			'messages.serverLimitTitle' => '播放失敗',
-			'messages.serverLimitBody' => '伺服器錯誤（HTTP 500）。伺服器的頻寬或轉碼限制可能拒絕此播放要求。請聯絡伺服器擁有者調整設定。',
+			'messages.serverLimitBody' => '伺服器錯誤（HTTP 500）。',
 			'messages.mediaUnreadableTitle' => '檔案無法使用',
 			'messages.mediaUnreadableBody' => '伺服器找到了此項目，但無法讀取其檔案（HTTP 404）。檔案可能已移動、刪除，或其儲存空間離線。請聯絡伺服器擁有者檢查檔案並重新掃描媒體庫。',
 			'messages.serverBusyTitle' => '串流無法使用',

@@ -1445,7 +1445,7 @@ class _Translations$messages$fa extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'شکست خورده به ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'تغییر به یک بازیکن سازگار';
 	@override String get serverLimitTitle => 'بازی شکست خورده';
-	@override String get serverLimitBody => 'خطای سرور (HTTP 500) یک محدودیت پهنای باند / ترانسکود احتمالا این جلسه را رد کرده است.';
+	@override String get serverLimitBody => 'خطای سرور (HTTP 500)';
 	@override String get mediaUnreadableTitle => 'فایلهای غیر قابل دسترس';
 	@override String get mediaUnreadableBody => 'سرور این آیتم را پیدا کرد اما نمی توانست فایل آن را بخواند (HTTP 404). فایل احتمالا منتقل شده، حذف شده یا ذخیره آن غیرفعال است.';
 	@override String get serverBusyTitle => 'جریان در دسترس نیست';
@@ -6891,7 +6891,7 @@ extension on TranslationsFa {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'شکست خورده به ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'تغییر به یک بازیکن سازگار',
 			'messages.serverLimitTitle' => 'بازی شکست خورده',
-			'messages.serverLimitBody' => 'خطای سرور (HTTP 500) یک محدودیت پهنای باند / ترانسکود احتمالا این جلسه را رد کرده است.',
+			'messages.serverLimitBody' => 'خطای سرور (HTTP 500)',
 			'messages.mediaUnreadableTitle' => 'فایلهای غیر قابل دسترس',
 			'messages.mediaUnreadableBody' => 'سرور این آیتم را پیدا کرد اما نمی توانست فایل آن را بخواند (HTTP 404). فایل احتمالا منتقل شده، حذف شده یا ذخیره آن غیرفعال است.',
 			'messages.serverBusyTitle' => 'جریان در دسترس نیست',

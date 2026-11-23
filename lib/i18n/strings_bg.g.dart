@@ -1445,7 +1445,7 @@ class _Translations$messages$bg extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Неуспешно ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Превключване към съвместим плейър...';
 	@override String get serverLimitTitle => 'Възпроизвеждането е неуспешно';
-	@override String get serverLimitBody => 'Грешка на сървъра (HTTP 500). Вероятно лимит за пропускателна способност/транскодиране е отхвърлил тази сесия. Помолете собственика да го коригира.';
+	@override String get serverLimitBody => 'Грешка на сървъра (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Файлът е недостъпен';
 	@override String get mediaUnreadableBody => 'Сървърът намери този елемент, но не можа да прочете файла му (HTTP 404). Файлът вероятно е бил преместен, изтрит или хранилището му е офлайн. Помолете собственика на сървъра да провери файла и да сканира отново библиотеката.';
 	@override String get serverBusyTitle => 'Потокът не е наличен';
@@ -6891,7 +6891,7 @@ extension on TranslationsBg {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Неуспешно ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Превключване към съвместим плейър...',
 			'messages.serverLimitTitle' => 'Възпроизвеждането е неуспешно',
-			'messages.serverLimitBody' => 'Грешка на сървъра (HTTP 500). Вероятно лимит за пропускателна способност/транскодиране е отхвърлил тази сесия. Помолете собственика да го коригира.',
+			'messages.serverLimitBody' => 'Грешка на сървъра (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Файлът е недостъпен',
 			'messages.mediaUnreadableBody' => 'Сървърът намери този елемент, но не можа да прочете файла му (HTTP 404). Файлът вероятно е бил преместен, изтрит или хранилището му е офлайн. Помолете собственика на сървъра да провери файла и да сканира отново библиотеката.',
 			'messages.serverBusyTitle' => 'Потокът не е наличен',

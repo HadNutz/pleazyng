@@ -1445,7 +1445,7 @@ class _Translations$messages$nl extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Afspelen van ${action} mislukt: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Overschakelen naar compatibele speler...';
 	@override String get serverLimitTitle => 'Afspelen mislukt';
-	@override String get serverLimitBody => 'Serverfout (HTTP 500). Waarschijnlijk weigerde een bandbreedte-/transcodeerlimiet deze sessie. Vraag de eigenaar dit aan te passen.';
+	@override String get serverLimitBody => 'Serverfout (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Bestand niet beschikbaar';
 	@override String get mediaUnreadableBody => 'De server heeft dit item gevonden maar kon het bestand niet lezen (HTTP 404). Het bestand is waarschijnlijk verplaatst of verwijderd, of de opslag is offline. Vraag de serverbeheerder om het bestand te controleren en de bibliotheek opnieuw te scannen.';
 	@override String get serverBusyTitle => 'Stream niet beschikbaar';
@@ -6891,7 +6891,7 @@ extension on TranslationsNl {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Afspelen van ${action} mislukt: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Overschakelen naar compatibele speler...',
 			'messages.serverLimitTitle' => 'Afspelen mislukt',
-			'messages.serverLimitBody' => 'Serverfout (HTTP 500). Waarschijnlijk weigerde een bandbreedte-/transcodeerlimiet deze sessie. Vraag de eigenaar dit aan te passen.',
+			'messages.serverLimitBody' => 'Serverfout (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Bestand niet beschikbaar',
 			'messages.mediaUnreadableBody' => 'De server heeft dit item gevonden maar kon het bestand niet lezen (HTTP 404). Het bestand is waarschijnlijk verplaatst of verwijderd, of de opslag is offline. Vraag de serverbeheerder om het bestand te controleren en de bibliotheek opnieuw te scannen.',
 			'messages.serverBusyTitle' => 'Stream niet beschikbaar',

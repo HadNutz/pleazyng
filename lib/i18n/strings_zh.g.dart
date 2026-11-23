@@ -1443,7 +1443,7 @@ class Translations$messages$zh extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => '无法执行“${action}”：${error}';
 	@override String get switchingToCompatiblePlayer => '正在切换到兼容的播放器…';
 	@override String get serverLimitTitle => '播放失败';
-	@override String get serverLimitBody => '服务器错误（HTTP 500）。此次会话可能因带宽或转码限制而被拒绝。请联系服务器所有者调整限制。';
+	@override String get serverLimitBody => '服务器错误（HTTP 500）。';
 	@override String get mediaUnreadableTitle => '文件不可用';
 	@override String get mediaUnreadableBody => '服务器找到了此项目，但无法读取其文件（HTTP 404）。文件可能已被移动、删除，或其存储已离线。请联系服务器管理员检查文件并重新扫描媒体库。';
 	@override String get serverBusyTitle => '视频流不可用';
@@ -6886,7 +6886,7 @@ extension on TranslationsZh {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => '无法执行“${action}”：${error}',
 			'messages.switchingToCompatiblePlayer' => '正在切换到兼容的播放器…',
 			'messages.serverLimitTitle' => '播放失败',
-			'messages.serverLimitBody' => '服务器错误（HTTP 500）。此次会话可能因带宽或转码限制而被拒绝。请联系服务器所有者调整限制。',
+			'messages.serverLimitBody' => '服务器错误（HTTP 500）。',
 			'messages.mediaUnreadableTitle' => '文件不可用',
 			'messages.mediaUnreadableBody' => '服务器找到了此项目，但无法读取其文件（HTTP 404）。文件可能已被移动、删除，或其存储已离线。请联系服务器管理员检查文件并重新扫描媒体库。',
 			'messages.serverBusyTitle' => '视频流不可用',

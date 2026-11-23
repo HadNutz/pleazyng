@@ -9,7 +9,7 @@ enum PlaybackFailureAction {
   /// Server refused this account or connection with HTTP 403.
   playbackNotAllowedDialog,
 
-  /// Server rejected the session with HTTP 500 — a bandwidth/transcoding limit.
+  /// The server returned HTTP 500 while serving the stream.
   serverLimitDialog,
 
   /// Server could not read the file behind the item (HTTP 404).
@@ -45,11 +45,9 @@ enum PlaybackFailureAction {
 /// (#2510), while live TV has no observed 403 cause worth abandoning the bounded
 /// ladder for. It outranks every other status latched on the same open — until
 /// the server lets this account stream, what it says about the file or session
-/// is moot. 500 stays terminal for both — a limit rejection is not something a
-/// retry clears. 503 arrives only as the open-phase watchdog's cause tag (it
-/// never latches into [fatalHttpStatuses]); by then the reconnect loop has had
-/// its chances, so on-demand playback surfaces it while live TV keeps its
-/// ladder.
+/// is moot. Both playback modes show the server error dialog for 500. The
+/// open-phase watchdog reports 503 after the reconnect loop has had its chances.
+/// On-demand playback then shows it while live TV keeps its fallback ladder.
 ///
 /// An audio-output failure is checked first: the device stopped taking audio,
 /// so a latched status or the live ladder would only re-open a stream into the
@@ -97,9 +95,8 @@ PlaybackFailureAction resolvePlaybackFailureAction({
 ///
 /// The 500 itself stays terminal (see [resolvePlaybackFailureAction]): this
 /// never retries the refused request. It only lets the viewer ask for a
-/// different one: a Plex transcode with direct play withheld and no cap of
-/// ours, so the server picks whatever output its limit admits, as Plex Web
-/// does when the server will not serve the file. Only an on-demand Plex open
+/// different one: a Plex transcode with direct play withheld and no client
+/// bitrate cap, so the server chooses the output. Only an on-demand Plex open
 /// at Original quality qualifies, on a server that can transcode, and only
 /// once per item ([fallbackAlreadyUsed]): a transcode that is refused too is
 /// the server's final answer.

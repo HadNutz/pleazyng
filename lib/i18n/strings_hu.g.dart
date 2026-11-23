@@ -1445,7 +1445,7 @@ class _Translations$messages$hu extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Nem sikerült a művelet (${action}): ${error}';
 	@override String get switchingToCompatiblePlayer => 'Váltás kompatibilis lejátszóra...';
 	@override String get serverLimitTitle => 'A lejátszás nem sikerült';
-	@override String get serverLimitBody => 'Szerverhiba (HTTP 500). A munkamenetet valószínűleg egy sávszélességi vagy átkódolási korlát utasította el. Kérd meg a tulajdonost a korlát módosítására.';
+	@override String get serverLimitBody => 'Szerverhiba (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'A fájl nem érhető el';
 	@override String get mediaUnreadableBody => 'A szerver megtalálta ezt az elemet, de nem tudta beolvasni a fájlját (HTTP 404). A fájl valószínűleg áthelyezésre vagy törlésre került, vagy a tárhelye offline. Kérje meg a szerver tulajdonosát, hogy ellenőrizze a fájlt, és vizsgálja újra a könyvtárat.';
 	@override String get serverBusyTitle => 'A stream nem érhető el';
@@ -6891,7 +6891,7 @@ extension on TranslationsHu {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Nem sikerült a művelet (${action}): ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Váltás kompatibilis lejátszóra...',
 			'messages.serverLimitTitle' => 'A lejátszás nem sikerült',
-			'messages.serverLimitBody' => 'Szerverhiba (HTTP 500). A munkamenetet valószínűleg egy sávszélességi vagy átkódolási korlát utasította el. Kérd meg a tulajdonost a korlát módosítására.',
+			'messages.serverLimitBody' => 'Szerverhiba (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'A fájl nem érhető el',
 			'messages.mediaUnreadableBody' => 'A szerver megtalálta ezt az elemet, de nem tudta beolvasni a fájlját (HTTP 404). A fájl valószínűleg áthelyezésre vagy törlésre került, vagy a tárhelye offline. Kérje meg a szerver tulajdonosát, hogy ellenőrizze a fájlt, és vizsgálja újra a könyvtárat.',
 			'messages.serverBusyTitle' => 'A stream nem érhető el',

@@ -1322,7 +1322,7 @@
     "failedPlayback": "شکست خورده به ${action}: ${error}",
     "switchingToCompatiblePlayer": "تغییر به یک بازیکن سازگار",
     "serverLimitTitle": "بازی شکست خورده",
-    "serverLimitBody": "خطای سرور (HTTP 500) یک محدودیت پهنای باند / ترانسکود احتمالا این جلسه را رد کرده است.",
+    "serverLimitBody": "خطای سرور (HTTP 500)",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "فایلهای غیر قابل دسترس",
     "mediaUnreadableBody": "سرور این آیتم را پیدا کرد اما نمی توانست فایل آن را بخواند (HTTP 404). فایل احتمالا منتقل شده، حذف شده یا ذخیره آن غیرفعال است.",

@@ -927,7 +927,7 @@
     "failedPlayback": "Falha ao ${action}: ${error}",
     "switchingToCompatiblePlayer": "A alternar para um reprodutor compatível...",
     "serverLimitTitle": "Falha na reprodução",
-    "serverLimitBody": "Erro do servidor (HTTP 500). Um limite de largura de banda ou de transcodificação terá provavelmente rejeitado esta sessão. Peça ao proprietário do servidor para o ajustar.",
+    "serverLimitBody": "Erro do servidor (HTTP 500).",
     "serverLimitTranscode": "Experimentar transcodificar",
     "mediaUnreadableTitle": "Ficheiro indisponível",
     "mediaUnreadableBody": "O servidor encontrou este item, mas não conseguiu ler o ficheiro (HTTP 404). O ficheiro foi provavelmente movido, eliminado ou o armazenamento está offline. Peça ao responsável pelo servidor para verificar o ficheiro e voltar a examinar a biblioteca.",

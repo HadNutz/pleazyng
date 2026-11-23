@@ -34,8 +34,7 @@ sealed class PlayerError with _$PlayerError {
 
   const factory PlayerError(String message, {String? cause}) = _PlayerError;
 
-  /// Cause tag for a server-side HTTP 500 — shared-user bandwidth or
-  /// transcoding limit rejection set by the server owner.
+  /// Cause tag for an HTTP 500 response on the media stream.
   static const String serverHttp500 = 'server-http-500';
 
   /// Cause tag for a server-side HTTP 404 on the media stream. The server

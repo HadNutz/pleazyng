@@ -254,7 +254,7 @@ Future<void> showPlaybackNotAllowedDialog(BuildContext context) async {
   );
 }
 
-/// Shows the server-side 500 modal (bandwidth/transcoding limit rejection).
+/// Shows the playback error dialog for HTTP 500.
 ///
 /// With [offerTranscode] it also offers to have the server transcode the item
 /// instead; returns true only when the viewer picks that. Close keeps the

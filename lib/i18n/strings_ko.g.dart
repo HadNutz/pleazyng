@@ -1443,7 +1443,7 @@ class _Translations$messages$ko extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => '${action}을(를) 수행할 수 없습니다: ${error}';
 	@override String get switchingToCompatiblePlayer => '호환되는 플레이어로 전환 중...';
 	@override String get serverLimitTitle => '재생 실패';
-	@override String get serverLimitBody => '서버 오류(HTTP 500). 대역폭/트랜스코딩 제한으로 세션이 거부된 것 같습니다. 소유자에게 조정을 요청하세요.';
+	@override String get serverLimitBody => '서버 오류(HTTP 500).';
 	@override String get mediaUnreadableTitle => '파일을 사용할 수 없음';
 	@override String get mediaUnreadableBody => '서버에서 이 항목을 찾았지만 파일을 읽을 수 없습니다(HTTP 404). 파일이 이동되거나 삭제되었거나 저장소가 오프라인 상태일 수 있습니다. 서버 관리자에게 파일 확인과 라이브러리 재스캔을 요청하세요.';
 	@override String get serverBusyTitle => '스트림을 사용할 수 없음';
@@ -6886,7 +6886,7 @@ extension on TranslationsKo {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => '${action}을(를) 수행할 수 없습니다: ${error}',
 			'messages.switchingToCompatiblePlayer' => '호환되는 플레이어로 전환 중...',
 			'messages.serverLimitTitle' => '재생 실패',
-			'messages.serverLimitBody' => '서버 오류(HTTP 500). 대역폭/트랜스코딩 제한으로 세션이 거부된 것 같습니다. 소유자에게 조정을 요청하세요.',
+			'messages.serverLimitBody' => '서버 오류(HTTP 500).',
 			'messages.mediaUnreadableTitle' => '파일을 사용할 수 없음',
 			'messages.mediaUnreadableBody' => '서버에서 이 항목을 찾았지만 파일을 읽을 수 없습니다(HTTP 404). 파일이 이동되거나 삭제되었거나 저장소가 오프라인 상태일 수 있습니다. 서버 관리자에게 파일 확인과 라이브러리 재스캔을 요청하세요.',
 			'messages.serverBusyTitle' => '스트림을 사용할 수 없음',

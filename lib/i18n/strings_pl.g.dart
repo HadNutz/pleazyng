@@ -1459,7 +1459,7 @@ class _Translations$messages$pl extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Nie udało się ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Przełączanie na kompatybilny odtwarzacz...';
 	@override String get serverLimitTitle => 'Odtwarzanie nie powiodło się';
-	@override String get serverLimitBody => 'Błąd serwera (HTTP 500). Limit przepustowości/transkodowania prawdopodobnie odrzucił tę sesję. Poproś właściciela o zmianę.';
+	@override String get serverLimitBody => 'Błąd serwera (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Plik niedostępny';
 	@override String get mediaUnreadableBody => 'Serwer znalazł ten element, ale nie mógł odczytać jego pliku (HTTP 404). Plik został prawdopodobnie przeniesiony, usunięty albo jego pamięć masowa jest niedostępna. Poproś właściciela serwera o sprawdzenie pliku i ponowne przeskanowanie biblioteki.';
 	@override String get serverBusyTitle => 'Strumień niedostępny';
@@ -6941,7 +6941,7 @@ extension on TranslationsPl {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Nie udało się ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Przełączanie na kompatybilny odtwarzacz...',
 			'messages.serverLimitTitle' => 'Odtwarzanie nie powiodło się',
-			'messages.serverLimitBody' => 'Błąd serwera (HTTP 500). Limit przepustowości/transkodowania prawdopodobnie odrzucił tę sesję. Poproś właściciela o zmianę.',
+			'messages.serverLimitBody' => 'Błąd serwera (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Plik niedostępny',
 			'messages.mediaUnreadableBody' => 'Serwer znalazł ten element, ale nie mógł odczytać jego pliku (HTTP 404). Plik został prawdopodobnie przeniesiony, usunięty albo jego pamięć masowa jest niedostępna. Poproś właściciela serwera o sprawdzenie pliku i ponowne przeskanowanie biblioteki.',
 			'messages.serverBusyTitle' => 'Strumień niedostępny',

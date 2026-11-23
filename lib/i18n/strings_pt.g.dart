@@ -1447,7 +1447,7 @@ class Translations$messages$pt extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Falha ao ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Alternando para um reprodutor compatível...';
 	@override String get serverLimitTitle => 'Falha na reprodução';
-	@override String get serverLimitBody => 'Erro do servidor (HTTP 500). Um limite de largura de banda ou transcodificação provavelmente rejeitou esta sessão. Peça ao proprietário do servidor para ajustá-lo.';
+	@override String get serverLimitBody => 'Erro do servidor (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Arquivo indisponível';
 	@override String get mediaUnreadableBody => 'O servidor encontrou este item, mas não conseguiu ler o arquivo (HTTP 404). O arquivo provavelmente foi movido, excluído ou o armazenamento está offline. Peça ao responsável pelo servidor para verificar o arquivo e reexaminar a biblioteca.';
 	@override String get serverBusyTitle => 'Transmissão indisponível';
@@ -6898,7 +6898,7 @@ extension on TranslationsPt {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Falha ao ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Alternando para um reprodutor compatível...',
 			'messages.serverLimitTitle' => 'Falha na reprodução',
-			'messages.serverLimitBody' => 'Erro do servidor (HTTP 500). Um limite de largura de banda ou transcodificação provavelmente rejeitou esta sessão. Peça ao proprietário do servidor para ajustá-lo.',
+			'messages.serverLimitBody' => 'Erro do servidor (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Arquivo indisponível',
 			'messages.mediaUnreadableBody' => 'O servidor encontrou este item, mas não conseguiu ler o arquivo (HTTP 404). O arquivo provavelmente foi movido, excluído ou o armazenamento está offline. Peça ao responsável pelo servidor para verificar o arquivo e reexaminar a biblioteca.',
 			'messages.serverBusyTitle' => 'Transmissão indisponível',

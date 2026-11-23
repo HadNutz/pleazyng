@@ -1445,7 +1445,7 @@ class _Translations$messages$de extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Wiedergabe für ${action} fehlgeschlagen: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Wechsel zu einem kompatiblen Player …';
 	@override String get serverLimitTitle => 'Wiedergabe fehlgeschlagen';
-	@override String get serverLimitBody => 'Serverfehler (HTTP 500). Vermutlich hat ein Bandbreiten- oder Transkodierungslimit diese Sitzung abgelehnt. Bitte den Besitzer, das Limit anzupassen.';
+	@override String get serverLimitBody => 'Serverfehler (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Datei nicht verfügbar';
 	@override String get mediaUnreadableBody => 'Der Server hat dieses Element gefunden, konnte seine Datei aber nicht lesen (HTTP 404). Die Datei wurde wahrscheinlich verschoben oder gelöscht, oder ihr Speicher ist offline. Bitte den Serverbesitzer, die Datei zu prüfen und die Mediathek neu zu scannen.';
 	@override String get serverBusyTitle => 'Stream nicht verfügbar';
@@ -6891,7 +6891,7 @@ extension on TranslationsDe {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Wiedergabe für ${action} fehlgeschlagen: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Wechsel zu einem kompatiblen Player …',
 			'messages.serverLimitTitle' => 'Wiedergabe fehlgeschlagen',
-			'messages.serverLimitBody' => 'Serverfehler (HTTP 500). Vermutlich hat ein Bandbreiten- oder Transkodierungslimit diese Sitzung abgelehnt. Bitte den Besitzer, das Limit anzupassen.',
+			'messages.serverLimitBody' => 'Serverfehler (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Datei nicht verfügbar',
 			'messages.mediaUnreadableBody' => 'Der Server hat dieses Element gefunden, konnte seine Datei aber nicht lesen (HTTP 404). Die Datei wurde wahrscheinlich verschoben oder gelöscht, oder ihr Speicher ist offline. Bitte den Serverbesitzer, die Datei zu prüfen und die Mediathek neu zu scannen.',
 			'messages.serverBusyTitle' => 'Stream nicht verfügbar',

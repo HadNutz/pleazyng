@@ -1030,7 +1030,7 @@ class Translations$messages$pt_PT extends Translations$messages$pt {
 	@override String failedPlayback({required Object action, required Object error}) => 'Falha ao ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'A alternar para um reprodutor compatível...';
 	@override String get serverLimitTitle => 'Falha na reprodução';
-	@override String get serverLimitBody => 'Erro do servidor (HTTP 500). Um limite de largura de banda ou de transcodificação terá provavelmente rejeitado esta sessão. Peça ao proprietário do servidor para o ajustar.';
+	@override String get serverLimitBody => 'Erro do servidor (HTTP 500).';
 	@override String get serverLimitTranscode => 'Experimentar transcodificar';
 	@override String get mediaUnreadableTitle => 'Ficheiro indisponível';
 	@override String get mediaUnreadableBody => 'O servidor encontrou este item, mas não conseguiu ler o ficheiro (HTTP 404). O ficheiro foi provavelmente movido, eliminado ou o armazenamento está offline. Peça ao responsável pelo servidor para verificar o ficheiro e voltar a examinar a biblioteca.';
@@ -4619,7 +4619,7 @@ extension on TranslationsPtPt {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Falha ao ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'A alternar para um reprodutor compatível...',
 			'messages.serverLimitTitle' => 'Falha na reprodução',
-			'messages.serverLimitBody' => 'Erro do servidor (HTTP 500). Um limite de largura de banda ou de transcodificação terá provavelmente rejeitado esta sessão. Peça ao proprietário do servidor para o ajustar.',
+			'messages.serverLimitBody' => 'Erro do servidor (HTTP 500).',
 			'messages.serverLimitTranscode' => 'Experimentar transcodificar',
 			'messages.mediaUnreadableTitle' => 'Ficheiro indisponível',
 			'messages.mediaUnreadableBody' => 'O servidor encontrou este item, mas não conseguiu ler o ficheiro (HTTP 404). O ficheiro foi provavelmente movido, eliminado ou o armazenamento está offline. Peça ao responsável pelo servidor para verificar o ficheiro e voltar a examinar a biblioteca.',

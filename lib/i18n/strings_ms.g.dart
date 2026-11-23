@@ -1438,7 +1438,7 @@ class _Translations$messages$ms extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Kegagalan ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Menukar kepada pemain yang kompatibel ...';
 	@override String get serverLimitTitle => 'Playback gagal';
-	@override String get serverLimitBody => 'Kesilapan pelayan (HTTP 500). had lebar jalur/transcoding mungkin menolak sesi ini.';
+	@override String get serverLimitBody => 'Kesilapan pelayan (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'fail yang tidak tersedia';
 	@override String get mediaUnreadableBody => 'Pelayan mendapati item ini tetapi tidak dapat membaca failnya (HTTP 404). fail itu mungkin telah dipindahkan, dipadamkan, atau penyimpanan adalah offline.';
 	@override String get serverBusyTitle => 'aliran tidak tersedia';
@@ -6866,7 +6866,7 @@ extension on TranslationsMs {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Kegagalan ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Menukar kepada pemain yang kompatibel ...',
 			'messages.serverLimitTitle' => 'Playback gagal',
-			'messages.serverLimitBody' => 'Kesilapan pelayan (HTTP 500). had lebar jalur/transcoding mungkin menolak sesi ini.',
+			'messages.serverLimitBody' => 'Kesilapan pelayan (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'fail yang tidak tersedia',
 			'messages.mediaUnreadableBody' => 'Pelayan mendapati item ini tetapi tidak dapat membaca failnya (HTTP 404). fail itu mungkin telah dipindahkan, dipadamkan, atau penyimpanan adalah offline.',
 			'messages.serverBusyTitle' => 'aliran tidak tersedia',

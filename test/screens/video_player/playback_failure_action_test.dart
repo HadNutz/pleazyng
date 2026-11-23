@@ -70,8 +70,6 @@ void main() {
 
   group('HTTP 500', () {
     test('is terminal for on-demand and live alike', () {
-      // A bandwidth/transcoding limit rejection is not something a retry
-      // clears, so live TV gets the same modal.
       expect(resolve(statuses: {500}), PlaybackFailureAction.serverLimitDialog);
       expect(resolve(statuses: {500}, isLive: true), PlaybackFailureAction.serverLimitDialog);
       expect(resolve(cause: PlayerError.serverHttp500, isLive: true), PlaybackFailureAction.serverLimitDialog);

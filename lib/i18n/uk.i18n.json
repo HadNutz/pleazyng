@@ -1334,7 +1334,7 @@
     "failedPlayback": "Не вдалося ${action}: ${error}",
     "switchingToCompatiblePlayer": "Перехід до комбінованого гравця.",
     "serverLimitTitle": "Playback провалився",
-    "serverLimitBody": "Серверна помилка (HTTP 500). обмеження ширини смуги/перешифрування, ймовірно, відкинули цю сесію.",
+    "serverLimitBody": "Серверна помилка (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "Файли недоступні",
     "mediaUnreadableBody": "Сервер знайшов цей елемент, але не міг прочитати його файл (HTTP 404). файл, ймовірно, був переміщений, видалений, або його зберігання офлайн.",

@@ -3799,8 +3799,8 @@ class Translations$messages$en {
 	/// en: 'Playback failed'
 	String get serverLimitTitle => 'Playback failed';
 
-	/// en: 'Server error (HTTP 500). A bandwidth/transcoding limit likely rejected this session. Ask the owner to adjust it.'
-	String get serverLimitBody => 'Server error (HTTP 500). A bandwidth/transcoding limit likely rejected this session. Ask the owner to adjust it.';
+	/// en: 'Server error (HTTP 500).'
+	String get serverLimitBody => 'Server error (HTTP 500).';
 
 	/// en: 'Try transcoding'
 	String get serverLimitTranscode => 'Try transcoding';
@@ -19592,7 +19592,7 @@ extension on Translations {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Failed to ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Switching to compatible player...',
 			'messages.serverLimitTitle' => 'Playback failed',
-			'messages.serverLimitBody' => 'Server error (HTTP 500). A bandwidth/transcoding limit likely rejected this session. Ask the owner to adjust it.',
+			'messages.serverLimitBody' => 'Server error (HTTP 500).',
 			'messages.serverLimitTranscode' => 'Try transcoding',
 			'messages.mediaUnreadableTitle' => 'File unavailable',
 			'messages.mediaUnreadableBody' => 'The server found this item but could not read its file (HTTP 404). The file was probably moved, deleted, or its storage is offline. Ask the server owner to check the file and rescan the library.',

@@ -1445,7 +1445,7 @@ class _Translations$messages$sv extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Det gick inte att ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Byter till kompatibel spelare...';
 	@override String get serverLimitTitle => 'Uppspelningen misslyckades';
-	@override String get serverLimitBody => 'Serverfel (HTTP 500). En bandbredds-/transkodningsgräns avvisade troligen sessionen. Be ägaren justera den.';
+	@override String get serverLimitBody => 'Serverfel (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Filen är otillgänglig';
 	@override String get mediaUnreadableBody => 'Servern hittade objektet men kunde inte läsa dess fil (HTTP 404). Filen har troligen flyttats, tagits bort eller så är dess lagring offline. Be serverägaren kontrollera filen och skanna om biblioteket.';
 	@override String get serverBusyTitle => 'Strömmen är inte tillgänglig';
@@ -6891,7 +6891,7 @@ extension on TranslationsSv {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Det gick inte att ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Byter till kompatibel spelare...',
 			'messages.serverLimitTitle' => 'Uppspelningen misslyckades',
-			'messages.serverLimitBody' => 'Serverfel (HTTP 500). En bandbredds-/transkodningsgräns avvisade troligen sessionen. Be ägaren justera den.',
+			'messages.serverLimitBody' => 'Serverfel (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Filen är otillgänglig',
 			'messages.mediaUnreadableBody' => 'Servern hittade objektet men kunde inte läsa dess fil (HTTP 404). Filen har troligen flyttats, tagits bort eller så är dess lagring offline. Be serverägaren kontrollera filen och skanna om biblioteket.',
 			'messages.serverBusyTitle' => 'Strömmen är inte tillgänglig',

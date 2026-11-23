@@ -1459,7 +1459,7 @@ class _Translations$messages$ru extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Не удалось ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Переключение на совместимый плеер...';
 	@override String get serverLimitTitle => 'Ошибка воспроизведения';
-	@override String get serverLimitBody => 'Ошибка сервера (HTTP 500). Лимит пропускной способности/транскодирования, вероятно, отклонил сессию. Попросите владельца изменить настройки.';
+	@override String get serverLimitBody => 'Ошибка сервера (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Файл недоступен';
 	@override String get mediaUnreadableBody => 'Сервер нашёл этот элемент, но не смог прочитать его файл (HTTP 404). Вероятно, файл был перемещён, удалён или его хранилище недоступно. Попросите владельца сервера проверить файл и пересканировать библиотеку.';
 	@override String get serverBusyTitle => 'Поток недоступен';
@@ -6941,7 +6941,7 @@ extension on TranslationsRu {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Не удалось ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Переключение на совместимый плеер...',
 			'messages.serverLimitTitle' => 'Ошибка воспроизведения',
-			'messages.serverLimitBody' => 'Ошибка сервера (HTTP 500). Лимит пропускной способности/транскодирования, вероятно, отклонил сессию. Попросите владельца изменить настройки.',
+			'messages.serverLimitBody' => 'Ошибка сервера (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Файл недоступен',
 			'messages.mediaUnreadableBody' => 'Сервер нашёл этот элемент, но не смог прочитать его файл (HTTP 404). Вероятно, файл был перемещён, удалён или его хранилище недоступно. Попросите владельца сервера проверить файл и пересканировать библиотеку.',
 			'messages.serverBusyTitle' => 'Поток недоступен',

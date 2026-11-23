@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Report playback HTTP 500 as a server error without attributing it to a bandwidth or transcoding limit.
+
 - Check iOS and tvOS App Store upload readiness independently.
 
 - Prefer Google's Maven Central mirror in Android emulator integration checks to avoid transient CI failures when Maven Central rate-limits requests.

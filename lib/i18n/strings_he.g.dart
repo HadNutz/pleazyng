@@ -1447,7 +1447,7 @@ class _Translations$messages$he extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'נכשל ל ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'הפוך לשחקן תואם ...';
 	@override String get serverLimitTitle => 'Playback נכשל';
-	@override String get serverLimitBody => 'שגיאה בשרת (HTTP 500).גבול רוחב הפס / העברת קוד כנראה דחה את הפגישה הזו.';
+	@override String get serverLimitBody => 'שגיאה בשרת (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'קובץ לא זמין';
 	@override String get mediaUnreadableBody => 'השרת מצא את הפריט הזה אך לא יכול לקרוא את הקובץ שלו (HTTP 404).הקובץ כנראה הועבר, נמחק, או אחסוןו אינו מקוון.';
 	@override String get serverBusyTitle => 'זרם לא זמין';
@@ -6899,7 +6899,7 @@ extension on TranslationsHe {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'נכשל ל ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'הפוך לשחקן תואם ...',
 			'messages.serverLimitTitle' => 'Playback נכשל',
-			'messages.serverLimitBody' => 'שגיאה בשרת (HTTP 500).גבול רוחב הפס / העברת קוד כנראה דחה את הפגישה הזו.',
+			'messages.serverLimitBody' => 'שגיאה בשרת (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'קובץ לא זמין',
 			'messages.mediaUnreadableBody' => 'השרת מצא את הפריט הזה אך לא יכול לקרוא את הקובץ שלו (HTTP 404).הקובץ כנראה הועבר, נמחק, או אחסוןו אינו מקוון.',
 			'messages.serverBusyTitle' => 'זרם לא זמין',

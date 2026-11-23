@@ -1445,7 +1445,7 @@ class _Translations$messages$hi extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'असफल ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'संगत खिलाड़ी के लिए स्विच करने के लिए ...';
 	@override String get serverLimitTitle => 'Playback असफल रहा';
-	@override String get serverLimitBody => 'सर्वर त्रुटि (HTTP 500). बैंडविड्थ / ट्रांसकोडिंग सीमा शायद इस सत्र को खारिज कर दिया. मालिक से इसे समायोजित करने के लिए पूछें.';
+	@override String get serverLimitBody => 'सर्वर त्रुटि (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'फ़ाइल उपलब्ध नहीं';
 	@override String get mediaUnreadableBody => 'सर्वर ने इस आइटम को पाया लेकिन फ़ाइल को पढ़ने में असमर्थ था (HTTP 404). फ़ाइल को शायद स्थानांतरित किया गया था, हटा दिया गया था, या इसका स्टोरेज ऑफ़लाइन है. सर्वर के मालिक से फ़ाइल की जांच करने और पुस्तकालय को बचाने के लिए पूछें.';
 	@override String get serverBusyTitle => 'अनावश्यक प्रवाह';
@@ -6891,7 +6891,7 @@ extension on TranslationsHi {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'असफल ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'संगत खिलाड़ी के लिए स्विच करने के लिए ...',
 			'messages.serverLimitTitle' => 'Playback असफल रहा',
-			'messages.serverLimitBody' => 'सर्वर त्रुटि (HTTP 500). बैंडविड्थ / ट्रांसकोडिंग सीमा शायद इस सत्र को खारिज कर दिया. मालिक से इसे समायोजित करने के लिए पूछें.',
+			'messages.serverLimitBody' => 'सर्वर त्रुटि (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'फ़ाइल उपलब्ध नहीं',
 			'messages.mediaUnreadableBody' => 'सर्वर ने इस आइटम को पाया लेकिन फ़ाइल को पढ़ने में असमर्थ था (HTTP 404). फ़ाइल को शायद स्थानांतरित किया गया था, हटा दिया गया था, या इसका स्टोरेज ऑफ़लाइन है. सर्वर के मालिक से फ़ाइल की जांच करने और पुस्तकालय को बचाने के लिए पूछें.',
 			'messages.serverBusyTitle' => 'अनावश्यक प्रवाह',

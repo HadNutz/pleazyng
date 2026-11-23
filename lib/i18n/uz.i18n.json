@@ -1322,7 +1322,7 @@
     "failedPlayback": "${action} muvaffaqiyatsiz tugadi: ${error}",
     "switchingToCompatiblePlayer": "Mos keluvchi pleyerga oʻtilmoqda...",
     "serverLimitTitle": "Ijro etishda xatolik",
-    "serverLimitBody": "Server xatoligi (HTTP 500). Cheklov ushbu seansni rad etdi.",
+    "serverLimitBody": "Server xatoligi (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "Fayl mavjud emas",
     "mediaUnreadableBody": "Server bu elementni topdi, lekin uning faylini oʻqiy olmadi (HTTP 404). Fayl koʻchirilgan, oʻchirilgan yoki uning saqlash joyi oflayn boʻlishi mumkin. Server egasidan faylni tekshirishni va kutubxonani qayta skanerlashni soʻrang.",

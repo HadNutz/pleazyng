@@ -1322,7 +1322,7 @@
     "failedPlayback": "অসম্ভব ${action}: ${error}",
     "switchingToCompatiblePlayer": "সমন্বয়যোগ্য খেলোয়াড়ের জন্য বিনিময় ...",
     "serverLimitTitle": "Playback হারিয়েছে",
-    "serverLimitBody": "সার্ভার ভুল (HTTP 500). একটি প্যাডবাইড / ট্রান্সকডিং সীমাবদ্ধতা সম্ভবত এই সেশনকে প্রত্যাহার করেছিল।",
+    "serverLimitBody": "সার্ভার ভুল (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "ফাইল অসম্ভব",
     "mediaUnreadableBody": "সার্ভারটি এই পণ্যটি খুঁজে পেয়েছিল কিন্তু তার ফাইলটি পড়তে পারতেন না (HTTP 404). ফাইলটি সম্ভবত স্থানান্তর করা হয়, মুছে ফেলিত হয়, অথবা তার স্টোরেজ অঅফলি।",

@@ -1445,7 +1445,7 @@ class _Translations$messages$kk extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => '${action} сәтсіз аяқталды: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Үйлесімді ойнатқышқа ауысуда...';
 	@override String get serverLimitTitle => 'Ойнату қатесі';
-	@override String get serverLimitBody => 'Сервер қатесі (HTTP 500). Шектеу бұл сеансты қабылдамады.';
+	@override String get serverLimitBody => 'Сервер қатесі (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Файл қолжетімсіз';
 	@override String get mediaUnreadableBody => 'Сервер бұл элементті тапты, бірақ оның файлын оқи алмады (HTTP 404). Файл жылжытылған, өшірілген немесе оның сақтау орны қолжетімсіз болуы мүмкін. Сервер иесінен файлды тексеріп, кітапхананы қайта сканерлеуді сұраңыз.';
 	@override String get serverBusyTitle => 'Ағын қолжетімсіз';
@@ -6891,7 +6891,7 @@ extension on TranslationsKk {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => '${action} сәтсіз аяқталды: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Үйлесімді ойнатқышқа ауысуда...',
 			'messages.serverLimitTitle' => 'Ойнату қатесі',
-			'messages.serverLimitBody' => 'Сервер қатесі (HTTP 500). Шектеу бұл сеансты қабылдамады.',
+			'messages.serverLimitBody' => 'Сервер қатесі (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Файл қолжетімсіз',
 			'messages.mediaUnreadableBody' => 'Сервер бұл элементті тапты, бірақ оның файлын оқи алмады (HTTP 404). Файл жылжытылған, өшірілген немесе оның сақтау орны қолжетімсіз болуы мүмкін. Сервер иесінен файлды тексеріп, кітапхананы қайта сканерлеуді сұраңыз.',
 			'messages.serverBusyTitle' => 'Ағын қолжетімсіз',

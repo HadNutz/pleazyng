@@ -172,8 +172,9 @@ void main() {
         await pumpUntil(
           tester,
           () => find.text(t.messages.serverLimitTitle).evaluate().isNotEmpty,
-          describe: () => 'no server-limit dialog',
+          describe: () => 'no HTTP 500 dialog',
         );
+        expect(find.text('Server error (HTTP 500).'), findsOneWidget);
 
         expect(
           find.byType(CircularProgressIndicator),

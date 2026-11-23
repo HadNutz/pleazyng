@@ -1438,7 +1438,7 @@ class _Translations$messages$id extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Kegagalan ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Beralih ke pemain yang kompatibel.';
 	@override String get serverLimitTitle => 'Playback gagal';
-	@override String get serverLimitBody => 'Kesalahan server (HTTP 500). batas bandwidth/transcoding mungkin menolak sesi ini.';
+	@override String get serverLimitBody => 'Kesalahan server (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'File yang tidak tersedia';
 	@override String get mediaUnreadableBody => 'Server menemukan item ini tetapi tidak dapat membaca file (HTTP 404). file ini mungkin telah dipindahkan, dihapus, atau penyimpanannya offline.';
 	@override String get serverBusyTitle => 'Stream tidak tersedia';
@@ -6866,7 +6866,7 @@ extension on TranslationsId {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Kegagalan ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Beralih ke pemain yang kompatibel.',
 			'messages.serverLimitTitle' => 'Playback gagal',
-			'messages.serverLimitBody' => 'Kesalahan server (HTTP 500). batas bandwidth/transcoding mungkin menolak sesi ini.',
+			'messages.serverLimitBody' => 'Kesalahan server (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'File yang tidak tersedia',
 			'messages.mediaUnreadableBody' => 'Server menemukan item ini tetapi tidak dapat membaca file (HTTP 404). file ini mungkin telah dipindahkan, dihapus, atau penyimpanannya offline.',
 			'messages.serverBusyTitle' => 'Stream tidak tersedia',

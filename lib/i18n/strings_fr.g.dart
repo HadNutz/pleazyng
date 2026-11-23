@@ -1447,7 +1447,7 @@ class Translations$messages$fr extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Échec de ${action} : ${error}';
 	@override String get switchingToCompatiblePlayer => 'Passage au lecteur compatible...';
 	@override String get serverLimitTitle => 'Échec de la lecture';
-	@override String get serverLimitBody => 'Erreur serveur (HTTP 500). Une limite de bande passante/transcodage a probablement rejeté cette session. Demandez au propriétaire de l\'ajuster.';
+	@override String get serverLimitBody => 'Erreur serveur (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Fichier indisponible';
 	@override String get mediaUnreadableBody => 'Le serveur a trouvé cet élément mais n\'a pas pu lire son fichier (HTTP 404). Le fichier a probablement été déplacé, supprimé, ou son stockage est hors ligne. Demandez au propriétaire du serveur de vérifier le fichier et de relancer l\'analyse de la bibliothèque.';
 	@override String get serverBusyTitle => 'Flux indisponible';
@@ -6925,7 +6925,7 @@ extension on TranslationsFr {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Échec de ${action} : ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Passage au lecteur compatible...',
 			'messages.serverLimitTitle' => 'Échec de la lecture',
-			'messages.serverLimitBody' => 'Erreur serveur (HTTP 500). Une limite de bande passante/transcodage a probablement rejeté cette session. Demandez au propriétaire de l\'ajuster.',
+			'messages.serverLimitBody' => 'Erreur serveur (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Fichier indisponible',
 			'messages.mediaUnreadableBody' => 'Le serveur a trouvé cet élément mais n\'a pas pu lire son fichier (HTTP 404). Le fichier a probablement été déplacé, supprimé, ou son stockage est hors ligne. Demandez au propriétaire du serveur de vérifier le fichier et de relancer l\'analyse de la bibliothèque.',
 			'messages.serverBusyTitle' => 'Flux indisponible',

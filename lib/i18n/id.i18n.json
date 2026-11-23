@@ -1315,7 +1315,7 @@
     "failedPlayback": "Kegagalan ${action}: ${error}",
     "switchingToCompatiblePlayer": "Beralih ke pemain yang kompatibel.",
     "serverLimitTitle": "Playback gagal",
-    "serverLimitBody": "Kesalahan server (HTTP 500). batas bandwidth/transcoding mungkin menolak sesi ini.",
+    "serverLimitBody": "Kesalahan server (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "File yang tidak tersedia",
     "mediaUnreadableBody": "Server menemukan item ini tetapi tidak dapat membaca file (HTTP 404). file ini mungkin telah dipindahkan, dihapus, atau penyimpanannya offline.",

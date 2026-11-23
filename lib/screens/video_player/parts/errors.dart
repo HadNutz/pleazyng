@@ -522,7 +522,7 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
   }
 
   /// Reopen the item the server refused (HTTP 500) as a server transcode at
-  /// the same preset, once. The server picks the output its limit admits; the
+  /// the same preset, once. The server chooses the output. The
   /// raw file is never requested again: the reload withholds direct play and
   /// fails instead of falling back to the file. A refused transcode, before
   /// or after its open, brings the dialog back without the offer, because
@@ -562,7 +562,7 @@ extension _VideoPlayerErrorMethods on VideoPlayerScreenState {
       case MediaReloadOutcome.superseded:
       case MediaReloadOutcome.rejected:
         return;
-      // The server would not start the transcode: its final answer.
+      // The transcode failed to start.
       case MediaReloadOutcome.failed:
         _latchFatalPlaybackError(PlaybackFailureAction.serverLimitDialog);
         unawaited(_showServerLimitDialog());

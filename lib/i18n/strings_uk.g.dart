@@ -1457,7 +1457,7 @@ class _Translations$messages$uk extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Не вдалося ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Перехід до комбінованого гравця.';
 	@override String get serverLimitTitle => 'Playback провалився';
-	@override String get serverLimitBody => 'Серверна помилка (HTTP 500). обмеження ширини смуги/перешифрування, ймовірно, відкинули цю сесію.';
+	@override String get serverLimitBody => 'Серверна помилка (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Файли недоступні';
 	@override String get mediaUnreadableBody => 'Сервер знайшов цей елемент, але не міг прочитати його файл (HTTP 404). файл, ймовірно, був переміщений, видалений, або його зберігання офлайн.';
 	@override String get serverBusyTitle => 'Потік недоступний';
@@ -6935,7 +6935,7 @@ extension on TranslationsUk {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Не вдалося ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Перехід до комбінованого гравця.',
 			'messages.serverLimitTitle' => 'Playback провалився',
-			'messages.serverLimitBody' => 'Серверна помилка (HTTP 500). обмеження ширини смуги/перешифрування, ймовірно, відкинули цю сесію.',
+			'messages.serverLimitBody' => 'Серверна помилка (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Файли недоступні',
 			'messages.mediaUnreadableBody' => 'Сервер знайшов цей елемент, але не міг прочитати його файл (HTTP 404). файл, ймовірно, був переміщений, видалений, або його зберігання офлайн.',
 			'messages.serverBusyTitle' => 'Потік недоступний',

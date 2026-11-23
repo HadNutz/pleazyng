@@ -1445,7 +1445,7 @@ class _Translations$messages$tr extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => '${action} başarısız oldu: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Uyumlu oynatıcıya geçiliyor...';
 	@override String get serverLimitTitle => 'Oynatma başarısız oldu';
-	@override String get serverLimitBody => 'Sunucu hatası (HTTP 500). Muhtemelen bir bant genişliği/kod dönüştürme sınırı bu oturumu reddetti. Sunucu sahibinden bunu ayarlamasını isteyin.';
+	@override String get serverLimitBody => 'Sunucu hatası (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'Dosya kullanılamıyor';
 	@override String get mediaUnreadableBody => 'Sunucu bu ögeyi buldu ancak dosyasını okuyamadı (HTTP 404). Dosya büyük olasılıkla taşındı, silindi veya depolama alanı çevrimdışı. Sunucu sahibinden dosyayı kontrol edip kitaplığı yeniden taramasını isteyin.';
 	@override String get serverBusyTitle => 'Akış kullanılamıyor';
@@ -6891,7 +6891,7 @@ extension on TranslationsTr {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => '${action} başarısız oldu: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Uyumlu oynatıcıya geçiliyor...',
 			'messages.serverLimitTitle' => 'Oynatma başarısız oldu',
-			'messages.serverLimitBody' => 'Sunucu hatası (HTTP 500). Muhtemelen bir bant genişliği/kod dönüştürme sınırı bu oturumu reddetti. Sunucu sahibinden bunu ayarlamasını isteyin.',
+			'messages.serverLimitBody' => 'Sunucu hatası (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'Dosya kullanılamıyor',
 			'messages.mediaUnreadableBody' => 'Sunucu bu ögeyi buldu ancak dosyasını okuyamadı (HTTP 404). Dosya büyük olasılıkla taşındı, silindi veya depolama alanı çevrimdışı. Sunucu sahibinden dosyayı kontrol edip kitaplığı yeniden taramasını isteyin.',
 			'messages.serverBusyTitle' => 'Akış kullanılamıyor',

@@ -1315,7 +1315,7 @@
     "failedPlayback": "thất bại đến ${action}: ${error}",
     "switchingToCompatiblePlayer": "Chuyển sang Player compatible...",
     "serverLimitTitle": "Playback thất bại",
-    "serverLimitBody": "Lỗi máy chủ (HTTP 500). Một giới hạn băng thông / mã hóa có thể đã từ chối phiên này.",
+    "serverLimitBody": "Lỗi máy chủ (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "file không sẵn dùng",
     "mediaUnreadableBody": "Máy chủ đã tìm thấy mục này nhưng không thể đọc tệp của nó (HTTP 404). tệp có thể đã di chuyển, xóa, hoặc lưu trữ của nó là không dây.",

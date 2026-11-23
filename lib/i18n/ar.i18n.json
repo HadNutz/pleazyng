@@ -1350,7 +1350,7 @@
     "failedPlayback": "فشل في ${action}: ${error}",
     "switchingToCompatiblePlayer": "التبديل إلى لاعب متوافق ...",
     "serverLimitTitle": "لعبة Playback فاشلة",
-    "serverLimitBody": "خطأ الخادم (HTTP 500). قد يرفض هذا الجلسة حد نطاق النطاق / التشفير.",
+    "serverLimitBody": "خطأ الخادم (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "ملف غير متوفر",
     "mediaUnreadableBody": "وجد الخادم هذا العنصر ولكن لم يكن قادرا على قراءة ملفها (HTTP 404). تم نقل الملف على الأرجح، وحذف، أو تخزين غير متصل.",

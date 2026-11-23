@@ -1438,7 +1438,7 @@ class _Translations$messages$th extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'ความล้มเหลว ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'เปลี่ยนไปยังผู้เล่นที่เข้ากันได้ ...';
 	@override String get serverLimitTitle => 'Playback ไม่ประสบความสําเร็จ';
-	@override String get serverLimitBody => 'ข้อผิดพลาดเซิร์ฟเวอร์ (HTTP 500) ข้อ จํากัด ความกว้างแบนด์วิดท์/การรหัสอาจปฏิเสธการประชุมนี้ โปรดขอให้เจ้าของปรับได้';
+	@override String get serverLimitBody => 'ข้อผิดพลาดเซิร์ฟเวอร์ (HTTP 500)';
 	@override String get mediaUnreadableTitle => 'ไฟล์ไม่สามารถเข้าถึงได้';
 	@override String get mediaUnreadableBody => 'เซิร์ฟเวอร์พบรายการนี้ แต่ไม่สามารถอ่านไฟล์ (HTTP 404) ไฟล์อาจถูกย้ายลบหรือการจัดเก็บของมันไม่สามารถเข้าถึงได้ โปรดขอให้เจ้าของเซิร์ฟเวอร์ตรวจสอบไฟล์และบันทึกห้องสมุด';
 	@override String get serverBusyTitle => 'การไหลไม่สามารถเข้าถึงได้';
@@ -6866,7 +6866,7 @@ extension on TranslationsTh {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'ความล้มเหลว ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'เปลี่ยนไปยังผู้เล่นที่เข้ากันได้ ...',
 			'messages.serverLimitTitle' => 'Playback ไม่ประสบความสําเร็จ',
-			'messages.serverLimitBody' => 'ข้อผิดพลาดเซิร์ฟเวอร์ (HTTP 500) ข้อ จํากัด ความกว้างแบนด์วิดท์/การรหัสอาจปฏิเสธการประชุมนี้ โปรดขอให้เจ้าของปรับได้',
+			'messages.serverLimitBody' => 'ข้อผิดพลาดเซิร์ฟเวอร์ (HTTP 500)',
 			'messages.mediaUnreadableTitle' => 'ไฟล์ไม่สามารถเข้าถึงได้',
 			'messages.mediaUnreadableBody' => 'เซิร์ฟเวอร์พบรายการนี้ แต่ไม่สามารถอ่านไฟล์ (HTTP 404) ไฟล์อาจถูกย้ายลบหรือการจัดเก็บของมันไม่สามารถเข้าถึงได้ โปรดขอให้เจ้าของเซิร์ฟเวอร์ตรวจสอบไฟล์และบันทึกห้องสมุด',
 			'messages.serverBusyTitle' => 'การไหลไม่สามารถเข้าถึงได้',

@@ -1315,7 +1315,7 @@
     "failedPlayback": "Kegagalan ${action}: ${error}",
     "switchingToCompatiblePlayer": "Menukar kepada pemain yang kompatibel ...",
     "serverLimitTitle": "Playback gagal",
-    "serverLimitBody": "Kesilapan pelayan (HTTP 500). had lebar jalur/transcoding mungkin menolak sesi ini.",
+    "serverLimitBody": "Kesilapan pelayan (HTTP 500).",
     "serverLimitTranscode": "",
     "mediaUnreadableTitle": "fail yang tidak tersedia",
     "mediaUnreadableBody": "Pelayan mendapati item ini tetapi tidak dapat membaca failnya (HTTP 404). fail itu mungkin telah dipindahkan, dipadamkan, atau penyimpanan adalah offline.",

@@ -1438,7 +1438,7 @@ class _Translations$messages$vi extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'thất bại đến ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Chuyển sang Player compatible...';
 	@override String get serverLimitTitle => 'Playback thất bại';
-	@override String get serverLimitBody => 'Lỗi máy chủ (HTTP 500). Một giới hạn băng thông / mã hóa có thể đã từ chối phiên này.';
+	@override String get serverLimitBody => 'Lỗi máy chủ (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'file không sẵn dùng';
 	@override String get mediaUnreadableBody => 'Máy chủ đã tìm thấy mục này nhưng không thể đọc tệp của nó (HTTP 404). tệp có thể đã di chuyển, xóa, hoặc lưu trữ của nó là không dây.';
 	@override String get serverBusyTitle => 'Stream không sẵn dùng';
@@ -6866,7 +6866,7 @@ extension on TranslationsVi {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'thất bại đến ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Chuyển sang Player compatible...',
 			'messages.serverLimitTitle' => 'Playback thất bại',
-			'messages.serverLimitBody' => 'Lỗi máy chủ (HTTP 500). Một giới hạn băng thông / mã hóa có thể đã từ chối phiên này.',
+			'messages.serverLimitBody' => 'Lỗi máy chủ (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'file không sẵn dùng',
 			'messages.mediaUnreadableBody' => 'Máy chủ đã tìm thấy mục này nhưng không thể đọc tệp của nó (HTTP 404). tệp có thể đã di chuyển, xóa, hoặc lưu trữ của nó là không dây.',
 			'messages.serverBusyTitle' => 'Stream không sẵn dùng',

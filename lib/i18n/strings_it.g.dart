@@ -1447,7 +1447,7 @@ class _Translations$messages$it extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'Impossibile eseguire l\'azione «${action}»: ${error}';
 	@override String get switchingToCompatiblePlayer => 'Passaggio al lettore compatibile...';
 	@override String get serverLimitTitle => 'Riproduzione non riuscita';
-	@override String get serverLimitBody => 'Errore del server (HTTP 500). È probabile che un limite di banda o transcodifica abbia impedito questa sessione. Chiedi al proprietario di modificare il limite.';
+	@override String get serverLimitBody => 'Errore del server (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'File non disponibile';
 	@override String get mediaUnreadableBody => 'Il server ha trovato questo elemento ma non ha potuto leggere il suo file (HTTP 404). Il file è stato probabilmente spostato o eliminato, oppure il suo storage è offline. Chiedi al proprietario del server di controllare il file e di riscansionare la libreria.';
 	@override String get serverBusyTitle => 'Streaming non disponibile';
@@ -6898,7 +6898,7 @@ extension on TranslationsIt {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'Impossibile eseguire l\'azione «${action}»: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'Passaggio al lettore compatibile...',
 			'messages.serverLimitTitle' => 'Riproduzione non riuscita',
-			'messages.serverLimitBody' => 'Errore del server (HTTP 500). È probabile che un limite di banda o transcodifica abbia impedito questa sessione. Chiedi al proprietario di modificare il limite.',
+			'messages.serverLimitBody' => 'Errore del server (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'File non disponibile',
 			'messages.mediaUnreadableBody' => 'Il server ha trovato questo elemento ma non ha potuto leggere il suo file (HTTP 404). Il file è stato probabilmente spostato o eliminato, oppure il suo storage è offline. Chiedi al proprietario del server di controllare il file e di riscansionare la libreria.',
 			'messages.serverBusyTitle' => 'Streaming non disponibile',

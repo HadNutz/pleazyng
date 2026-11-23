@@ -1445,7 +1445,7 @@ class _Translations$messages$bn extends Translations$messages$en {
 	@override String failedPlayback({required Object action, required Object error}) => 'অসম্ভব ${action}: ${error}';
 	@override String get switchingToCompatiblePlayer => 'সমন্বয়যোগ্য খেলোয়াড়ের জন্য বিনিময় ...';
 	@override String get serverLimitTitle => 'Playback হারিয়েছে';
-	@override String get serverLimitBody => 'সার্ভার ভুল (HTTP 500). একটি প্যাডবাইড / ট্রান্সকডিং সীমাবদ্ধতা সম্ভবত এই সেশনকে প্রত্যাহার করেছিল।';
+	@override String get serverLimitBody => 'সার্ভার ভুল (HTTP 500).';
 	@override String get mediaUnreadableTitle => 'ফাইল অসম্ভব';
 	@override String get mediaUnreadableBody => 'সার্ভারটি এই পণ্যটি খুঁজে পেয়েছিল কিন্তু তার ফাইলটি পড়তে পারতেন না (HTTP 404). ফাইলটি সম্ভবত স্থানান্তর করা হয়, মুছে ফেলিত হয়, অথবা তার স্টোরেজ অঅফলি।';
 	@override String get serverBusyTitle => 'অসম্ভব প্রদর্শন';
@@ -6891,7 +6891,7 @@ extension on TranslationsBn {
 			'messages.failedPlayback' => ({required Object action, required Object error}) => 'অসম্ভব ${action}: ${error}',
 			'messages.switchingToCompatiblePlayer' => 'সমন্বয়যোগ্য খেলোয়াড়ের জন্য বিনিময় ...',
 			'messages.serverLimitTitle' => 'Playback হারিয়েছে',
-			'messages.serverLimitBody' => 'সার্ভার ভুল (HTTP 500). একটি প্যাডবাইড / ট্রান্সকডিং সীমাবদ্ধতা সম্ভবত এই সেশনকে প্রত্যাহার করেছিল।',
+			'messages.serverLimitBody' => 'সার্ভার ভুল (HTTP 500).',
 			'messages.mediaUnreadableTitle' => 'ফাইল অসম্ভব',
 			'messages.mediaUnreadableBody' => 'সার্ভারটি এই পণ্যটি খুঁজে পেয়েছিল কিন্তু তার ফাইলটি পড়তে পারতেন না (HTTP 404). ফাইলটি সম্ভবত স্থানান্তর করা হয়, মুছে ফেলিত হয়, অথবা তার স্টোরেজ অঅফলি।',
 			'messages.serverBusyTitle' => 'অসম্ভব প্রদর্শন',
