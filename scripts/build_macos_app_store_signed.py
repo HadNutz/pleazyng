@@ -993,6 +993,38 @@ def validate_entitlements_data(entitlements: dict) -> None:
         raise ValueError("Signed Mac App Store app enables unsigned executable memory")
 
 
+STORE_HELPERS = ("plezy_retro_worker", "plezy_visualizer_helper")
+STORE_HELPER_ENTITLEMENTS = {
+    "com.apple.security.app-sandbox": True,
+    "com.apple.security.inherit": True,
+}
+
+
+def verify_store_helpers(app_path: Path) -> None:
+    for name in STORE_HELPERS:
+        helper = app_path / "Contents/MacOS" / name
+        if helper.is_symlink() or not helper.is_file():
+            raise ValueError(f"Missing Mac App Store helper executable: {name}")
+        data = _capture(["codesign", "-d", "--entitlements", ":-", str(helper)])
+        if plistlib.loads(data) != STORE_HELPER_ENTITLEMENTS:
+            raise ValueError(f"Mac App Store helper does not inherit the app sandbox: {name}")
+
+
+def sign_store_helpers(app_path: Path, *, fingerprint: str, keychain: Path, stage: Path) -> None:
+    entitlements = stage / "store-helper.entitlements"
+    entitlements.write_bytes(plistlib.dumps(STORE_HELPER_ENTITLEMENTS))
+    identity = ["codesign", "--force", "--sign", fingerprint, "--keychain", str(keychain)]
+    for name in STORE_HELPERS:
+        helper = app_path / "Contents/MacOS" / name
+        if helper.is_symlink() or not helper.is_file():
+            raise ValueError(f"Missing Mac App Store helper executable: {name}")
+        signing_run([*identity, "--identifier", f"{EXPECTED_BUNDLE_ID}.{name}",
+                     "--options", "runtime", "--entitlements", str(entitlements), str(helper)])
+    # Seal the modified nested signatures while retaining the app's own entitlements.
+    signing_run([*identity, "--preserve-metadata=identifier,entitlements,flags,runtime", str(app_path)])
+    verify_store_helpers(app_path)
+
+
 def _verify_installer(package_path: Path, *, team: str) -> None:
     details = _capture(["/usr/sbin/pkgutil", "--check-signature", str(package_path)]).decode(errors="replace")
     lowered = details.lower()
@@ -1242,6 +1274,7 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
         frameworks = app_path / "Contents/Frameworks"
         if any((frameworks / name).exists() for name in ("Sparkle.framework", "auto_updater_macos.framework")):
             raise ValueError("The direct-download updater is still bundled in the Mac App Store archive")
+        sign_store_helpers(app_path, fingerprint=app_fingerprint, keychain=app_keychain, stage=stage)
         app_info, architectures = inspect_app(app_path)
         archive_info_plist = app_path / "Contents/Info.plist"
         category_receipt = store_category_receipt(store_info_plist, archive_info_plist)
@@ -1278,6 +1311,12 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
         shutil.rmtree(export_dir)
         options_path.unlink(missing_ok=True)
         _verify_installer(package_path, team=team)
+        expanded_package = stage / "exported-installer"
+        _capture(["/usr/sbin/pkgutil", "--expand-full", str(package_path), str(expanded_package)])
+        exported_apps = list(expanded_package.rglob("Pleazyng.app"))
+        if len(exported_apps) != 1:
+            raise ValueError("Installer must contain exactly one exported Pleazyng app")
+        verify_store_helpers(exported_apps[0])
         receipt = {
             "schema_version": 1,
             "product": "Pleazyng",
@@ -1288,6 +1327,7 @@ def build_signed_package(source_dir: Path, source: dict[str, str], output_dir: P
             "application_category": category_receipt,
             "embedded_plezy_torrent_framework": native_framework,
             "app_signature": signature,
+            "sandboxed_helpers": list(STORE_HELPERS),
             "installer_signature": {"signed": True, "certificate_type": INSTALLER_CERTIFICATE_TYPE,
                                     "certificate_sha1": installer_fingerprint},
             "profile": {"type": PROFILE_TYPE, "uuid": profile_uuid},
