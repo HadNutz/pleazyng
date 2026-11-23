@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update the reader integration test browser tooling to Playwright 1.65.1.
+
 - Update GitHub Actions artifact downloads to 8.0.2 for release assembly, foldable Android checks, and the macOS Store build.
 
 - Open the music mini-player’s Play on device picker inside the active profile.
