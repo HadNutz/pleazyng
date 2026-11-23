@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Update GitHub Actions artifact downloads to 8.0.2 for release assembly, foldable Android checks, and the macOS Store build.
+
 - Open the music mini-player’s Play on device picker inside the active profile.
 
 - Save desktop motion smoothing choices when the current renderer cannot switch live, clarify MPV and Neural options, and reduce desktop MPV blending.
