@@ -24,8 +24,6 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / 'scripts/checks'))
-from check_dart_imports import directive_uris  # noqa: E402
 PINS = json.loads((Path(__file__).with_name('toolchain.json')).read_text())
 APP_ID = 'org.snapetech.pleazyng'
 NS = {'t': 'http://tizen.org/ns/packages'}
@@ -452,6 +450,9 @@ PDF_READER_ADAPTERS = {
 
 def preflight_pdf_readers(source):
     """Check the actual staged Dart imports before installing or building SDKs."""
+    # This source-tree check is unused by the standalone tester handoff.
+    sys.path.insert(0, str(ROOT / 'scripts/checks'))
+    from check_dart_imports import directive_uris
     source = Path(source)
     tracked = set(subprocess.check_output(['git', '-C', str(source), 'ls-files', '-z']).decode().split('\0'))
     for replacement in PDF_READER_ADAPTERS.values():
