@@ -568,7 +568,7 @@ final class PleazyngStoreKitLocalTrialReviewUITests: XCTestCase {
           userInfo: [NSLocalizedDescriptionKey: "XCUIApplication.screenshot() did not provide a decodable PNG"])
       }
       let rawImageSize = CGSize(width: image.width, height: image.height)
-      let screenFrame = XCUIScreen.main.frame
+      let screenFrame = CGDisplayBounds(CGMainDisplayID())
       let applicationFrame = app.frame
       let windowFrame = window.frame
       let mapping = try resolveMacScreenshotMapping(

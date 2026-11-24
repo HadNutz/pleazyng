@@ -616,7 +616,7 @@ class StoreKitReviewCaptureTests(unittest.TestCase):
         )
         self.assertNotIn("window.screenshot()", UI_TEST)
         self.assertIn("let screenshot = app.screenshot()", UI_TEST)
-        self.assertIn("let screenFrame = XCUIScreen.main.frame", UI_TEST)
+        self.assertIn("let screenFrame = CGDisplayBounds(CGMainDisplayID())", UI_TEST)
         self.assertIn("let applicationFrame = app.frame", UI_TEST)
         self.assertIn("let windowFrame = window.frame", UI_TEST)
         self.assertIn("image.cropping(to: crop)", UI_TEST)
