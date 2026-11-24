@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Pass the required virtual-collection type when browsing RomM libraries.
+
 - Build signed iOS and tvOS App Store packages directly in focused Store runs, saving the developer builds for GitHub release runs.
 
 - Keep Samsung TV playback from retrying the player's default volume at startup and initialize the mpv fallback with the required numeric locale.
